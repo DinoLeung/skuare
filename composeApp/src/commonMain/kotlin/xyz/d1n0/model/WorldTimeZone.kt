@@ -10,8 +10,8 @@ data class WorldTimeZone(
     override val dstRules: Int
 ) : TimeZone(cityName, identifier, offset, dstDiff, dstRules) {
     companion object {
-        private val worldTimeZones = listOf(
-            WorldTimeZone(
+        val worldTimeZones: Map<Int, WorldTimeZone> = mapOf(
+            2 to WorldTimeZone(
                 country = "Australia",
                 city = "Adealide",
                 cityName = "Adelaide",
@@ -20,7 +20,7 @@ data class WorldTimeZone(
                 dstDiff = 1.0,
                 dstRules = 5
             ),
-            WorldTimeZone(
+            1 to WorldTimeZone(
                 country = "America",
                 city = "New York",
                 cityName = "New York",
@@ -33,8 +33,10 @@ data class WorldTimeZone(
 
         fun fuzzySearch(keyword: String): List<WorldTimeZone> {
             val keywordLowerCase = keyword.trim().lowercase()
-            if (keywordLowerCase.isEmpty()) return worldTimeZones
-            return worldTimeZones.filter { it.city.lowercase().contains(keywordLowerCase) || it.country.lowercase().contains(keywordLowerCase) }
+            if (keywordLowerCase.isEmpty()) return worldTimeZones.values.toList()
+            return worldTimeZones.values.filter {
+                it.city.lowercase().contains(keywordLowerCase) || it.country.lowercase().contains(keywordLowerCase)
+            }
         }
     }
 }

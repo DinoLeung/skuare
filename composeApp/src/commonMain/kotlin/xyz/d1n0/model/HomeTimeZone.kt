@@ -9,8 +9,8 @@ data class HomeTimeZone(
     override val dstRules: Int
 ) : TimeZone(cityName, identifier, offset, dstDiff, dstRules) {
     companion object {
-        private val homeTimeZones = listOf(
-            HomeTimeZone(
+        val homeTimeZones: Map<Int, HomeTimeZone> = mapOf(
+            1 to HomeTimeZone(
                 timeZone = "Australia/Adelaide",
                 cityName = "Adelaide",
                 identifier = 1,
@@ -18,7 +18,7 @@ data class HomeTimeZone(
                 dstDiff = 1.0,
                 dstRules = 5
             ),
-            HomeTimeZone(
+            2 to HomeTimeZone(
                 timeZone = "America/New_York",
                 cityName = "New York",
                 identifier = 2,
@@ -35,8 +35,8 @@ data class HomeTimeZone(
          */
         fun fuzzySearch(keyword: String): List<HomeTimeZone> {
             val keywordLowerCase = keyword.trim().lowercase()
-            if (keywordLowerCase.isEmpty()) return homeTimeZones
-            return homeTimeZones.filter { it.timeZone.lowercase().contains(keywordLowerCase) }
+            if (keywordLowerCase.isEmpty()) return homeTimeZones.values.toList()
+            return homeTimeZones.values.filter { it.timeZone.lowercase().contains(keywordLowerCase) }
         }
     }
 }

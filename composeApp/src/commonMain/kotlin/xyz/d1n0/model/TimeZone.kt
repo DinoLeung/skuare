@@ -11,7 +11,7 @@ sealed class TimeZone(
 ) {
     // Identifier bytes (converted to 2-byte representation)
     val identifierBytes: ByteArray
-        get() = BytesConverter.intTo2Bytes(identifier)
+        get() = BytesConverter.intToLittleEdianBytes(identifier)
 
     // 5 bytes representation
     val bytes: ByteArray
