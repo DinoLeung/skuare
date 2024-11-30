@@ -10,6 +10,21 @@ data class WorldTimeZone(
     override val dstRules: Int
 ) : TimeZone(cityName, identifier, offset, dstDiff, dstRules) {
     companion object {
+        /**
+         * Performs a case-insensitive search for the given keyword across all WorldTimeZone instances.
+         * Matches are found where the keyword is a substring of the city or country name.
+         * If the keyword is empty or contains only whitespace, all WorldTimeZone instances are returned.
+         * @param keyword The search term to look for in city and country names.
+         * @return A list of WorldTimeZone objects whose city or country names contain the keyword.
+         */
+        fun fuzzySearch(keyword: String): List<WorldTimeZone> {
+            val keywordLowerCase = keyword.trim().lowercase()
+            if (keywordLowerCase.isEmpty()) return worldTimeZones.values.toList()
+            return worldTimeZones.values.filter {
+                it.city.lowercase().contains(keywordLowerCase) || it.country.lowercase().contains(keywordLowerCase)
+            }
+        }
+
         val worldTimeZones: Map<Int, WorldTimeZone> = mapOf(
             2 to WorldTimeZone(
                 country = "Australia",
@@ -30,13 +45,5 @@ data class WorldTimeZone(
                 dstRules = 3
             ),
         )
-
-        fun fuzzySearch(keyword: String): List<WorldTimeZone> {
-            val keywordLowerCase = keyword.trim().lowercase()
-            if (keywordLowerCase.isEmpty()) return worldTimeZones.values.toList()
-            return worldTimeZones.values.filter {
-                it.city.lowercase().contains(keywordLowerCase) || it.country.lowercase().contains(keywordLowerCase)
-            }
-        }
     }
 }

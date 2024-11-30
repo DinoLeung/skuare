@@ -9,6 +9,17 @@ data class HomeTimeZone(
     override val dstRules: Int
 ) : TimeZone(cityName, identifier, offset, dstDiff, dstRules) {
     companion object {
+        /**
+         * Perform a fuzzy search on the list of HomeTimeZones by matching the keyword with the `timeZone` field.
+         * @param keyword The search keyword.
+         * @return A list of HomeTimeZone objects matching the search keyword.
+         */
+        fun fuzzySearch(keyword: String): List<HomeTimeZone> {
+            val keywordLowerCase = keyword.trim().lowercase()
+            if (keywordLowerCase.isEmpty()) return homeTimeZones.values.toList()
+            return homeTimeZones.values.filter { it.timeZone.lowercase().contains(keywordLowerCase) }
+        }
+
         val homeTimeZones: Map<Int, HomeTimeZone> = mapOf(
             1 to HomeTimeZone(
                 timeZone = "Australia/Adelaide",
@@ -27,16 +38,5 @@ data class HomeTimeZone(
                 dstRules = 3
             )
         )
-
-        /**
-         * Perform a fuzzy search on the list of HomeTimeZones by matching the keyword with the `timeZone` field.
-         * @param keyword The search keyword.
-         * @return A list of HomeTimeZone objects matching the search keyword.
-         */
-        fun fuzzySearch(keyword: String): List<HomeTimeZone> {
-            val keywordLowerCase = keyword.trim().lowercase()
-            if (keywordLowerCase.isEmpty()) return homeTimeZones.values.toList()
-            return homeTimeZones.values.filter { it.timeZone.lowercase().contains(keywordLowerCase) }
-        }
     }
 }

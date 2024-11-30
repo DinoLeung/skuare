@@ -9,9 +9,11 @@ enum class Command(val code: Int) {
     clock(0x1d),
     timeZoneName(0x1f),
     timeZoneConfig(0x1e),
+
     // somethingRelatedToTimezone(0x24), maybe it's not important
     currentTime(0x09),
-//    settingForAlm(0x15),
+
+    //    settingForAlm(0x15),
 //    settingForAlm2(0x16),
 //    settingForBasic(0x13),
 //    currentTimeManager(0x39),
@@ -25,6 +27,6 @@ enum class Command(val code: Int) {
 //    findPhone(0x0A);
 
     companion object {
-        fun fromCode(code: Int) = values().firstOrNull { it.code == code } ?: error("Unknown command code: $code")
+        fun fromCode(code: Int) = entries.firstOrNull { it.code == code } ?: error("Unknown command code: $code")
     }
 }
