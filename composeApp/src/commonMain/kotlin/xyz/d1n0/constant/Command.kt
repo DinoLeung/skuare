@@ -1,4 +1,4 @@
-package xyz.d1n0.model
+package xyz.d1n0.constant
 
 enum class Command(val code: Int) {
     watchName(0x23),
@@ -6,9 +6,9 @@ enum class Command(val code: Int) {
     bleFeatures(0x10),
     settingForBle(0x11),
     watchCondition(0x28),
-    clock(0x1d),
-    timeZoneName(0x1f),
-    timeZoneConfig(0x1e),
+    clock(0x1D),
+    timeZoneName(0x1F),
+    timeZoneConfig(0x1E),
 
     // somethingRelatedToTimezone(0x24), maybe it's not important
     currentTime(0x09),

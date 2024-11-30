@@ -1,4 +1,4 @@
-package xyz.d1n0.lib
+package xyz.d1n0.constant
 
 import com.benasher44.uuid.uuidFrom
 

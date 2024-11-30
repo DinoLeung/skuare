@@ -1,5 +1,7 @@
 package xyz.d1n0.model
 
+import xyz.d1n0.constant.Command
+import xyz.d1n0.constant.DstStatus
 import xyz.d1n0.helper.BytesConverter
 
 class Config {

@@ -1,6 +1,8 @@
 package xyz.d1n0.model
 
 import kotlinx.datetime.toLocalDateTime
+import xyz.d1n0.constant.DstStatus
+import xyz.d1n0.constant.HomeTimeZoneData
 import kotlinx.datetime.TimeZone as KotlinTimeZone
 import kotlinx.datetime.Clock as KotlinClock
 import kotlinx.datetime.LocalDateTime as KotlinLocalDateTime
@@ -24,7 +26,7 @@ data class HomeClock(
          * @throws HomeClockError If the specified time zone ID does not exist in `homeTimeZones`.
          */
         fun fromTimeZoneId(timeZoneId: Int, dstStatus: DstStatus) =
-            HomeTimeZone.homeTimeZones[timeZoneId]?.let {
+            HomeTimeZoneData.all[timeZoneId]?.let {
                 HomeClock(it, dstStatus)
             } ?: throw HomeClockError("Time Zone ID $timeZoneId not found")
     }

@@ -1,4 +1,4 @@
-package xyz.d1n0.lib
+package xyz.d1n0.constant
 
 import xyz.d1n0.model.HomeTimeZone
 

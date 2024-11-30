@@ -1,6 +1,6 @@
 package xyz.d1n0.model
 
-import xyz.d1n0.lib.HomeTimeZoneData
+import xyz.d1n0.constant.HomeTimeZoneData
 
 data class HomeTimeZone(
     val timeZone: String,

@@ -1,4 +1,4 @@
-package xyz.d1n0.model
+package xyz.d1n0.constant
 
 enum class DstStatus(val value: Int) {
     // 00000000

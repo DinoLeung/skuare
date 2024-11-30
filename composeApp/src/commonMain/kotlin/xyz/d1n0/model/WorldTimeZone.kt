@@ -1,6 +1,6 @@
 package xyz.d1n0.model
 
-import xyz.d1n0.lib.WorldTimeZoneData
+import xyz.d1n0.constant.WorldTimeZoneData
 
 data class WorldTimeZone(
     val country: String,
