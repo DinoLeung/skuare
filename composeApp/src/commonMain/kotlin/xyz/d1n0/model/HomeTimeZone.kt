@@ -1,5 +1,7 @@
 package xyz.d1n0.model
 
+import xyz.d1n0.lib.HomeTimeZoneData
+
 data class HomeTimeZone(
     val timeZone: String,
     override val cityName: String,
@@ -16,27 +18,8 @@ data class HomeTimeZone(
          */
         fun fuzzySearch(keyword: String): List<HomeTimeZone> {
             val keywordLowerCase = keyword.trim().lowercase()
-            if (keywordLowerCase.isEmpty()) return homeTimeZones.values.toList()
-            return homeTimeZones.values.filter { it.timeZone.lowercase().contains(keywordLowerCase) }
+            if (keywordLowerCase.isEmpty()) return HomeTimeZoneData.all.values.toList()
+            return HomeTimeZoneData.all.values.filter { it.timeZone.lowercase().contains(keywordLowerCase) }
         }
-
-        val homeTimeZones: Map<Int, HomeTimeZone> = mapOf(
-            1 to HomeTimeZone(
-                timeZone = "Australia/Adelaide",
-                cityName = "Adelaide",
-                identifier = 1,
-                offset = 9.5,
-                dstDiff = 1.0,
-                dstRules = 5
-            ),
-            2 to HomeTimeZone(
-                timeZone = "America/New_York",
-                cityName = "New York",
-                identifier = 2,
-                offset = -5.0,
-                dstDiff = 1.0,
-                dstRules = 3
-            )
-        )
     }
 }

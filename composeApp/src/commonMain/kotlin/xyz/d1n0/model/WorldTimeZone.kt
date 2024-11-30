@@ -1,5 +1,7 @@
 package xyz.d1n0.model
 
+import xyz.d1n0.lib.WorldTimeZoneData
+
 data class WorldTimeZone(
     val country: String,
     val city: String,
@@ -19,31 +21,10 @@ data class WorldTimeZone(
          */
         fun fuzzySearch(keyword: String): List<WorldTimeZone> {
             val keywordLowerCase = keyword.trim().lowercase()
-            if (keywordLowerCase.isEmpty()) return worldTimeZones.values.toList()
-            return worldTimeZones.values.filter {
+            if (keywordLowerCase.isEmpty()) return WorldTimeZoneData.all.values.toList()
+            return WorldTimeZoneData.all.values.filter {
                 it.city.lowercase().contains(keywordLowerCase) || it.country.lowercase().contains(keywordLowerCase)
             }
         }
-
-        val worldTimeZones: Map<Int, WorldTimeZone> = mapOf(
-            2 to WorldTimeZone(
-                country = "Australia",
-                city = "Adealide",
-                cityName = "Adelaide",
-                identifier = 2,
-                offset = 9.5,
-                dstDiff = 1.0,
-                dstRules = 5
-            ),
-            1 to WorldTimeZone(
-                country = "America",
-                city = "New York",
-                cityName = "New York",
-                identifier = 1,
-                offset = -5.0,
-                dstDiff = 1.0,
-                dstRules = 3
-            ),
-        )
     }
 }
