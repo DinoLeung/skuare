@@ -37,19 +37,17 @@ class Watch(private val peripheral: Peripheral) {
 
 	init {
 		CoroutineScope(Dispatchers.IO).launch {
-			listen()
+			startObservingIoCharacteristic()
 		}
 	}
 
 	private val config = Config()
 
-	suspend fun connect() = runBlocking {
-		peripheral.connect()
-	}
+	private val ioCharacteristicObservation = peripheral.observe(ioCharacteristic)
 
-	suspend fun disconnect() {
-		peripheral.disconnect()
-	}
+	suspend fun connect() = peripheral.connect()
+
+	suspend fun disconnect() = peripheral.disconnect()
 
 	/**
 	 * Sends a request to the peripheral with a specified command,.
@@ -85,17 +83,19 @@ class Watch(private val peripheral: Peripheral) {
 	suspend fun write(data: ByteArray) = peripheral.write(ioCharacteristic, data)
 
 	/**
-	 * Listens to the peripheral for incoming data packets and processes them.
-	 * This function observes the IO characteristic, collecting packets of data as they arrive.
-	 * Based on the command type parsed from the packet, it either processes clock data or handles
-	 * unsupported packets by printing a message.
+	 * Starts observing the IO characteristic for incoming data packets.
 	 *
-	 * Usage of this function requires an established connection to the peripheral.
-	 * It is designed to operate within a coroutine scope due to its suspend nature.
+	 * This function collects data emitted by `ioCharacteristicObservation` in the IO coroutine context
+	 * and processes them based on the command type. If the packet type is unsupported, it will print
+	 * the packet data in hexadecimal format.
+	 *
+	 * This function is a coroutine and should be invoked within a coroutine scope.
+	 *
+	 * Note: This is an experimental API and usage may require enabling the `ExperimentalStdlibApi` opt-in.
 	 */
 	@OptIn(ExperimentalStdlibApi::class)
-	suspend fun listen() {
-		peripheral.observe(ioCharacteristic).collect {
+	suspend fun startObservingIoCharacteristic() = withContext(Dispatchers.IO) {
+		ioCharacteristicObservation.collect {
 			when (Command.fromValue(it.first().toInt())) {
 				Command.CLOCK -> {
 					config.parseClocksPacket(it)

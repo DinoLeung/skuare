@@ -8,7 +8,7 @@ enum class Command(val value: Int) {
 	WATCH_CONDITION(0x28),
 	CLOCK(0x1D),
 	TIMEZONE_NAME(0x1F),
-	TIMEZONE_CONFIG(0x1E),
+	TIMEZONE_INFO(0x1E),
 
 	// somethingRelatedToTimezone(0x24), maybe it's not important
 	CURRENT_TIME(0x09),

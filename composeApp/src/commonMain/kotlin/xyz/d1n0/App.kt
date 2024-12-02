@@ -24,31 +24,30 @@ import xyz.d1n0.model.Watch
 @Preview
 fun App() {
 
-//    val scan = {
-//        Watch.scanner.advertisements
-//            .onStart { }
-//            .collect {
-//                Peripheral(it.)
-//            }
-//    }
+//	val scan = {
+//		Watch.scanner.advertisements
+//			.collect {
+//				Peripheral(it.)
+//			}
+//	}
 
-    MaterialTheme {
-        var showContent by remember { mutableStateOf(false) }
+	MaterialTheme {
+		var showContent by remember { mutableStateOf(false) }
 
-        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-            Button(onClick = { showContent = !showContent }) {
-                Text("Click me!")
-            }
+		Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+			Button(onClick = { showContent = !showContent }) {
+				Text("Click me!")
+			}
 //            Button(onClick = scan) {
 //                Text("Scan!")
 //            }
-            AnimatedVisibility(showContent) {
-                val greeting = remember { Greeting().greet() }
-                Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                    Image(painterResource(Res.drawable.compose_multiplatform), null)
-                    Text("Compose: $greeting")
-                }
-            }
-        }
-    }
+			AnimatedVisibility(showContent) {
+				val greeting = remember { Greeting().greet() }
+				Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+					Image(painterResource(Res.drawable.compose_multiplatform), null)
+					Text("Compose: $greeting")
+				}
+			}
+		}
+	}
 }

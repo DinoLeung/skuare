@@ -26,9 +26,10 @@ class Config {
 	 * @param timeZoneId The ID of the time zone to assign to the specified clock position.
 	 * @param dstStatus The daylight saving time status applicable to the time zone.
 	 *
-	 * @throws ConfigError if the position is not within the range 0..5.
+	 * @throws IllegalArgumentException if the position is not within the range 0..5.
 	 */
 	private fun setClock(position: Int, timeZoneId: Int, dstStatus: DstStatus) {
+		require(position in 0..5) { "TimeZones position must be in 0..5" }
 		when (position) {
 			0 -> homeClock = HomeClock.fromTimeZoneId(timeZoneId, dstStatus)
 			1 -> worldClock1 = WorldClock.fromTimeZoneId(timeZoneId, dstStatus)
@@ -36,7 +37,7 @@ class Config {
 			3 -> worldClock3 = WorldClock.fromTimeZoneId(timeZoneId, dstStatus)
 			4 -> worldClock4 = WorldClock.fromTimeZoneId(timeZoneId, dstStatus)
 			5 -> worldClock5 = WorldClock.fromTimeZoneId(timeZoneId, dstStatus)
-			else -> throw ConfigError("TimeZones position must be in 0..5")
+//			else -> throw ConfigError("TimeZones position must be in 0..5")
 		}
 	}
 
@@ -72,17 +73,15 @@ class Config {
 	 *
 	 * @param clocksPacket The byte array containing the clocks packet to be parsed and processed.
 	 *
-	 * @throws ConfigError if the packet does not start with the expected command code
+	 * @throws IllegalArgumentException if the packet does not start with the expected command code
 	 * or if its length is not exactly 15 bytes as required by the protocol.
 	 */
 	@OptIn(ExperimentalStdlibApi::class)
 	fun parseClocksPacket(clocksPacket: ByteArray) {
-		if (clocksPacket.first() != Command.CLOCK.value.toByte()) {
-			throw ConfigError("Clocks packet must starts with command code ${Command.CLOCK.value.toHexString(HexFormat.UpperCase)}")
+		require(clocksPacket.first() == Command.CLOCK.value.toByte()) {
+			"Clocks packet must starts with command code ${Command.CLOCK.value.toHexString(HexFormat.UpperCase)}"
 		}
-		if (clocksPacket.size != 15) {
-			throw ConfigError("Clocks packet must be exactly 15 bytes long, e.g. 1D 00 01 03 02 7F 76 00 00 FF FF FF FF FF FF")
-		}
+		require(clocksPacket.size == 15) { "Clocks packet must be exactly 15 bytes long, e.g. 1D 00 01 03 02 7F 76 00 00 FF FF FF FF FF FF" }
 
 		val positionA = clocksPacket[1].toInt()
 		val positionB = clocksPacket[2].toInt()
@@ -107,19 +106,18 @@ class Config {
 	 *         helper function to encapsulate positions, DST status, and time zone IDs for
 	 *         a pair of clocks.
 	 *
-	 * @throws ConfigError if any of the clock objects are not initialized, ensuring the
+	 * @throws IllegalArgumentException if any of the clock objects are not initialized, ensuring the
 	 *         packets are only created with complete clock data.
 	 */
-	fun getClocksPackets(): List<ByteArray> {
-		if (!areClocksInitialized()) {
-			throw ConfigError("Clocks must be initialized")
+	val clocksPackets: List<ByteArray>
+		get() {
+			require(areClocksInitialized()) { "Clocks must be initialized" }
+			return listOf(
+				getClocksPairPacket(0, 1, homeClock, worldClock1),
+				getClocksPairPacket(2, 3, worldClock2, worldClock3),
+				getClocksPairPacket(4, 5, worldClock4, worldClock5)
+			)
 		}
-		return listOf(
-			getClocksPairPacket(0, 1, homeClock, worldClock1),
-			getClocksPairPacket(2, 3, worldClock2, worldClock3),
-			getClocksPairPacket(4, 5, worldClock4, worldClock5)
-		)
-	}
 
 	/**
 	 * Constructs and returns a list of byte arrays representing the
@@ -132,22 +130,21 @@ class Config {
 	 * @return A list of byte arrays representing time zone configuration packets
 	 *         for each initialized clock in the system.
 	 *
-	 * @throws ConfigError if any of the clock objects are not fully initialized,
+	 * @throws IllegalArgumentException if any of the clock objects are not fully initialized,
 	 *         ensuring integrity of time zone data in the generated packets.
 	 */
-	fun getTimeZoneConfigPackets(): List<ByteArray> {
-		if (!areClocksInitialized()) {
-			throw ConfigError("Clocks must be initialized")
+	val timeZoneConfigPackets: List<ByteArray>
+		get() {
+			require(areClocksInitialized()) { "Clocks must be initialized" }
+			return listOf(
+				byteArrayOf(Command.TIMEZONE_INFO.value.toByte(), 0.toByte()) + homeClock.timeZone.bytes,
+				byteArrayOf(Command.TIMEZONE_INFO.value.toByte(), 1.toByte()) + worldClock1.timeZone.bytes,
+				byteArrayOf(Command.TIMEZONE_INFO.value.toByte(), 2.toByte()) + worldClock2.timeZone.bytes,
+				byteArrayOf(Command.TIMEZONE_INFO.value.toByte(), 3.toByte()) + worldClock3.timeZone.bytes,
+				byteArrayOf(Command.TIMEZONE_INFO.value.toByte(), 4.toByte()) + worldClock4.timeZone.bytes,
+				byteArrayOf(Command.TIMEZONE_INFO.value.toByte(), 5.toByte()) + worldClock5.timeZone.bytes,
+			)
 		}
-		return listOf(
-			byteArrayOf(Command.TIMEZONE_CONFIG.value.toByte(), 0.toByte()) + homeClock.timeZone.bytes,
-			byteArrayOf(Command.TIMEZONE_CONFIG.value.toByte(), 1.toByte()) + worldClock1.timeZone.bytes,
-			byteArrayOf(Command.TIMEZONE_CONFIG.value.toByte(), 2.toByte()) + worldClock2.timeZone.bytes,
-			byteArrayOf(Command.TIMEZONE_CONFIG.value.toByte(), 3.toByte()) + worldClock3.timeZone.bytes,
-			byteArrayOf(Command.TIMEZONE_CONFIG.value.toByte(), 4.toByte()) + worldClock4.timeZone.bytes,
-			byteArrayOf(Command.TIMEZONE_CONFIG.value.toByte(), 5.toByte()) + worldClock5.timeZone.bytes,
-		)
-	}
 
 	/**
 	 * Constructs and returns a list of byte arrays representing the
@@ -160,22 +157,19 @@ class Config {
 	 * @return A list of byte arrays representing time zone name configuration packets
 	 *         for each initialized clock in the system.
 	 *
-	 * @throws ConfigError if any of the clock objects are not fully initialized,
+	 * @throws IllegalArgumentException if any of the clock objects are not fully initialized,
 	 *         ensuring integrity of city name data in the generated packets.
 	 */
-	fun getTimeZoneNamePackets(): List<ByteArray> {
-		if (!areClocksInitialized()) {
-			throw ConfigError("Clocks must be initialized")
+	val timeZoneNamePackets: List<ByteArray>
+		get() {
+			require(areClocksInitialized()) { "Clocks must be initialized" }
+			return listOf(
+				byteArrayOf(Command.TIMEZONE_NAME.value.toByte(), 0.toByte()) + homeClock.timeZone.cityNameBytes,
+				byteArrayOf(Command.TIMEZONE_NAME.value.toByte(), 1.toByte()) + worldClock1.timeZone.cityNameBytes,
+				byteArrayOf(Command.TIMEZONE_NAME.value.toByte(), 2.toByte()) + worldClock2.timeZone.cityNameBytes,
+				byteArrayOf(Command.TIMEZONE_NAME.value.toByte(), 3.toByte()) + worldClock3.timeZone.cityNameBytes,
+				byteArrayOf(Command.TIMEZONE_NAME.value.toByte(), 4.toByte()) + worldClock4.timeZone.cityNameBytes,
+				byteArrayOf(Command.TIMEZONE_NAME.value.toByte(), 5.toByte()) + worldClock5.timeZone.cityNameBytes,
+			)
 		}
-		return listOf(
-			byteArrayOf(Command.TIMEZONE_NAME.value.toByte(), 0.toByte()) + homeClock.timeZone.cityNameBytes,
-			byteArrayOf(Command.TIMEZONE_NAME.value.toByte(), 1.toByte()) + worldClock1.timeZone.cityNameBytes,
-			byteArrayOf(Command.TIMEZONE_NAME.value.toByte(), 2.toByte()) + worldClock2.timeZone.cityNameBytes,
-			byteArrayOf(Command.TIMEZONE_NAME.value.toByte(), 3.toByte()) + worldClock3.timeZone.cityNameBytes,
-			byteArrayOf(Command.TIMEZONE_NAME.value.toByte(), 4.toByte()) + worldClock4.timeZone.cityNameBytes,
-			byteArrayOf(Command.TIMEZONE_NAME.value.toByte(), 5.toByte()) + worldClock5.timeZone.cityNameBytes,
-		)
-	}
 }
-
-class ConfigError(message: String) : Exception(message)

@@ -41,7 +41,7 @@ class BytesConverter {
 			return (bytes[1].toInt() shl 8) or (bytes[0].toInt() and 0xFF)
 		}
 
-		fun dateTimeToByteArray(dateTime: KotlinLocalDateTime) {
+		fun dateTimeToByteArray(dateTime: KotlinLocalDateTime) =
 			byteArrayOf(
 				// Year represented in two bytes
 				*intToLittleEdianBytes(dateTime.year),
@@ -57,7 +57,5 @@ class BytesConverter {
 				// Milliseconds, scaled to 0-255 for 1 byte
 				((dateTime.nanosecond / 1_000_000) * 255 / 999).toByte()
 			)
-		}
-
 	}
 }
