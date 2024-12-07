@@ -15,6 +15,6 @@ enum class DstStatus(val value: Int) {
 
 	companion object {
 		fun fromValue(value: Int) =
-			values().firstOrNull { it.value == value } ?: error("Unknown DST status value: $value")
+			entries.firstOrNull { it.value == value } ?: error("Unknown DST status value: $value")
 	}
 }

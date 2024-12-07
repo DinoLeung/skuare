@@ -18,8 +18,8 @@ data class HomeTimeZone(
 		 */
 		fun fuzzySearch(keyword: String): List<HomeTimeZone> {
 			val keywordLowerCase = keyword.trim().lowercase()
-			if (keywordLowerCase.isEmpty()) return HomeTimeZoneData.all.values.toList()
-			return HomeTimeZoneData.all.values.filter { it.timeZone.lowercase().contains(keywordLowerCase) }
+			if (keywordLowerCase.isEmpty()) return HomeTimeZoneData.values.toList()
+			return HomeTimeZoneData.values.filter { it.timeZone.lowercase().contains(keywordLowerCase) }
 		}
 	}
 }

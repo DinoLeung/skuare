@@ -8,11 +8,11 @@ data class WorldClock(
 	override val dstStatus: DstStatus,
 ) : Clock(timeZone, dstStatus) {
 	companion object {
-		fun fromTimeZoneId(timeZoneId: Int, dstStatus: DstStatus) =
-			WorldTimeZoneData.all[timeZoneId]?.let {
-				WorldClock(it, dstStatus)
-			} ?: throw WorldClockError("Time Zone ID $timeZoneId not found")
+		fun fromTimeZoneId(timeZoneId: Int, dstStatus: DstStatus): WorldClock {
+			require(WorldTimeZoneData.containsKey(timeZoneId)) {
+				"Time Zone ID $timeZoneId not found"
+			}
+			return WorldClock(WorldTimeZoneData[timeZoneId]!!, dstStatus)
+		}
 	}
 }
-
-class WorldClockError(message: String) : Exception(message)

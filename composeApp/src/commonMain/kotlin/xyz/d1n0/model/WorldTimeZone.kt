@@ -21,8 +21,8 @@ data class WorldTimeZone(
 		 */
 		fun fuzzySearch(keyword: String): List<WorldTimeZone> {
 			val keywordLowerCase = keyword.trim().lowercase()
-			if (keywordLowerCase.isEmpty()) return WorldTimeZoneData.all.values.toList()
-			return WorldTimeZoneData.all.values.filter {
+			if (keywordLowerCase.isEmpty()) return WorldTimeZoneData.values.toList()
+			return WorldTimeZoneData.values.filter {
 				it.city.lowercase().contains(keywordLowerCase) || it.country.lowercase().contains(keywordLowerCase)
 			}
 		}
