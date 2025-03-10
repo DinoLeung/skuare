@@ -1,25 +1,24 @@
 package xyz.d1n0.model
 
-import com.benasher44.uuid.uuidFrom
-import com.juul.kable.Peripheral
-import com.juul.kable.Scanner
-import com.juul.kable.characteristicOf
+import com.juul.kable.*
 import com.juul.kable.logs.Logging
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.onEach
+import kotlinx.io.IOException
+import xyz.d1n0.constant.BleUuid
 import xyz.d1n0.constant.Command
+import kotlin.coroutines.cancellation.CancellationException
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 class Watch(private val peripheral: Peripheral) {
 
+	@OptIn(ExperimentalUuidApi::class)
 	companion object {
-		val CASIO_SERVICE_UUID = uuidFrom("00001804-0000-1000-8000-00805f9b34fb")
-		private val ALL_FEATURES_CHARACTERISTIC_UUID = "26eb000d-b012-49a8-b1f8-394fb2032b0f"
-		private val REQUEST_CHARACTERISTIC_UUID = "26eb002c-b012-49a8-b1f8-394fb2032b0f"
-		private val IO_CHARACTERISTIC_UUID = "26eb002d-b012-49a8-b1f8-394fb2032b0f"
-
 		private val requestCharacteristic =
-			characteristicOf(service = ALL_FEATURES_CHARACTERISTIC_UUID, characteristic = REQUEST_CHARACTERISTIC_UUID)
+			characteristicOf(service = BleUuid.ALL_FEATURES_CHARACTERISTIC_UUID, characteristic = BleUuid.REQUEST_CHARACTERISTIC_UUID)
 		private val ioCharacteristic =
-			characteristicOf(service = ALL_FEATURES_CHARACTERISTIC_UUID, characteristic = IO_CHARACTERISTIC_UUID)
+			characteristicOf(service = BleUuid.ALL_FEATURES_CHARACTERISTIC_UUID, characteristic = BleUuid.IO_CHARACTERISTIC_UUID)
 
 		val scanner by lazy {
 			Scanner {
@@ -28,16 +27,10 @@ class Watch(private val peripheral: Peripheral) {
 				}
 				filters {
 					match {
-						services = listOf(CASIO_SERVICE_UUID)
+						services = listOf(BleUuid.CASIO_SERVICE_UUID)
 					}
 				}
 			}
-		}
-	}
-
-	init {
-		CoroutineScope(Dispatchers.IO).launch {
-			startObservingIoCharacteristic()
 		}
 	}
 
@@ -45,19 +38,35 @@ class Watch(private val peripheral: Peripheral) {
 
 	private val ioCharacteristicObservation = peripheral.observe(ioCharacteristic)
 
+	private var ioCharacteristicObservationJob: Job? = null
+
+	init {
+		ioCharacteristicObservationJob = peripheral.scope.launch {
+			startObservingIoCharacteristic()
+		}
+	}
+
+	val scope: CoroutineScope
+		get() = peripheral.scope
+
 	suspend fun connect() = peripheral.connect()
 
 	suspend fun disconnect() = peripheral.disconnect()
+		.also {
+			ioCharacteristicObservationJob?.cancel()
+			ioCharacteristicObservationJob = null
+		}
 
 	/**
-	 * Sends a request to the peripheral with a specified command,.
+	 * Sends a request to the peripheral with a specified command and position.
 	 * Results will be returned through the IO characteristic.
 	 *
 	 * @param command The command to be sent to the peripheral.
-	 * @return A [Unit] that completes when the command is written successfully.
+	 * @return A [Unit] that completes when the command and position are written successfully.
 	 */
+	@Throws(CancellationException::class, IOException::class, NotConnectedException::class)
 	suspend fun request(command: Command) =
-		peripheral.write(requestCharacteristic, ByteArray(1) { command.value.toByte() })
+		peripheral.write(requestCharacteristic, byteArrayOf(command.value.toByte()))
 
 	/**
 	 * Sends a request to the peripheral with a specified command and position.
@@ -67,6 +76,7 @@ class Watch(private val peripheral: Peripheral) {
 	 * @param position The position value accompanying the command.
 	 * @return A [Unit] that completes when the command and position are written successfully.
 	 */
+	@Throws(CancellationException::class, IOException::class, NotConnectedException::class)
 	suspend fun request(command: Command, position: Int) =
 		peripheral.write(requestCharacteristic, byteArrayOf(command.value.toByte(), position.toByte()))
 
@@ -80,6 +90,7 @@ class Watch(private val peripheral: Peripheral) {
 	 *
 	 * Usage of this function requires an established connection to the peripheral.
 	 */
+	@Throws(CancellationException::class, IOException::class, NotConnectedException::class)
 	suspend fun write(data: ByteArray) = peripheral.write(ioCharacteristic, data)
 
 	/**
@@ -94,9 +105,13 @@ class Watch(private val peripheral: Peripheral) {
 	 * Note: This is an experimental API and usage may require enabling the `ExperimentalStdlibApi` opt-in.
 	 */
 	@OptIn(ExperimentalStdlibApi::class)
-	suspend fun startObservingIoCharacteristic() = withContext(Dispatchers.IO) {
-		ioCharacteristicObservation.collect {
+	@Throws(IllegalArgumentException::class, CancellationException::class)
+	private suspend fun startObservingIoCharacteristic() =
+		ioCharacteristicObservation.onEach {
 			when (Command.fromValue(it.first().toInt())) {
+				Command.WATCH_NAME -> {
+					print(it.toHexString(HexFormat.UpperCase))
+				}
 				Command.CLOCK -> {
 					config.parseClocksPacket(it)
 				}
@@ -106,7 +121,36 @@ class Watch(private val peripheral: Peripheral) {
 				}
 			}
 		}
+
+	suspend fun requestName() = request(Command.WATCH_NAME)
+
+	fun requestClocks() = scope.launch {
+		for (i in 1..3) {
+			request(Command.CLOCK)
+		}
 	}
 
+	fun writeClocks() = scope.launch {
+		config.clocksPackets.forEach {
+			write(it)
+		}
+	}
 
+	fun writeTimeZoneConfigs() = scope.launch {
+		config.timeZoneConfigPackets.forEach {
+			write(it)
+		}
+	}
+
+	fun writeTimeZoneNames() = scope.launch {
+		config.timeZoneNamePackets.forEach {
+			write(it)
+		}
+	}
+
+	fun writeTime() = scope.launch {
+		config.homeClock.getCurrentDateTimePacket()
+	}
 }
+
+class WatchException (message: String, cause: Throwable) : Exception(message, cause)

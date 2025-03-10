@@ -31,7 +31,7 @@ data class HomeClock(
          */
         fun fromTimeZoneId(timeZoneId: Int, dstStatus: DstStatus): HomeClock {
             require(HomeTimeZoneData.containsKey(timeZoneId)) { "Time Zone ID $timeZoneId not found" }
-            return HomeClock(HomeTimeZoneData[timeZoneId]!!, dstStatus)
+            return HomeClock(HomeTimeZoneData.getValue(timeZoneId), dstStatus)
         }
     }
 

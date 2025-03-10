@@ -12,7 +12,7 @@ data class WorldClock(
 			require(WorldTimeZoneData.containsKey(timeZoneId)) {
 				"Time Zone ID $timeZoneId not found"
 			}
-			return WorldClock(WorldTimeZoneData[timeZoneId]!!, dstStatus)
+			return WorldClock(WorldTimeZoneData.getValue(timeZoneId), dstStatus)
 		}
 	}
 }

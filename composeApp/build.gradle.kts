@@ -28,7 +28,7 @@ kotlin {
         }
     }
 
-    jvm("desktop")
+//    jvm("desktop")
 
     sourceSets {
         commonMain.dependencies {
@@ -44,16 +44,27 @@ kotlin {
             implementation(libs.kotlinx.datetime)
             implementation(libs.kable)
         }
-        val desktopMain by getting
-        desktopMain.dependencies {
-            implementation(compose.desktop.currentOs)
-        }
+//        val desktopMain by getting
+//        desktopMain.dependencies {
+//            implementation(compose.desktop.currentOs)
+//        }
+
+//        listOf(
+//            macosX64(),
+//            macosArm64(),
+//        ).forEach { target ->
+//            target.binaries.executable {
+//                baseName = "skuare"
+//                entryPoint = "xyz.d1n0"
+//            }
+//        }
+
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
         }
-        iosMain.dependencies {
 
+        iosMain.dependencies {
         }
     }
 }
@@ -89,14 +100,14 @@ dependencies {
     debugImplementation(compose.uiTooling)
 }
 
-compose.desktop {
-    application {
-        mainClass = "xyz.d1n0.MainKt"
-
-        nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "xyz.d1n0"
-            packageVersion = "1.0.0"
-        }
-    }
-}
+//compose.desktop {
+//    application {
+//        mainClass = "xyz.d1n0.MainKt"
+//
+//        nativeDistributions {
+//            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+//            packageName = "xyz.d1n0"
+//            packageVersion = "1.0.0"
+//        }
+//    }
+//}
