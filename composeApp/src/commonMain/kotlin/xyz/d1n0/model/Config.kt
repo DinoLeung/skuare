@@ -61,7 +61,7 @@ class Config {
             clockB.dstStatus.value.toByte(),
             *clockA.timeZone.identifierBytes,
             *clockB.timeZone.identifierBytes,
-        ) + ByteArray(5) { 0xFF.toByte() }
+        ) + ByteArray(6) { 0xFF.toByte() }
 
     /**
      * Parses a packet representing two clocks and updates their configurations in the system.

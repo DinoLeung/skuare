@@ -8,10 +8,10 @@ enum class DstStatus(val value: Int) {
 	MANUAL_ON(1),
 
 	// 00000010
-	AUTO_OFF(3),
+	AUTO_OFF(2),
 
 	// 00000011
-	AUTO_ON(4);
+	AUTO_ON(3);
 
 	companion object {
 		fun fromValue(value: Int) =

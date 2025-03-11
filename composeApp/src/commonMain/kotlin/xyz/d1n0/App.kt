@@ -1,11 +1,8 @@
 package xyz.d1n0
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -15,12 +12,8 @@ import androidx.compose.ui.Modifier
 import com.juul.kable.Peripheral
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
-import skuare.composeapp.generated.resources.Res
-import skuare.composeapp.generated.resources.compose_multiplatform
-import xyz.d1n0.constant.Command
 import xyz.d1n0.model.Watch
 import kotlin.time.Duration.Companion.seconds
 
@@ -43,6 +36,7 @@ fun App() {
 				Watch.scanner.advertisements.firstOrNull()?.let {
 					watch = Watch(Peripheral(it))
 					watch?.connect().also {
+						println("Watch connected")
 						isConnected = true
 					}
 				}
@@ -66,25 +60,34 @@ fun App() {
 		}
 
 		fun getName() {
+			println("getting name")
 			watch?.let {
+				println("watch is available")
 				it.scope.launch {
+					println("sending request message")
 					it.requestName()
 				}
 			}
 		}
 
-		fun syncTime() {
-			watch?.let {
-				coroutineScope.launch {
-					it.requestClocks().join()
-					delay(2.seconds)
-					it.writeClocks().join()
-					it.writeTimeZoneConfigs().join()
-					it.writeTimeZoneNames().join()
-					it.writeTime().join()
-				}
+		fun syncTime() = coroutineScope.launch {
+			runCatching {
+				watch?.let {
+					coroutineScope.launch {
+						// TODO: crash when clocks info parsing fail
+						it.requestClocks()
+						delay(2.seconds)
+						it.writeClocks()
+						it.writeTimeZoneConfigs()
+						it.writeTimeZoneNames()
+						it.writeTime()
+					}
+				} ?: throw IllegalStateException("Watch is not connected")
+			}.onFailure {
+				println("Error syncing time: ${it.message}")
 			}
 		}
+
 
 		Column(
 			modifier = Modifier.fillMaxSize(),
@@ -101,8 +104,7 @@ fun App() {
 
 			Button(onClick = { getName() }, enabled = isConnected) { Text("Get Name!") }
 
-//			Button(onClick = { syncTime() }, enabled = isConnected) { Text("Sync Time!") }
-
+			Button(onClick = { syncTime() }, enabled = isConnected) { Text("Sync Time!") }
 		}
 	}
 }

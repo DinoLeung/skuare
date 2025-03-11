@@ -3,11 +3,14 @@ package xyz.d1n0.model
 import com.juul.kable.*
 import com.juul.kable.logs.Logging
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.onEach
 import kotlinx.io.IOException
 import xyz.d1n0.constant.BleUuid
 import xyz.d1n0.constant.Command
 import kotlin.coroutines.cancellation.CancellationException
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -34,22 +37,19 @@ class Watch(private val peripheral: Peripheral) {
 		}
 	}
 
-	private val config = Config()
+	val config = Config()
 
 	private val ioCharacteristicObservation = peripheral.observe(ioCharacteristic)
 
 	private var ioCharacteristicObservationJob: Job? = null
 
-	init {
-		ioCharacteristicObservationJob = peripheral.scope.launch {
-			startObservingIoCharacteristic()
-		}
-	}
-
+	val connectionState: StateFlow<State>
+		get() = peripheral.state
 	val scope: CoroutineScope
 		get() = peripheral.scope
 
 	suspend fun connect() = peripheral.connect()
+		.launch { startObservingIoCharacteristic() }
 
 	suspend fun disconnect() = peripheral.disconnect()
 		.also {
@@ -90,8 +90,12 @@ class Watch(private val peripheral: Peripheral) {
 	 *
 	 * Usage of this function requires an established connection to the peripheral.
 	 */
+	@OptIn(ExperimentalStdlibApi::class)
 	@Throws(CancellationException::class, IOException::class, NotConnectedException::class)
-	suspend fun write(data: ByteArray) = peripheral.write(ioCharacteristic, data)
+	suspend fun write(data: ByteArray) {
+		println("Writing: ${data.toHexString(HexFormat.UpperCase)}")
+		peripheral.write(ioCharacteristic, data, WriteType.WithResponse)
+	}
 
 	/**
 	 * Starts observing the IO characteristic for incoming data packets.
@@ -107,50 +111,54 @@ class Watch(private val peripheral: Peripheral) {
 	@OptIn(ExperimentalStdlibApi::class)
 	@Throws(IllegalArgumentException::class, CancellationException::class)
 	private suspend fun startObservingIoCharacteristic() =
-		ioCharacteristicObservation.onEach {
+		ioCharacteristicObservation.collect {
+			println("ioCharacteristicObservation.collect")
+			println(it.toHexString(HexFormat.UpperCase))
 			when (Command.fromValue(it.first().toInt())) {
 				Command.WATCH_NAME -> {
-					print(it.toHexString(HexFormat.UpperCase))
+					val name = it.drop(1)
+						.takeWhile { it != 0x00.toByte() }
+						.toByteArray()
+						.decodeToString()
+					println("WATCH_NAME: $name")
+
 				}
 				Command.CLOCK -> {
-					config.parseClocksPacket(it)
+					runCatching {
+						config.parseClocksPacket(it)
+					}.onFailure { println("Failed to parse clocks packet: ${it.message}") }
 				}
 				// TODO: implement other commands
 				else -> {
-					print("Unsupported packet: ${it.toHexString(HexFormat.UpperCase)}")
+					println("Unsupported packet: ${it.toHexString(HexFormat.UpperCase)}")
 				}
 			}
 		}
 
 	suspend fun requestName() = request(Command.WATCH_NAME)
 
-	fun requestClocks() = scope.launch {
-		for (i in 1..3) {
+	suspend fun requestClocks() =
+		repeat(3) {
 			request(Command.CLOCK)
 		}
-	}
 
-	fun writeClocks() = scope.launch {
+	suspend fun writeClocks() =
 		config.clocksPackets.forEach {
 			write(it)
 		}
-	}
 
-	fun writeTimeZoneConfigs() = scope.launch {
+	suspend fun writeTimeZoneConfigs() =
 		config.timeZoneConfigPackets.forEach {
 			write(it)
 		}
-	}
 
-	fun writeTimeZoneNames() = scope.launch {
+	suspend fun writeTimeZoneNames() =
 		config.timeZoneNamePackets.forEach {
 			write(it)
 		}
-	}
 
-	fun writeTime() = scope.launch {
-		config.homeClock.getCurrentDateTimePacket()
-	}
+	suspend fun writeTime() =
+		write(config.homeClock.getCurrentDateTimePacket(delay = 0.seconds))
 }
 
 class WatchException (message: String, cause: Throwable) : Exception(message, cause)
