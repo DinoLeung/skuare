@@ -4,7 +4,7 @@ import xyz.d1n0.constant.Command
 import xyz.d1n0.constant.DstStatus
 import xyz.d1n0.helper.from2BytesLittleEndian
 
-class Config {
+class ClocksConfig {
     lateinit var homeClock: HomeClock
     lateinit var worldClock1: WorldClock
     lateinit var worldClock2: WorldClock
@@ -16,7 +16,7 @@ class Config {
      * Checks whether all the clock instances in the Config class are initialized.
      * @return true if homeClock and all worldClocks are initialized; false otherwise.
      */
-    private fun areClocksInitialized() =
+    fun hasInitializedClocks() =
         ::homeClock.isInitialized && ::worldClock1.isInitialized && ::worldClock2.isInitialized && ::worldClock3.isInitialized && ::worldClock4.isInitialized && ::worldClock5.isInitialized
 
     /**
@@ -115,7 +115,7 @@ class Config {
      */
     val clocksPackets: List<ByteArray>
         get() {
-            require(areClocksInitialized()) { "Clocks must be initialized" }
+            require(hasInitializedClocks()) { "Clocks must be initialized" }
             return listOf(
                 getClocksPairPacket(0, 1, homeClock, worldClock1),
                 getClocksPairPacket(2, 3, worldClock2, worldClock3),
@@ -139,7 +139,7 @@ class Config {
      */
     val timeZoneConfigPackets: List<ByteArray>
         get() {
-            require(areClocksInitialized()) { "Clocks must be initialized" }
+            require(hasInitializedClocks()) { "Clocks must be initialized" }
             return listOf(
                 byteArrayOf(Command.TIMEZONE_INFO.value.toByte(), 0.toByte()) + homeClock.timeZone.bytes,
                 byteArrayOf(Command.TIMEZONE_INFO.value.toByte(), 1.toByte()) + worldClock1.timeZone.bytes,
@@ -167,7 +167,7 @@ class Config {
      */
     val timeZoneNamePackets: List<ByteArray>
         get() {
-            require(areClocksInitialized()) { "Clocks must be initialized" }
+            require(hasInitializedClocks()) { "Clocks must be initialized" }
             return listOf(
                 byteArrayOf(Command.TIMEZONE_NAME.value.toByte(), 0.toByte()) + homeClock.timeZone.cityNameBytes,
                 byteArrayOf(Command.TIMEZONE_NAME.value.toByte(), 1.toByte()) + worldClock1.timeZone.cityNameBytes,

@@ -57,7 +57,7 @@ data class HomeClock(
      * @param delay An optional `Duration` to adjust the current time by adding a specified delay. The defaulting to 300 milliseconds.
      * @return A `KotlinLocalDateTime` object representing the adjusted current date and time.
      */
-    fun getCurrentDateTime(delay: Duration = 300.milliseconds): KotlinLocalDateTime {
+    fun getCurrentDateTime(delay: Duration = 0.milliseconds): KotlinLocalDateTime {
         val timeZone = KotlinTimeZone.of(timeZone.timeZone)
         val now = KotlinClock.System.now() + delay
         return now.toLocalDateTime(timeZone)
@@ -74,7 +74,7 @@ data class HomeClock(
      * @param delay An optional `Duration` to adjust the current time by adding a specified delay. The default is 300 milliseconds.
      * @return A `ByteArray` containing the command identifier, the byte representation of the adjusted current date and time, and an additional status byte.
      */
-    fun getCurrentDateTimePacket(delay: Duration = 300.milliseconds) =
+    fun getCurrentDateTimePacket(delay: Duration = 0.milliseconds) =
         byteArrayOf(
             Command.CURRENT_TIME.value.toByte(),
             *getCurrentDateTime(delay).toByteArray(),

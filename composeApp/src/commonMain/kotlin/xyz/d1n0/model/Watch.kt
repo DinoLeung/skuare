@@ -4,15 +4,13 @@ import com.juul.kable.*
 import com.juul.kable.logs.Logging
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.collect
 import kotlinx.io.IOException
 import xyz.d1n0.constant.BleUuid
 import xyz.d1n0.constant.Command
 import kotlin.coroutines.cancellation.CancellationException
-import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
 
 class Watch(private val peripheral: Peripheral) {
 
@@ -37,25 +35,24 @@ class Watch(private val peripheral: Peripheral) {
 		}
 	}
 
-	val config = Config()
+	val clocksConfig = ClocksConfig()
+
+	val scope: CoroutineScope get() = peripheral.scope
+
+	val connectionState: State get() = _connectionState
+	private var _connectionState: State = State.Disconnected()
+
 
 	private val ioCharacteristicObservation = peripheral.observe(ioCharacteristic)
 
-	private var ioCharacteristicObservationJob: Job? = null
+	suspend fun connect() = peripheral.connect().let { coroutineScope ->
+		coroutineScope.launch { observeConnectionState() }
+		coroutineScope.launch { observeIoCharacteristic() }
+	}
 
-	val connectionState: StateFlow<State>
-		get() = peripheral.state
-	val scope: CoroutineScope
-		get() = peripheral.scope
-
-	suspend fun connect() = peripheral.connect()
-		.launch { startObservingIoCharacteristic() }
-
-	suspend fun disconnect() = peripheral.disconnect()
-		.also {
-			ioCharacteristicObservationJob?.cancel()
-			ioCharacteristicObservationJob = null
-		}
+	suspend fun disconnect() = peripheral.disconnect().also {
+		_connectionState = State.Disconnected()
+	}
 
 	/**
 	 * Sends a request to the peripheral with a specified command and position.
@@ -97,6 +94,30 @@ class Watch(private val peripheral: Peripheral) {
 		peripheral.write(ioCharacteristic, data, WriteType.WithResponse)
 	}
 
+	private suspend fun observeConnectionState(): Nothing =
+		peripheral.state.collect {
+			println("startObservingConnectionState ${it.toString()}")
+			_connectionState = it
+			if (it is State.Disconnected) {
+				// TODO: it should somehow clean up the connection, then UI should reflect that
+				// if (it.status is State.Disconnected.Status.PeripheralDisconnected) {}
+			}
+//			when (it) {
+//				is State.Connected -> {
+//					println("Connected")
+//				}
+//				is State.Connecting -> {
+//					println("Connecting")
+//				}
+//				is State.Disconnected -> {
+//					println("Disconnected")
+//				}
+//				is State.Disconnecting -> {
+//					println("Disconnecting")
+//				}
+//			}
+		}
+
 	/**
 	 * Starts observing the IO characteristic for incoming data packets.
 	 *
@@ -110,7 +131,7 @@ class Watch(private val peripheral: Peripheral) {
 	 */
 	@OptIn(ExperimentalStdlibApi::class)
 	@Throws(IllegalArgumentException::class, CancellationException::class)
-	private suspend fun startObservingIoCharacteristic() =
+	private suspend fun observeIoCharacteristic() =
 		ioCharacteristicObservation.collect {
 			println("ioCharacteristicObservation.collect")
 			println(it.toHexString(HexFormat.UpperCase))
@@ -125,7 +146,7 @@ class Watch(private val peripheral: Peripheral) {
 				}
 				Command.CLOCK -> {
 					runCatching {
-						config.parseClocksPacket(it)
+						clocksConfig.parseClocksPacket(it)
 					}.onFailure { println("Failed to parse clocks packet: ${it.message}") }
 				}
 				// TODO: implement other commands
@@ -143,22 +164,22 @@ class Watch(private val peripheral: Peripheral) {
 		}
 
 	suspend fun writeClocks() =
-		config.clocksPackets.forEach {
+		clocksConfig.clocksPackets.forEach {
 			write(it)
 		}
 
 	suspend fun writeTimeZoneConfigs() =
-		config.timeZoneConfigPackets.forEach {
+		clocksConfig.timeZoneConfigPackets.forEach {
 			write(it)
 		}
 
 	suspend fun writeTimeZoneNames() =
-		config.timeZoneNamePackets.forEach {
+		clocksConfig.timeZoneNamePackets.forEach {
 			write(it)
 		}
 
 	suspend fun writeTime() =
-		write(config.homeClock.getCurrentDateTimePacket(delay = 0.seconds))
+		write(clocksConfig.homeClock.getCurrentDateTimePacket(delay = 0.seconds))
 }
 
 class WatchException (message: String, cause: Throwable) : Exception(message, cause)

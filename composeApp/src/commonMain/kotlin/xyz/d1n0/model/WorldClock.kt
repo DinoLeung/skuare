@@ -9,9 +9,7 @@ data class WorldClock(
 ) : Clock(timeZone, dstStatus) {
 	companion object {
 		fun fromTimeZoneId(timeZoneId: Int, dstStatus: DstStatus): WorldClock {
-			require(WorldTimeZoneData.containsKey(timeZoneId)) {
-				"Time Zone ID $timeZoneId not found"
-			}
+			require(WorldTimeZoneData.containsKey(timeZoneId)) { "Time Zone ID $timeZoneId not found" }
 			return WorldClock(WorldTimeZoneData.getValue(timeZoneId), dstStatus)
 		}
 	}
