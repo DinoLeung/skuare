@@ -40,9 +40,15 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
+            implementation(libs.androidx.lifecycle.viewmodel.compose)
+            implementation(libs.androidx.navigation.compose)
             implementation(libs.kotlinx.coroutines)
             implementation(libs.kotlinx.datetime)
             implementation(libs.kable)
+
+//            api(libs.koin.core)
+//            implementation(libs.koin.compose)
+//            implementation(libs.koin.compose.viewmodel.navigation)
         }
 //        val desktopMain by getting
 //        desktopMain.dependencies {

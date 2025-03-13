@@ -5,6 +5,7 @@ import com.juul.kable.logs.Logging
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
 import kotlinx.io.IOException
 import xyz.d1n0.constant.BleUuid
 import xyz.d1n0.constant.Command
@@ -39,20 +40,14 @@ class Watch(private val peripheral: Peripheral) {
 
 	val scope: CoroutineScope get() = peripheral.scope
 
-	val connectionState: State get() = _connectionState
-	private var _connectionState: State = State.Disconnected()
-
+	val state: StateFlow<State> get() = peripheral.state
 
 	private val ioCharacteristicObservation = peripheral.observe(ioCharacteristic)
 
-	suspend fun connect() = peripheral.connect().let { coroutineScope ->
-		coroutineScope.launch { observeConnectionState() }
-		coroutineScope.launch { observeIoCharacteristic() }
-	}
+	suspend fun connect() = peripheral.connect()
+		.launch { observeIoCharacteristic() }
 
-	suspend fun disconnect() = peripheral.disconnect().also {
-		_connectionState = State.Disconnected()
-	}
+	suspend fun disconnect() = peripheral.disconnect()
 
 	/**
 	 * Sends a request to the peripheral with a specified command and position.
@@ -93,30 +88,6 @@ class Watch(private val peripheral: Peripheral) {
 		println("Writing: ${data.toHexString(HexFormat.UpperCase)}")
 		peripheral.write(ioCharacteristic, data, WriteType.WithResponse)
 	}
-
-	private suspend fun observeConnectionState(): Nothing =
-		peripheral.state.collect {
-			println("startObservingConnectionState ${it.toString()}")
-			_connectionState = it
-			if (it is State.Disconnected) {
-				// TODO: it should somehow clean up the connection, then UI should reflect that
-				// if (it.status is State.Disconnected.Status.PeripheralDisconnected) {}
-			}
-//			when (it) {
-//				is State.Connected -> {
-//					println("Connected")
-//				}
-//				is State.Connecting -> {
-//					println("Connecting")
-//				}
-//				is State.Disconnected -> {
-//					println("Disconnected")
-//				}
-//				is State.Disconnecting -> {
-//					println("Disconnecting")
-//				}
-//			}
-		}
 
 	/**
 	 * Starts observing the IO characteristic for incoming data packets.
