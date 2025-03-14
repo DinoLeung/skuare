@@ -1,6 +1,7 @@
 package xyz.d1n0.model
 
 import kotlinx.datetime.toLocalDateTime
+import kotlinx.serialization.Serializable
 import xyz.d1n0.constant.Command
 import xyz.d1n0.constant.DstStatus
 import xyz.d1n0.constant.HomeTimeZoneData
@@ -11,11 +12,11 @@ import kotlinx.datetime.TimeZone as KotlinTimeZone
 import kotlinx.datetime.Clock as KotlinClock
 import kotlinx.datetime.LocalDateTime as KotlinLocalDateTime
 
-
+@Serializable
 data class HomeClock(
     override val timeZone: HomeTimeZone,
     override val dstStatus: DstStatus,
-) : Clock(timeZone, dstStatus) {
+) : Clock() {
     companion object {
         /**
          * Creates a `HomeClock` object from a given time zone ID and daylight saving time (DST) status.

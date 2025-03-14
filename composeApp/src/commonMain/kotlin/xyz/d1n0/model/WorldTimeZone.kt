@@ -1,7 +1,9 @@
 package xyz.d1n0.model
 
+import kotlinx.serialization.Serializable
 import xyz.d1n0.constant.WorldTimeZoneData
 
+@Serializable
 data class WorldTimeZone(
 	val country: String,
 	val city: String,
@@ -10,7 +12,7 @@ data class WorldTimeZone(
 	override val offset: Double,
 	override val dstDiff: Double,
 	override val dstRules: Int
-) : TimeZone(cityName, identifier, offset, dstDiff, dstRules) {
+) : TimeZone() {
 	companion object {
 		/**
 		 * Performs a case-insensitive search for the given keyword across all WorldTimeZone instances.

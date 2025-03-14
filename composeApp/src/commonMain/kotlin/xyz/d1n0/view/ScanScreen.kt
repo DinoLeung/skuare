@@ -12,13 +12,19 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
+import kotlinx.serialization.Serializable
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import xyz.d1n0.viewModel.ScanScreenViewModel
+
+@Serializable
+object ScanRoute
 
 @Composable
 @Preview
 fun ScanScreen(
-    viewModel: ScanScreenViewModel = viewModel { ScanScreenViewModel() }
+    navController: NavHostController,
+    viewModel: ScanScreenViewModel = viewModel { ScanScreenViewModel(navController) }
 ) {
     val state by viewModel.state.collectAsState()
 

@@ -2,13 +2,13 @@ package xyz.d1n0.model
 
 import xyz.d1n0.helper.to2BytesLittleEndian
 
-sealed class TimeZone(
-    open val cityName: String,
-    open val identifier: Int,
-    open val offset: Double,
-    open val dstDiff: Double,
-    open val dstRules: Int
-) {
+abstract class TimeZone {
+    open abstract val cityName: String
+    open abstract val identifier: Int
+    open abstract val offset: Double
+    open abstract val dstDiff: Double
+    open abstract val dstRules: Int
+
     /**
      * Converts the identifier integer into a little-endian 2-byte array.
      */

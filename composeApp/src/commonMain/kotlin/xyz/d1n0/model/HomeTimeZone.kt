@@ -1,7 +1,9 @@
 package xyz.d1n0.model
 
+import kotlinx.serialization.Serializable
 import xyz.d1n0.constant.HomeTimeZoneData
 
+@Serializable
 data class HomeTimeZone(
 	val timeZone: String,
 	override val cityName: String,
@@ -9,7 +11,7 @@ data class HomeTimeZone(
 	override val offset: Double,
 	override val dstDiff: Double,
 	override val dstRules: Int
-) : TimeZone(cityName, identifier, offset, dstDiff, dstRules) {
+) : TimeZone() {
 	companion object {
 		/**
 		 * Perform a fuzzy search on the list of HomeTimeZones by matching the keyword with the `timeZone` field.

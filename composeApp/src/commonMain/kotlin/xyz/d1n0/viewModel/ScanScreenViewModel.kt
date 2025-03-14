@@ -5,18 +5,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavHostController
 import com.juul.kable.Peripheral
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import xyz.d1n0.model.Watch
+import xyz.d1n0.view.WatchRoute
+import xyz.d1n0.view.WatchScreen
 
 data class ScanScreenState(
     val scanJob: Job? = null,
     val isScanning: Boolean = false,
 )
 
-class ScanScreenViewModel: ViewModel() {
+class ScanScreenViewModel(
+    private val navController: NavHostController,
+): ViewModel() {
 
     private val _state = MutableStateFlow(ScanScreenState())
     val state: StateFlow<ScanScreenState> = _state.asStateFlow()
@@ -29,11 +34,9 @@ class ScanScreenViewModel: ViewModel() {
             _state.update { it.copy(isScanning = true) }
             Watch.scanner.advertisements.firstOrNull()?.let {
                 val watch = Watch(Peripheral(it))
-                watch!!.connect()
+                watch.connect()
                     .also { println("Watch connected") }
-                // TODO: then navigate to the next screen
-                val watchScreenViewModel = WatchScreenViewModel(watch)
-
+                    .also { navController.navigate(WatchRoute(watch)) }
             }
             _state.update { it.copy(isScanning = false) }
         }
