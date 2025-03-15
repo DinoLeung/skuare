@@ -18,9 +18,8 @@ fun NavGraph(navController: NavHostController) {
     NavHost(navController, startDestination = Route.Scan.route) {
         composable(route = Route.Scan.route) {
             ScanScreen(navToWatch = {
-                navController.navigate(Route.Watch.route) {
-                    popUpTo(Route.Scan.route) { inclusive = true }
-                }
+                navController.navigate(Route.Watch.route)
+//                { popUpTo(Route.Scan.route) { inclusive = true } }
             })
         }
         composable(route = Route.Watch.route) {

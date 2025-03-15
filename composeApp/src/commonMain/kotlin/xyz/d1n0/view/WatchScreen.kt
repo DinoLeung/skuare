@@ -35,7 +35,7 @@ fun WatchScreen(
             Button(onClick = viewModel::syncTime) {
                 Text("Sync Time")
             }
-            Button(onClick = viewModel::disconnect) {
+            Button(onClick = { viewModel.disconnect(onDisconnected = { navBack() }) }) {
                 Text("Disconnect")
             }
         }
