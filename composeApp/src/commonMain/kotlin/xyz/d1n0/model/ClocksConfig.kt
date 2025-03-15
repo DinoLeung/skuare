@@ -1,11 +1,9 @@
 package xyz.d1n0.model
 
-import kotlinx.serialization.Serializable
 import xyz.d1n0.constant.Command
 import xyz.d1n0.constant.DstStatus
 import xyz.d1n0.helper.from2BytesLittleEndian
 
-@Serializable
 class ClocksConfig {
     lateinit var homeClock: HomeClock
     lateinit var worldClock1: WorldClock

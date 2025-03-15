@@ -11,21 +11,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import kotlinx.serialization.Serializable
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.viewmodel.koinViewModel
 import xyz.d1n0.model.Watch
+import xyz.d1n0.viewModel.ScanScreenViewModel
 import xyz.d1n0.viewModel.WatchScreenViewModel
-
-@Serializable
-data class WatchRoute(val watch: Watch)
 
 @Composable
 @Preview
 fun WatchScreen(
-    navController: NavHostController,
-    watch: Watch,
-    viewModel: WatchScreenViewModel = viewModel { WatchScreenViewModel(navController, watch) },
+    navBack: () -> Unit
 ) {
+    val viewModel = koinViewModel<WatchScreenViewModel>()
     MaterialTheme {
         Column(
             modifier = Modifier.fillMaxSize(),

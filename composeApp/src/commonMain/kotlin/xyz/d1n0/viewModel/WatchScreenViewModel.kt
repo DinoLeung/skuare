@@ -1,29 +1,25 @@
 package xyz.d1n0.viewModel
 
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavHostController
 import com.juul.kable.State
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
+import xyz.d1n0.Repo
 import xyz.d1n0.model.Watch
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 class WatchScreenViewModel(
-    private val navController: NavHostController,
-    private val watch: Watch,
+    private val repo: Repo
 ): ViewModel() {
+    val watch = repo.getWatch() ?: throw Exception("Can't find watch")
 
-//    val connectionState: State by watch.state.collectAsState()
     val connectionState: State = watch.state.value
 
     fun disconnect() = viewModelScope.launch {
         watch.disconnect()
-            .also { navController.popBackStack() }
         // TODO: navigate back
     }
 

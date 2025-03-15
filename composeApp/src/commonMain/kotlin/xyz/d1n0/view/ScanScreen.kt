@@ -13,19 +13,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import kotlinx.serialization.Serializable
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.viewmodel.koinViewModel
+import xyz.d1n0.model.Watch
 import xyz.d1n0.viewModel.ScanScreenViewModel
-
-@Serializable
-object ScanRoute
 
 @Composable
 @Preview
 fun ScanScreen(
-    navController: NavHostController,
-    viewModel: ScanScreenViewModel = viewModel { ScanScreenViewModel(navController) }
+    navToWatch: (Watch) -> Unit
 ) {
+    val viewModel = koinViewModel<ScanScreenViewModel>()
     val state by viewModel.state.collectAsState()
 
     Column(
@@ -33,7 +31,7 @@ fun ScanScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Button(onClick = viewModel::startScanning , enabled = !state.isScanning) {
+        Button(onClick = { viewModel.startScanning(onWatchFound = { navToWatch(it) }) }, enabled = !state.isScanning) {
             Text("Scan!")
         }
         Button(onClick = viewModel::stopScanning , enabled = state.isScanning) {

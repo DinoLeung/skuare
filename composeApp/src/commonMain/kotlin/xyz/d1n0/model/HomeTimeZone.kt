@@ -1,9 +1,7 @@
 package xyz.d1n0.model
 
-import kotlinx.serialization.Serializable
 import xyz.d1n0.constant.HomeTimeZoneData
 
-@Serializable
 data class HomeTimeZone(
 	val timeZone: String,
 	override val cityName: String,

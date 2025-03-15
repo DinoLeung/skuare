@@ -7,16 +7,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.io.IOException
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 import xyz.d1n0.constant.BleUuid
 import xyz.d1n0.constant.Command
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Duration.Companion.seconds
 import kotlin.uuid.ExperimentalUuidApi
 
-@Serializable
-class Watch(@Transient private val peripheral: Peripheral) {
+class Watch(private val peripheral: Peripheral) {
 
 	@OptIn(ExperimentalUuidApi::class)
 	companion object {
@@ -41,13 +38,10 @@ class Watch(@Transient private val peripheral: Peripheral) {
 
 	val clocksConfig = ClocksConfig()
 
-	@Transient
 	val scope: CoroutineScope get() = peripheral.scope
 
-	@Transient
 	val state: StateFlow<State> get() = peripheral.state
 
-	@Transient
 	private val ioCharacteristicObservation = peripheral.observe(ioCharacteristic)
 
 	suspend fun connect() = peripheral.connect()

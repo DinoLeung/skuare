@@ -7,7 +7,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
-    alias(libs.plugins.kotlinSerialization)
+//    alias(libs.plugins.kotlinSerialization)
 }
 
 kotlin {
@@ -44,15 +44,15 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodel.compose)
             implementation(libs.androidx.navigation.common)
             implementation(libs.androidx.navigation.compose)
-            implementation(libs.kotlinx.serialization.core)
-            implementation(libs.kotlinx.serialization.json)
+//            implementation(libs.kotlinx.serialization.core)
+//            implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.coroutines)
             implementation(libs.kotlinx.datetime)
             implementation(libs.kable)
 
-//            api(libs.koin.core)
-//            implementation(libs.koin.compose)
-//            implementation(libs.koin.compose.viewmodel.navigation)
+            api(libs.koin.core)
+            implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel.navigation)
         }
 //        val desktopMain by getting
 //        desktopMain.dependencies {

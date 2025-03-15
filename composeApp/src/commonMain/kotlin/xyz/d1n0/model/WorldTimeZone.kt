@@ -1,9 +1,7 @@
 package xyz.d1n0.model
 
-import kotlinx.serialization.Serializable
 import xyz.d1n0.constant.WorldTimeZoneData
 
-@Serializable
 data class WorldTimeZone(
 	val country: String,
 	val city: String,
