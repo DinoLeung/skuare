@@ -7,6 +7,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -23,6 +24,11 @@ fun WatchScreen(
     navBack: () -> Unit
 ) {
     val viewModel = koinViewModel<WatchScreenViewModel>()
+
+    LaunchedEffect(Unit) {
+        viewModel.connect(onConnectionLost = navBack)
+    }
+
     MaterialTheme {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -35,7 +41,7 @@ fun WatchScreen(
             Button(onClick = viewModel::syncTime) {
                 Text("Sync Time")
             }
-            Button(onClick = { viewModel.disconnect(onDisconnected = { navBack() }) }) {
+            Button(onClick = { viewModel.disconnect(onDisconnected = navBack) }) {
                 Text("Disconnect")
             }
         }

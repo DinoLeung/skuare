@@ -1,12 +1,10 @@
 package xyz.d1n0.viewModel
 
+import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.juul.kable.State
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withTimeoutOrNull
+import kotlinx.coroutines.*
 import xyz.d1n0.Repo
 import xyz.d1n0.model.Watch
 import kotlin.time.Duration.Companion.milliseconds
@@ -18,6 +16,12 @@ class WatchScreenViewModel(
     val watch = repo.getWatch() ?: throw IllegalStateException("Can't find watch")
 
     val connectionState: State = watch.state.value
+
+    fun connect(onConnectionLost: () -> Unit) = viewModelScope.launch {
+        watch.connect().invokeOnCompletion {
+            viewModelScope.launch(Dispatchers.Main) { onConnectionLost() }
+        }
+    }
 
     fun disconnect(onDisconnected: () -> Unit) = viewModelScope.launch {
         watch.disconnect()

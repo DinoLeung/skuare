@@ -27,8 +27,6 @@ class ScanScreenViewModel(private val repo: Repo): ViewModel() {
             Watch.scanner.advertisements.firstOrNull()?.let {
                 val watch = Watch(Peripheral(it))
                 repo.setWatch(watch)
-                watch.connect()
-                    .also { println("Watch connected") }
 
                 onWatchFound(watch)
             }
