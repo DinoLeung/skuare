@@ -84,10 +84,10 @@ class ClocksConfig {
             "Clocks packet must be exactly 15 bytes long, e.g. 1D 00 01 03 02 7F 76 00 00 FF FF FF FF FF FF"
         }
         runCatching {
-            val positionA = clocksPacket[1].toInt()
-            val positionB = clocksPacket[2].toInt()
-            val dstStatusA = DstStatus.fromValue(clocksPacket[3].toInt())
-            val dstStatusB = DstStatus.fromValue(clocksPacket[4].toInt())
+            val positionA = clocksPacket.get(1).toInt()
+            val positionB = clocksPacket.get(2).toInt()
+            val dstStatusA = DstStatus.fromValue(clocksPacket.get(3).toInt())
+            val dstStatusB = DstStatus.fromValue(clocksPacket.get(4).toInt())
             val timeZoneIdA = Int.from2BytesLittleEndian(clocksPacket.sliceArray(5..6))
             val timeZoneIdB = Int.from2BytesLittleEndian(clocksPacket.sliceArray(7..8))
 

@@ -11,7 +11,7 @@ import kotlin.time.Duration.Companion.seconds
 class WatchScreenViewModel(
     private val repo: Repo
 ): ViewModel() {
-    val watch = repo.getWatch() ?: throw IllegalStateException("Can't find watch")
+    val watch = repo.getWatch() ?: throw IllegalStateException("Watch is not initialized")
 
     val connectionState: State = watch.state.value
 

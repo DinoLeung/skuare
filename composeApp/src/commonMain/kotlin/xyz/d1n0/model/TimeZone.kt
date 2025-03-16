@@ -35,7 +35,7 @@ abstract class TimeZone {
         get() = runCatching {
                 cityName.encodeToByteArray()
             }.map {
-                ByteArray(18) { index -> if (index < it.size) it[index] else 0x00 }
+                ByteArray(18) { index -> if (index < it.size) it.get(index) else 0x00 }
             }.getOrElse {
                 throw IllegalArgumentException("Failed to encode cityName", it)
             }

@@ -36,6 +36,7 @@ class Watch(private val peripheral: Peripheral) {
 	}
 
 	val clocksConfig = ClocksConfig()
+	val watchConfig = WatchConfig()
 
 	val scope: CoroutineScope get() = peripheral.scope
 
@@ -115,7 +116,6 @@ class Watch(private val peripheral: Peripheral) {
 
 					val reason = ConnectReason.fromValue(it.get(8).toInt())
 
-
 					println("FEATURE")
 				}
 				Command.AUTO_SYNC_SETTINGS -> {
@@ -135,15 +135,12 @@ class Watch(private val peripheral: Peripheral) {
 					// probably can set to anything
 				}
 				Command.WATCH_SETTINGS -> {
-					//13 07 00 00 01 00 00 00 00 00 00 00
-					// looks like [1] does a lot of things, try decode different settings in binary
-					// [1] 07 -> 24h format, power saving on, tone off, auto light off (and do not disturb off?)
-					// [4] 00 -> mm:dd
-					// [4] 01 -> dd:mm
-					// [5] 00 -> eng
-					// 00 -> eng, 01 -> spanish, 02 -> french, 03 -> german, 04 -> italian, 05 -> russian
+					runCatching {
+						watchConfig.parseSettingsPacket(it)
+					}.onFailure { println("Failed to parse settings packet: ${it.message}") }
 				}
 				Command.WATCH_NAME -> {
+					// TODO: save this somewhere, and implement write
 					val name = it.drop(1)
 						.takeWhile { it != 0x00.toByte() }
 						.toByteArray()
