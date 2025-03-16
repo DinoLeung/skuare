@@ -4,11 +4,10 @@ import com.juul.kable.*
 import com.juul.kable.logs.Logging
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onEach
 import kotlinx.io.IOException
 import xyz.d1n0.constant.BleUuid
 import xyz.d1n0.constant.Command
+import xyz.d1n0.constant.ConnectReason
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Duration.Companion.seconds
 import kotlin.uuid.ExperimentalUuidApi
@@ -107,6 +106,43 @@ class Watch(private val peripheral: Peripheral) {
 			println("ioCharacteristicObservation.collect")
 			println(it.toHexString(HexFormat.UpperCase))
 			when (Command.fromValue(it.first().toInt())) {
+				Command.CONNECT_REASON -> {
+					// bottom left
+					// 10 26 94 50 90 70 D8 7F 01 03 0F FFFFFFFF24000000
+					// 10 26 94 50 90 70 D8 7F 01 03 0F FFFFFFFF48000400
+					// bottom right
+					// 10 26 94 50 90 70 D8 7F 04 03 0F FFFFFFFF24000000
+
+					val reason = ConnectReason.fromValue(it.get(8).toInt())
+
+
+					println("FEATURE")
+				}
+				Command.AUTO_SYNC_SETTINGS -> {
+					// auto sync on
+					// 110F0F0F0600500004000100 00 20 03
+					// auto sync off
+					// 110F0F0F0600500004000100 80 20 03
+					// 110F0F0F0600500004000100 80 1E 03
+					// 1E(30) is the default time sync off set
+					// so it should auto connect at 6:30, 12:30, 18:30, 00:30
+				}
+				Command.APP_INFO -> {
+					// new/reset watch		22FFFFFFFFFFFFFFFFFFFF00
+					// b5600 old app ver.	222DA85E248C468C74834202
+					// b5600 newer app ver.	228C8973A1B416502E67DD02
+					// Looks like the app will compare this number to determine if the watch has been paired or not
+					// probably can set to anything
+				}
+				Command.WATCH_SETTINGS -> {
+					//13 07 00 00 01 00 00 00 00 00 00 00
+					// looks like [1] does a lot of things, try decode different settings in binary
+					// [1] 07 -> 24h format, power saving on, tone off, auto light off (and do not disturb off?)
+					// [4] 00 -> mm:dd
+					// [4] 01 -> dd:mm
+					// [5] 00 -> eng
+					// 00 -> eng, 01 -> spanish, 02 -> french, 03 -> german, 04 -> italian, 05 -> russian
+				}
 				Command.WATCH_NAME -> {
 					val name = it.drop(1)
 						.takeWhile { it != 0x00.toByte() }
@@ -126,6 +162,14 @@ class Watch(private val peripheral: Peripheral) {
 				}
 			}
 		}
+
+	suspend fun requestConnectReason() = request(Command.CONNECT_REASON)
+
+	suspend fun requestTimeSyncSettings() = request(Command.AUTO_SYNC_SETTINGS)
+
+	suspend fun requestWatchSettings() = request(Command.WATCH_SETTINGS)
+
+	suspend fun requestInfo() = request(Command.APP_INFO)
 
 	suspend fun requestName() = request(Command.WATCH_NAME)
 

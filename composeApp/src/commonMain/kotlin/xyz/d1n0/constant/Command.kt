@@ -3,16 +3,16 @@ package xyz.d1n0.constant
 enum class Command(val value: Int) {
 	WATCH_NAME(0x23),
 	APP_INFO(0x22),
-	BLE_FEATURES(0x10),
-	BLE_SETTINGS(0x11),
-	WATCH_CONDITION(0x28),
+	CONNECT_REASON(0x10),
+	AUTO_SYNC_SETTINGS(0x11),
+	WATCH_SETTINGS(0x13),
 	CLOCK(0x1D),
 	TIMEZONE_NAME(0x1F),
 	TIMEZONE_INFO(0x1E),
-
 	// somethingRelatedToTimezone(0x24), maybe it's not important
 	CURRENT_TIME(0x09),
 
+	WATCH_CONDITION(0x28),
 	//    settingForAlm(0x15),
 //    settingForAlm2(0x16),
 //    settingForBasic(0x13),

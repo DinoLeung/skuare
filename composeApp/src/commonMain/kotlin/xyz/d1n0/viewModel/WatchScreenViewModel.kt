@@ -1,12 +1,10 @@
 package xyz.d1n0.viewModel
 
-import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.juul.kable.State
 import kotlinx.coroutines.*
 import xyz.d1n0.Repo
-import xyz.d1n0.model.Watch
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
@@ -27,6 +25,14 @@ class WatchScreenViewModel(
         watch.disconnect()
         onDisconnected()
     }
+
+    fun getConnectReason() = watch.scope.launch { watch.requestConnectReason() }
+
+    fun getTimeSyncSettings() = watch.scope.launch { watch.requestTimeSyncSettings() }
+
+    fun getWatchSettings() = watch.scope.launch { watch.requestWatchSettings() }
+
+    fun getInfo() = watch.scope.launch { watch.requestInfo() }
 
     fun getName() = watch.scope.launch { watch.requestName() }
 

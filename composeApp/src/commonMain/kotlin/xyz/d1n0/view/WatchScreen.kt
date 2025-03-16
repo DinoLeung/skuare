@@ -10,12 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
-import xyz.d1n0.model.Watch
-import xyz.d1n0.viewModel.ScanScreenViewModel
 import xyz.d1n0.viewModel.WatchScreenViewModel
 
 @Composable
@@ -35,6 +31,19 @@ fun WatchScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
+
+            Button(onClick = viewModel::getConnectReason) {
+                Text("Get Reason")
+            }
+            Button(onClick = viewModel::getTimeSyncSettings) {
+                Text("Get TimeSync Settings")
+            }
+            Button(onClick = viewModel::getWatchSettings) {
+                Text("Get Watch Settings")
+            }
+            Button(onClick = viewModel::getInfo) {
+                Text("Get Info")
+            }
             Button(onClick = viewModel::getName) {
                 Text("Get Name")
             }
