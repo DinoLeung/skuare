@@ -6,7 +6,8 @@ import com.juul.kable.Peripheral
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import xyz.d1n0.Repo
+import org.koin.core.component.inject
+import org.koin.mp.KoinPlatform.getKoin
 import xyz.d1n0.model.Watch
 
 
@@ -15,20 +16,19 @@ data class ScanScreenState(
     val isScanning: Boolean = false,
 )
 
-class ScanScreenViewModel(private val repo: Repo): ViewModel() {
+class ScanScreenViewModel(): ViewModel() {
     private val _state = MutableStateFlow(ScanScreenState())
     val state: StateFlow<ScanScreenState> = _state.asStateFlow()
 
     private var scanJob: Job? = null
 
-    fun startScanning(onWatchFound: (Watch) -> Unit) {
+    fun startScanning(onWatchFound: () -> Unit) {
         scanJob = viewModelScope.launch {
             _state.update { it.copy(isScanning = true) }
             Watch.scanner.advertisements.firstOrNull()?.let {
-                val watch = Watch(Peripheral(it))
-                repo.setWatch(watch)
-
-                onWatchFound(watch)
+                // declare watch in koin, so it knows how to inject it to other places
+                getKoin().declare(Watch(Peripheral(it)))
+                onWatchFound()
             }
             _state.update { it.copy(isScanning = false) }
         }

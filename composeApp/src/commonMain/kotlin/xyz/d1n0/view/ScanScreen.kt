@@ -21,7 +21,7 @@ import xyz.d1n0.viewModel.ScanScreenViewModel
 @Composable
 @Preview
 fun ScanScreen(
-    navToWatch: (Watch) -> Unit
+    navToWatch: () -> Unit
 ) {
     val viewModel = koinViewModel<ScanScreenViewModel>()
     val state by viewModel.state.collectAsState()
@@ -31,7 +31,7 @@ fun ScanScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Button(onClick = { viewModel.startScanning(onWatchFound = { navToWatch(it) }) }, enabled = !state.isScanning) {
+        Button(onClick = { viewModel.startScanning(onWatchFound = navToWatch) }, enabled = !state.isScanning) {
             Text("Scan!")
         }
         Button(onClick = viewModel::stopScanning , enabled = state.isScanning) {

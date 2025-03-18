@@ -4,15 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.juul.kable.State
 import kotlinx.coroutines.*
-import xyz.d1n0.Repo
+import xyz.d1n0.model.Watch
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 class WatchScreenViewModel(
-    private val repo: Repo
+    private val watch: Watch
 ): ViewModel() {
-    val watch = repo.getWatch() ?: throw IllegalStateException("Watch is not initialized")
-
     val connectionState: State = watch.state.value
 
     fun connect(onConnectionLost: () -> Unit) = viewModelScope.launch {
