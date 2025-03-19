@@ -4,11 +4,9 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.juul.kable.Peripheral
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinApplication
-import org.koin.compose.KoinContext
-import org.koin.core.module.dsl.viewModel
+import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 import xyz.d1n0.model.Watch
@@ -21,7 +19,7 @@ fun App() {
 	MaterialTheme {
 		KoinApplication(application = {
 			modules(module {
-				single<Watch> { (peripheral: Peripheral) -> Watch(peripheral) }
+				singleOf(::Watch)
 
 				viewModelOf(::ScanScreenViewModel)
 				viewModelOf(::WatchScreenViewModel)

@@ -1,7 +1,7 @@
 package xyz.d1n0.helper
 
-import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.isoDayNumber
 
 /**
  * Converts a given integer to a ByteArray in little-endian format.

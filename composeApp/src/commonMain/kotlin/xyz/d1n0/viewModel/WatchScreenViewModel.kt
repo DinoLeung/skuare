@@ -3,7 +3,10 @@ package xyz.d1n0.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.juul.kable.State
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import xyz.d1n0.model.Watch
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
@@ -14,9 +17,10 @@ class WatchScreenViewModel(
     val connectionState: State = watch.state.value
 
     fun connect(onConnectionLost: () -> Unit) = viewModelScope.launch {
-        watch.connect().invokeOnCompletion {
-            viewModelScope.launch(Dispatchers.Main) { onConnectionLost() }
-        }
+        watch.connect()
+            .invokeOnCompletion {
+                viewModelScope.launch(Dispatchers.Main) { onConnectionLost() }
+            }
     }
 
     fun disconnect(onDisconnected: () -> Unit) = viewModelScope.launch {

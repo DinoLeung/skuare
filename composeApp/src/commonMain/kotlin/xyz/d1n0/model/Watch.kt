@@ -2,8 +2,9 @@ package xyz.d1n0.model
 
 import com.juul.kable.*
 import com.juul.kable.logs.Logging
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import kotlinx.io.IOException
 import xyz.d1n0.constant.BleUuid
 import xyz.d1n0.constant.Command
@@ -39,7 +40,6 @@ class Watch(private val peripheral: Peripheral) {
 	val watchConfig = WatchConfig()
 
 	val scope: CoroutineScope get() = peripheral.scope
-
 	val state: StateFlow<State> get() = peripheral.state
 
 	private val ioCharacteristicObservation = peripheral.observe(ioCharacteristic)
