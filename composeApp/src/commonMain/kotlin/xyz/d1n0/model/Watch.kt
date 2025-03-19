@@ -37,7 +37,7 @@ class Watch(private val peripheral: Peripheral) {
 	}
 
 	val clocksConfig = ClocksConfig()
-	val watchConfig = WatchConfig()
+	val watchConfig = WatchInfo()
 
 	val scope: CoroutineScope get() = peripheral.scope
 	val state: StateFlow<State> get() = peripheral.state
@@ -115,17 +115,26 @@ class Watch(private val peripheral: Peripheral) {
 					// 10 26 94 50 90 70 D8 7F 04 03 0F FFFFFFFF24000000
 
 					val reason = ConnectReason.fromValue(it.get(8).toInt())
+					when (reason) {
+						ConnectReason.SETUP, ConnectReason.DEFAULT -> {
+							// TODO: Check APP_INFO, up date if required
+							// TODO:
+						}
+						ConnectReason.AUTO_SYNC, ConnectReason.MANUAL_SYNC -> {
+							// TODO: sync time procedure, then disconnect
+							// TODO: figure out how long the watch will stay connected for
+						}
+						ConnectReason.FIND -> {
+							// TODO: figure out if sync time is required
+							// TODO: figure out how long the watch will stay connected for
+						}
+					}
 
-					println("FEATURE")
 				}
 				Command.AUTO_SYNC_SETTINGS -> {
-					// auto sync on
-					// 110F0F0F0600500004000100 00 20 03
-					// auto sync off
-					// 110F0F0F0600500004000100 80 20 03
-					// 110F0F0F0600500004000100 80 1E 03
-					// 1E(30) is the default time sync off set
-					// so it should auto connect at 6:30, 12:30, 18:30, 00:30
+					runCatching {
+						watchConfig.parseAutoSyncPacket(it)
+					}.onFailure { println("Failed to parse auto sync settings packet: ${it.message}") }
 				}
 				Command.APP_INFO -> {
 					// new/reset watch		22FFFFFFFFFFFFFFFFFFFF00
@@ -140,12 +149,9 @@ class Watch(private val peripheral: Peripheral) {
 					}.onFailure { println("Failed to parse settings packet: ${it.message}") }
 				}
 				Command.WATCH_NAME -> {
-					// TODO: save this somewhere, and implement write
-					val name = it.drop(1)
-						.takeWhile { it != 0x00.toByte() }
-						.toByteArray()
-						.decodeToString()
-					println("WATCH_NAME: $name")
+					runCatching {
+						watchConfig.parseNamePacket(it)
+					}.onFailure { println("Failed to parse name packet: ${it.message}") }
 
 				}
 				Command.CLOCK -> {
