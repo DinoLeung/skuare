@@ -21,8 +21,8 @@ data class AutoSyncSettings(
 				"Auto Sync Settings packet must be exactly 15 bytes long, e.g. 11 0F 0F 0F 06 00 50 00 04 00 01 00 00 20 03"
 			}
 			return AutoSyncSettings(
-                enabled = AutoSyncEnabled.fromValue(packet.get(12).toInt()),
-                syncOffsetMinute = packet.get(12).toInt(),
+                enabled = AutoSyncEnabled.fromValue(packet.get(12).toUByte().toInt()),
+                syncOffsetMinute = packet.get(13).toUByte().toInt(),
             )
 		}
 	}

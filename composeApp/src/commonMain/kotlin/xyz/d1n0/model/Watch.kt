@@ -160,6 +160,10 @@ class Watch(private val peripheral: Peripheral) {
 						clocksConfig.parseClocksPacket(it)
 					}.onFailure { println("Failed to parse clocks packet: ${it.message}") }
 				}
+
+				Command.ERROR -> {
+					println("Error: ${it.toHexString(HexFormat.UpperCase)}")
+				}
 				// TODO: implement other commands
 				else -> {
 					println("Unsupported packet: ${it.toHexString(HexFormat.UpperCase)}")
@@ -168,15 +172,10 @@ class Watch(private val peripheral: Peripheral) {
 		}
 
 	suspend fun requestConnectReason() = request(Command.CONNECT_REASON)
-
 	suspend fun requestTimeSyncSettings() = request(Command.AUTO_SYNC_SETTINGS)
-
 	suspend fun requestWatchSettings() = request(Command.WATCH_SETTINGS)
-
 	suspend fun requestAppInfo() = request(Command.APP_INFO)
-
 	suspend fun requestName() = request(Command.WATCH_NAME)
-
 	suspend fun requestWatchCondition() = request(Command.WATCH_CONDITION)
 
 	suspend fun requestClocks() =
