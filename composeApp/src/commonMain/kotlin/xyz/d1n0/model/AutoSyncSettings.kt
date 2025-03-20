@@ -6,11 +6,11 @@ import xyz.d1n0.constant.Command
 data class AutoSyncSettings(
     var enabled: AutoSyncEnabled,
     var syncOffsetMinute: Int,
+	var connectionTimeoutMinute: Int,
 ) {
 	companion object {
         // TODO: don't know what do these bytes mean yet
 		val packetPrefix = byteArrayOf(0x0F, 0x0F, 0x0F, 0x06, 0x00, 0x50, 0x00, 0x04, 0x00, 0x01, 0x00)
-		val packetSuffix = byteArrayOf(0x03)
 
 		@OptIn(ExperimentalStdlibApi::class)
 		fun fromPacket(packet: ByteArray): AutoSyncSettings {
@@ -23,6 +23,7 @@ data class AutoSyncSettings(
 			return AutoSyncSettings(
                 enabled = AutoSyncEnabled.fromValue(packet.get(12).toUByte().toInt()),
                 syncOffsetMinute = packet.get(13).toUByte().toInt(),
+				connectionTimeoutMinute = packet.get(14).toUByte().toInt(),
             )
 		}
 	}
@@ -33,6 +34,6 @@ data class AutoSyncSettings(
 			*packetPrefix,
 			enabled.value.toByte(),
 			syncOffsetMinute.toByte(),
-			*packetSuffix
+			connectionTimeoutMinute.toByte(),
 		)
 }
