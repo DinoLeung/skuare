@@ -21,7 +21,12 @@ abstract class TimeZone {
      * a 1-byte daylight saving time (DST) offset, and a 1-byte DST rules.
      */
     val bytes: ByteArray
-        get() = identifierBytes + byteArrayOf(offsetByte, dstOffsetByte, dstRules.toByte())
+        get() = byteArrayOf(
+            *identifierBytes,
+            offsetByte,
+            dstOffsetByte,
+            dstRules.toByte(),
+        )
 
     /**
      * Converts the city name to a byte array of 18 bytes.
@@ -32,13 +37,7 @@ abstract class TimeZone {
      * properly.
      */
     val cityNameBytes: ByteArray
-        get() = runCatching {
-                cityName.encodeToByteArray()
-            }.map {
-                ByteArray(18) { index -> if (index < it.size) it.get(index) else 0x00 }
-            }.getOrElse {
-                throw IllegalArgumentException("Failed to encode cityName", it)
-            }
+        get() = cityName.encodeToByteArray().copyOf(18)
 
     /**
      * Converts the offset, which is represented as a double indicating the time zone offset in hours, into a single byte.

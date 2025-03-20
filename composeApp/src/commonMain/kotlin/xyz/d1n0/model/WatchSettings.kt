@@ -21,7 +21,7 @@ data class WatchSettings(
 				"Settings packet must be exactly 15 bytes long, e.g. 13 07 00 00 01 00 00 00 00 00 00 00"
 			}
 			return WatchSettings(
-                preferences = WatchPreferences(packet.get(1)),
+                preferences = WatchPreferences.fromByte(packet.get(1)),
                 backlightDuration = BacklightDuration.fromValue(packet.get(2).toInt()),
                 dateFormat = DateFormat.fromValue(packet.get(4).toInt()),
                 weekdayLanguage = WeekdayLanguage.fromValue(packet.get(5).toInt()),
@@ -30,10 +30,10 @@ data class WatchSettings(
 	}
 
     val packet: ByteArray
-        get() = ByteArray(12) { index ->
-            when (index) {
+        get() = ByteArray(12) {
+            when (it) {
                 0 -> Command.WATCH_SETTINGS.value.toByte()
-                1 -> preferences.toBitMask()
+                1 -> preferences.byte
                 2 -> backlightDuration.value.toByte()
                 4 -> dateFormat.value.toByte()
                 5 -> weekdayLanguage.value.toByte()

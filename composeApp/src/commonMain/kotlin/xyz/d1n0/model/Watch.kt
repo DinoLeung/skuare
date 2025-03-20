@@ -38,6 +38,11 @@ class Watch(private val peripheral: Peripheral) {
 
 	val clocksConfig = ClocksConfig()
 	val watchConfig = WatchInfo()
+	// TODO: Alarm 1, 2, 3, 4, snooze
+	// TODO: hourly signal
+	// TODO: Stopwatch?
+	// TODO: Timer
+	// TODO: Reminder
 
 	val scope: CoroutineScope get() = peripheral.scope
 	val state: StateFlow<State> get() = peripheral.state
@@ -108,12 +113,6 @@ class Watch(private val peripheral: Peripheral) {
 			println(it.toHexString(HexFormat.UpperCase))
 			when (Command.fromValue(it.first().toInt())) {
 				Command.CONNECT_REASON -> {
-					// bottom left
-					// 10 26 94 50 90 70 D8 7F 01 03 0F FFFFFFFF24000000
-					// 10 26 94 50 90 70 D8 7F 01 03 0F FFFFFFFF48000400
-					// bottom right
-					// 10 26 94 50 90 70 D8 7F 04 03 0F FFFFFFFF24000000
-
 					val reason = ConnectReason.fromValue(it.get(8).toInt())
 					when (reason) {
 						ConnectReason.SETUP, ConnectReason.DEFAULT -> {
@@ -152,7 +151,9 @@ class Watch(private val peripheral: Peripheral) {
 					runCatching {
 						watchConfig.parseNamePacket(it)
 					}.onFailure { println("Failed to parse name packet: ${it.message}") }
-
+				}
+				Command.WATCH_CONDITION -> {
+					// 28 13 1F 00
 				}
 				Command.CLOCK -> {
 					runCatching {
@@ -172,9 +173,11 @@ class Watch(private val peripheral: Peripheral) {
 
 	suspend fun requestWatchSettings() = request(Command.WATCH_SETTINGS)
 
-	suspend fun requestInfo() = request(Command.APP_INFO)
+	suspend fun requestAppInfo() = request(Command.APP_INFO)
 
 	suspend fun requestName() = request(Command.WATCH_NAME)
+
+	suspend fun requestWatchCondition() = request(Command.WATCH_CONDITION)
 
 	suspend fun requestClocks() =
 		repeat(3) {

@@ -8,7 +8,7 @@ data class AutoSyncSettings(
     var syncOffsetMinute: Int,
 ) {
 	companion object {
-        // TODO: don't know what are these bytes means yet
+        // TODO: don't know what do these bytes mean yet
 		val packetPrefix = byteArrayOf(0x0F, 0x0F, 0x0F, 0x06, 0x00, 0x50, 0x00, 0x04, 0x00, 0x01, 0x00)
 		val packetSuffix = byteArrayOf(0x03)
 

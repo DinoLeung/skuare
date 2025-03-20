@@ -2,7 +2,7 @@ package xyz.d1n0.constant
 
 enum class BacklightDuration(val value: Int) {
     SHORT(0),
-    Long(1);
+    LONG(1);
 
     companion object {
         fun fromValue(value: Int) =

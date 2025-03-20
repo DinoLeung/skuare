@@ -1,7 +1,6 @@
 package xyz.d1n0.model
 
 import xyz.d1n0.constant.Command
-import xyz.d1n0.constant.DstStatus
 import xyz.d1n0.helper.from2BytesLittleEndian
 
 class ClocksConfig {
@@ -17,25 +16,25 @@ class ClocksConfig {
      * @return true if homeClock and all worldClocks are initialized; false otherwise.
      */
     fun hasInitializedClocks() =
-        ::homeClock.isInitialized && ::worldClock1.isInitialized && ::worldClock2.isInitialized && ::worldClock3.isInitialized && ::worldClock4.isInitialized && ::worldClock5.isInitialized
+        ::homeClock.isInitialized &&::worldClock1.isInitialized &&::worldClock2.isInitialized &&::worldClock3.isInitialized &&::worldClock4.isInitialized &&::worldClock5.isInitialized
 
     /**
      * Sets a clock for the specified position with the given time zone ID and DST status.
      *
      * @param position The position of the clock, where 0 is homeClock and 1-5 are worldClocks.
      * @param timeZoneId The ID of the time zone to assign to the specified clock position.
-     * @param dstStatus The daylight saving time status applicable to the time zone.
+     * @param dstSettings The daylight saving time status applicable to the time zone.
      *
      * @throws IllegalArgumentException if the position is not within the range 0..5.
      */
-    private fun setClock(position: Int, timeZoneId: Int, dstStatus: DstStatus) =
+    private fun setClock(position: Int, timeZoneId: Int, dstSettings: DstSettings) =
         when (position) {
-            0 -> homeClock = HomeClock.fromTimeZoneId(timeZoneId, dstStatus)
-            1 -> worldClock1 = WorldClock.fromTimeZoneId(timeZoneId, dstStatus)
-            2 -> worldClock2 = WorldClock.fromTimeZoneId(timeZoneId, dstStatus)
-            3 -> worldClock3 = WorldClock.fromTimeZoneId(timeZoneId, dstStatus)
-            4 -> worldClock4 = WorldClock.fromTimeZoneId(timeZoneId, dstStatus)
-            5 -> worldClock5 = WorldClock.fromTimeZoneId(timeZoneId, dstStatus)
+            0 -> homeClock = HomeClock.fromTimeZoneId(timeZoneId, dstSettings)
+            1 -> worldClock1 = WorldClock.fromTimeZoneId(timeZoneId, dstSettings)
+            2 -> worldClock2 = WorldClock.fromTimeZoneId(timeZoneId, dstSettings)
+            3 -> worldClock3 = WorldClock.fromTimeZoneId(timeZoneId, dstSettings)
+            4 -> worldClock4 = WorldClock.fromTimeZoneId(timeZoneId, dstSettings)
+            5 -> worldClock5 = WorldClock.fromTimeZoneId(timeZoneId, dstSettings)
             else -> require(position in 0..5) { "TimeZones position must be in 0..5" }
         }
 
@@ -57,11 +56,13 @@ class ClocksConfig {
             Command.CLOCK.value.toByte(),
             positionA.toByte(),
             positionB.toByte(),
-            clockA.dstStatus.value.toByte(),
-            clockB.dstStatus.value.toByte(),
+            clockA.dstSettings.byte,
+            clockB.dstSettings.byte,
             *clockA.timeZone.identifierBytes,
             *clockB.timeZone.identifierBytes,
-        ) + ByteArray(6) { 0xFF.toByte() }
+        ).let {
+            it + ByteArray(15 - it.size) { 0xFF.toByte() }
+        }
 
     /**
      * Parses a packet representing two clocks and updates their configurations in the system.
@@ -86,8 +87,8 @@ class ClocksConfig {
         runCatching {
             val positionA = clocksPacket.get(1).toInt()
             val positionB = clocksPacket.get(2).toInt()
-            val dstStatusA = DstStatus.fromValue(clocksPacket.get(3).toInt())
-            val dstStatusB = DstStatus.fromValue(clocksPacket.get(4).toInt())
+            val dstStatusA = DstSettings.fromByte(clocksPacket.get(3))
+            val dstStatusB = DstSettings.fromByte(clocksPacket.get(4))
             val timeZoneIdA = Int.from2BytesLittleEndian(clocksPacket.sliceArray(5..6))
             val timeZoneIdB = Int.from2BytesLittleEndian(clocksPacket.sliceArray(7..8))
 

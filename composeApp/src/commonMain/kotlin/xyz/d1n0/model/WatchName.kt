@@ -34,7 +34,7 @@ data class WatchName(private val _name: String) {
             when (index) {
                 0 -> Command.WATCH_SETTINGS.value.toByte()
                 in 1.._name.length -> _name.get(index - 1).code.toByte()
-                else -> 0x00
+                else -> 0x00.toByte()
             }
         }
 }

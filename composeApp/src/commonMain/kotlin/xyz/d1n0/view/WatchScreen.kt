@@ -47,6 +47,9 @@ fun WatchScreen(
             Button(onClick = viewModel::getName) {
                 Text("Get Name")
             }
+            Button(onClick = viewModel::getWatchCondition) {
+                Text("Get Condition")
+            }
             Button(onClick = viewModel::syncTime) {
                 Text("Sync Time")
             }

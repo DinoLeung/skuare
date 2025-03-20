@@ -5,6 +5,8 @@ class WatchInfo {
     lateinit var settings: WatchSettings
 	lateinit var autoSyncSettings: AutoSyncSettings
 
+    // TODO: connection timeout
+
     fun parseNamePacket(namePacket: ByteArray) {
         name = WatchName.fromPacket(namePacket)
     }
