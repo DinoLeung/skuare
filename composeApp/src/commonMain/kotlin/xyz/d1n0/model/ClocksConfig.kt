@@ -60,9 +60,9 @@ class ClocksConfig {
             clockB.dstSettings.byte,
             *clockA.timeZone.identifierBytes,
             *clockB.timeZone.identifierBytes,
-        ).let {
-            it + ByteArray(15 - it.size) { 0xFF.toByte() }
-        }
+        )
+            .copyOf(15)
+            .apply { fill(0xFF.toByte(), this.size, 15) }
 
     /**
      * Parses a packet representing two clocks and updates their configurations in the system.
