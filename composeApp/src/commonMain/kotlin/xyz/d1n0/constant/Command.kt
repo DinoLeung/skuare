@@ -3,7 +3,7 @@ package xyz.d1n0.constant
 enum class Command(val value: Int) {
 	CONNECT_REASON(0x10),
 	WATCH_NAME(0x23),
-	AUTO_SYNC_SETTINGS(0x11),
+	CONNECTION_SETTINGS(0x11),
 	WATCH_SETTINGS(0x13),
 	CLOCK(0x1D),
 	TIMEZONE_NAME(0x1F),

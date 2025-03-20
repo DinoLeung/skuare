@@ -130,9 +130,9 @@ class Watch(private val peripheral: Peripheral) {
 					}
 
 				}
-				Command.AUTO_SYNC_SETTINGS -> {
+				Command.CONNECTION_SETTINGS -> {
 					runCatching {
-						watchConfig.parseAutoSyncPacket(it)
+						watchConfig.parseConnectionSettingsPacket(it)
 					}.onFailure { println("Failed to parse auto sync settings packet: ${it.message}") }
 				}
 				Command.APP_INFO -> {
@@ -144,7 +144,7 @@ class Watch(private val peripheral: Peripheral) {
 				}
 				Command.WATCH_SETTINGS -> {
 					runCatching {
-						watchConfig.parseSettingsPacket(it)
+						watchConfig.parseWatchSettingsPacket(it)
 					}.onFailure { println("Failed to parse settings packet: ${it.message}") }
 				}
 				Command.WATCH_NAME -> {
@@ -172,7 +172,7 @@ class Watch(private val peripheral: Peripheral) {
 		}
 
 	suspend fun requestConnectReason() = request(Command.CONNECT_REASON)
-	suspend fun requestTimeSyncSettings() = request(Command.AUTO_SYNC_SETTINGS)
+	suspend fun requestTimeSyncSettings() = request(Command.CONNECTION_SETTINGS)
 	suspend fun requestWatchSettings() = request(Command.WATCH_SETTINGS)
 	suspend fun requestAppInfo() = request(Command.APP_INFO)
 	suspend fun requestName() = request(Command.WATCH_NAME)

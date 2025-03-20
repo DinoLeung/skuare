@@ -3,7 +3,7 @@ package xyz.d1n0.model
 import xyz.d1n0.constant.AutoSyncEnabled
 import xyz.d1n0.constant.Command
 
-data class AutoSyncSettings(
+data class ConnectionSettings(
     var enabled: AutoSyncEnabled,
     var syncOffsetMinute: Int,
 	var connectionTimeoutMinute: Int,
@@ -13,14 +13,14 @@ data class AutoSyncSettings(
 		val packetPrefix = byteArrayOf(0x0F, 0x0F, 0x0F, 0x06, 0x00, 0x50, 0x00, 0x04, 0x00, 0x01, 0x00)
 
 		@OptIn(ExperimentalStdlibApi::class)
-		fun fromPacket(packet: ByteArray): AutoSyncSettings {
-			require(packet.first() == Command.AUTO_SYNC_SETTINGS.value.toByte()) {
-				"Auto Sync Settings packet must starts with command code ${Command.AUTO_SYNC_SETTINGS.value.toHexString(HexFormat.UpperCase)}"
+		fun fromPacket(packet: ByteArray): ConnectionSettings {
+			require(packet.first() == Command.CONNECTION_SETTINGS.value.toByte()) {
+				"Auto Sync Settings packet must starts with command code ${Command.CONNECTION_SETTINGS.value.toHexString(HexFormat.UpperCase)}"
 			}
 			require(packet.size == 15) {
 				"Auto Sync Settings packet must be exactly 15 bytes long, e.g. 11 0F 0F 0F 06 00 50 00 04 00 01 00 00 20 03"
 			}
-			return AutoSyncSettings(
+			return ConnectionSettings(
                 enabled = AutoSyncEnabled.fromValue(packet.get(12).toUByte().toInt()),
                 syncOffsetMinute = packet.get(13).toUByte().toInt(),
 				connectionTimeoutMinute = packet.get(14).toUByte().toInt(),
@@ -30,7 +30,7 @@ data class AutoSyncSettings(
 
 	val packet: ByteArray
 		get() = byteArrayOf(
-			Command.AUTO_SYNC_SETTINGS.value.toByte(),
+			Command.CONNECTION_SETTINGS.value.toByte(),
 			*packetPrefix,
 			enabled.value.toByte(),
 			syncOffsetMinute.toByte(),

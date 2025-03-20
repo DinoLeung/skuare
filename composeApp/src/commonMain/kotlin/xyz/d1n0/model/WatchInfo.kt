@@ -2,21 +2,21 @@ package xyz.d1n0.model
 
 class WatchInfo {
     lateinit var name: WatchName
-    lateinit var settings: WatchSettings
-	lateinit var autoSyncSettings: AutoSyncSettings
+    lateinit var watchSettings: WatchSettings
+	lateinit var connectionSettings: ConnectionSettings
 
     // TODO: connection timeout
 
-    fun parseNamePacket(namePacket: ByteArray) {
-        name = WatchName.fromPacket(namePacket)
+    fun parseNamePacket(packet: ByteArray) {
+        name = WatchName.fromPacket(packet)
     }
 
-	fun parseSettingsPacket(settingsPacket: ByteArray) {
-		settings = WatchSettings.fromPacket(settingsPacket)
+	fun parseWatchSettingsPacket(packet: ByteArray) {
+		watchSettings = WatchSettings.fromPacket(packet)
 	}
 
-    fun parseAutoSyncPacket(autoSyncPacket: ByteArray) {
-        autoSyncSettings = AutoSyncSettings.fromPacket(autoSyncPacket)
+    fun parseConnectionSettingsPacket(packet: ByteArray) {
+        connectionSettings = ConnectionSettings.fromPacket(packet)
     }
 
 }
