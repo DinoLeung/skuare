@@ -161,6 +161,16 @@ class Watch(private val peripheral: Peripheral) {
 						clocks.parseClocksPacket(it)
 					}.onFailure { println("Failed to parse clocks packet: ${it.message}") }
 				}
+				Command.ALARM_A -> {
+					runCatching {
+						alarms.parseAlarmAPacket(it)
+					}.onFailure { println("Failed to parse alarm A packet: ${it.message}") }
+				}
+				Command.ALARM_B -> {
+					runCatching {
+						alarms.parseAlarmBPacket(it)
+					}.onFailure { println("Failed to parse alarm B packet: ${it.message}") }
+				}
 
 				Command.ERROR -> {
 					println("Error: ${it.toHexString(HexFormat.UpperCase)}")
@@ -184,6 +194,11 @@ class Watch(private val peripheral: Peripheral) {
 			request(Command.CLOCK)
 		}
 
+	suspend fun requestAlarms() {
+		request(Command.ALARM_A)
+		request(Command.ALARM_B)
+	}
+
 	suspend fun writeClocks() =
 		clocks.clocksPackets.forEach {
 			write(it)
@@ -201,6 +216,11 @@ class Watch(private val peripheral: Peripheral) {
 
 	suspend fun writeTime() =
 		write(clocks.homeClock.getCurrentDateTimePacket(delay = 0.seconds))
+
+	suspend fun writeAlarms() {
+		write(alarms.alarmAPacket)
+		write(alarms.alarmBPacket)
+	}
 }
 
 class WatchException (message: String, cause: Throwable) : Exception(message, cause)

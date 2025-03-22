@@ -13,7 +13,7 @@ data class Alarm(
                 "Alarm bytes must be exactly 4 bytes long, e.g. 40 00 17 3B"
             }
             return Alarm(
-                enable = bytes[0].toInt() and AlarmBitMask.MASK_ENABLE != 0,
+                enable = bytes[0].toInt() and AlarmBitMask.ENABLE != 0,
                 time = LocalTime(
                     hour = bytes[2].toUByte().toInt(),
                     minute = bytes[3].toUByte().toInt(),
@@ -25,7 +25,7 @@ data class Alarm(
     val bytes: ByteArray
         get() = ByteArray(4) {
             when (it) {
-                0 -> (if (enable) AlarmBitMask.MASK_ENABLE else 0).toByte()
+                0 -> (if (enable) AlarmBitMask.ENABLE else 0).toByte()
                 2 -> time.hour.toByte()
                 3 -> time.minute.toByte()
                 else -> 0x00

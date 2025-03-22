@@ -26,7 +26,7 @@ class AlarmsSettings {
         require(packet.size == 5) {
             "Alarm A packet must be exactly 5 bytes long, e.g. 15 C0 00 0C 1E"
         }
-        hourlySignal = SignalAlarm.fromBytes(packet.sliceArray(1..2))
+        hourlySignal = SignalAlarm.fromByte(packet[0])
         alarm1 = Alarm.fromBytes(packet.sliceArray(1..4))
     }
 
@@ -47,10 +47,9 @@ class AlarmsSettings {
     val alarmAPacket: ByteArray
         get() {
             require(isInitialized()) { "Alarms must be initialized" }
-            val signalBytes = hourlySignal.bytes
+            val signalBytes = hourlySignal.byte
             val alarmBytes = alarm1.bytes.apply {
-                this[0] = this[0] or signalBytes[0]
-                this[1] = signalBytes[1]
+                this[0] = this[0] or hourlySignal.byte
             }
             return byteArrayOf(
                 Command.ALARM_A.value.toByte(),

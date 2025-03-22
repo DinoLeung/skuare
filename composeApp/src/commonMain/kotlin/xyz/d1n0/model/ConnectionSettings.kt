@@ -1,11 +1,11 @@
 package xyz.d1n0.model
 
-import xyz.d1n0.constant.AutoSyncEnabled
+import xyz.d1n0.constant.AutoSyncBitMask
 import xyz.d1n0.constant.Command
 
 data class ConnectionSettings(
-    var enabled: AutoSyncEnabled,
-    var syncOffsetMinute: Int,
+	var autoSyncEnable: Boolean,
+	var autoSyncOffsetMinute: Int,
 	var connectionTimeoutMinute: Int,
 ) {
 	companion object {
@@ -20,9 +20,10 @@ data class ConnectionSettings(
 			require(packet.size == 15) {
 				"Auto Sync Settings packet must be exactly 15 bytes long, e.g. 11 0F 0F 0F 06 00 50 00 04 00 01 00 00 20 03"
 			}
+			packet[12].toInt() and AutoSyncBitMask.DISABLE == 0
 			return ConnectionSettings(
-                enabled = AutoSyncEnabled.fromValue(packet[12].toUByte().toInt()),
-                syncOffsetMinute = packet[13].toUByte().toInt(),
+                autoSyncEnable = packet[12].toInt() and AutoSyncBitMask.DISABLE == 0,
+                autoSyncOffsetMinute = packet[13].toUByte().toInt(),
 				connectionTimeoutMinute = packet[14].toUByte().toInt(),
             )
 		}
@@ -32,8 +33,8 @@ data class ConnectionSettings(
 		get() = byteArrayOf(
 			Command.CONNECTION_SETTINGS.value.toByte(),
 			*packetPrefix,
-			enabled.value.toByte(),
-			syncOffsetMinute.toByte(),
+			(if (autoSyncEnable) 0 else AutoSyncBitMask.DISABLE).toByte(),
+			autoSyncOffsetMinute.toByte(),
 			connectionTimeoutMinute.toByte(),
 		)
 }

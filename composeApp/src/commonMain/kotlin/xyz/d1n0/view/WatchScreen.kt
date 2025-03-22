@@ -50,6 +50,12 @@ fun WatchScreen(
             Button(onClick = viewModel::getWatchCondition) {
                 Text("Get Condition")
             }
+            Button(onClick = viewModel::getAlarms) {
+                Text("Get Alarms")
+            }
+            Button(onClick = viewModel::writeAlarms) {
+                Text("Write Alarms")
+            }
             Button(onClick = viewModel::syncTime) {
                 Text("Sync Time")
             }
