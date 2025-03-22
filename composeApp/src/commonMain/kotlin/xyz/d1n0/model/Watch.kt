@@ -38,9 +38,8 @@ class Watch(private val peripheral: Peripheral) {
 
 	val clocks = ClocksSettings()
 	val alarms = AlarmsSettings()
+	val timer = TimerSettings()
 	val watchConfig = WatchInfo()
-	// TODO: Alarm 1, 2, 3, 4, snooze
-	// TODO: hourly signal
 	// TODO: Stopwatch?
 	// TODO: Timer
 	// TODO: Reminder
@@ -171,6 +170,11 @@ class Watch(private val peripheral: Peripheral) {
 						alarms.parseAlarmBPacket(it)
 					}.onFailure { println("Failed to parse alarm B packet: ${it.message}") }
 				}
+				Command.TIMER -> {
+					runCatching {
+						timer.parseTimerPacket(it)
+					}.onFailure { println("Failed to parse timer packet: ${it.message}") }
+				}
 
 				Command.ERROR -> {
 					println("Error: ${it.toHexString(HexFormat.UpperCase)}")
@@ -188,6 +192,7 @@ class Watch(private val peripheral: Peripheral) {
 	suspend fun requestAppInfo() = request(Command.APP_INFO)
 	suspend fun requestName() = request(Command.WATCH_NAME)
 	suspend fun requestWatchCondition() = request(Command.WATCH_CONDITION)
+	suspend fun requestTimer() = request(Command.TIMER)
 
 	suspend fun requestClocks() =
 		repeat(3) {
@@ -221,10 +226,8 @@ class Watch(private val peripheral: Peripheral) {
 		write(alarms.alarmAPacket)
 		write(alarms.alarmBPacket)
 	}
+
+	suspend fun writeTimer() = write(timer.timerPacket)
 }
 
 class WatchException (message: String, cause: Throwable) : Exception(message, cause)
-
-// TIMER SCREEN
-// 18000A0000000000
-// 18000A1E00000000

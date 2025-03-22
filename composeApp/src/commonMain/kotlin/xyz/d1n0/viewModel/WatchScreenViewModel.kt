@@ -35,6 +35,7 @@ class WatchScreenViewModel(
     fun getName() = watch.scope.launch { watch.requestName() }
     fun getWatchCondition() = watch.scope.launch { watch.requestWatchCondition() }
     fun getAlarms() = watch.scope.launch { watch.requestAlarms() }
+    fun getTimer() = watch.scope.launch { watch.requestTimer() }
 
     fun syncTime() = watch.scope.launch {
         runCatching {
@@ -56,4 +57,5 @@ class WatchScreenViewModel(
     }
 
     fun writeAlarms() = watch.scope.launch { watch.writeAlarms() }
+    fun writeTimer() = watch.scope.launch { watch.writeTimer() }
 }

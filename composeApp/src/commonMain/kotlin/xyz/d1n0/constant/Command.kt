@@ -16,10 +16,10 @@ enum class Command(val value: Int) {
 
 	ALARM_A(0x15),
 	ALARM_B(0x16),
+    TIMER(0x18),
 
 //    reminderTitle(0x30),
 //    reminderTime(0x31),
-//    timer(0x18),
 	ERROR(0xFF);
 //    currentTimeManager(0x39),????
 
