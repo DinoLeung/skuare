@@ -13,33 +13,28 @@ data class Timer(
     val status: TimerStatus
 ) {
     companion object {
-        @OptIn(ExperimentalStdlibApi::class)
-        fun fromPacket(packet: ByteArray): Timer {
-            require(packet.first() == Command.TIMER.value.toByte()) {
-                "Timer packet must starts with command code ${Command.TIMER.value.toHexString(HexFormat.UpperCase)}"
-            }
-            require(packet.size == 8) {
-                "Timer packet bytes must be exactly 8 bytes long, e.g. 18 17 0F 1E 00 00 00 00"
+        fun fromBytes(bytes: ByteArray): Timer {
+            require(bytes.size == 7) {
+                "Timer bytes must be exactly 7 bytes long, e.g. 17 0F 1E 00 00 00 00"
             }
             return Timer(
-                duration = packet[1].toUByte().toInt().hours
-                        + packet[2].toUByte().toInt().minutes
-                        + packet[3].toUByte().toInt().seconds,
-                status = TimerStatus.fromValue(packet.last().toInt(),
+                duration = bytes[0].toUByte().toInt().hours
+                        + bytes[1].toUByte().toInt().minutes
+                        + bytes[2].toUByte().toInt().seconds,
+                status = TimerStatus.fromValue(bytes.last().toInt(),
                 )
             )
         }
     }
 
-    val packet: ByteArray
+    val bytes: ByteArray
         get() = duration.toComponents { hours, minutes, seconds, _ ->
-            ByteArray(8) {
+            ByteArray(7) {
                 when (it) {
-                    0 -> Command.TIMER.value.toByte()
-                    1 -> hours.toByte()
-                    2 -> minutes.toByte()
-                    3 -> seconds.toByte()
-                    7 -> status.value.toByte()
+                    0 -> hours.toByte()
+                    1 -> minutes.toByte()
+                    2 -> seconds.toByte()
+                    6 -> status.value.toByte()
                     else -> 0
                 }
             }

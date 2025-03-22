@@ -1,8 +1,8 @@
 package xyz.d1n0.constant
 
 enum class DateFormat(val value: Int) {
-    MMDD(0),
-    DDMM(1);
+    MDD(0),
+    DDM(1);
 
     companion object {
         fun fromValue(value: Int) =
