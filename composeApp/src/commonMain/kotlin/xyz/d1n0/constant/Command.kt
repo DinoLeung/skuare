@@ -14,8 +14,8 @@ enum class Command(val value: Int) {
 	APP_INFO(0x22),
 	WATCH_CONDITION(0x28),
 
-	//    settingForAlm(0x15),
-//    settingForAlm2(0x16),
+	ALARM_A(0x15),
+	ALARM_B(0x16),
 
 //    reminderTitle(0x30),
 //    reminderTime(0x31),

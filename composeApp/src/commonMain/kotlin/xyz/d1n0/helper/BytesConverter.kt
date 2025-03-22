@@ -32,7 +32,7 @@ fun Int.to2BytesLittleEndian(): ByteArray {
  */
 fun Int.Companion.from2BytesLittleEndian(bytes: ByteArray): Int {
     require(bytes.size == 2) { "Input must be a ByteArray of exactly 2 bytes." }
-    return (bytes.get(1).toInt() shl 8) or (bytes.get(0).toInt() and 0xFF)
+    return (bytes[1].toInt() shl 8) or (bytes[0].toInt() and 0xFF)
 }
 
 /**

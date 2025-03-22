@@ -36,7 +36,8 @@ class Watch(private val peripheral: Peripheral) {
 		}
 	}
 
-	val clocksConfig = ClocksConfig()
+	val clocks = ClocksSettings()
+	val alarms = AlarmsSettings()
 	val watchConfig = WatchInfo()
 	// TODO: Alarm 1, 2, 3, 4, snooze
 	// TODO: hourly signal
@@ -113,7 +114,7 @@ class Watch(private val peripheral: Peripheral) {
 			println(it.toHexString(HexFormat.UpperCase))
 			when (Command.fromValue(it.first().toInt())) {
 				Command.CONNECT_REASON -> {
-					val reason = ConnectReason.fromValue(it.get(8).toInt())
+					val reason = ConnectReason.fromValue(it[8].toInt())
 					when (reason) {
 						ConnectReason.SETUP, ConnectReason.DEFAULT -> {
 							// TODO: Check APP_INFO, up date if required
@@ -157,7 +158,7 @@ class Watch(private val peripheral: Peripheral) {
 				}
 				Command.CLOCK -> {
 					runCatching {
-						clocksConfig.parseClocksPacket(it)
+						clocks.parseClocksPacket(it)
 					}.onFailure { println("Failed to parse clocks packet: ${it.message}") }
 				}
 
@@ -184,22 +185,26 @@ class Watch(private val peripheral: Peripheral) {
 		}
 
 	suspend fun writeClocks() =
-		clocksConfig.clocksPackets.forEach {
+		clocks.clocksPackets.forEach {
 			write(it)
 		}
 
 	suspend fun writeTimeZoneConfigs() =
-		clocksConfig.timeZoneConfigPackets.forEach {
+		clocks.timeZoneConfigPackets.forEach {
 			write(it)
 		}
 
 	suspend fun writeTimeZoneNames() =
-		clocksConfig.timeZoneNamePackets.forEach {
+		clocks.timeZoneNamePackets.forEach {
 			write(it)
 		}
 
 	suspend fun writeTime() =
-		write(clocksConfig.homeClock.getCurrentDateTimePacket(delay = 0.seconds))
+		write(clocks.homeClock.getCurrentDateTimePacket(delay = 0.seconds))
 }
 
 class WatchException (message: String, cause: Throwable) : Exception(message, cause)
+
+// TIMER SCREEN
+// 18000A0000000000
+// 18000A1E00000000
