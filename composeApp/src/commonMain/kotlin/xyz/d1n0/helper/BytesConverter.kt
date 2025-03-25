@@ -1,14 +1,20 @@
 package xyz.d1n0.helper
 
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
 import kotlinx.datetime.isoDayNumber
+import kotlin.time.Duration
 
 /**
- * Converts a given integer to a ByteArray in little-endian format.
+ * Converts this integer (which must be within the 16-bit unsigned range, 0x0000–0xFFFF)
+ * into a 2-byte array in little-endian order.
  *
- * The least significant byte (LSB) is stored first, followed by the most significant byte (MSB).
+ * In little-endian format, the least significant byte is placed at index 0, while the most
+ * significant byte is placed at index 1.
  *
- * @return A ByteArray of size 2 representing the integer in little-endian byte order.
+ * @return a ByteArray of length 2 representing the integer in little-endian byte order.
+ * @throws IllegalArgumentException if the integer is not in the range 0x0000..0xFFFF.
  */
 fun Int.to2BytesLittleEndian(): ByteArray {
     require(this in 0x0000..0xFFFF) { "Input must be a 16-bit unsigned integer." }
@@ -19,20 +25,57 @@ fun Int.to2BytesLittleEndian(): ByteArray {
 }
 
 /**
- * Converts a 2-byte little-endian ByteArray into an integer.
+ * Decodes a 2-byte little-endian ByteArray into its corresponding integer value.
  *
- * Little-endian format means the least significant byte (LSB) is at index 0, and the most significant byte (MSB)
- * is at index 1 of the ByteArray.
+ * In little-endian order, the byte at index 0 is the least significant, and the byte at index 1
+ * is the most significant.
  *
- * @param bytes A ByteArray of size 2 representing a number in little-endian byte order.
- *
- * @return An integer corresponding to the little-endian ByteArray.
- *
- * @throws IllegalArgumentException if the input byte array is not exactly 2 bytes long.
+ * @param bytes a ByteArray of exactly 2 bytes.
+ * @return the integer represented by the byte array.
+ * @throws IllegalArgumentException if the byte array does not contain exactly 2 bytes.
  */
 fun Int.Companion.from2BytesLittleEndian(bytes: ByteArray): Int {
     require(bytes.size == 2) { "Input must be a ByteArray of exactly 2 bytes." }
     return (bytes[1].toInt() shl 8) or (bytes[0].toInt() and 0xFF)
+}
+
+/**
+ * Converts this integer (expected to be between 0 and 99) into a Binary-Coded Decimal (BCD)
+ * encoded byte.
+ *
+ * In BCD, the tens digit is stored in the upper 4 bits and the ones digit in the lower 4 bits.
+ * For example:
+ * - 31 is encoded as 0x31 (with 3 in the high nibble and 1 in the low nibble).
+ * - 99 is encoded as 0x99.
+ *
+ * @return a Byte representing the BCD encoding of the integer.
+ * @throws IllegalArgumentException if the integer is not in the range 0..99.
+ */
+fun Int.toBcdByte(): Byte {
+    require(this in 0..99) { "Value must be between 0 and 99 for BCD encoding" }
+    val tens = this / 10
+    val ones = this % 10
+    return ((tens shl 4) or ones).toByte()
+}
+
+/**
+ * Decodes a BCD-encoded byte into its corresponding integer value.
+ *
+ * In Binary-Coded Decimal (BCD) encoding, the high nibble represents the tens digit and the low
+ * nibble represents the ones digit. For example, a BCD byte 0x31 decodes to 31.
+ *
+ * @param bcd the BCD-encoded byte.
+ * @return the integer value (0 to 99) represented by the BCD byte.
+ * @throws IllegalArgumentException if either nibble is greater than 9, indicating an invalid BCD value.
+ */
+@OptIn(ExperimentalStdlibApi::class)
+fun Int.Companion.fromBcdByte(bcd: Byte): Int {
+    val highNibble = (bcd.toInt() ushr 4) and 0x0F
+    val lowNibble = bcd.toInt() and 0x0F
+    require(highNibble in 0..9 && lowNibble in 0..9) {
+        "Invalid BCD byte: contains non-decimal digits ${bcd.toHexString(HexFormat.UpperCase)}"
+    }
+    return highNibble * 10 + lowNibble
 }
 
 /**
@@ -64,3 +107,135 @@ fun LocalDateTime.toByteArray() =
         // Milliseconds, scaled to 0-255 for 1 byte
         ((this.nanosecond / 1_000_000) * 255 / 999).toByte()
     )
+
+/**
+ * Converts this LocalDate into a 3-byte array where each component is encoded in Binary-Coded Decimal (BCD).
+ *
+ * The encoding scheme is as follows:
+ * - Byte 0: Year as a 2-digit number offset from 2000 (e.g., 2025 becomes 25, then encoded as 0x25)
+ * - Byte 1: Month (in BCD)
+ * - Byte 2: Day of the month (in BCD)
+ *
+ * For example, LocalDate.of(2025, 3, 24) is encoded as:
+ * ```
+ * byteArrayOf(0x25, 0x03, 0x24)
+ * ```
+ *
+ * @return a ByteArray of length 3 containing the BCD-encoded date.
+ * @throws IllegalArgumentException if any date component is out of the valid range for BCD encoding.
+ */
+fun LocalDate.toBcdByteArray() =
+    byteArrayOf(
+        (this.year - 2000).toBcdByte(),
+        this.monthNumber.toBcdByte(),
+        this.dayOfMonth.toBcdByte()
+    )
+
+/**
+ * Creates a LocalDate from a 3-byte BCD-encoded ByteArray.
+ *
+ * The byte array must have the following structure:
+ * - Byte 0: Year offset from 2000 (in BCD), e.g. 0x25 represents 2025.
+ * - Byte 1: Month (in BCD)
+ * - Byte 2: Day of month (in BCD)
+ *
+ * For example, byteArrayOf(0x25, 0x03, 0x24) decodes to LocalDate.of(2025, 3, 24).
+ *
+ * @param bytes a ByteArray of exactly 3 bytes containing the BCD-encoded date.
+ * @return the corresponding LocalDate.
+ * @throws IllegalArgumentException if the array length is not 3 or if the BCD values are invalid.
+ */
+fun LocalDate.Companion.fromBcdByteArray(bytes: ByteArray): LocalDate {
+    require(bytes.size == 3) { "BCD date array must be exactly 3 bytes" }
+
+    val year = 2000 + Int.fromBcdByte(bytes[0])
+    val month = Int.fromBcdByte(bytes[1])
+    val day = Int.fromBcdByte(bytes[2])
+
+    return LocalDate(year = year, monthNumber = month, dayOfMonth = day)
+}
+
+/**
+ * Converts this LocalTime into a 2-byte array.
+ *
+ * The returned array contains:
+ * - Byte 0: Hour (0 to 23)
+ * - Byte 1: Minute (0 to 59)
+ *
+ * These values are stored as raw byte values (i.e. not BCD encoded).
+ *
+ * @return a ByteArray of length 2 representing this LocalTime.
+ */
+fun LocalTime.toByteArray() =
+    byteArrayOf(
+        this.hour.toByte(),
+        this.minute.toByte(),
+    )
+
+/**
+ * Constructs a LocalTime instance from a 2-byte array.
+ *
+ * The expected byte array structure is:
+ * - Byte 0: Hour (0 to 23)
+ * - Byte 1: Minute (0 to 59)
+ *
+ * Each value is read directly as a raw byte.
+ *
+ * @param bytes a ByteArray of exactly 2 bytes.
+ * @return a LocalTime corresponding to the provided hour and minute.
+ * @throws IllegalArgumentException if the byte array does not contain exactly 2 bytes.
+ */
+fun LocalTime.Companion.fromByteArray(bytes: ByteArray): LocalTime {
+    require(bytes.size == 2) { "Time byte array must be exactly 2 bytes" }
+    val hour = bytes[0].toInt()
+    val minute = bytes[1].toInt()
+    return LocalTime(hour = hour, minute = minute)
+}
+
+
+/**
+ * Serializes this Duration into a 3-byte array.
+ *
+ * The duration is decomposed into hours, minutes, and seconds, with each component stored
+ * as a single byte. The nanosecond part of the Duration is ignored.
+ *
+ * **Important:** Ensure that the hours, minutes, and seconds values do not exceed 255.
+ *
+ * For example, a duration of 12 hours, 30 minutes, and 45 seconds is converted to:
+ * ```
+ * byteArrayOf(12, 30, 45)
+ * ```
+ *
+ * @return a ByteArray of length 3 containing the hours, minutes, and seconds.
+ */
+fun Duration.toByteArray() =
+    this.toComponents { hours, minutes, seconds, _ ->
+        byteArrayOf(
+            hours.toByte(),
+            minutes.toByte(),
+            seconds.toByte(),
+        )
+    }
+
+/**
+ * Constructs a Duration from a 3-byte array.
+ *
+ * The byte array must be structured as follows:
+ * - Byte 0: Hours (0 to 255)
+ * - Byte 1: Minutes (0 to 255)
+ * - Byte 2: Seconds (0 to 255)
+ *
+ * Each byte is directly interpreted as an integer value.
+ * For instance, byteArrayOf(0x0C, 0x1E, 0x2D) corresponds to a duration of 12 hours, 30 minutes, and 45 seconds.
+ *
+ * @param bytes a ByteArray of exactly 3 bytes.
+ * @return a Duration representing the interval defined by the byte array.
+ * @throws IllegalArgumentException if the byte array length is not exactly 3.
+ */
+fun Duration.Companion.fromByteArray(bytes: ByteArray): Duration {
+    require(bytes.size == 3) { "Duration byte array must be exactly 3 bytes" }
+    val hours = bytes[0].toInt()
+    val minutes = bytes[1].toInt()
+    val seconds = bytes[2].toInt()
+    return hours.hours + minutes.minutes + seconds.seconds
+}

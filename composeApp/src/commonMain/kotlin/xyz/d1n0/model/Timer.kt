@@ -2,6 +2,8 @@ package xyz.d1n0.model
 
 import xyz.d1n0.constant.Command
 import xyz.d1n0.constant.TimerStatus
+import xyz.d1n0.helper.fromByteArray
+import xyz.d1n0.helper.toByteArray
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
@@ -18,9 +20,7 @@ data class Timer(
                 "Timer bytes must be exactly 7 bytes long, e.g. 17 0F 1E 00 00 00 00"
             }
             return Timer(
-                duration = bytes[0].toUByte().toInt().hours
-                        + bytes[1].toUByte().toInt().minutes
-                        + bytes[2].toUByte().toInt().seconds,
+                duration = Duration.fromByteArray(bytes.sliceArray(0..2)),
                 status = TimerStatus.fromValue(bytes.last().toInt(),
                 )
             )
@@ -28,12 +28,13 @@ data class Timer(
     }
 
     val bytes: ByteArray
-        get() = duration.toComponents { hours, minutes, seconds, _ ->
-            ByteArray(7) {
+        get() {
+            val durationBytes = duration.toByteArray()
+            return ByteArray(7) {
                 when (it) {
-                    0 -> hours.toByte()
-                    1 -> minutes.toByte()
-                    2 -> seconds.toByte()
+                    0 -> durationBytes[0]
+                    1 -> durationBytes[1]
+                    2 -> durationBytes[2]
                     6 -> status.value.toByte()
                     else -> 0
                 }
