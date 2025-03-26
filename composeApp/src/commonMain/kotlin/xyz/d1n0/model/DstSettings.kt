@@ -7,16 +7,16 @@ data class DstSettings(
 	val auto: Boolean,
 ) {
 	companion object {
-		fun fromByte(byte: Byte) = DstSettings(
-            enable = byte.toInt() and DstBitMask.MASK_ENABLE != 0,
-            auto = byte.toInt() and DstBitMask.MASK_AUTO != 0
+		fun fromValue(value: Int) = DstSettings(
+            enable = value and DstBitMask.MASK_ENABLE != 0,
+            auto = value and DstBitMask.MASK_AUTO != 0
         )
 	}
-	val byte: Byte
+	val value: Int
 		get() {
 			var bitMask = 0
 			if (enable) bitMask = bitMask or DstBitMask.MASK_ENABLE
 			if (auto) bitMask = bitMask or DstBitMask.MASK_AUTO
-			return bitMask.toByte()
+			return bitMask
 		}
 }

@@ -60,8 +60,8 @@ class ClocksSettings {
             Command.CLOCK.value.toByte(),
             positionA.toByte(),
             positionB.toByte(),
-            clockA.dstSettings.byte,
-            clockB.dstSettings.byte,
+            clockA.dstSettings.value.toByte(),
+            clockB.dstSettings.value.toByte(),
             *clockA.timeZone.identifierBytes,
             *clockB.timeZone.identifierBytes,
         ).let {
@@ -91,8 +91,8 @@ class ClocksSettings {
         runCatching {
             val positionA = clocksPacket[1].toInt()
             val positionB = clocksPacket[2].toInt()
-            val dstStatusA = DstSettings.fromByte(clocksPacket[3])
-            val dstStatusB = DstSettings.fromByte(clocksPacket[4])
+            val dstStatusA = DstSettings.fromValue(clocksPacket[3].toInt())
+            val dstStatusB = DstSettings.fromValue(clocksPacket[4].toInt())
             val timeZoneIdA = Int.from2BytesLittleEndian(clocksPacket.sliceArray(5..6))
             val timeZoneIdB = Int.from2BytesLittleEndian(clocksPacket.sliceArray(7..8))
 

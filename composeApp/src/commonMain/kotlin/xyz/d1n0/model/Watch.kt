@@ -36,12 +36,13 @@ class Watch(private val peripheral: Peripheral) {
 		}
 	}
 
+	val watchConfig = WatchInfo()
 	val clocks = ClocksSettings()
 	val alarms = AlarmsSettings()
 	val timer = TimerSettings()
-	val watchConfig = WatchInfo()
+	val reminders = RemindersSettings()
+//	val
 	// TODO: Stopwatch?
-	// TODO: Timer
 	// TODO: Reminder
 
 	val scope: CoroutineScope get() = peripheral.scope

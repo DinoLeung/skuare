@@ -1,6 +1,6 @@
 package xyz.d1n0.model
 
-import xyz.d1n0.constant.PreferencesBitMask
+import xyz.d1n0.constant.PreferencesBitmask
 
 data class WatchPreferences(
     var is24HourTime: Boolean,
@@ -9,21 +9,21 @@ data class WatchPreferences(
     var powerSaving: Boolean,
 ) {
     companion object {
-        fun fromByte(byte: Byte) = WatchPreferences(
-            is24HourTime = byte.toInt() and PreferencesBitMask.MILITARY_TIME != 0,
-            isToneMuted = byte.toInt() and PreferencesBitMask.MUTE_TONE != 0,
-            autoBacklight = byte.toInt() and PreferencesBitMask.AUTO_BACKLIGHT_OFF == 0,
-            powerSaving = byte.toInt() and PreferencesBitMask.POWER_SAVING_OFF == 0,
+        fun fromValue(value: Int) = WatchPreferences(
+            is24HourTime = value and PreferencesBitmask.MILITARY_TIME != 0,
+            isToneMuted = value and PreferencesBitmask.MUTE_TONE != 0,
+            autoBacklight = value and PreferencesBitmask.AUTO_BACKLIGHT_OFF == 0,
+            powerSaving = value and PreferencesBitmask.POWER_SAVING_OFF == 0,
         )
     }
 
-    val byte: Byte
+    val value: Int
         get() {
             var bitmask = 0
-            if (is24HourTime) bitmask = bitmask or PreferencesBitMask.MILITARY_TIME
-            if (isToneMuted) bitmask = bitmask or PreferencesBitMask.MUTE_TONE
-            if (!autoBacklight) bitmask = bitmask or PreferencesBitMask.AUTO_BACKLIGHT_OFF
-            if (!powerSaving) bitmask = bitmask or PreferencesBitMask.POWER_SAVING_OFF
-            return bitmask.toByte()
+            if (is24HourTime) bitmask = bitmask or PreferencesBitmask.MILITARY_TIME
+            if (isToneMuted) bitmask = bitmask or PreferencesBitmask.MUTE_TONE
+            if (!autoBacklight) bitmask = bitmask or PreferencesBitmask.AUTO_BACKLIGHT_OFF
+            if (!powerSaving) bitmask = bitmask or PreferencesBitmask.POWER_SAVING_OFF
+            return bitmask
         }
 }
