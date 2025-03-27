@@ -10,7 +10,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 0,
 		offset = 0.0,
 		dstDiff = 0.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 0.00000,
+		latitude = 0.00000
 	),
 	1 to WorldTimeZone(
 		country = "Cote d'lvoire",
@@ -19,7 +21,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 1,
 		offset = 0.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -4.02775,
+		latitude = 5.33632
 	),
 	2 to WorldTimeZone(
 		country = "United Arab Emirates",
@@ -28,7 +32,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 2,
 		offset = 4.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 54.36667,
+		latitude = 24.46667
 	),
 	3 to WorldTimeZone(
 		country = "Ghana",
@@ -37,7 +43,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 3,
 		offset = 0.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -0.19631,
+		latitude = 5.55572
 	),
 	4 to WorldTimeZone(
 		country = "Ethiopia",
@@ -46,7 +54,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 4,
 		offset = 3.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 38.74680,
+		latitude = 9.02274
 	),
 	5 to WorldTimeZone(
 		country = "Australia",
@@ -55,7 +65,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 5,
 		offset = 9.5,
 		dstDiff = 1.0,
-		dstRules = 4
+		dstRules = 4,
+		longitude = 138.59996,
+		latitude = -34.92862
 	),
 	6 to WorldTimeZone(
 		country = "Algeria",
@@ -64,7 +76,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 6,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 3.05861,
+		latitude = 36.77639
 	),
 	7 to WorldTimeZone(
 		country = "Kazakhstan",
@@ -73,7 +87,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 7,
 		offset = 5.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 76.91263,
+		latitude = 43.25506
 	),
 	8 to WorldTimeZone(
 		country = "Indonesia",
@@ -82,7 +98,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 8,
 		offset = 9.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 128.18213,
+		latitude = -3.69472
 	),
 	9 to WorldTimeZone(
 		country = "Jordan",
@@ -91,7 +109,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 9,
 		offset = 3.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 35.93250,
+		latitude = 31.95667
 	),
 	10 to WorldTimeZone(
 		country = "Netherlands",
@@ -100,7 +120,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 10,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 4.89517,
+		latitude = 52.37022
 	),
 	11 to WorldTimeZone(
 		country = "Russia",
@@ -109,7 +131,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 11,
 		offset = 12.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 177.50000,
+		latitude = 64.73333
 	),
 	12 to WorldTimeZone(
 		country = "United States",
@@ -118,7 +142,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 12,
 		offset = -9.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -149.90028,
+		latitude = 61.21806
 	),
 	13 to WorldTimeZone(
 		country = "Turkey",
@@ -127,7 +153,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 13,
 		offset = 3.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 32.85411,
+		latitude = 39.92077
 	),
 	14 to WorldTimeZone(
 		country = "Madagascar",
@@ -136,7 +164,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 14,
 		offset = 3.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 47.53161,
+		latitude = -18.91487
 	),
 	15 to WorldTimeZone(
 		country = "Turkmenistan",
@@ -145,7 +175,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 15,
 		offset = 5.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 58.39154,
+		latitude = 37.94143
 	),
 	16 to WorldTimeZone(
 		country = "Eritrea",
@@ -154,7 +186,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 16,
 		offset = 3.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 38.92617,
+		latitude = 15.33236
 	),
 	17 to WorldTimeZone(
 		country = "Kazakhstan",
@@ -163,7 +197,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 17,
 		offset = 5.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 71.43333,
+		latitude = 51.16667
 	),
 	18 to WorldTimeZone(
 		country = "Paraguay",
@@ -172,7 +208,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 18,
 		offset = -4.0,
 		dstDiff = 1.0,
-		dstRules = 9
+		dstRules = 9,
+		longitude = -57.63510,
+		latitude = -25.28220
 	),
 	19 to WorldTimeZone(
 		country = "Greece",
@@ -181,7 +219,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 19,
 		offset = 2.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 23.72931,
+		latitude = 37.98372
 	),
 	20 to WorldTimeZone(
 		country = "United States",
@@ -190,7 +230,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 20,
 		offset = -5.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -84.38798,
+		latitude = 33.74900
 	),
 	21 to WorldTimeZone(
 		country = "New Zealand",
@@ -199,7 +241,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 21,
 		offset = 12.0,
 		dstDiff = 1.0,
-		dstRules = 5
+		dstRules = 5,
+		longitude = 174.76333,
+		latitude = -36.84846
 	),
 	22 to WorldTimeZone(
 		country = "United States",
@@ -208,7 +252,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 22,
 		offset = -6.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -97.74306,
+		latitude = 30.26715
 	),
 	23 to WorldTimeZone(
 		country = "Iraq",
@@ -217,7 +263,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 23,
 		offset = 3.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 44.42200,
+		latitude = 33.32500
 	),
 	24 to WorldTimeZone(
 		country = "Azerbaijan",
@@ -226,7 +274,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 24,
 		offset = 4.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 49.86762,
+		latitude = 40.43495
 	),
 	25 to WorldTimeZone(
 		country = "United States",
@@ -235,7 +285,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 25,
 		offset = -5.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -76.61219,
+		latitude = 39.29038
 	),
 	26 to WorldTimeZone(
 		country = "Mali",
@@ -244,7 +296,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 26,
 		offset = 0.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -8.00000,
+		latitude = 12.65000
 	),
 	27 to WorldTimeZone(
 		country = "India",
@@ -253,7 +307,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 27,
 		offset = 5.5,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 77.59456,
+		latitude = 12.97160
 	),
 	28 to WorldTimeZone(
 		country = "Thailand",
@@ -262,7 +318,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 28,
 		offset = 7.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 100.47623,
+		latitude = 13.72342
 	),
 	29 to WorldTimeZone(
 		country = "Central African Republic",
@@ -271,7 +329,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 29,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 18.55598,
+		latitude = 4.36170
 	),
 	30 to WorldTimeZone(
 		country = "Spain",
@@ -280,7 +340,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 30,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 2.17340,
+		latitude = 41.38506
 	),
 	31 to WorldTimeZone(
 		country = "Italy",
@@ -289,7 +351,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 31,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 16.87187,
+		latitude = 41.11714
 	),
 	32 to WorldTimeZone(
 		country = "Guadeloupe",
@@ -298,7 +362,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 32,
 		offset = -4.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -61.72566,
+		latitude = 15.99879
 	),
 	33 to WorldTimeZone(
 		country = "China",
@@ -307,7 +373,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 33,
 		offset = 8.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 116.40753,
+		latitude = 39.90403
 	),
 	34 to WorldTimeZone(
 		country = "Lebanon",
@@ -316,7 +384,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 34,
 		offset = 2.0,
 		dstDiff = 1.0,
-		dstRules = 12
+		dstRules = 12,
+		longitude = 35.49548,
+		latitude = 33.88863
 	),
 	35 to WorldTimeZone(
 		country = "Serbia",
@@ -325,7 +395,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 35,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 20.46222,
+		latitude = 44.82056
 	),
 	36 to WorldTimeZone(
 		country = "Belize",
@@ -334,7 +406,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 36,
 		offset = -6.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -88.18665,
+		latitude = 17.49771
 	),
 	37 to WorldTimeZone(
 		country = "Germany",
@@ -343,7 +417,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 37,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 13.40495,
+		latitude = 52.52001
 	),
 	38 to WorldTimeZone(
 		country = "Switzerland",
@@ -352,7 +428,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 38,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 7.44461,
+		latitude = 46.94792
 	),
 	39 to WorldTimeZone(
 		country = "Kyegyzstan",
@@ -361,7 +439,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 39,
 		offset = 6.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 74.58788,
+		latitude = 42.87002
 	),
 	40 to WorldTimeZone(
 		country = "Guinea Bissau",
@@ -370,7 +450,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 40,
 		offset = 0.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -15.60000,
+		latitude = 11.86667
 	),
 	41 to WorldTimeZone(
 		country = "Colombia",
@@ -379,7 +461,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 41,
 		offset = -5.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -74.07583,
+		latitude = 4.59806
 	),
 	42 to WorldTimeZone(
 		country = "Italy",
@@ -388,7 +472,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 42,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 11.34262,
+		latitude = 44.49489
 	),
 	43 to WorldTimeZone(
 		country = "United States",
@@ -397,7 +483,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 43,
 		offset = -5.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -71.05977,
+		latitude = 42.35843
 	),
 	44 to WorldTimeZone(
 		country = "Brazil",
@@ -406,7 +494,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 44,
 		offset = -3.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -47.89775,
+		latitude = -15.79211
 	),
 	45 to WorldTimeZone(
 		country = "Slovakia",
@@ -415,7 +505,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 45,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 17.10714,
+		latitude = 48.14589
 	),
 	46 to WorldTimeZone(
 		country = "Barbados",
@@ -424,7 +516,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 46,
 		offset = -4.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -59.61335,
+		latitude = 13.09894
 	),
 	47 to WorldTimeZone(
 		country = "Australia",
@@ -433,7 +527,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 47,
 		offset = 10.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 153.02345,
+		latitude = -27.47101
 	),
 	48 to WorldTimeZone(
 		country = "Belgium",
@@ -442,7 +538,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 48,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 4.35171,
+		latitude = 50.85034
 	),
 	49 to WorldTimeZone(
 		country = "Romania",
@@ -451,7 +549,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 49,
 		offset = 2.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 26.10389,
+		latitude = 44.43250
 	),
 	50 to WorldTimeZone(
 		country = "Hungary",
@@ -460,7 +560,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 50,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 19.04023,
+		latitude = 47.49791
 	),
 	51 to WorldTimeZone(
 		country = "Argentina",
@@ -469,7 +571,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 51,
 		offset = -3.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -58.38159,
+		latitude = -34.60372
 	),
 	52 to WorldTimeZone(
 		country = "Egypt",
@@ -478,7 +582,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 52,
 		offset = 2.0,
 		dstDiff = 1.0,
-		dstRules = 22
+		dstRules = 22,
+		longitude = 31.23571,
+		latitude = 30.04442
 	),
 	53 to WorldTimeZone(
 		country = "Canada",
@@ -487,7 +593,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 53,
 		offset = -7.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -114.05810,
+		latitude = 51.04532
 	),
 	54 to WorldTimeZone(
 		country = "Australia",
@@ -496,7 +604,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 54,
 		offset = 10.0,
 		dstDiff = 1.0,
-		dstRules = 4
+		dstRules = 4,
+		longitude = 149.12868,
+		latitude = -35.28200
 	),
 	55 to WorldTimeZone(
 		country = "South Africa",
@@ -505,7 +615,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 55,
 		offset = 2.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 18.42406,
+		latitude = -33.92487
 	),
 	56 to WorldTimeZone(
 		country = "Venezuela",
@@ -514,7 +626,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 56,
 		offset = -4.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -66.90206,
+		latitude = 10.49102
 	),
 	57 to WorldTimeZone(
 		country = "Wales",
@@ -523,7 +637,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 57,
 		offset = 0.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = -3.17909,
+		latitude = 51.48158
 	),
 	58 to WorldTimeZone(
 		country = "Morocco",
@@ -532,7 +648,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 58,
 		offset = 0.0,
 		dstDiff = 1.0,
-		dstRules = 15
+		dstRules = 15,
+		longitude = -7.58333,
+		latitude = 33.53333
 	),
 	59 to WorldTimeZone(
 		country = "Italy",
@@ -541,7 +659,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 59,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 16.58765,
+		latitude = 38.90979
 	),
 	60 to WorldTimeZone(
 		country = "French Guiana",
@@ -550,7 +670,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 60,
 		offset = -3.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -52.32690,
+		latitude = 4.92270
 	),
 	61 to WorldTimeZone(
 		country = "United States",
@@ -559,7 +681,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 61,
 		offset = -5.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -80.84313,
+		latitude = 35.22709
 	),
 	62 to WorldTimeZone(
 		country = "US Virgin Islands",
@@ -568,7 +692,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 62,
 		offset = -4.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -64.93070,
+		latitude = 18.34190
 	),
 	63 to WorldTimeZone(
 		country = "New Zealand",
@@ -577,7 +703,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 63,
 		offset = 12.8,
 		dstDiff = 1.0,
-		dstRules = 23
+		dstRules = 23,
+		longitude = -176.55934,
+		latitude = -43.95593
 	),
 	64 to WorldTimeZone(
 		country = "Russia",
@@ -586,7 +714,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 64,
 		offset = 5.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 61.42668,
+		latitude = 55.17453
 	),
 	65 to WorldTimeZone(
 		country = "India",
@@ -595,7 +725,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 65,
 		offset = 5.5,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 80.25082,
+		latitude = 13.05241
 	),
 	66 to WorldTimeZone(
 		country = "United States",
@@ -604,7 +736,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 66,
 		offset = -6.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -87.62980,
+		latitude = 41.87811
 	),
 	67 to WorldTimeZone(
 		country = "Mexico",
@@ -613,7 +747,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 67,
 		offset = -6.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -106.08869,
+		latitude = 28.63551
 	),
 	68 to WorldTimeZone(
 		country = "Moldova",
@@ -622,7 +758,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 68,
 		offset = 2.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 28.84155,
+		latitude = 47.02686
 	),
 	69 to WorldTimeZone(
 		country = "Russia",
@@ -631,7 +769,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 69,
 		offset = 9.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 113.50000,
+		latitude = 52.03333
 	),
 	70 to WorldTimeZone(
 		country = "United States",
@@ -640,7 +780,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 70,
 		offset = -5.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -81.69541,
+		latitude = 41.49950
 	),
 	71 to WorldTimeZone(
 		country = "Sri Lanka",
@@ -649,7 +791,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 71,
 		offset = 5.5,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 79.86124,
+		latitude = 6.92708
 	),
 	72 to WorldTimeZone(
 		country = "United States",
@@ -658,7 +802,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 72,
 		offset = -5.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -82.99879,
+		latitude = 39.96118
 	),
 	73 to WorldTimeZone(
 		country = "Guinea",
@@ -667,7 +813,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 73,
 		offset = 0.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -13.67847,
+		latitude = 9.53703
 	),
 	74 to WorldTimeZone(
 		country = "Denmark",
@@ -676,7 +824,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 74,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 12.56834,
+		latitude = 55.67610
 	),
 	75 to WorldTimeZone(
 		country = "Ireland",
@@ -685,7 +835,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 75,
 		offset = 0.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = -8.48632,
+		latitude = 51.89689
 	),
 	76 to WorldTimeZone(
 		country = "Italy",
@@ -694,7 +846,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 76,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 17.12711,
+		latitude = 39.08079
 	),
 	77 to WorldTimeZone(
 		country = "Senegal",
@@ -703,7 +857,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 77,
 		offset = 0.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -17.36603,
+		latitude = 14.76450
 	),
 	78 to WorldTimeZone(
 		country = "United States",
@@ -712,7 +868,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 78,
 		offset = -6.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -96.80045,
+		latitude = 32.78014
 	),
 	79 to WorldTimeZone(
 		country = "Syria",
@@ -721,7 +879,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 79,
 		offset = 3.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 36.30640,
+		latitude = 33.51110
 	),
 	80 to WorldTimeZone(
 		country = "Tanzania",
@@ -730,7 +890,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 80,
 		offset = 3.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 39.26966,
+		latitude = -6.82292
 	),
 	81 to WorldTimeZone(
 		country = "Australia",
@@ -739,7 +901,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 81,
 		offset = 9.5,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 130.84178,
+		latitude = -12.46283
 	),
 	82 to WorldTimeZone(
 		country = "India",
@@ -748,7 +912,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 82,
 		offset = 5.5,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 77.22496,
+		latitude = 28.63531
 	),
 	83 to WorldTimeZone(
 		country = "Indonesia",
@@ -757,7 +923,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 83,
 		offset = 8.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 115.22210,
+		latitude = -8.65629
 	),
 	84 to WorldTimeZone(
 		country = "United States",
@@ -766,7 +934,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 84,
 		offset = -7.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -104.98472,
+		latitude = 39.73757
 	),
 	85 to WorldTimeZone(
 		country = "United States",
@@ -775,7 +945,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 85,
 		offset = -5.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -83.05674,
+		latitude = 42.34539
 	),
 	86 to WorldTimeZone(
 		country = "Bangladesh",
@@ -784,7 +956,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 86,
 		offset = 6.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 90.40714,
+		latitude = 23.70992
 	),
 	87 to WorldTimeZone(
 		country = "UK",
@@ -793,7 +967,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 87,
 		offset = 6.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 72.42286,
+		latitude = -7.31950
 	),
 	88 to WorldTimeZone(
 		country = "Djibouti",
@@ -802,7 +978,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 88,
 		offset = 3.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 43.14500,
+		latitude = 11.58800
 	),
 	89 to WorldTimeZone(
 		country = "Qatar",
@@ -811,7 +989,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 89,
 		offset = 3.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 51.52248,
+		latitude = 25.28028
 	),
 	90 to WorldTimeZone(
 		country = "Cameroon",
@@ -820,7 +1000,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 90,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 9.70637,
+		latitude = 4.04749
 	),
 	91 to WorldTimeZone(
 		country = "United Arab Emirates",
@@ -829,7 +1011,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 91,
 		offset = 4.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 55.30749,
+		latitude = 25.27114
 	),
 	92 to WorldTimeZone(
 		country = "Ireland",
@@ -838,7 +1022,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 92,
 		offset = 0.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = -6.26031,
+		latitude = 53.34981
 	),
 	93 to WorldTimeZone(
 		country = "Tajikistan",
@@ -847,7 +1033,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 93,
 		offset = 5.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 68.78000,
+		latitude = 38.53667
 	),
 	94 to WorldTimeZone(
 		country = "Chile",
@@ -856,7 +1044,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 94,
 		offset = -6.0,
 		dstDiff = 1.0,
-		dstRules = 28
+		dstRules = 28,
+		longitude = -109.41914,
+		latitude = -27.14817
 	),
 	95 to WorldTimeZone(
 		country = "Scotland",
@@ -865,7 +1055,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 95,
 		offset = 0.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = -3.18827,
+		latitude = 55.95325
 	),
 	96 to WorldTimeZone(
 		country = "Canada",
@@ -874,7 +1066,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 96,
 		offset = -7.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -113.49093,
+		latitude = 53.54439
 	),
 	97 to WorldTimeZone(
 		country = "United States",
@@ -883,7 +1077,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 97,
 		offset = -7.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -106.49681,
+		latitude = 31.76996
 	),
 	98 to WorldTimeZone(
 		country = "Brazil",
@@ -892,7 +1088,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 98,
 		offset = -2.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -32.41202,
+		latitude = -3.84660
 	),
 	99 to WorldTimeZone(
 		country = "Italy",
@@ -901,7 +1099,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 99,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 11.24800,
+		latitude = 43.77103
 	),
 	100 to WorldTimeZone(
 		country = "Martinique",
@@ -910,7 +1110,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 100,
 		offset = -4.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -61.07256,
+		latitude = 14.60937
 	),
 	101 to WorldTimeZone(
 		country = "Germany",
@@ -919,7 +1121,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 101,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 8.68213,
+		latitude = 50.11092
 	),
 	102 to WorldTimeZone(
 		country = "Sierra Leone",
@@ -928,7 +1132,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 102,
 		offset = 0.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -13.16912,
+		latitude = 8.44183
 	),
 	103 to WorldTimeZone(
 		country = "Botswana",
@@ -937,7 +1143,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 103,
 		offset = 2.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 25.90874,
+		latitude = -24.65411
 	),
 	104 to WorldTimeZone(
 		country = "Ecuador",
@@ -946,7 +1154,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 104,
 		offset = -6.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -90.98207,
+		latitude = -0.82928
 	),
 	105 to WorldTimeZone(
 		country = "Switzerland",
@@ -955,7 +1165,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 105,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 6.14230,
+		latitude = 46.19839
 	),
 	106 to WorldTimeZone(
 		country = "Italy",
@@ -964,7 +1176,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 106,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 8.94626,
+		latitude = 44.40565
 	),
 	107 to WorldTimeZone(
 		country = "Guyana",
@@ -973,7 +1187,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 107,
 		offset = -4.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -58.15483,
+		latitude = 6.80461
 	),
 	108 to WorldTimeZone(
 		country = "South Georgia",
@@ -982,7 +1198,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 108,
 		offset = -2.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -36.50800,
+		latitude = -54.28150
 	),
 	109 to WorldTimeZone(
 		country = "United States",
@@ -991,7 +1209,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 109,
 		offset = 10.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 144.79373,
+		latitude = 13.44430
 	),
 	110 to WorldTimeZone(
 		country = "China",
@@ -1000,7 +1220,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 110,
 		offset = 8.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 113.26444,
+		latitude = 23.12916
 	),
 	111 to WorldTimeZone(
 		country = "Guatemala",
@@ -1009,7 +1231,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 111,
 		offset = -6.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -90.53282,
+		latitude = 14.62480
 	),
 	112 to WorldTimeZone(
 		country = "China",
@@ -1018,7 +1242,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 112,
 		offset = 8.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 110.32886,
+		latitude = 20.03079
 	),
 	113 to WorldTimeZone(
 		country = "Canada",
@@ -1027,7 +1253,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 113,
 		offset = -4.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -63.57501,
+		latitude = 44.64831
 	),
 	114 to WorldTimeZone(
 		country = "Germany",
@@ -1036,7 +1264,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 114,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 9.99368,
+		latitude = 53.55108
 	),
 	115 to WorldTimeZone(
 		country = "Vietnam",
@@ -1045,7 +1275,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 115,
 		offset = 7.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 105.85000,
+		latitude = 21.03333
 	),
 	116 to WorldTimeZone(
 		country = "Zimbabwe",
@@ -1054,7 +1286,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 116,
 		offset = 2.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 31.05396,
+		latitude = -17.82922
 	),
 	117 to WorldTimeZone(
 		country = "Cuba",
@@ -1063,7 +1297,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 117,
 		offset = -5.0,
 		dstDiff = 1.0,
-		dstRules = 21
+		dstRules = 21,
+		longitude = -82.38856,
+		latitude = 23.11680
 	),
 	118 to WorldTimeZone(
 		country = "Finland",
@@ -1072,7 +1308,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 118,
 		offset = 2.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 24.94102,
+		latitude = 60.17332
 	),
 	119 to WorldTimeZone(
 		country = "United States",
@@ -1081,7 +1319,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 119,
 		offset = -10.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -155.08234,
+		latitude = 19.71419
 	),
 	120 to WorldTimeZone(
 		country = "Vietnam",
@@ -1090,7 +1330,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 120,
 		offset = 7.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 106.62966,
+		latitude = 10.82310
 	),
 	121 to WorldTimeZone(
 		country = "Australia",
@@ -1099,7 +1341,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 121,
 		offset = 10.0,
 		dstDiff = 1.0,
-		dstRules = 4
+		dstRules = 4,
+		longitude = 147.32381,
+		latitude = -42.88190
 	),
 	122 to WorldTimeZone(
 		country = "Hong Kong",
@@ -1108,7 +1352,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 122,
 		offset = 8.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 114.16938,
+		latitude = 22.28040
 	),
 	123 to WorldTimeZone(
 		country = "United States",
@@ -1117,7 +1363,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 123,
 		offset = -10.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -157.85833,
+		latitude = 21.30694
 	),
 	124 to WorldTimeZone(
 		country = "United States",
@@ -1126,7 +1374,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 124,
 		offset = -6.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -95.36939,
+		latitude = 29.76019
 	),
 	125 to WorldTimeZone(
 		country = "Mongolia",
@@ -1135,7 +1385,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 125,
 		offset = 7.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 91.64056,
+		latitude = 48.00417
 	),
 	126 to WorldTimeZone(
 		country = "India",
@@ -1144,7 +1396,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 126,
 		offset = 5.5,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 78.48667,
+		latitude = 17.38504
 	),
 	127 to WorldTimeZone(
 		country = "United States",
@@ -1153,7 +1407,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 127,
 		offset = -5.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -86.15807,
+		latitude = 39.76840
 	),
 	128 to WorldTimeZone(
 		country = "Russia",
@@ -1162,7 +1418,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 128,
 		offset = 8.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 104.30000,
+		latitude = 52.28333
 	),
 	129 to WorldTimeZone(
 		country = "Pakistan",
@@ -1171,7 +1429,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 129,
 		offset = 5.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 73.05729,
+		latitude = 33.71447
 	),
 	130 to WorldTimeZone(
 		country = "Turkey",
@@ -1180,7 +1440,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 130,
 		offset = 3.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 28.97541,
+		latitude = 41.00933
 	),
 	131 to WorldTimeZone(
 		country = "Russia",
@@ -1189,7 +1451,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 131,
 		offset = 4.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 53.18333,
+		latitude = 56.83333
 	),
 	132 to WorldTimeZone(
 		country = "Indonesia",
@@ -1198,7 +1462,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 132,
 		offset = 7.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 106.84560,
+		latitude = -6.20876
 	),
 	133 to WorldTimeZone(
 		country = "Saudi Arabia",
@@ -1207,7 +1473,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 133,
 		offset = 3.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 39.17278,
+		latitude = 21.54333
 	),
 	134 to WorldTimeZone(
 		country = "",
@@ -1216,7 +1484,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 134,
 		offset = 2.0,
 		dstDiff = 1.0,
-		dstRules = 42
+		dstRules = 42,
+		longitude = 35.21371,
+		latitude = 31.76832
 	),
 	135 to WorldTimeZone(
 		country = "South Africa",
@@ -1225,7 +1495,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 135,
 		offset = 2.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 28.04731,
+		latitude = -26.20410
 	),
 	136 to WorldTimeZone(
 		country = "Afghanistan",
@@ -1234,7 +1506,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 136,
 		offset = 4.5,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 69.17170,
+		latitude = 34.52846
 	),
 	137 to WorldTimeZone(
 		country = "Russia",
@@ -1243,7 +1517,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 137,
 		offset = 2.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 20.51667,
+		latitude = 54.71667
 	),
 	138 to WorldTimeZone(
 		country = "Uganda",
@@ -1252,7 +1528,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 138,
 		offset = 3.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 32.58111,
+		latitude = 0.31361
 	),
 	139 to WorldTimeZone(
 		country = "Pakistan",
@@ -1261,7 +1539,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 139,
 		offset = 5.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 67.00994,
+		latitude = 24.86146
 	),
 	140 to WorldTimeZone(
 		country = "Nepal",
@@ -1270,7 +1550,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 140,
 		offset = 5.8,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 85.33333,
+		latitude = 27.70000
 	),
 	141 to WorldTimeZone(
 		country = "Russia",
@@ -1279,7 +1561,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 141,
 		offset = 10.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 135.08959,
+		latitude = 48.48692
 	),
 	142 to WorldTimeZone(
 		country = "Ukraine",
@@ -1288,7 +1572,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 142,
 		offset = 2.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 36.23038,
+		latitude = 49.99350
 	),
 	143 to WorldTimeZone(
 		country = "Sudan",
@@ -1297,7 +1583,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 143,
 		offset = 2.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 32.53224,
+		latitude = 15.55010
 	),
 	144 to WorldTimeZone(
 		country = "Canada",
@@ -1306,7 +1594,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 144,
 		offset = -5.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -76.48595,
+		latitude = 44.23117
 	),
 	145 to WorldTimeZone(
 		country = "Jamaica",
@@ -1315,7 +1605,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 145,
 		offset = -5.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -76.79214,
+		latitude = 17.99260
 	),
 	146 to WorldTimeZone(
 		country = "D.R. Congo",
@@ -1324,7 +1616,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 146,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 15.31389,
+		latitude = -4.33167
 	),
 	147 to WorldTimeZone(
 		country = "Kiribati",
@@ -1333,7 +1627,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 147,
 		offset = 14.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -157.35630,
+		latitude = 1.81694
 	),
 	148 to WorldTimeZone(
 		country = "India",
@@ -1342,7 +1638,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 148,
 		offset = 5.5,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 88.36389,
+		latitude = 22.57265
 	),
 	149 to WorldTimeZone(
 		country = "Russia",
@@ -1351,7 +1649,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 149,
 		offset = 7.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 92.92568,
+		latitude = 55.99925
 	),
 	150 to WorldTimeZone(
 		country = "Malaysia",
@@ -1360,7 +1660,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 150,
 		offset = 8.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 101.68685,
+		latitude = 3.13900
 	),
 	151 to WorldTimeZone(
 		country = "Kuwait",
@@ -1369,7 +1671,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 151,
 		offset = 3.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 47.97833,
+		latitude = 29.36972
 	),
 	152 to WorldTimeZone(
 		country = "Ukraine",
@@ -1378,7 +1682,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 152,
 		offset = 2.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 30.52340,
+		latitude = 50.45010
 	),
 	153 to WorldTimeZone(
 		country = "Bolivia",
@@ -1387,7 +1693,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 153,
 		offset = -4.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -68.14625,
+		latitude = -16.49901
 	),
 	154 to WorldTimeZone(
 		country = "Nigeria",
@@ -1396,7 +1704,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 154,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 3.41798,
+		latitude = 6.44116
 	),
 	155 to WorldTimeZone(
 		country = "Canary Islands - Spain",
@@ -1405,7 +1715,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 155,
 		offset = 0.0,
 		dstDiff = 1.0,
-		dstRules = 14
+		dstRules = 14,
+		longitude = -15.43606,
+		latitude = 28.13104
 	),
 	156 to WorldTimeZone(
 		country = "United States",
@@ -1414,7 +1726,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 156,
 		offset = -8.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -115.15912,
+		latitude = 36.12822
 	),
 	157 to WorldTimeZone(
 		country = "Peru",
@@ -1423,7 +1737,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 157,
 		offset = -5.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -77.04279,
+		latitude = -12.04637
 	),
 	158 to WorldTimeZone(
 		country = "Portugal",
@@ -1432,7 +1748,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 158,
 		offset = 0.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = -9.15079,
+		latitude = 38.72654
 	),
 	159 to WorldTimeZone(
 		country = "Slivenia",
@@ -1441,7 +1759,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 159,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 14.50807,
+		latitude = 46.05645
 	),
 	160 to WorldTimeZone(
 		country = "UK",
@@ -1450,7 +1770,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 160,
 		offset = 0.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = -0.12549,
+		latitude = 51.50852
 	),
 	161 to WorldTimeZone(
 		country = "United States",
@@ -1459,7 +1781,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 161,
 		offset = -8.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -118.24368,
+		latitude = 34.05223
 	),
 	162 to WorldTimeZone(
 		country = "United States",
@@ -1468,7 +1792,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 162,
 		offset = -5.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -85.75846,
+		latitude = 38.25266
 	),
 	163 to WorldTimeZone(
 		country = "Angola",
@@ -1477,7 +1803,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 163,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 13.23444,
+		latitude = -8.83833
 	),
 	164 to WorldTimeZone(
 		country = "D.R. Congo",
@@ -1486,7 +1814,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 164,
 		offset = 2.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 27.47955,
+		latitude = -11.66468
 	),
 	165 to WorldTimeZone(
 		country = "Zambia",
@@ -1495,7 +1825,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 165,
 		offset = 2.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 28.28717,
+		latitude = -15.40819
 	),
 	166 to WorldTimeZone(
 		country = "Luxembourg",
@@ -1504,7 +1836,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 166,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 6.13148,
+		latitude = 49.60791
 	),
 	167 to WorldTimeZone(
 		country = "Ukraine",
@@ -1513,7 +1847,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 167,
 		offset = 2.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 24.02972,
+		latitude = 49.83968
 	),
 	168 to WorldTimeZone(
 		country = "China",
@@ -1522,7 +1858,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 168,
 		offset = 8.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 113.54387,
+		latitude = 22.19874
 	),
 	169 to WorldTimeZone(
 		country = "Spain",
@@ -1531,7 +1869,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 169,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = -3.70379,
+		latitude = 40.41678
 	),
 	170 to WorldTimeZone(
 		country = "Russia",
@@ -1540,7 +1880,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 170,
 		offset = 11.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 150.80000,
+		latitude = 59.55000
 	),
 	171 to WorldTimeZone(
 		country = "Equaorial Guinea",
@@ -1549,7 +1891,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 171,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 8.78333,
+		latitude = 3.75000
 	),
 	172 to WorldTimeZone(
 		country = "Maldives",
@@ -1558,7 +1902,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 172,
 		offset = 5.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 73.51091,
+		latitude = 4.17420
 	),
 	173 to WorldTimeZone(
 		country = "France",
@@ -1567,7 +1913,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 173,
 		offset = 3.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 45.22780,
+		latitude = -12.78060
 	),
 	174 to WorldTimeZone(
 		country = "Nicaragua",
@@ -1576,7 +1924,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 174,
 		offset = -6.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -86.25139,
+		latitude = 12.13639
 	),
 	175 to WorldTimeZone(
 		country = "Bahrain",
@@ -1585,7 +1935,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 175,
 		offset = 3.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 50.58333,
+		latitude = 26.21667
 	),
 	176 to WorldTimeZone(
 		country = "Philippines",
@@ -1594,7 +1946,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 176,
 		offset = 8.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 120.98422,
+		latitude = 14.59951
 	),
 	177 to WorldTimeZone(
 		country = "Mozambique",
@@ -1603,7 +1957,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 177,
 		offset = 2.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 32.58333,
+		latitude = -25.96667
 	),
 	178 to WorldTimeZone(
 		country = "Saint Martin",
@@ -1612,7 +1968,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 178,
 		offset = -4.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -63.08368,
+		latitude = 18.06960
 	),
 	179 to WorldTimeZone(
 		country = "Mexico",
@@ -1621,7 +1979,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 179,
 		offset = -7.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -106.41528,
+		latitude = 23.23611
 	),
 	180 to WorldTimeZone(
 		country = "Saudi Arabia",
@@ -1630,7 +1990,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 180,
 		offset = 3.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 39.81667,
+		latitude = 21.41667
 	),
 	181 to WorldTimeZone(
 		country = "Australia",
@@ -1639,7 +2001,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 181,
 		offset = 10.0,
 		dstDiff = 1.0,
-		dstRules = 4
+		dstRules = 4,
+		longitude = 144.96328,
+		latitude = -37.81411
 	),
 	182 to WorldTimeZone(
 		country = "United States",
@@ -1648,7 +2012,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 182,
 		offset = -6.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -90.04898,
+		latitude = 35.14953
 	),
 	183 to WorldTimeZone(
 		country = "Italy",
@@ -1657,7 +2023,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 183,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 15.55402,
+		latitude = 38.19381
 	),
 	184 to WorldTimeZone(
 		country = "Mexico",
@@ -1666,7 +2034,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 184,
 		offset = -6.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -99.13321,
+		latitude = 19.43261
 	),
 	185 to WorldTimeZone(
 		country = "United States",
@@ -1675,7 +2045,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 185,
 		offset = -5.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -80.22644,
+		latitude = 25.78897
 	),
 	186 to WorldTimeZone(
 		country = "United States",
@@ -1684,7 +2056,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 186,
 		offset = -11.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -177.37634,
+		latitude = 28.20884
 	),
 	187 to WorldTimeZone(
 		country = "Italy",
@@ -1693,7 +2067,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 187,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 9.18652,
+		latitude = 45.46545
 	),
 	188 to WorldTimeZone(
 		country = "United States",
@@ -1702,7 +2078,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 188,
 		offset = -6.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -87.90647,
+		latitude = 43.03890
 	),
 	189 to WorldTimeZone(
 		country = "Belarus",
@@ -1711,7 +2089,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 189,
 		offset = 3.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 27.56667,
+		latitude = 53.90000
 	),
 	190 to WorldTimeZone(
 		country = "Somalia",
@@ -1720,7 +2100,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 190,
 		offset = 3.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 45.34597,
+		latitude = 2.04603
 	),
 	191 to WorldTimeZone(
 		country = "Liberia",
@@ -1729,7 +2111,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 191,
 		offset = 0.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -10.79716,
+		latitude = 6.30077
 	),
 	192 to WorldTimeZone(
 		country = "Uruguay",
@@ -1738,7 +2122,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 192,
 		offset = -3.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -56.18194,
+		latitude = -34.88361
 	),
 	193 to WorldTimeZone(
 		country = "Canada",
@@ -1747,7 +2133,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 193,
 		offset = -5.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -73.56532,
+		latitude = 45.50811
 	),
 	194 to WorldTimeZone(
 		country = "Russia",
@@ -1756,7 +2144,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 194,
 		offset = 3.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 37.61730,
+		latitude = 55.75583
 	),
 	195 to WorldTimeZone(
 		country = "India",
@@ -1765,7 +2155,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 195,
 		offset = 5.5,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 72.87766,
+		latitude = 19.07598
 	),
 	196 to WorldTimeZone(
 		country = "Germany",
@@ -1774,7 +2166,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 196,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 11.58198,
+		latitude = 48.13513
 	),
 	197 to WorldTimeZone(
 		country = "Oman",
@@ -1783,7 +2177,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 197,
 		offset = 4.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 58.54000,
+		latitude = 23.61000
 	),
 	198 to WorldTimeZone(
 		country = "Chad",
@@ -1792,7 +2188,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 198,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 15.05281,
+		latitude = 12.11166
 	),
 	199 to WorldTimeZone(
 		country = "Kenya",
@@ -1801,7 +2199,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 199,
 		offset = 3.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 36.82195,
+		latitude = -1.29207
 	),
 	200 to WorldTimeZone(
 		country = "Italy",
@@ -1810,7 +2210,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 200,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 14.26812,
+		latitude = 40.85177
 	),
 	201 to WorldTimeZone(
 		country = "Switzerland",
@@ -1819,7 +2221,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 201,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 7.99579,
+		latitude = 46.32728
 	),
 	202 to WorldTimeZone(
 		country = "United States",
@@ -1828,7 +2232,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 202,
 		offset = -5.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -74.00597,
+		latitude = 40.71435
 	),
 	203 to WorldTimeZone(
 		country = "Niger",
@@ -1837,7 +2243,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 203,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 2.11252,
+		latitude = 13.51267
 	),
 	204 to WorldTimeZone(
 		country = "Mauritania",
@@ -1846,7 +2254,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 204,
 		offset = 0.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -15.97842,
+		latitude = 18.08406
 	),
 	205 to WorldTimeZone(
 		country = "New Caledonia",
@@ -1855,7 +2265,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 205,
 		offset = 11.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 166.45800,
+		latitude = -22.27580
 	),
 	206 to WorldTimeZone(
 		country = "Russia",
@@ -1864,7 +2276,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 206,
 		offset = 7.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 87.11667,
+		latitude = 53.75000
 	),
 	207 to WorldTimeZone(
 		country = "Russia",
@@ -1873,7 +2287,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 207,
 		offset = 7.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 82.93333,
+		latitude = 55.01667
 	),
 	208 to WorldTimeZone(
 		country = "Tonga",
@@ -1882,7 +2298,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 208,
 		offset = 13.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -175.20000,
+		latitude = -21.13333
 	),
 	209 to WorldTimeZone(
 		country = "Greenland",
@@ -1891,7 +2309,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 209,
 		offset = -2.0,
 		dstDiff = 1.0,
-		dstRules = 31
+		dstRules = 31,
+		longitude = -51.72141,
+		latitude = 64.18362
 	),
 	210 to WorldTimeZone(
 		country = "Russia",
@@ -1900,7 +2320,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 210,
 		offset = 6.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 73.38333,
+		latitude = 54.96667
 	),
 	211 to WorldTimeZone(
 		country = "Japan",
@@ -1909,7 +2331,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 211,
 		offset = 9.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 135.50217,
+		latitude = 34.69374
 	),
 	212 to WorldTimeZone(
 		country = "Norway",
@@ -1918,7 +2342,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 212,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 10.75225,
+		latitude = 59.91387
 	),
 	213 to WorldTimeZone(
 		country = "Canada",
@@ -1927,7 +2353,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 213,
 		offset = -5.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -75.69324,
+		latitude = 45.41463
 	),
 	214 to WorldTimeZone(
 		country = "Burkina Faso",
@@ -1936,7 +2364,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 214,
 		offset = 0.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -1.53386,
+		latitude = 12.36464
 	),
 	215 to WorldTimeZone(
 		country = "American Samoa",
@@ -1945,7 +2375,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 215,
 		offset = -11.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -170.70419,
+		latitude = -14.27555
 	),
 	216 to WorldTimeZone(
 		country = "Italy",
@@ -1954,7 +2386,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 216,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 13.36127,
+		latitude = 38.11569
 	),
 	217 to WorldTimeZone(
 		country = "Panama",
@@ -1963,7 +2397,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 217,
 		offset = -5.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -79.51879,
+		latitude = 8.99427
 	),
 	218 to WorldTimeZone(
 		country = "Tahiti - French Polynesia",
@@ -1972,7 +2408,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 218,
 		offset = -10.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -149.55865,
+		latitude = -17.53465
 	),
 	219 to WorldTimeZone(
 		country = "Suriname",
@@ -1981,7 +2419,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 219,
 		offset = -3.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -55.16788,
+		latitude = 5.82320
 	),
 	220 to WorldTimeZone(
 		country = "France",
@@ -1990,7 +2430,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 220,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 2.35222,
+		latitude = 48.85661
 	),
 	221 to WorldTimeZone(
 		country = "Russia",
@@ -1999,7 +2441,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 221,
 		offset = 5.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 56.24889,
+		latitude = 58.01389
 	),
 	222 to WorldTimeZone(
 		country = "Australia",
@@ -2008,7 +2452,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 222,
 		offset = 8.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 115.85747,
+		latitude = -31.95300
 	),
 	223 to WorldTimeZone(
 		country = "Russia",
@@ -2017,7 +2463,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 223,
 		offset = 12.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 158.65000,
+		latitude = 53.01667
 	),
 	224 to WorldTimeZone(
 		country = "United States",
@@ -2026,7 +2474,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 224,
 		offset = -5.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -75.16379,
+		latitude = 39.95233
 	),
 	225 to WorldTimeZone(
 		country = "Cambodia",
@@ -2035,7 +2485,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 225,
 		offset = 7.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 104.91745,
+		latitude = 11.55883
 	),
 	226 to WorldTimeZone(
 		country = "United States",
@@ -2044,7 +2496,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 226,
 		offset = -7.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -112.07404,
+		latitude = 33.44838
 	),
 	227 to WorldTimeZone(
 		country = "Montenegro",
@@ -2053,7 +2507,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 227,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 19.26865,
+		latitude = 42.44257
 	),
 	228 to WorldTimeZone(
 		country = "Portugal",
@@ -2062,7 +2518,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 228,
 		offset = -1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = -25.67495,
+		latitude = 37.74224
 	),
 	229 to WorldTimeZone(
 		country = "Mauritius",
@@ -2071,7 +2529,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 229,
 		offset = 4.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 57.49638,
+		latitude = -20.16528
 	),
 	230 to WorldTimeZone(
 		country = "Haiti",
@@ -2080,7 +2540,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 230,
 		offset = -5.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -72.33641,
+		latitude = 18.53927
 	),
 	231 to WorldTimeZone(
 		country = "United States",
@@ -2089,7 +2551,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 231,
 		offset = -8.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -122.67621,
+		latitude = 45.52345
 	),
 	232 to WorldTimeZone(
 		country = "Czech",
@@ -2098,7 +2562,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 232,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 14.43780,
+		latitude = 50.07554
 	),
 	233 to WorldTimeZone(
 		country = "Cabo Verde",
@@ -2107,7 +2573,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 233,
 		offset = -1.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -23.51267,
+		latitude = 14.93046
 	),
 	234 to WorldTimeZone(
 		country = "North Korea",
@@ -2116,7 +2584,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 234,
 		offset = 9.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 125.75377,
+		latitude = 39.03186
 	),
 	235 to WorldTimeZone(
 		country = "Ecuador",
@@ -2125,7 +2595,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 235,
 		offset = -5.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -78.49601,
+		latitude = -0.20082
 	),
 	236 to WorldTimeZone(
 		country = "Morocco",
@@ -2134,7 +2606,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 236,
 		offset = 0.0,
 		dstDiff = 1.0,
-		dstRules = 15
+		dstRules = 15,
+		longitude = -6.83272,
+		latitude = 34.01505
 	),
 	237 to WorldTimeZone(
 		country = "Brazil",
@@ -2143,7 +2617,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 237,
 		offset = -3.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -34.87738,
+		latitude = -8.04707
 	),
 	238 to WorldTimeZone(
 		country = "Canada",
@@ -2152,7 +2628,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 238,
 		offset = -6.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -104.60667,
+		latitude = 50.45472
 	),
 	239 to WorldTimeZone(
 		country = "Iceland",
@@ -2161,7 +2639,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 239,
 		offset = 0.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -21.89521,
+		latitude = 64.13534
 	),
 	240 to WorldTimeZone(
 		country = "Latvia",
@@ -2170,7 +2650,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 240,
 		offset = 2.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 24.10519,
+		latitude = 56.94965
 	),
 	241 to WorldTimeZone(
 		country = "Brazil",
@@ -2179,7 +2661,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 241,
 		offset = -3.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -43.20071,
+		latitude = -22.91340
 	),
 	242 to WorldTimeZone(
 		country = "Saudi Arabia",
@@ -2188,7 +2672,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 242,
 		offset = 3.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 46.72417,
+		latitude = 24.71167
 	),
 	243 to WorldTimeZone(
 		country = "Italy",
@@ -2197,7 +2683,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 243,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 12.48252,
+		latitude = 41.89292
 	),
 	244 to WorldTimeZone(
 		country = "Canada",
@@ -2206,7 +2694,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 244,
 		offset = -4.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -66.05583,
+		latitude = 45.27266
 	),
 	245 to WorldTimeZone(
 		country = "Antigua and Barbuda",
@@ -2215,7 +2705,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 245,
 		offset = -4.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -61.84450,
+		latitude = 17.11502
 	),
 	246 to WorldTimeZone(
 		country = "Reunion",
@@ -2224,7 +2716,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 246,
 		offset = 4.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 55.45160,
+		latitude = -20.88206
 	),
 	247 to WorldTimeZone(
 		country = "Russia",
@@ -2233,7 +2727,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 247,
 		offset = 3.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 30.33510,
+		latitude = 59.93428
 	),
 	248 to WorldTimeZone(
 		country = "Russia",
@@ -2242,7 +2738,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 248,
 		offset = 4.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 50.16667,
+		latitude = 53.23333
 	),
 	249 to WorldTimeZone(
 		country = "United States",
@@ -2251,7 +2749,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 249,
 		offset = -6.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -98.49363,
+		latitude = 29.42412
 	),
 	250 to WorldTimeZone(
 		country = "United States",
@@ -2260,7 +2760,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 250,
 		offset = -8.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -117.15726,
+		latitude = 32.71533
 	),
 	251 to WorldTimeZone(
 		country = "United States",
@@ -2269,7 +2771,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 251,
 		offset = -8.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -122.41942,
+		latitude = 37.77493
 	),
 	252 to WorldTimeZone(
 		country = "Costa Rica",
@@ -2278,7 +2782,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 252,
 		offset = -6.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -84.08199,
+		latitude = 9.92680
 	),
 	253 to WorldTimeZone(
 		country = "United States",
@@ -2287,7 +2793,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 253,
 		offset = -8.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -121.89496,
+		latitude = 37.33939
 	),
 	254 to WorldTimeZone(
 		country = "Puerto Rico",
@@ -2296,7 +2804,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 254,
 		offset = -4.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -66.06919,
+		latitude = 18.45055
 	),
 	255 to WorldTimeZone(
 		country = "San Marino",
@@ -2305,7 +2815,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 255,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 12.45778,
+		latitude = 43.94236
 	),
 	256 to WorldTimeZone(
 		country = "El Salvador",
@@ -2314,7 +2826,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 256,
 		offset = -6.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -89.20181,
+		latitude = 13.70688
 	),
 	257 to WorldTimeZone(
 		country = "Yemen",
@@ -2323,7 +2837,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 257,
 		offset = 3.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 44.20746,
+		latitude = 15.35203
 	),
 	258 to WorldTimeZone(
 		country = "Chile",
@@ -2332,7 +2848,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 258,
 		offset = -4.0,
 		dstDiff = 1.0,
-		dstRules = 27
+		dstRules = 27,
+		longitude = -70.64200,
+		latitude = -33.46912
 	),
 	259 to WorldTimeZone(
 		country = "Dominican",
@@ -2341,7 +2859,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 259,
 		offset = -4.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -69.96508,
+		latitude = 18.49636
 	),
 	260 to WorldTimeZone(
 		country = "Brazil",
@@ -2350,7 +2870,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 260,
 		offset = -3.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -46.63331,
+		latitude = -23.55052
 	),
 	261 to WorldTimeZone(
 		country = "United States",
@@ -2359,7 +2881,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 261,
 		offset = -8.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -122.33207,
+		latitude = 47.60621
 	),
 	262 to WorldTimeZone(
 		country = "South Korea",
@@ -2368,7 +2892,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 262,
 		offset = 9.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 126.97797,
+		latitude = 37.56654
 	),
 	263 to WorldTimeZone(
 		country = "China",
@@ -2377,7 +2903,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 263,
 		offset = 8.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 121.47370,
+		latitude = 31.23042
 	),
 	264 to WorldTimeZone(
 		country = "China",
@@ -2386,7 +2914,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 264,
 		offset = 8.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 114.05787,
+		latitude = 22.54310
 	),
 	265 to WorldTimeZone(
 		country = "Singapore",
@@ -2395,7 +2925,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 265,
 		offset = 8.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 103.84613,
+		latitude = 1.29287
 	),
 	266 to WorldTimeZone(
 		country = "Macedonia",
@@ -2404,7 +2936,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 266,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 21.42800,
+		latitude = 41.99735
 	),
 	267 to WorldTimeZone(
 		country = "Bulgaria",
@@ -2413,7 +2947,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 267,
 		offset = 2.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 23.32167,
+		latitude = 42.69784
 	),
 	268 to WorldTimeZone(
 		country = "Canada",
@@ -2422,7 +2958,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 268,
 		offset = -3.5,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -52.71448,
+		latitude = 47.55985
 	),
 	269 to WorldTimeZone(
 		country = "Sweden",
@@ -2431,7 +2969,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 269,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 18.06491,
+		latitude = 59.32893
 	),
 	270 to WorldTimeZone(
 		country = "Fiji",
@@ -2440,7 +2980,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 270,
 		offset = 12.0,
 		dstDiff = 1.0,
-		dstRules = 19
+		dstRules = 19,
+		longitude = 178.44190,
+		latitude = -18.14160
 	),
 	271 to WorldTimeZone(
 		country = "Australia",
@@ -2449,7 +2991,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 271,
 		offset = 10.0,
 		dstDiff = 1.0,
-		dstRules = 4
+		dstRules = 4,
+		longitude = 151.20699,
+		latitude = -33.86749
 	),
 	272 to WorldTimeZone(
 		country = "Taiwan",
@@ -2458,7 +3002,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 272,
 		offset = 8.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 121.53837,
+		latitude = 25.05900
 	),
 	273 to WorldTimeZone(
 		country = "Estonia",
@@ -2467,7 +3013,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 273,
 		offset = 2.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 24.75357,
+		latitude = 59.43696
 	),
 	274 to WorldTimeZone(
 		country = "Kiribati",
@@ -2476,7 +3024,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 274,
 		offset = 12.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 172.97905,
+		latitude = 1.32905
 	),
 	275 to WorldTimeZone(
 		country = "Uzbekistan",
@@ -2485,7 +3035,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 275,
 		offset = 5.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 69.21667,
+		latitude = 41.26667
 	),
 	276 to WorldTimeZone(
 		country = "Georgia",
@@ -2494,7 +3046,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 276,
 		offset = 4.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 44.79300,
+		latitude = 41.70998
 	),
 	277 to WorldTimeZone(
 		country = "Honduras",
@@ -2503,7 +3057,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 277,
 		offset = -6.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -87.21012,
+		latitude = 14.06857
 	),
 	278 to WorldTimeZone(
 		country = "Iran",
@@ -2512,7 +3068,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 278,
 		offset = 3.5,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 51.42294,
+		latitude = 35.69622
 	),
 	279 to WorldTimeZone(
 		country = "China",
@@ -2521,7 +3079,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 279,
 		offset = 8.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 117.20098,
+		latitude = 39.08416
 	),
 	280 to WorldTimeZone(
 		country = "Mexico",
@@ -2530,7 +3090,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 280,
 		offset = -8.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -117.03825,
+		latitude = 32.51495
 	),
 	281 to WorldTimeZone(
 		country = "Japan",
@@ -2539,7 +3101,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 281,
 		offset = 9.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 139.69171,
+		latitude = 35.68949
 	),
 	282 to WorldTimeZone(
 		country = "Canada",
@@ -2548,7 +3112,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 282,
 		offset = -5.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -79.38318,
+		latitude = 43.65323
 	),
 	283 to WorldTimeZone(
 		country = "Libya",
@@ -2557,7 +3123,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 283,
 		offset = 2.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 13.18751,
+		latitude = 32.87617
 	),
 	284 to WorldTimeZone(
 		country = "Tunisia",
@@ -2566,7 +3134,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 284,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 10.16596,
+		latitude = 36.81881
 	),
 	285 to WorldTimeZone(
 		country = "Italy",
@@ -2575,7 +3145,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 285,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 7.68568,
+		latitude = 45.07098
 	),
 	286 to WorldTimeZone(
 		country = "Russia",
@@ -2584,7 +3156,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 286,
 		offset = 5.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 55.96667,
+		latitude = 54.75000
 	),
 	287 to WorldTimeZone(
 		country = "Mongolia",
@@ -2593,7 +3167,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 287,
 		offset = 8.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 106.90554,
+		latitude = 47.92138
 	),
 	288 to WorldTimeZone(
 		country = "Liechtenstein",
@@ -2602,7 +3178,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 288,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 9.52070,
+		latitude = 47.14137
 	),
 	289 to WorldTimeZone(
 		country = "Malta",
@@ -2611,7 +3189,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 289,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 14.51411,
+		latitude = 35.89779
 	),
 	290 to WorldTimeZone(
 		country = "Canada",
@@ -2620,7 +3200,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 290,
 		offset = -8.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -123.11393,
+		latitude = 49.26123
 	),
 	291 to WorldTimeZone(
 		country = "Italy",
@@ -2629,7 +3211,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 291,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 10.99166,
+		latitude = 45.43836
 	),
 	292 to WorldTimeZone(
 		country = "Seychelles",
@@ -2638,7 +3222,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 292,
 		offset = 4.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 55.45238,
+		latitude = -4.62126
 	),
 	293 to WorldTimeZone(
 		country = "Austria",
@@ -2647,7 +3233,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 293,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 16.37382,
+		latitude = 48.20817
 	),
 	294 to WorldTimeZone(
 		country = "Lithuania",
@@ -2656,7 +3244,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 294,
 		offset = 2.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 25.27965,
+		latitude = 54.68715
 	),
 	295 to WorldTimeZone(
 		country = "Russia",
@@ -2665,7 +3255,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 295,
 		offset = 10.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 131.93333,
+		latitude = 43.16667
 	),
 	296 to WorldTimeZone(
 		country = "Russia",
@@ -2674,7 +3266,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 296,
 		offset = 3.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 44.51822,
+		latitude = 48.70902
 	),
 	297 to WorldTimeZone(
 		country = "Poland",
@@ -2683,7 +3277,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 297,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 21.01223,
+		latitude = 52.22968
 	),
 	298 to WorldTimeZone(
 		country = "United States",
@@ -2692,7 +3288,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 298,
 		offset = -5.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -77.03646,
+		latitude = 38.90723
 	),
 	299 to WorldTimeZone(
 		country = "New Zealand",
@@ -2701,7 +3299,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 299,
 		offset = 12.0,
 		dstDiff = 1.0,
-		dstRules = 5
+		dstRules = 5,
+		longitude = 174.77624,
+		latitude = -41.28646
 	),
 	300 to WorldTimeZone(
 		country = "Canada",
@@ -2710,7 +3310,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 300,
 		offset = -6.0,
 		dstDiff = 1.0,
-		dstRules = 1
+		dstRules = 1,
+		longitude = -97.13749,
+		latitude = 49.89975
 	),
 	301 to WorldTimeZone(
 		country = "Russia",
@@ -2719,7 +3321,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 301,
 		offset = 9.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 129.73333,
+		latitude = 62.03333
 	),
 	302 to WorldTimeZone(
 		country = "Cote d'lvoire",
@@ -2728,7 +3332,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 302,
 		offset = 0.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -5.27334,
+		latitude = 6.80719
 	),
 	303 to WorldTimeZone(
 		country = "Myanmar",
@@ -2737,7 +3343,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 303,
 		offset = 6.5,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 96.15000,
+		latitude = 16.80000
 	),
 	304 to WorldTimeZone(
 		country = "Cameroon",
@@ -2746,7 +3354,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 304,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 11.51667,
+		latitude = 3.86667
 	),
 	305 to WorldTimeZone(
 		country = "Russia",
@@ -2755,7 +3365,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 305,
 		offset = 5.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 60.60000,
+		latitude = 56.83333
 	),
 	306 to WorldTimeZone(
 		country = "Armenia",
@@ -2764,7 +3376,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 306,
 		offset = 4.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 44.51667,
+		latitude = 40.18333
 	),
 	307 to WorldTimeZone(
 		country = "Russia",
@@ -2773,7 +3387,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 307,
 		offset = 11.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 142.73333,
+		latitude = 46.96667
 	),
 	308 to WorldTimeZone(
 		country = "Croatia",
@@ -2782,7 +3398,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 308,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 15.97790,
+		latitude = 45.81303
 	),
 	309 to WorldTimeZone(
 		country = "Switzerland",
@@ -2791,7 +3409,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 309,
 		offset = 1.0,
 		dstDiff = 1.0,
-		dstRules = 2
+		dstRules = 2,
+		longitude = 8.53918,
+		latitude = 47.36865
 	),
 	310 to WorldTimeZone(
 		country = "Australia",
@@ -2800,7 +3420,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 310,
 		offset = 8.8,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = 128.88930,
+		latitude = -31.67713
 	),
 	311 to WorldTimeZone(
 		country = "Australia",
@@ -2809,7 +3431,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 311,
 		offset = 10.5,
 		dstDiff = 0.5,
-		dstRules = 18
+		dstRules = 18,
+		longitude = 159.07035,
+		latitude = -31.53130
 	),
 	312 to WorldTimeZone(
 		country = "Australia",
@@ -2818,7 +3442,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 312,
 		offset = 11.0,
 		dstDiff = 1.0,
-		dstRules = 4
+		dstRules = 4,
+		longitude = 167.95000,
+		latitude = -29.03333
 	),
 	313 to WorldTimeZone(
 		country = "United States",
@@ -2827,7 +3453,9 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 313,
 		offset = -12.0,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -176.47691,
+		latitude = 0.19363
 	),
 	314 to WorldTimeZone(
 		country = "France",
@@ -2836,6 +3464,8 @@ val WorldTimeZoneData: Map<Int, WorldTimeZone> = mapOf(
 		identifier = 314,
 		offset = -9.5,
 		dstDiff = 1.0,
-		dstRules = 0
+		dstRules = 0,
+		longitude = -139.03943,
+		latitude = -9.80278
 	)
 )

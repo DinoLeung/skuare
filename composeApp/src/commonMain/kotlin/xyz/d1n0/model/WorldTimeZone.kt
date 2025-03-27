@@ -5,6 +5,8 @@ import xyz.d1n0.constant.WorldTimeZoneData
 data class WorldTimeZone(
 	val country: String,
 	val city: String,
+	val longitude: Double,
+	val latitude: Double,
 	override val cityName: String,
 	override val identifier: Int,
 	override val offset: Double,

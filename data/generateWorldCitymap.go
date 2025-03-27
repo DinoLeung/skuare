@@ -32,17 +32,19 @@ func main() {
             continue // Skip the header
         }
 
-        id, _ := strconv.Atoi(record[0])                // ID
-        offset, _ := strconv.ParseFloat(record[1], 64)  // Offset
-        dstDiff, _ := strconv.ParseFloat(record[2], 64) // DST Diff
-        dstRule, _ := strconv.Atoi(record[3])           // DST Rule
-        cityName := record[4]                           // Name
-        country := record[5]                            // Country
-        city := record[6]                               // City
+        id, _ := strconv.Atoi(record[0])                  // ID
+        offset, _ := strconv.ParseFloat(record[1], 64)    // Offset
+        dstDiff, _ := strconv.ParseFloat(record[2], 64)   // DST Diff
+        dstRule, _ := strconv.Atoi(record[3])             // DST Rule
+        cityName := record[4]                             // Name
+        country := record[5]                              // Country
+        city := record[6]                                 // City
+        longitude, _ := strconv.ParseFloat(record[7], 64) // Longitude
+        latitude, _ := strconv.ParseFloat(record[8], 64)  // Latitude
 
         kotlinMap.WriteString(fmt.Sprintf(
-            "    %d to WorldTimeZone(\n        country = \"%s\",\n        city = \"%s\",\n        cityName = \"%s\",\n        identifier = %d,\n        offset = %.1f,\n        dstDiff = %.1f,\n        dstRules = %d\n    ),\n",
-            id, country, city, cityName, id, offset, dstDiff, dstRule,
+            "    %d to WorldTimeZone(\n        country = \"%s\",\n        city = \"%s\",\n        cityName = \"%s\",\n        identifier = %d,\n        offset = %.1f,\n        dstDiff = %.1f,\n        dstRules = %d,\n        longitude = %.5f,\n        latitude = %.5f\n    ),\n",
+            id, country, city, cityName, id, offset, dstDiff, dstRule, longitude, latitude,
         ))
     }
 

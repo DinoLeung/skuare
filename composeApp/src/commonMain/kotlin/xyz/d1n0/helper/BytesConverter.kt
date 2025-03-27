@@ -40,6 +40,49 @@ fun Int.Companion.from2BytesLittleEndian(bytes: ByteArray): Int {
 }
 
 /**
+ * Converts this Double into an 8-byte array in big-endian order.
+ *
+ * The resulting byte array is in big-endian order, with the most significant byte at index 0.
+ *
+ * @return a ByteArray of length 8 representing the Double.
+ */
+fun Double.to8BytesBigEndian(): ByteArray {
+    val bits = this.toBits()
+    return byteArrayOf(
+        ((bits shr 56) and 0xFF).toByte(),
+        ((bits shr 48) and 0xFF).toByte(),
+        ((bits shr 40) and 0xFF).toByte(),
+        ((bits shr 32) and 0xFF).toByte(),
+        ((bits shr 24) and 0xFF).toByte(),
+        ((bits shr 16) and 0xFF).toByte(),
+        ((bits shr 8) and 0xFF).toByte(),
+        (bits and 0xFF).toByte()
+    )
+}
+
+/**
+ * Constructs a Double from an 8-byte array in big-endian order.
+ *
+ * The byte array must be exactly 8 bytes long, with the most significant byte at index 0.
+ *
+ * @param bytes a ByteArray of exactly 8 bytes.
+ * @return the corresponding Double value.
+ * @throws IllegalArgumentException if the byte array does not contain exactly 8 bytes.
+ */
+fun Double.Companion.from8BytesBigEndian(bytes: ByteArray): Double {
+    require(bytes.size == 8) { "Input must be exactly 8 bytes long." }
+    val bits = ((bytes[0].toLong() and 0xFFL) shl 56) or
+            ((bytes[1].toLong() and 0xFFL) shl 48) or
+            ((bytes[2].toLong() and 0xFFL) shl 40) or
+            ((bytes[3].toLong() and 0xFFL) shl 32) or
+            ((bytes[4].toLong() and 0xFFL) shl 24) or
+            ((bytes[5].toLong() and 0xFFL) shl 16) or
+            ((bytes[6].toLong() and 0xFFL) shl 8) or
+            (bytes[7].toLong() and 0xFFL)
+    return Double.fromBits(bits)
+}
+
+/**
  * Converts this integer (expected to be between 0 and 99) into a Binary-Coded Decimal (BCD)
  * encoded byte.
  *
