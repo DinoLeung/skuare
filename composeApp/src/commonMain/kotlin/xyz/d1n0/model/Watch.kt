@@ -45,14 +45,33 @@ class Watch(private val peripheral: Peripheral) {
 	// TODO: Stopwatch?
 	// TODO: Reminder
 
+	/**
+	 * Provides the [CoroutineScope] associated with the watch connection.
+	 * This scope is used to launch coroutines tied to the lifecycle of the peripheral.
+	 */
 	val scope: CoroutineScope get() = peripheral.scope
+
+	/**
+	 * Represents the current connection state of the watch as a [StateFlow].
+	 * This can be observed to react to connection state changes, such as connected, disconnected, or connecting.
+	 */
 	val state: StateFlow<State> get() = peripheral.state
 
+	/**
+	 * Observes incoming data from the IO characteristic of the peripheral.
+	 * This observation emits incoming BLE packets which are then processed by [observeIoCharacteristic].
+	 */
 	private val ioCharacteristicObservation = peripheral.observe(ioCharacteristic)
 
+	/**
+	 * Disconnects from the peripheral watch, terminating any ongoing data observations.
+	 */
 	suspend fun connect() = peripheral.connect()
 		.launch { observeIoCharacteristic() }
 
+	/**
+	 * Disconnects the BLE connection from the peripheral.
+	 */
 	suspend fun disconnect() = peripheral.disconnect()
 
 	/**

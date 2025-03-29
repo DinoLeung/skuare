@@ -35,7 +35,7 @@ fun WatchScreen(
             Button(onClick = viewModel::getConnectReason) {
                 Text("Get Reason")
             }
-            Button(onClick = viewModel::getTimeSyncSettings) {
+            Button(onClick = viewModel::getConnectionSettings) {
                 Text("Get TimeSync Settings")
             }
             Button(onClick = viewModel::getWatchSettings) {

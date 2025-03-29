@@ -29,7 +29,7 @@ class WatchScreenViewModel(
     }
 
     fun getConnectReason() = watch.scope.launch { watch.requestConnectReason() }
-    fun getTimeSyncSettings() = watch.scope.launch { watch.requestTimeSyncSettings() }
+    fun getConnectionSettings() = watch.scope.launch { watch.requestConnectionSettings() }
     fun getWatchSettings() = watch.scope.launch { watch.requestWatchSettings() }
     fun getInfo() = watch.scope.launch { watch.requestAppInfo() }
     fun getName() = watch.scope.launch { watch.requestName() }
