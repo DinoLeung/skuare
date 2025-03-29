@@ -9,6 +9,7 @@ import kotlinx.io.IOException
 import xyz.d1n0.constant.BleUuid
 import xyz.d1n0.constant.Command
 import xyz.d1n0.constant.ConnectReason
+import xyz.d1n0.helper.from8BytesBigEndian
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Duration.Companion.seconds
 import kotlin.uuid.ExperimentalUuidApi
@@ -179,6 +180,15 @@ class Watch(private val peripheral: Peripheral) {
 					runCatching {
 						clocks.parseClocksPacket(it)
 					}.onFailure { println("Failed to parse clocks packet: ${it.message}") }
+				}
+				Command.TIMEZONE_LOCATION_RADIO_ID -> {
+					runCatching {
+						val position = it[1].toInt()
+						val latitude = Double.from8BytesBigEndian(it.sliceArray(3..10))
+						val longitude = Double.from8BytesBigEndian(it.sliceArray(11..18))
+
+						println("Position $position: $latitude, $longitude")
+					}.onFailure { println("Failed to parse location radio ID packet: ${it.message}") }
 				}
 				Command.ALARM_A -> {
 					runCatching {

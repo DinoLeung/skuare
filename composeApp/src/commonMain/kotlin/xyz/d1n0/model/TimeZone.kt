@@ -3,6 +3,7 @@ package xyz.d1n0.model
 import xyz.d1n0.constant.timezoneRadioIdData
 import xyz.d1n0.helper.to2BytesLittleEndian
 
+// TODO: identifier is 16bit, should change it into UShort
 abstract class Timezone {
     open abstract val cityName: String
     open abstract val identifier: Int

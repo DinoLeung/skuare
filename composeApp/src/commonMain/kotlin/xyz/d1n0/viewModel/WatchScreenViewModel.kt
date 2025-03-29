@@ -57,6 +57,10 @@ class WatchScreenViewModel(
         }
     }
 
+    fun getGPS() = watch.scope.launch {
+        watch.requestTimeZoneCoordinatesAndRadioId()
+    }
+
     fun writeAlarms() = watch.scope.launch { watch.writeAlarms() }
     fun writeTimer() = watch.scope.launch { watch.writeTimer() }
 }

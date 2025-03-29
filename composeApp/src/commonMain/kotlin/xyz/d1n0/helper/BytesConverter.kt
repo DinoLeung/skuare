@@ -48,16 +48,12 @@ fun Int.Companion.from2BytesLittleEndian(bytes: ByteArray): Int {
  */
 fun Double.to8BytesBigEndian(): ByteArray {
     val bits = this.toBits()
-    return byteArrayOf(
-        ((bits shr 56) and 0xFF).toByte(),
-        ((bits shr 48) and 0xFF).toByte(),
-        ((bits shr 40) and 0xFF).toByte(),
-        ((bits shr 32) and 0xFF).toByte(),
-        ((bits shr 24) and 0xFF).toByte(),
-        ((bits shr 16) and 0xFF).toByte(),
-        ((bits shr 8) and 0xFF).toByte(),
-        (bits and 0xFF).toByte()
-    )
+    val byteArray = ByteArray(8)
+    for (i in 0 until 8) {
+        // Extract the least-significant byte and place it in reverse order
+        byteArray[7 - i] = ((bits shr (8 * i)) and 0xFF).toByte()
+    }
+    return byteArray
 }
 
 /**
@@ -71,14 +67,10 @@ fun Double.to8BytesBigEndian(): ByteArray {
  */
 fun Double.Companion.from8BytesBigEndian(bytes: ByteArray): Double {
     require(bytes.size == 8) { "Input must be exactly 8 bytes long." }
-    val bits = ((bytes[0].toLong() and 0xFFL) shl 56) or
-            ((bytes[1].toLong() and 0xFFL) shl 48) or
-            ((bytes[2].toLong() and 0xFFL) shl 40) or
-            ((bytes[3].toLong() and 0xFFL) shl 32) or
-            ((bytes[4].toLong() and 0xFFL) shl 24) or
-            ((bytes[5].toLong() and 0xFFL) shl 16) or
-            ((bytes[6].toLong() and 0xFFL) shl 8) or
-            (bytes[7].toLong() and 0xFFL)
+    var bits = 0L
+    for (byte in bytes) {
+        bits = (bits shl 8) or (byte.toLong() and 0xFF)
+    }
     return Double.fromBits(bits)
 }
 

@@ -53,7 +53,12 @@ suspend fun Watch.writeTimeZoneNames() =
         write(it)
     }
 
-// TODO: suspend fun Watch.requestTimeZoneCoordinatesAndRadioId()
+suspend fun Watch.requestTimeZoneCoordinatesAndRadioId() {
+    for(i in 0..5) {
+        request(Command.TIMEZONE_LOCATION_RADIO_ID, i)
+    }
+}
+
 suspend fun Watch.writeTimeZoneCoordinatesAndRadioId() =
     clocks.coordinatesRadioIdPackets.forEach {
         write(it)

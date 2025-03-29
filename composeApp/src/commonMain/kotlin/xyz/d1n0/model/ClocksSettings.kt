@@ -190,6 +190,7 @@ class ClocksSettings {
      * Each packet includes:
      * - A command code for the timezone location radio ID (`TIMEZONE_LOCATION_RADIO_ID`).
      * - The clock's position identifier (ranging from 0 for homeClock to 5 for worldClock5).
+     * - A byte of 0x01 indicates that timezone data is in the database
      * - The timezone coordinates as a byte array.
      * - The radio ID associated with the timezone.
      *
@@ -201,12 +202,12 @@ class ClocksSettings {
         get() {
             require(isInitialized()) { "Clocks must be initialized" }
             return listOf(
-                byteArrayOf(Command.TIMEZONE_LOCATION_RADIO_ID.value.toByte(), 0.toByte()) + homeClock.timeZone.coordinatesBytes + homeClock.timeZone.radioIdByte,
-                byteArrayOf(Command.TIMEZONE_LOCATION_RADIO_ID.value.toByte(), 1.toByte()) + worldClock1.timeZone.coordinatesBytes + worldClock1.timeZone.radioIdByte,
-                byteArrayOf(Command.TIMEZONE_LOCATION_RADIO_ID.value.toByte(), 2.toByte()) + worldClock2.timeZone.coordinatesBytes + worldClock2.timeZone.radioIdByte,
-                byteArrayOf(Command.TIMEZONE_LOCATION_RADIO_ID.value.toByte(), 3.toByte()) + worldClock3.timeZone.coordinatesBytes + worldClock3.timeZone.radioIdByte,
-                byteArrayOf(Command.TIMEZONE_LOCATION_RADIO_ID.value.toByte(), 4.toByte()) + worldClock4.timeZone.coordinatesBytes + worldClock4.timeZone.radioIdByte,
-                byteArrayOf(Command.TIMEZONE_LOCATION_RADIO_ID.value.toByte(), 5.toByte()) + worldClock5.timeZone.coordinatesBytes + worldClock5.timeZone.radioIdByte,
+                byteArrayOf(Command.TIMEZONE_LOCATION_RADIO_ID.value.toByte(), 0.toByte(), 1.toByte()) + homeClock.timeZone.coordinatesBytes + homeClock.timeZone.radioIdByte,
+                byteArrayOf(Command.TIMEZONE_LOCATION_RADIO_ID.value.toByte(), 1.toByte(), 1.toByte()) + worldClock1.timeZone.coordinatesBytes + worldClock1.timeZone.radioIdByte,
+                byteArrayOf(Command.TIMEZONE_LOCATION_RADIO_ID.value.toByte(), 2.toByte(), 1.toByte()) + worldClock2.timeZone.coordinatesBytes + worldClock2.timeZone.radioIdByte,
+                byteArrayOf(Command.TIMEZONE_LOCATION_RADIO_ID.value.toByte(), 3.toByte(), 1.toByte()) + worldClock3.timeZone.coordinatesBytes + worldClock3.timeZone.radioIdByte,
+                byteArrayOf(Command.TIMEZONE_LOCATION_RADIO_ID.value.toByte(), 4.toByte(), 1.toByte()) + worldClock4.timeZone.coordinatesBytes + worldClock4.timeZone.radioIdByte,
+                byteArrayOf(Command.TIMEZONE_LOCATION_RADIO_ID.value.toByte(), 5.toByte(), 1.toByte()) + worldClock5.timeZone.coordinatesBytes + worldClock5.timeZone.radioIdByte,
             )
         }
 }
