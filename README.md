@@ -1,4 +1,43 @@
-This is a Kotlin Multiplatform project targeting Android, iOS, Desktop.
+# Skuare
+
+<img src="skuare.svg" alt="drawing" style="width:250px;"/>
+
+An alternative app that allows connecting G-Shock watches via BLE.
+
+## Background
+
+In October 2024, a significant [data breach](https://world.casio.com/news/2025/0107-incident) occurred,
+compromising the personal information of thousands of individuals, including employees, business partners, and customers.
+This incident raised concerns about how user data is handled, especially considering that the official app stores geolocation data online. 
+
+As a long-time enthusiast of Casio watches and a proponent of user privacy, I was motivated to develop Skuare—a simple,
+basic app with full support for the G-Shock Bluetooth protocol.
+Skuare enables users to connect to their Casio watches with trust,
+operating entirely offline to ensure that no personal data is transmitted over the internet.
+
+The underlying protocol was reverse-engineered from the official Casio app, with significant assistance from [GShockAPI](https://github.com/izivkov/GShockAPI/tree/main).
+
+Currently, Skuare supports the GMW-B5000 and GW-B5600 models.
+
+## Supported watch features
+
+- [x] Watch settings
+  - [x] Watch name
+  - [x] BLE connection timeout
+  - [x] Time adjustment settings
+  - [x] Backlight duration
+  - [x] Date time display preference
+- [x] Time adjustment procedure
+- [x] Home timezone and world timezone
+  - [x] Timezone DST settings 
+  - [ ] Timezone Geo location and radio signal ID
+- [x] Alarms
+  - [x] Hourly Signal
+- [x] Timer
+- [ ] Reminder
+
+
+This is a Kotlin Multiplatform project targeting Android, iOS.
 
 * `/composeApp` is for code that will be shared across your Compose Multiplatform applications.
   It contains several subfolders:
