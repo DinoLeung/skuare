@@ -41,7 +41,7 @@ class Watch(private val peripheral: Peripheral) {
 	val alarms = AlarmsSettings()
 	val timer = TimerSettings()
 	val reminders = RemindersSettings()
-//	val
+
 	// TODO: Stopwatch?
 	// TODO: Reminder
 
@@ -186,49 +186,6 @@ class Watch(private val peripheral: Peripheral) {
 				}
 			}
 		}
-
-	suspend fun requestConnectReason() = request(Command.CONNECT_REASON)
-	suspend fun requestTimeSyncSettings() = request(Command.CONNECTION_SETTINGS)
-	suspend fun requestWatchSettings() = request(Command.WATCH_SETTINGS)
-	suspend fun requestAppInfo() = request(Command.APP_INFO)
-	suspend fun requestName() = request(Command.WATCH_NAME)
-	suspend fun requestWatchCondition() = request(Command.WATCH_CONDITION)
-	suspend fun requestTimer() = request(Command.TIMER)
-
-	suspend fun requestClocks() =
-		repeat(3) {
-			request(Command.CLOCK)
-		}
-
-	suspend fun requestAlarms() {
-		request(Command.ALARM_A)
-		request(Command.ALARM_B)
-	}
-
-	suspend fun writeClocks() =
-		clocks.clocksPackets.forEach {
-			write(it)
-		}
-
-	suspend fun writeTimeZoneConfigs() =
-		clocks.timeZoneConfigPackets.forEach {
-			write(it)
-		}
-
-	suspend fun writeTimeZoneNames() =
-		clocks.timeZoneNamePackets.forEach {
-			write(it)
-		}
-
-	suspend fun writeTime() =
-		write(clocks.homeClock.getCurrentDateTimePacket(delay = 0.seconds))
-
-	suspend fun writeAlarms() {
-		write(alarms.alarmAPacket)
-		write(alarms.alarmBPacket)
-	}
-
-	suspend fun writeTimer() = write(timer.timerPacket)
 }
 
 class WatchException (message: String, cause: Throwable) : Exception(message, cause)
