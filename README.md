@@ -17,7 +17,7 @@ operating entirely offline to ensure that no personal data is transmitted over t
 
 The underlying protocol was reverse-engineered from the official Casio app, with significant assistance from [GShockAPI](https://github.com/izivkov/GShockAPI/tree/main).
 
-Currently, Skuare supports the GMW-B5000 and GW-B5600 models.
+Currently, Skuare supports the GMW-B5000 and GW-B5600 models, as these are the only watch models I have access to.
 
 ## Supported watch features
 
@@ -30,11 +30,11 @@ Currently, Skuare supports the GMW-B5000 and GW-B5600 models.
 - [x] Time adjustment procedure
 - [x] Home timezone and world timezone
   - [x] Timezone DST settings 
-  - [ ] Timezone Geo location and radio signal ID
+  - [ ] Timezone gps coordinates and radio signal ID
 - [x] Alarms
   - [x] Hourly Signal
 - [x] Timer
-- [ ] Reminder
+- [ ] Reminders
 
 
 This is a Kotlin Multiplatform project targeting Android, iOS.
