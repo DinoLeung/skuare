@@ -1,9 +1,9 @@
 package xyz.d1n0.constant
 
-import xyz.d1n0.model.HomeTimeZone
+import xyz.d1n0.model.HomeTimezone
 
-val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
-    30000 to HomeTimeZone(
+val HomeTimezoneData: Map<Int, HomeTimezone> = mapOf(
+    30000 to HomeTimezone(
         timeZone = "Africa/Abidjan",
         cityName = "ABIDJAN",
         identifier = 30000,
@@ -11,7 +11,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30001 to HomeTimeZone(
+    30001 to HomeTimezone(
         timeZone = "Africa/Accra",
         cityName = "ACCRA",
         identifier = 30001,
@@ -19,7 +19,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30002 to HomeTimeZone(
+    30002 to HomeTimezone(
         timeZone = "Africa/Addis_Ababa",
         cityName = "ADDIS ABABA",
         identifier = 30002,
@@ -27,7 +27,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30003 to HomeTimeZone(
+    30003 to HomeTimezone(
         timeZone = "Africa/Algiers",
         cityName = "ALGIERS",
         identifier = 30003,
@@ -35,7 +35,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30004 to HomeTimeZone(
+    30004 to HomeTimezone(
         timeZone = "Africa/Asmara",
         cityName = "ASMARA",
         identifier = 30004,
@@ -43,7 +43,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30005 to HomeTimeZone(
+    30005 to HomeTimezone(
         timeZone = "Africa/Asmera",
         cityName = "ASMERA",
         identifier = 30005,
@@ -51,7 +51,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30006 to HomeTimeZone(
+    30006 to HomeTimezone(
         timeZone = "Africa/Bamako",
         cityName = "BAMAKO",
         identifier = 30006,
@@ -59,7 +59,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30007 to HomeTimeZone(
+    30007 to HomeTimezone(
         timeZone = "Africa/Bangui",
         cityName = "BANGUI",
         identifier = 30007,
@@ -67,7 +67,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30008 to HomeTimeZone(
+    30008 to HomeTimezone(
         timeZone = "Africa/Banjul",
         cityName = "BANJUL",
         identifier = 30008,
@@ -75,7 +75,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30009 to HomeTimeZone(
+    30009 to HomeTimezone(
         timeZone = "Africa/Bissau",
         cityName = "BISSAU",
         identifier = 30009,
@@ -83,7 +83,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30010 to HomeTimeZone(
+    30010 to HomeTimezone(
         timeZone = "Africa/Blantyre",
         cityName = "BLANTYRE",
         identifier = 30010,
@@ -91,7 +91,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30011 to HomeTimeZone(
+    30011 to HomeTimezone(
         timeZone = "Africa/Brazzaville",
         cityName = "BRAZZAVILLE",
         identifier = 30011,
@@ -99,7 +99,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30012 to HomeTimeZone(
+    30012 to HomeTimezone(
         timeZone = "Africa/Bujumbura",
         cityName = "BUJUMBURA",
         identifier = 30012,
@@ -107,7 +107,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30013 to HomeTimeZone(
+    30013 to HomeTimezone(
         timeZone = "Africa/Cairo",
         cityName = "CAIRO",
         identifier = 30013,
@@ -115,7 +115,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 22
     ),
-    30014 to HomeTimeZone(
+    30014 to HomeTimezone(
         timeZone = "Africa/Casablanca",
         cityName = "CASABLANCA",
         identifier = 30014,
@@ -123,7 +123,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 15
     ),
-    30015 to HomeTimeZone(
+    30015 to HomeTimezone(
         timeZone = "Africa/Ceuta",
         cityName = "CEUTA",
         identifier = 30015,
@@ -131,7 +131,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30016 to HomeTimeZone(
+    30016 to HomeTimezone(
         timeZone = "Africa/Conakry",
         cityName = "CONAKRY",
         identifier = 30016,
@@ -139,7 +139,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30017 to HomeTimeZone(
+    30017 to HomeTimezone(
         timeZone = "Africa/Dakar",
         cityName = "DAKAR",
         identifier = 30017,
@@ -147,7 +147,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30018 to HomeTimeZone(
+    30018 to HomeTimezone(
         timeZone = "Africa/Dar_es_Salaam",
         cityName = "DAR ES SALAAM",
         identifier = 30018,
@@ -155,7 +155,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30019 to HomeTimeZone(
+    30019 to HomeTimezone(
         timeZone = "Africa/Djibouti",
         cityName = "DJIBOUTI",
         identifier = 30019,
@@ -163,7 +163,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30020 to HomeTimeZone(
+    30020 to HomeTimezone(
         timeZone = "Africa/Douala",
         cityName = "DOUALA",
         identifier = 30020,
@@ -171,7 +171,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30021 to HomeTimeZone(
+    30021 to HomeTimezone(
         timeZone = "Africa/El_Aaiun",
         cityName = "EL AAIUN",
         identifier = 30021,
@@ -179,7 +179,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 15
     ),
-    30022 to HomeTimeZone(
+    30022 to HomeTimezone(
         timeZone = "Africa/Freetown",
         cityName = "FREETOWN",
         identifier = 30022,
@@ -187,7 +187,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30023 to HomeTimeZone(
+    30023 to HomeTimezone(
         timeZone = "Africa/Gaborone",
         cityName = "GABORONE",
         identifier = 30023,
@@ -195,7 +195,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30024 to HomeTimeZone(
+    30024 to HomeTimezone(
         timeZone = "Africa/Harare",
         cityName = "HARARE",
         identifier = 30024,
@@ -203,7 +203,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30025 to HomeTimeZone(
+    30025 to HomeTimezone(
         timeZone = "Africa/Johannesburg",
         cityName = "JOHANNESBURG",
         identifier = 30025,
@@ -211,7 +211,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30026 to HomeTimeZone(
+    30026 to HomeTimezone(
         timeZone = "Africa/Juba",
         cityName = "JUBA",
         identifier = 30026,
@@ -219,7 +219,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30027 to HomeTimeZone(
+    30027 to HomeTimezone(
         timeZone = "Africa/Kampala",
         cityName = "KAMPALA",
         identifier = 30027,
@@ -227,7 +227,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30028 to HomeTimeZone(
+    30028 to HomeTimezone(
         timeZone = "Africa/Khartoum",
         cityName = "KHARTOUM",
         identifier = 30028,
@@ -235,7 +235,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30029 to HomeTimeZone(
+    30029 to HomeTimezone(
         timeZone = "Africa/Kigali",
         cityName = "KIGALI",
         identifier = 30029,
@@ -243,7 +243,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30030 to HomeTimeZone(
+    30030 to HomeTimezone(
         timeZone = "Africa/Kinshasa",
         cityName = "KINSHASA",
         identifier = 30030,
@@ -251,7 +251,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30031 to HomeTimeZone(
+    30031 to HomeTimezone(
         timeZone = "Africa/Lagos",
         cityName = "LAGOS",
         identifier = 30031,
@@ -259,7 +259,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30032 to HomeTimeZone(
+    30032 to HomeTimezone(
         timeZone = "Africa/Libreville",
         cityName = "LIBREVILLE",
         identifier = 30032,
@@ -267,7 +267,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30033 to HomeTimeZone(
+    30033 to HomeTimezone(
         timeZone = "Africa/Lome",
         cityName = "LOME",
         identifier = 30033,
@@ -275,7 +275,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30034 to HomeTimeZone(
+    30034 to HomeTimezone(
         timeZone = "Africa/Luanda",
         cityName = "LUANDA",
         identifier = 30034,
@@ -283,7 +283,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30035 to HomeTimeZone(
+    30035 to HomeTimezone(
         timeZone = "Africa/Lubumbashi",
         cityName = "LUBUMBASHI",
         identifier = 30035,
@@ -291,7 +291,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30036 to HomeTimeZone(
+    30036 to HomeTimezone(
         timeZone = "Africa/Lusaka",
         cityName = "LUSAKA",
         identifier = 30036,
@@ -299,7 +299,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30037 to HomeTimeZone(
+    30037 to HomeTimezone(
         timeZone = "Africa/Malabo",
         cityName = "MALABO",
         identifier = 30037,
@@ -307,7 +307,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30038 to HomeTimeZone(
+    30038 to HomeTimezone(
         timeZone = "Africa/Maputo",
         cityName = "MAPUTO",
         identifier = 30038,
@@ -315,7 +315,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30039 to HomeTimeZone(
+    30039 to HomeTimezone(
         timeZone = "Africa/Maseru",
         cityName = "MASERU",
         identifier = 30039,
@@ -323,7 +323,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30040 to HomeTimeZone(
+    30040 to HomeTimezone(
         timeZone = "Africa/Mbabane",
         cityName = "MBABANE",
         identifier = 30040,
@@ -331,7 +331,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30041 to HomeTimeZone(
+    30041 to HomeTimezone(
         timeZone = "Africa/Mogadishu",
         cityName = "MOGADISHU",
         identifier = 30041,
@@ -339,7 +339,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30042 to HomeTimeZone(
+    30042 to HomeTimezone(
         timeZone = "Africa/Monrovia",
         cityName = "MONROVIA",
         identifier = 30042,
@@ -347,7 +347,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30043 to HomeTimeZone(
+    30043 to HomeTimezone(
         timeZone = "Africa/Nairobi",
         cityName = "NAIROBI",
         identifier = 30043,
@@ -355,7 +355,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30044 to HomeTimeZone(
+    30044 to HomeTimezone(
         timeZone = "Africa/Ndjamena",
         cityName = "NDJAMENA",
         identifier = 30044,
@@ -363,7 +363,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30045 to HomeTimeZone(
+    30045 to HomeTimezone(
         timeZone = "Africa/Niamey",
         cityName = "NIAMEY",
         identifier = 30045,
@@ -371,7 +371,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30046 to HomeTimeZone(
+    30046 to HomeTimezone(
         timeZone = "Africa/Nouakchott",
         cityName = "NOUAKCHOTT",
         identifier = 30046,
@@ -379,7 +379,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30047 to HomeTimeZone(
+    30047 to HomeTimezone(
         timeZone = "Africa/Ouagadougou",
         cityName = "OUAGADOUGOU",
         identifier = 30047,
@@ -387,7 +387,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30048 to HomeTimeZone(
+    30048 to HomeTimezone(
         timeZone = "Africa/Porto-Novo",
         cityName = "PORTO-NOVO",
         identifier = 30048,
@@ -395,7 +395,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30049 to HomeTimeZone(
+    30049 to HomeTimezone(
         timeZone = "Africa/Sao_Tome",
         cityName = "SAO TOME",
         identifier = 30049,
@@ -403,7 +403,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30050 to HomeTimeZone(
+    30050 to HomeTimezone(
         timeZone = "Africa/Timbuktu",
         cityName = "TIMBUKTU",
         identifier = 30050,
@@ -411,7 +411,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30051 to HomeTimeZone(
+    30051 to HomeTimezone(
         timeZone = "Africa/Tripoli",
         cityName = "TRIPOLI",
         identifier = 30051,
@@ -419,7 +419,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30052 to HomeTimeZone(
+    30052 to HomeTimezone(
         timeZone = "Africa/Tunis",
         cityName = "TUNIS",
         identifier = 30052,
@@ -427,7 +427,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30053 to HomeTimeZone(
+    30053 to HomeTimezone(
         timeZone = "Africa/Windhoek",
         cityName = "WINDHOEK",
         identifier = 30053,
@@ -435,7 +435,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30054 to HomeTimeZone(
+    30054 to HomeTimezone(
         timeZone = "America/Adak",
         cityName = "ADAK",
         identifier = 30054,
@@ -443,7 +443,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30055 to HomeTimeZone(
+    30055 to HomeTimezone(
         timeZone = "America/Anchorage",
         cityName = "ANCHORAGE",
         identifier = 30055,
@@ -451,7 +451,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30056 to HomeTimeZone(
+    30056 to HomeTimezone(
         timeZone = "America/Anguilla",
         cityName = "ANGUILLA",
         identifier = 30056,
@@ -459,7 +459,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30057 to HomeTimeZone(
+    30057 to HomeTimezone(
         timeZone = "America/Antigua",
         cityName = "ANTIGUA",
         identifier = 30057,
@@ -467,7 +467,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30058 to HomeTimeZone(
+    30058 to HomeTimezone(
         timeZone = "America/Araguaina",
         cityName = "ARAGUAINA",
         identifier = 30058,
@@ -475,7 +475,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30059 to HomeTimeZone(
+    30059 to HomeTimezone(
         timeZone = "America/Argentina/Buenos_Aires",
         cityName = "BUENOS AIRES",
         identifier = 30059,
@@ -483,7 +483,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30060 to HomeTimeZone(
+    30060 to HomeTimezone(
         timeZone = "America/Argentina/Catamarca",
         cityName = "CATAMARCA",
         identifier = 30060,
@@ -491,7 +491,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30061 to HomeTimeZone(
+    30061 to HomeTimezone(
         timeZone = "America/Argentina/ComodRivadavia",
         cityName = "COMODRIVADAVIA",
         identifier = 30061,
@@ -499,7 +499,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30062 to HomeTimeZone(
+    30062 to HomeTimezone(
         timeZone = "America/Argentina/Cordoba",
         cityName = "CORDOBA",
         identifier = 30062,
@@ -507,7 +507,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30063 to HomeTimeZone(
+    30063 to HomeTimezone(
         timeZone = "America/Argentina/Jujuy",
         cityName = "JUJUY",
         identifier = 30063,
@@ -515,7 +515,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30064 to HomeTimeZone(
+    30064 to HomeTimezone(
         timeZone = "America/Argentina/La_Rioja",
         cityName = "LA RIOJA",
         identifier = 30064,
@@ -523,7 +523,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30065 to HomeTimeZone(
+    30065 to HomeTimezone(
         timeZone = "America/Argentina/Mendoza",
         cityName = "MENDOZA",
         identifier = 30065,
@@ -531,7 +531,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30066 to HomeTimeZone(
+    30066 to HomeTimezone(
         timeZone = "America/Argentina/Rio_Gallegos",
         cityName = "RIO GALLEGOS",
         identifier = 30066,
@@ -539,7 +539,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30067 to HomeTimeZone(
+    30067 to HomeTimezone(
         timeZone = "America/Argentina/Salta",
         cityName = "SALTA",
         identifier = 30067,
@@ -547,7 +547,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30068 to HomeTimeZone(
+    30068 to HomeTimezone(
         timeZone = "America/Argentina/San_Juan",
         cityName = "SAN JUAN",
         identifier = 30068,
@@ -555,7 +555,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30069 to HomeTimeZone(
+    30069 to HomeTimezone(
         timeZone = "America/Argentina/San_Luis",
         cityName = "SAN LUIS",
         identifier = 30069,
@@ -563,7 +563,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30070 to HomeTimeZone(
+    30070 to HomeTimezone(
         timeZone = "America/Argentina/Tucuman",
         cityName = "TUCUMAN",
         identifier = 30070,
@@ -571,7 +571,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30071 to HomeTimeZone(
+    30071 to HomeTimezone(
         timeZone = "America/Argentina/Ushuaia",
         cityName = "USHUAIA",
         identifier = 30071,
@@ -579,7 +579,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30072 to HomeTimeZone(
+    30072 to HomeTimezone(
         timeZone = "America/Aruba",
         cityName = "ARUBA",
         identifier = 30072,
@@ -587,7 +587,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30073 to HomeTimeZone(
+    30073 to HomeTimezone(
         timeZone = "America/Asuncion",
         cityName = "ASUNCION",
         identifier = 30073,
@@ -595,7 +595,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 9
     ),
-    30074 to HomeTimeZone(
+    30074 to HomeTimezone(
         timeZone = "America/Atikokan",
         cityName = "ATIKOKAN",
         identifier = 30074,
@@ -603,7 +603,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30075 to HomeTimeZone(
+    30075 to HomeTimezone(
         timeZone = "America/Atka",
         cityName = "ATKA",
         identifier = 30075,
@@ -611,7 +611,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30076 to HomeTimeZone(
+    30076 to HomeTimezone(
         timeZone = "America/Bahia",
         cityName = "BAHIA",
         identifier = 30076,
@@ -619,7 +619,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30077 to HomeTimeZone(
+    30077 to HomeTimezone(
         timeZone = "America/Bahia_Banderas",
         cityName = "BAHIA BANDERAS",
         identifier = 30077,
@@ -627,7 +627,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30078 to HomeTimeZone(
+    30078 to HomeTimezone(
         timeZone = "America/Barbados",
         cityName = "BARBADOS",
         identifier = 30078,
@@ -635,7 +635,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30079 to HomeTimeZone(
+    30079 to HomeTimezone(
         timeZone = "America/Belem",
         cityName = "BELEM",
         identifier = 30079,
@@ -643,7 +643,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30080 to HomeTimeZone(
+    30080 to HomeTimezone(
         timeZone = "America/Belize",
         cityName = "BELIZE",
         identifier = 30080,
@@ -651,7 +651,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30081 to HomeTimeZone(
+    30081 to HomeTimezone(
         timeZone = "America/Blanc-Sablon",
         cityName = "BLANC-SABLON",
         identifier = 30081,
@@ -659,7 +659,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30082 to HomeTimeZone(
+    30082 to HomeTimezone(
         timeZone = "America/Boa_Vista",
         cityName = "BOA VISTA",
         identifier = 30082,
@@ -667,7 +667,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30083 to HomeTimeZone(
+    30083 to HomeTimezone(
         timeZone = "America/Bogota",
         cityName = "BOGOTA",
         identifier = 30083,
@@ -675,7 +675,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30084 to HomeTimeZone(
+    30084 to HomeTimezone(
         timeZone = "America/Boise",
         cityName = "BOISE",
         identifier = 30084,
@@ -683,7 +683,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30085 to HomeTimeZone(
+    30085 to HomeTimezone(
         timeZone = "America/Buenos_Aires",
         cityName = "BUENOS AIRES",
         identifier = 30085,
@@ -691,7 +691,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30086 to HomeTimeZone(
+    30086 to HomeTimezone(
         timeZone = "America/Cambridge_Bay",
         cityName = "CAMBRIDGE BAY",
         identifier = 30086,
@@ -699,7 +699,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30087 to HomeTimeZone(
+    30087 to HomeTimezone(
         timeZone = "America/Campo_Grande",
         cityName = "CAMPO GRANDE",
         identifier = 30087,
@@ -707,7 +707,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30088 to HomeTimeZone(
+    30088 to HomeTimezone(
         timeZone = "America/Cancun",
         cityName = "CANCUN",
         identifier = 30088,
@@ -715,7 +715,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30089 to HomeTimeZone(
+    30089 to HomeTimezone(
         timeZone = "America/Caracas",
         cityName = "CARACAS",
         identifier = 30089,
@@ -723,7 +723,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30090 to HomeTimeZone(
+    30090 to HomeTimezone(
         timeZone = "America/Catamarca",
         cityName = "CATAMARCA",
         identifier = 30090,
@@ -731,7 +731,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30091 to HomeTimeZone(
+    30091 to HomeTimezone(
         timeZone = "America/Cayenne",
         cityName = "CAYENNE",
         identifier = 30091,
@@ -739,7 +739,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30092 to HomeTimeZone(
+    30092 to HomeTimezone(
         timeZone = "America/Cayman",
         cityName = "CAYMAN",
         identifier = 30092,
@@ -747,7 +747,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30093 to HomeTimeZone(
+    30093 to HomeTimezone(
         timeZone = "America/Chicago",
         cityName = "CHICAGO",
         identifier = 30093,
@@ -755,7 +755,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30094 to HomeTimeZone(
+    30094 to HomeTimezone(
         timeZone = "America/Chihuahua",
         cityName = "CHIHUAHUA",
         identifier = 30094,
@@ -763,7 +763,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30095 to HomeTimeZone(
+    30095 to HomeTimezone(
         timeZone = "America/Coral_Harbour",
         cityName = "CORAL HARBOUR",
         identifier = 30095,
@@ -771,7 +771,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30096 to HomeTimeZone(
+    30096 to HomeTimezone(
         timeZone = "America/Cordoba",
         cityName = "CORDOBA",
         identifier = 30096,
@@ -779,7 +779,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30097 to HomeTimeZone(
+    30097 to HomeTimezone(
         timeZone = "America/Costa_Rica",
         cityName = "COSTA RICA",
         identifier = 30097,
@@ -787,7 +787,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30098 to HomeTimeZone(
+    30098 to HomeTimezone(
         timeZone = "America/Creston",
         cityName = "CRESTON",
         identifier = 30098,
@@ -795,7 +795,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30099 to HomeTimeZone(
+    30099 to HomeTimezone(
         timeZone = "America/Cuiaba",
         cityName = "CUIABA",
         identifier = 30099,
@@ -803,7 +803,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30100 to HomeTimeZone(
+    30100 to HomeTimezone(
         timeZone = "America/Curacao",
         cityName = "CURACAO",
         identifier = 30100,
@@ -811,7 +811,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30101 to HomeTimeZone(
+    30101 to HomeTimezone(
         timeZone = "America/Danmarkshavn",
         cityName = "DANMARKSHAVN",
         identifier = 30101,
@@ -819,7 +819,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30102 to HomeTimeZone(
+    30102 to HomeTimezone(
         timeZone = "America/Dawson",
         cityName = "DAWSON",
         identifier = 30102,
@@ -827,7 +827,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30103 to HomeTimeZone(
+    30103 to HomeTimezone(
         timeZone = "America/Dawson_Creek",
         cityName = "DAWSON CREEK",
         identifier = 30103,
@@ -835,7 +835,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30104 to HomeTimeZone(
+    30104 to HomeTimezone(
         timeZone = "America/Denver",
         cityName = "DENVER",
         identifier = 30104,
@@ -843,7 +843,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30105 to HomeTimeZone(
+    30105 to HomeTimezone(
         timeZone = "America/Detroit",
         cityName = "DETROIT",
         identifier = 30105,
@@ -851,7 +851,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30106 to HomeTimeZone(
+    30106 to HomeTimezone(
         timeZone = "America/Dominica",
         cityName = "DOMINICA",
         identifier = 30106,
@@ -859,7 +859,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30107 to HomeTimeZone(
+    30107 to HomeTimezone(
         timeZone = "America/Edmonton",
         cityName = "EDMONTON",
         identifier = 30107,
@@ -867,7 +867,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30108 to HomeTimeZone(
+    30108 to HomeTimezone(
         timeZone = "America/Eirunepe",
         cityName = "EIRUNEPE",
         identifier = 30108,
@@ -875,7 +875,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30109 to HomeTimeZone(
+    30109 to HomeTimezone(
         timeZone = "America/El_Salvador",
         cityName = "EL SALVADOR",
         identifier = 30109,
@@ -883,7 +883,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30110 to HomeTimeZone(
+    30110 to HomeTimezone(
         timeZone = "America/Ensenada",
         cityName = "ENSENADA",
         identifier = 30110,
@@ -891,7 +891,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30111 to HomeTimeZone(
+    30111 to HomeTimezone(
         timeZone = "America/Fort_Wayne",
         cityName = "FORT WAYNE",
         identifier = 30111,
@@ -899,7 +899,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30112 to HomeTimeZone(
+    30112 to HomeTimezone(
         timeZone = "America/Fortaleza",
         cityName = "FORTALEZA",
         identifier = 30112,
@@ -907,7 +907,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30113 to HomeTimeZone(
+    30113 to HomeTimezone(
         timeZone = "America/Glace_Bay",
         cityName = "GLACE BAY",
         identifier = 30113,
@@ -915,7 +915,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30114 to HomeTimeZone(
+    30114 to HomeTimezone(
         timeZone = "America/Godthab",
         cityName = "GODTHAB",
         identifier = 30114,
@@ -923,7 +923,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 31
     ),
-    30115 to HomeTimeZone(
+    30115 to HomeTimezone(
         timeZone = "America/Goose_Bay",
         cityName = "GOOSE BAY",
         identifier = 30115,
@@ -931,7 +931,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30116 to HomeTimeZone(
+    30116 to HomeTimezone(
         timeZone = "America/Grand_Turk",
         cityName = "GRAND TURK",
         identifier = 30116,
@@ -939,7 +939,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30117 to HomeTimeZone(
+    30117 to HomeTimezone(
         timeZone = "America/Grenada",
         cityName = "GRENADA",
         identifier = 30117,
@@ -947,7 +947,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30118 to HomeTimeZone(
+    30118 to HomeTimezone(
         timeZone = "America/Guadeloupe",
         cityName = "GUADELOUPE",
         identifier = 30118,
@@ -955,7 +955,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30119 to HomeTimeZone(
+    30119 to HomeTimezone(
         timeZone = "America/Guatemala",
         cityName = "GUATEMALA",
         identifier = 30119,
@@ -963,7 +963,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30120 to HomeTimeZone(
+    30120 to HomeTimezone(
         timeZone = "America/Guayaquil",
         cityName = "GUAYAQUIL",
         identifier = 30120,
@@ -971,7 +971,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30121 to HomeTimeZone(
+    30121 to HomeTimezone(
         timeZone = "America/Guyana",
         cityName = "GUYANA",
         identifier = 30121,
@@ -979,7 +979,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30122 to HomeTimeZone(
+    30122 to HomeTimezone(
         timeZone = "America/Halifax",
         cityName = "HALIFAX",
         identifier = 30122,
@@ -987,7 +987,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30123 to HomeTimeZone(
+    30123 to HomeTimezone(
         timeZone = "America/Havana",
         cityName = "HAVANA",
         identifier = 30123,
@@ -995,7 +995,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 21
     ),
-    30124 to HomeTimeZone(
+    30124 to HomeTimezone(
         timeZone = "America/Hermosillo",
         cityName = "HERMOSILLO",
         identifier = 30124,
@@ -1003,7 +1003,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30125 to HomeTimeZone(
+    30125 to HomeTimezone(
         timeZone = "America/Indiana/Indianapolis",
         cityName = "INDIANAPOLIS",
         identifier = 30125,
@@ -1011,7 +1011,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30126 to HomeTimeZone(
+    30126 to HomeTimezone(
         timeZone = "America/Indiana/Knox",
         cityName = "KNOX",
         identifier = 30126,
@@ -1019,7 +1019,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30127 to HomeTimeZone(
+    30127 to HomeTimezone(
         timeZone = "America/Indiana/Marengo",
         cityName = "MARENGO",
         identifier = 30127,
@@ -1027,7 +1027,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30128 to HomeTimeZone(
+    30128 to HomeTimezone(
         timeZone = "America/Indiana/Petersburg",
         cityName = "PETERSBURG",
         identifier = 30128,
@@ -1035,7 +1035,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30129 to HomeTimeZone(
+    30129 to HomeTimezone(
         timeZone = "America/Indiana/Tell_City",
         cityName = "TELL CITY",
         identifier = 30129,
@@ -1043,7 +1043,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30130 to HomeTimeZone(
+    30130 to HomeTimezone(
         timeZone = "America/Indiana/Vevay",
         cityName = "VEVAY",
         identifier = 30130,
@@ -1051,7 +1051,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30131 to HomeTimeZone(
+    30131 to HomeTimezone(
         timeZone = "America/Indiana/Vincennes",
         cityName = "VINCENNES",
         identifier = 30131,
@@ -1059,7 +1059,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30132 to HomeTimeZone(
+    30132 to HomeTimezone(
         timeZone = "America/Indiana/Winamac",
         cityName = "WINAMAC",
         identifier = 30132,
@@ -1067,7 +1067,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30133 to HomeTimeZone(
+    30133 to HomeTimezone(
         timeZone = "America/Indianapolis",
         cityName = "INDIANAPOLIS",
         identifier = 30133,
@@ -1075,7 +1075,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30134 to HomeTimeZone(
+    30134 to HomeTimezone(
         timeZone = "America/Inuvik",
         cityName = "INUVIK",
         identifier = 30134,
@@ -1083,7 +1083,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30135 to HomeTimeZone(
+    30135 to HomeTimezone(
         timeZone = "America/Iqaluit",
         cityName = "IQALUIT",
         identifier = 30135,
@@ -1091,7 +1091,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30136 to HomeTimeZone(
+    30136 to HomeTimezone(
         timeZone = "America/Jamaica",
         cityName = "JAMAICA",
         identifier = 30136,
@@ -1099,7 +1099,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30137 to HomeTimeZone(
+    30137 to HomeTimezone(
         timeZone = "America/Jujuy",
         cityName = "JUJUY",
         identifier = 30137,
@@ -1107,7 +1107,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30138 to HomeTimeZone(
+    30138 to HomeTimezone(
         timeZone = "America/Juneau",
         cityName = "JUNEAU",
         identifier = 30138,
@@ -1115,7 +1115,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30139 to HomeTimeZone(
+    30139 to HomeTimezone(
         timeZone = "America/Kentucky/Louisville",
         cityName = "LOUISVILLE",
         identifier = 30139,
@@ -1123,7 +1123,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30140 to HomeTimeZone(
+    30140 to HomeTimezone(
         timeZone = "America/Kentucky/Monticello",
         cityName = "MONTICELLO",
         identifier = 30140,
@@ -1131,7 +1131,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30141 to HomeTimeZone(
+    30141 to HomeTimezone(
         timeZone = "America/Knox_IN",
         cityName = "KNOX IN",
         identifier = 30141,
@@ -1139,7 +1139,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30142 to HomeTimeZone(
+    30142 to HomeTimezone(
         timeZone = "America/Kralendijk",
         cityName = "KRALENDIJK",
         identifier = 30142,
@@ -1147,7 +1147,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30143 to HomeTimeZone(
+    30143 to HomeTimezone(
         timeZone = "America/La_Paz",
         cityName = "LA PAZ",
         identifier = 30143,
@@ -1155,7 +1155,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30144 to HomeTimeZone(
+    30144 to HomeTimezone(
         timeZone = "America/Lima",
         cityName = "LIMA",
         identifier = 30144,
@@ -1163,7 +1163,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30145 to HomeTimeZone(
+    30145 to HomeTimezone(
         timeZone = "America/Los_Angeles",
         cityName = "LOS ANGELES",
         identifier = 30145,
@@ -1171,7 +1171,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30146 to HomeTimeZone(
+    30146 to HomeTimezone(
         timeZone = "America/Louisville",
         cityName = "LOUISVILLE",
         identifier = 30146,
@@ -1179,7 +1179,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30147 to HomeTimeZone(
+    30147 to HomeTimezone(
         timeZone = "America/Lower_Princes",
         cityName = "LOWER PRINCES",
         identifier = 30147,
@@ -1187,7 +1187,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30148 to HomeTimeZone(
+    30148 to HomeTimezone(
         timeZone = "America/Maceio",
         cityName = "MACEIO",
         identifier = 30148,
@@ -1195,7 +1195,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30149 to HomeTimeZone(
+    30149 to HomeTimezone(
         timeZone = "America/Managua",
         cityName = "MANAGUA",
         identifier = 30149,
@@ -1203,7 +1203,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30150 to HomeTimeZone(
+    30150 to HomeTimezone(
         timeZone = "America/Manaus",
         cityName = "MANAUS",
         identifier = 30150,
@@ -1211,7 +1211,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30151 to HomeTimeZone(
+    30151 to HomeTimezone(
         timeZone = "America/Marigot",
         cityName = "MARIGOT",
         identifier = 30151,
@@ -1219,7 +1219,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30152 to HomeTimeZone(
+    30152 to HomeTimezone(
         timeZone = "America/Martinique",
         cityName = "MARTINIQUE",
         identifier = 30152,
@@ -1227,7 +1227,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30153 to HomeTimeZone(
+    30153 to HomeTimezone(
         timeZone = "America/Matamoros",
         cityName = "MATAMOROS",
         identifier = 30153,
@@ -1235,7 +1235,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30154 to HomeTimeZone(
+    30154 to HomeTimezone(
         timeZone = "America/Mazatlan",
         cityName = "MAZATLAN",
         identifier = 30154,
@@ -1243,7 +1243,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30155 to HomeTimeZone(
+    30155 to HomeTimezone(
         timeZone = "America/Mendoza",
         cityName = "MENDOZA",
         identifier = 30155,
@@ -1251,7 +1251,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30156 to HomeTimeZone(
+    30156 to HomeTimezone(
         timeZone = "America/Menominee",
         cityName = "MENOMINEE",
         identifier = 30156,
@@ -1259,7 +1259,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30157 to HomeTimeZone(
+    30157 to HomeTimezone(
         timeZone = "America/Merida",
         cityName = "MERIDA",
         identifier = 30157,
@@ -1267,7 +1267,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30158 to HomeTimeZone(
+    30158 to HomeTimezone(
         timeZone = "America/Metlakatla",
         cityName = "METLAKATLA",
         identifier = 30158,
@@ -1275,7 +1275,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30159 to HomeTimeZone(
+    30159 to HomeTimezone(
         timeZone = "America/Mexico_City",
         cityName = "MEXICO CITY",
         identifier = 30159,
@@ -1283,7 +1283,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30160 to HomeTimeZone(
+    30160 to HomeTimezone(
         timeZone = "America/Miquelon",
         cityName = "MIQUELON",
         identifier = 30160,
@@ -1291,7 +1291,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30161 to HomeTimeZone(
+    30161 to HomeTimezone(
         timeZone = "America/Moncton",
         cityName = "MONCTON",
         identifier = 30161,
@@ -1299,7 +1299,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30162 to HomeTimeZone(
+    30162 to HomeTimezone(
         timeZone = "America/Monterrey",
         cityName = "MONTERREY",
         identifier = 30162,
@@ -1307,7 +1307,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30163 to HomeTimeZone(
+    30163 to HomeTimezone(
         timeZone = "America/Montevideo",
         cityName = "MONTEVIDEO",
         identifier = 30163,
@@ -1315,7 +1315,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30164 to HomeTimeZone(
+    30164 to HomeTimezone(
         timeZone = "America/Montreal",
         cityName = "MONTREAL",
         identifier = 30164,
@@ -1323,7 +1323,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30165 to HomeTimeZone(
+    30165 to HomeTimezone(
         timeZone = "America/Montserrat",
         cityName = "MONTSERRAT",
         identifier = 30165,
@@ -1331,7 +1331,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30166 to HomeTimeZone(
+    30166 to HomeTimezone(
         timeZone = "America/Nassau",
         cityName = "NASSAU",
         identifier = 30166,
@@ -1339,7 +1339,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30167 to HomeTimeZone(
+    30167 to HomeTimezone(
         timeZone = "America/New_York",
         cityName = "NEW YORK",
         identifier = 30167,
@@ -1347,7 +1347,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30168 to HomeTimeZone(
+    30168 to HomeTimezone(
         timeZone = "America/Nipigon",
         cityName = "NIPIGON",
         identifier = 30168,
@@ -1355,7 +1355,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30169 to HomeTimeZone(
+    30169 to HomeTimezone(
         timeZone = "America/Nome",
         cityName = "NOME",
         identifier = 30169,
@@ -1363,7 +1363,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30170 to HomeTimeZone(
+    30170 to HomeTimezone(
         timeZone = "America/Noronha",
         cityName = "NORONHA",
         identifier = 30170,
@@ -1371,7 +1371,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30171 to HomeTimeZone(
+    30171 to HomeTimezone(
         timeZone = "America/North_Dakota/Beulah",
         cityName = "BEULAH",
         identifier = 30171,
@@ -1379,7 +1379,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30172 to HomeTimeZone(
+    30172 to HomeTimezone(
         timeZone = "America/North_Dakota/Center",
         cityName = "CENTER",
         identifier = 30172,
@@ -1387,7 +1387,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30173 to HomeTimeZone(
+    30173 to HomeTimezone(
         timeZone = "America/North_Dakota/New_Salem",
         cityName = "NEW SALEM",
         identifier = 30173,
@@ -1395,7 +1395,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30174 to HomeTimeZone(
+    30174 to HomeTimezone(
         timeZone = "America/Ojinaga",
         cityName = "OJINAGA",
         identifier = 30174,
@@ -1403,7 +1403,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30175 to HomeTimeZone(
+    30175 to HomeTimezone(
         timeZone = "America/Panama",
         cityName = "PANAMA",
         identifier = 30175,
@@ -1411,7 +1411,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30176 to HomeTimeZone(
+    30176 to HomeTimezone(
         timeZone = "America/Pangnirtung",
         cityName = "PANGNIRTUNG",
         identifier = 30176,
@@ -1419,7 +1419,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30177 to HomeTimeZone(
+    30177 to HomeTimezone(
         timeZone = "America/Paramaribo",
         cityName = "PARAMARIBO",
         identifier = 30177,
@@ -1427,7 +1427,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30178 to HomeTimeZone(
+    30178 to HomeTimezone(
         timeZone = "America/Phoenix",
         cityName = "PHOENIX",
         identifier = 30178,
@@ -1435,7 +1435,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30179 to HomeTimeZone(
+    30179 to HomeTimezone(
         timeZone = "America/Port-au-Prince",
         cityName = "PORT-AU-PRINCE",
         identifier = 30179,
@@ -1443,7 +1443,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30180 to HomeTimeZone(
+    30180 to HomeTimezone(
         timeZone = "America/Port_of_Spain",
         cityName = "PORT OF SPAIN",
         identifier = 30180,
@@ -1451,7 +1451,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30181 to HomeTimeZone(
+    30181 to HomeTimezone(
         timeZone = "America/Porto_Acre",
         cityName = "PORTO ACRE",
         identifier = 30181,
@@ -1459,7 +1459,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30182 to HomeTimeZone(
+    30182 to HomeTimezone(
         timeZone = "America/Porto_Velho",
         cityName = "PORTO VELHO",
         identifier = 30182,
@@ -1467,7 +1467,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30183 to HomeTimeZone(
+    30183 to HomeTimezone(
         timeZone = "America/Puerto_Rico",
         cityName = "PUERTO RICO",
         identifier = 30183,
@@ -1475,7 +1475,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30184 to HomeTimeZone(
+    30184 to HomeTimezone(
         timeZone = "America/Rainy_River",
         cityName = "RAINY RIVER",
         identifier = 30184,
@@ -1483,7 +1483,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30185 to HomeTimeZone(
+    30185 to HomeTimezone(
         timeZone = "America/Rankin_Inlet",
         cityName = "RANKIN INLET",
         identifier = 30185,
@@ -1491,7 +1491,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30186 to HomeTimeZone(
+    30186 to HomeTimezone(
         timeZone = "America/Recife",
         cityName = "RECIFE",
         identifier = 30186,
@@ -1499,7 +1499,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30187 to HomeTimeZone(
+    30187 to HomeTimezone(
         timeZone = "America/Regina",
         cityName = "REGINA",
         identifier = 30187,
@@ -1507,7 +1507,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30188 to HomeTimeZone(
+    30188 to HomeTimezone(
         timeZone = "America/Resolute",
         cityName = "RESOLUTE",
         identifier = 30188,
@@ -1515,7 +1515,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30189 to HomeTimeZone(
+    30189 to HomeTimezone(
         timeZone = "America/Rio_Branco",
         cityName = "RIO BRANCO",
         identifier = 30189,
@@ -1523,7 +1523,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30190 to HomeTimeZone(
+    30190 to HomeTimezone(
         timeZone = "America/Rosario",
         cityName = "ROSARIO",
         identifier = 30190,
@@ -1531,7 +1531,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30191 to HomeTimeZone(
+    30191 to HomeTimezone(
         timeZone = "America/Santa_Isabel",
         cityName = "SANTA ISABEL",
         identifier = 30191,
@@ -1539,7 +1539,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30192 to HomeTimeZone(
+    30192 to HomeTimezone(
         timeZone = "America/Santarem",
         cityName = "SANTAREM",
         identifier = 30192,
@@ -1547,7 +1547,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30193 to HomeTimeZone(
+    30193 to HomeTimezone(
         timeZone = "America/Santiago",
         cityName = "SANTIAGO",
         identifier = 30193,
@@ -1555,7 +1555,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 27
     ),
-    30194 to HomeTimeZone(
+    30194 to HomeTimezone(
         timeZone = "America/Santo_Domingo",
         cityName = "SANTO DOMINGO",
         identifier = 30194,
@@ -1563,7 +1563,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30195 to HomeTimeZone(
+    30195 to HomeTimezone(
         timeZone = "America/Sao_Paulo",
         cityName = "SAO PAULO",
         identifier = 30195,
@@ -1571,7 +1571,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30196 to HomeTimeZone(
+    30196 to HomeTimezone(
         timeZone = "America/Scoresbysund",
         cityName = "SCORESBYSUND",
         identifier = 30196,
@@ -1579,7 +1579,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30197 to HomeTimeZone(
+    30197 to HomeTimezone(
         timeZone = "America/Shiprock",
         cityName = "SHIPROCK",
         identifier = 30197,
@@ -1587,7 +1587,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30198 to HomeTimeZone(
+    30198 to HomeTimezone(
         timeZone = "America/Sitka",
         cityName = "SITKA",
         identifier = 30198,
@@ -1595,7 +1595,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30199 to HomeTimeZone(
+    30199 to HomeTimezone(
         timeZone = "America/St_Barthelemy",
         cityName = "ST BARTHELEMY",
         identifier = 30199,
@@ -1603,7 +1603,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30200 to HomeTimeZone(
+    30200 to HomeTimezone(
         timeZone = "America/St_Johns",
         cityName = "ST JOHNS",
         identifier = 30200,
@@ -1611,7 +1611,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30201 to HomeTimeZone(
+    30201 to HomeTimezone(
         timeZone = "America/St_Kitts",
         cityName = "ST KITTS",
         identifier = 30201,
@@ -1619,7 +1619,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30202 to HomeTimeZone(
+    30202 to HomeTimezone(
         timeZone = "America/St_Lucia",
         cityName = "ST LUCIA",
         identifier = 30202,
@@ -1627,7 +1627,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30203 to HomeTimeZone(
+    30203 to HomeTimezone(
         timeZone = "America/St_Thomas",
         cityName = "ST THOMAS",
         identifier = 30203,
@@ -1635,7 +1635,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30204 to HomeTimeZone(
+    30204 to HomeTimezone(
         timeZone = "America/St_Vincent",
         cityName = "ST VINCENT",
         identifier = 30204,
@@ -1643,7 +1643,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30205 to HomeTimeZone(
+    30205 to HomeTimezone(
         timeZone = "America/Swift_Current",
         cityName = "SWIFT CURRENT",
         identifier = 30205,
@@ -1651,7 +1651,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30206 to HomeTimeZone(
+    30206 to HomeTimezone(
         timeZone = "America/Tegucigalpa",
         cityName = "TEGUCIGALPA",
         identifier = 30206,
@@ -1659,7 +1659,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30207 to HomeTimeZone(
+    30207 to HomeTimezone(
         timeZone = "America/Thule",
         cityName = "THULE",
         identifier = 30207,
@@ -1667,7 +1667,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30208 to HomeTimeZone(
+    30208 to HomeTimezone(
         timeZone = "America/Thunder_Bay",
         cityName = "THUNDER BAY",
         identifier = 30208,
@@ -1675,7 +1675,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30209 to HomeTimeZone(
+    30209 to HomeTimezone(
         timeZone = "America/Tijuana",
         cityName = "TIJUANA",
         identifier = 30209,
@@ -1683,7 +1683,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30210 to HomeTimeZone(
+    30210 to HomeTimezone(
         timeZone = "America/Toronto",
         cityName = "TORONTO",
         identifier = 30210,
@@ -1691,7 +1691,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30211 to HomeTimeZone(
+    30211 to HomeTimezone(
         timeZone = "America/Tortola",
         cityName = "TORTOLA",
         identifier = 30211,
@@ -1699,7 +1699,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30212 to HomeTimeZone(
+    30212 to HomeTimezone(
         timeZone = "America/Vancouver",
         cityName = "VANCOUVER",
         identifier = 30212,
@@ -1707,7 +1707,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30213 to HomeTimeZone(
+    30213 to HomeTimezone(
         timeZone = "America/Virgin",
         cityName = "VIRGIN",
         identifier = 30213,
@@ -1715,7 +1715,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30214 to HomeTimeZone(
+    30214 to HomeTimezone(
         timeZone = "America/Whitehorse",
         cityName = "WHITEHORSE",
         identifier = 30214,
@@ -1723,7 +1723,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30215 to HomeTimeZone(
+    30215 to HomeTimezone(
         timeZone = "America/Winnipeg",
         cityName = "WINNIPEG",
         identifier = 30215,
@@ -1731,7 +1731,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30216 to HomeTimeZone(
+    30216 to HomeTimezone(
         timeZone = "America/Yakutat",
         cityName = "YAKUTAT",
         identifier = 30216,
@@ -1739,7 +1739,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30217 to HomeTimeZone(
+    30217 to HomeTimezone(
         timeZone = "America/Yellowknife",
         cityName = "YELLOWKNIFE",
         identifier = 30217,
@@ -1747,7 +1747,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30218 to HomeTimeZone(
+    30218 to HomeTimezone(
         timeZone = "Antarctica/Casey",
         cityName = "CASEY",
         identifier = 30218,
@@ -1755,7 +1755,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30219 to HomeTimeZone(
+    30219 to HomeTimezone(
         timeZone = "Antarctica/Davis",
         cityName = "DAVIS",
         identifier = 30219,
@@ -1763,7 +1763,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30220 to HomeTimeZone(
+    30220 to HomeTimezone(
         timeZone = "Antarctica/DumontDUrville",
         cityName = "DUMONTDURVILLE",
         identifier = 30220,
@@ -1771,7 +1771,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30221 to HomeTimeZone(
+    30221 to HomeTimezone(
         timeZone = "Antarctica/Macquarie",
         cityName = "MACQUARIE",
         identifier = 30221,
@@ -1779,7 +1779,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30222 to HomeTimeZone(
+    30222 to HomeTimezone(
         timeZone = "Antarctica/Mawson",
         cityName = "MAWSON",
         identifier = 30222,
@@ -1787,7 +1787,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30223 to HomeTimeZone(
+    30223 to HomeTimezone(
         timeZone = "Antarctica/McMurdo",
         cityName = "MCMURDO",
         identifier = 30223,
@@ -1795,7 +1795,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 5
     ),
-    30224 to HomeTimeZone(
+    30224 to HomeTimezone(
         timeZone = "Antarctica/Palmer",
         cityName = "PALMER",
         identifier = 30224,
@@ -1803,7 +1803,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30225 to HomeTimeZone(
+    30225 to HomeTimezone(
         timeZone = "Antarctica/Rothera",
         cityName = "ROTHERA",
         identifier = 30225,
@@ -1811,7 +1811,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30226 to HomeTimeZone(
+    30226 to HomeTimezone(
         timeZone = "Antarctica/South_Pole",
         cityName = "SOUTH POLE",
         identifier = 30226,
@@ -1819,7 +1819,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 5
     ),
-    30227 to HomeTimeZone(
+    30227 to HomeTimezone(
         timeZone = "Antarctica/Syowa",
         cityName = "SYOWA",
         identifier = 30227,
@@ -1827,7 +1827,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30228 to HomeTimeZone(
+    30228 to HomeTimezone(
         timeZone = "Antarctica/Troll",
         cityName = "TROLL",
         identifier = 30228,
@@ -1835,7 +1835,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 2.0,
         dstRules = 2
     ),
-    30229 to HomeTimeZone(
+    30229 to HomeTimezone(
         timeZone = "Antarctica/Vostok",
         cityName = "VOSTOK",
         identifier = 30229,
@@ -1843,7 +1843,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30230 to HomeTimeZone(
+    30230 to HomeTimezone(
         timeZone = "Arctic/Longyearbyen",
         cityName = "LONGYEARBYEN",
         identifier = 30230,
@@ -1851,7 +1851,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30231 to HomeTimeZone(
+    30231 to HomeTimezone(
         timeZone = "Asia/Aden",
         cityName = "ADEN",
         identifier = 30231,
@@ -1859,7 +1859,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30232 to HomeTimeZone(
+    30232 to HomeTimezone(
         timeZone = "Asia/Almaty",
         cityName = "ALMATY",
         identifier = 30232,
@@ -1867,7 +1867,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30233 to HomeTimeZone(
+    30233 to HomeTimezone(
         timeZone = "Asia/Amman",
         cityName = "AMMAN",
         identifier = 30233,
@@ -1875,7 +1875,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30234 to HomeTimeZone(
+    30234 to HomeTimezone(
         timeZone = "Asia/Anadyr",
         cityName = "ANADYR",
         identifier = 30234,
@@ -1883,7 +1883,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30235 to HomeTimeZone(
+    30235 to HomeTimezone(
         timeZone = "Asia/Aqtau",
         cityName = "AQTAU",
         identifier = 30235,
@@ -1891,7 +1891,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30236 to HomeTimeZone(
+    30236 to HomeTimezone(
         timeZone = "Asia/Aqtobe",
         cityName = "AQTOBE",
         identifier = 30236,
@@ -1899,7 +1899,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30237 to HomeTimeZone(
+    30237 to HomeTimezone(
         timeZone = "Asia/Ashgabat",
         cityName = "ASHGABAT",
         identifier = 30237,
@@ -1907,7 +1907,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30238 to HomeTimeZone(
+    30238 to HomeTimezone(
         timeZone = "Asia/Ashkhabad",
         cityName = "ASHKHABAD",
         identifier = 30238,
@@ -1915,7 +1915,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30239 to HomeTimeZone(
+    30239 to HomeTimezone(
         timeZone = "Asia/Baghdad",
         cityName = "BAGHDAD",
         identifier = 30239,
@@ -1923,7 +1923,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30240 to HomeTimeZone(
+    30240 to HomeTimezone(
         timeZone = "Asia/Bahrain",
         cityName = "BAHRAIN",
         identifier = 30240,
@@ -1931,7 +1931,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30241 to HomeTimeZone(
+    30241 to HomeTimezone(
         timeZone = "Asia/Baku",
         cityName = "BAKU",
         identifier = 30241,
@@ -1939,7 +1939,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30242 to HomeTimeZone(
+    30242 to HomeTimezone(
         timeZone = "Asia/Bangkok",
         cityName = "BANGKOK",
         identifier = 30242,
@@ -1947,7 +1947,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30243 to HomeTimeZone(
+    30243 to HomeTimezone(
         timeZone = "Asia/Beirut",
         cityName = "BEIRUT",
         identifier = 30243,
@@ -1955,7 +1955,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 12
     ),
-    30244 to HomeTimeZone(
+    30244 to HomeTimezone(
         timeZone = "Asia/Bishkek",
         cityName = "BISHKEK",
         identifier = 30244,
@@ -1963,7 +1963,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30245 to HomeTimeZone(
+    30245 to HomeTimezone(
         timeZone = "Asia/Brunei",
         cityName = "BRUNEI",
         identifier = 30245,
@@ -1971,7 +1971,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30246 to HomeTimeZone(
+    30246 to HomeTimezone(
         timeZone = "Asia/Calcutta",
         cityName = "CALCUTTA",
         identifier = 30246,
@@ -1979,7 +1979,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30247 to HomeTimeZone(
+    30247 to HomeTimezone(
         timeZone = "Asia/Choibalsan",
         cityName = "CHOIBALSAN",
         identifier = 30247,
@@ -1987,7 +1987,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30248 to HomeTimeZone(
+    30248 to HomeTimezone(
         timeZone = "Asia/Chongqing",
         cityName = "CHONGQING",
         identifier = 30248,
@@ -1995,7 +1995,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30249 to HomeTimeZone(
+    30249 to HomeTimezone(
         timeZone = "Asia/Chungking",
         cityName = "CHUNGKING",
         identifier = 30249,
@@ -2003,7 +2003,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30250 to HomeTimeZone(
+    30250 to HomeTimezone(
         timeZone = "Asia/Colombo",
         cityName = "COLOMBO",
         identifier = 30250,
@@ -2011,7 +2011,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30251 to HomeTimeZone(
+    30251 to HomeTimezone(
         timeZone = "Asia/Dacca",
         cityName = "DACCA",
         identifier = 30251,
@@ -2019,7 +2019,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30252 to HomeTimeZone(
+    30252 to HomeTimezone(
         timeZone = "Asia/Damascus",
         cityName = "DAMASCUS",
         identifier = 30252,
@@ -2027,7 +2027,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30253 to HomeTimeZone(
+    30253 to HomeTimezone(
         timeZone = "Asia/Dhaka",
         cityName = "DHAKA",
         identifier = 30253,
@@ -2035,7 +2035,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30254 to HomeTimeZone(
+    30254 to HomeTimezone(
         timeZone = "Asia/Dili",
         cityName = "DILI",
         identifier = 30254,
@@ -2043,7 +2043,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30255 to HomeTimeZone(
+    30255 to HomeTimezone(
         timeZone = "Asia/Dubai",
         cityName = "DUBAI",
         identifier = 30255,
@@ -2051,7 +2051,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30256 to HomeTimeZone(
+    30256 to HomeTimezone(
         timeZone = "Asia/Dushanbe",
         cityName = "DUSHANBE",
         identifier = 30256,
@@ -2059,7 +2059,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30257 to HomeTimeZone(
+    30257 to HomeTimezone(
         timeZone = "Asia/Gaza",
         cityName = "GAZA",
         identifier = 30257,
@@ -2067,7 +2067,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 29
     ),
-    30258 to HomeTimeZone(
+    30258 to HomeTimezone(
         timeZone = "Asia/Harbin",
         cityName = "HARBIN",
         identifier = 30258,
@@ -2075,7 +2075,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30259 to HomeTimeZone(
+    30259 to HomeTimezone(
         timeZone = "Asia/Hebron",
         cityName = "HEBRON",
         identifier = 30259,
@@ -2083,7 +2083,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 29
     ),
-    30260 to HomeTimeZone(
+    30260 to HomeTimezone(
         timeZone = "Asia/Ho_Chi_Minh",
         cityName = "HO CHI MINH",
         identifier = 30260,
@@ -2091,7 +2091,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30261 to HomeTimeZone(
+    30261 to HomeTimezone(
         timeZone = "Asia/Hong_Kong",
         cityName = "HONG KONG",
         identifier = 30261,
@@ -2099,7 +2099,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30262 to HomeTimeZone(
+    30262 to HomeTimezone(
         timeZone = "Asia/Hovd",
         cityName = "HOVD",
         identifier = 30262,
@@ -2107,7 +2107,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30263 to HomeTimeZone(
+    30263 to HomeTimezone(
         timeZone = "Asia/Irkutsk",
         cityName = "IRKUTSK",
         identifier = 30263,
@@ -2115,7 +2115,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30264 to HomeTimeZone(
+    30264 to HomeTimezone(
         timeZone = "Asia/Istanbul",
         cityName = "ISTANBUL",
         identifier = 30264,
@@ -2123,7 +2123,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30265 to HomeTimeZone(
+    30265 to HomeTimezone(
         timeZone = "Asia/Jakarta",
         cityName = "JAKARTA",
         identifier = 30265,
@@ -2131,7 +2131,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30266 to HomeTimeZone(
+    30266 to HomeTimezone(
         timeZone = "Asia/Jayapura",
         cityName = "JAYAPURA",
         identifier = 30266,
@@ -2139,7 +2139,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30267 to HomeTimeZone(
+    30267 to HomeTimezone(
         timeZone = "Asia/Jerusalem",
         cityName = "JERUSALEM",
         identifier = 30267,
@@ -2147,7 +2147,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 42
     ),
-    30268 to HomeTimeZone(
+    30268 to HomeTimezone(
         timeZone = "Asia/Kabul",
         cityName = "KABUL",
         identifier = 30268,
@@ -2155,7 +2155,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30269 to HomeTimeZone(
+    30269 to HomeTimezone(
         timeZone = "Asia/Kamchatka",
         cityName = "KAMCHATKA",
         identifier = 30269,
@@ -2163,7 +2163,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30270 to HomeTimeZone(
+    30270 to HomeTimezone(
         timeZone = "Asia/Karachi",
         cityName = "KARACHI",
         identifier = 30270,
@@ -2171,7 +2171,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30271 to HomeTimeZone(
+    30271 to HomeTimezone(
         timeZone = "Asia/Kashgar",
         cityName = "KASHGAR",
         identifier = 30271,
@@ -2179,7 +2179,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30272 to HomeTimeZone(
+    30272 to HomeTimezone(
         timeZone = "Asia/Kathmandu",
         cityName = "KATHMANDU",
         identifier = 30272,
@@ -2187,7 +2187,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30273 to HomeTimeZone(
+    30273 to HomeTimezone(
         timeZone = "Asia/Katmandu",
         cityName = "KATMANDU",
         identifier = 30273,
@@ -2195,7 +2195,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30274 to HomeTimeZone(
+    30274 to HomeTimezone(
         timeZone = "Asia/Khandyga",
         cityName = "KHANDYGA",
         identifier = 30274,
@@ -2203,7 +2203,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30275 to HomeTimeZone(
+    30275 to HomeTimezone(
         timeZone = "Asia/Kolkata",
         cityName = "KOLKATA",
         identifier = 30275,
@@ -2211,7 +2211,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30276 to HomeTimeZone(
+    30276 to HomeTimezone(
         timeZone = "Asia/Krasnoyarsk",
         cityName = "KRASNOYARSK",
         identifier = 30276,
@@ -2219,7 +2219,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30277 to HomeTimeZone(
+    30277 to HomeTimezone(
         timeZone = "Asia/Kuala_Lumpur",
         cityName = "KUALA LUMPUR",
         identifier = 30277,
@@ -2227,7 +2227,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30278 to HomeTimeZone(
+    30278 to HomeTimezone(
         timeZone = "Asia/Kuching",
         cityName = "KUCHING",
         identifier = 30278,
@@ -2235,7 +2235,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30279 to HomeTimeZone(
+    30279 to HomeTimezone(
         timeZone = "Asia/Kuwait",
         cityName = "KUWAIT",
         identifier = 30279,
@@ -2243,7 +2243,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30280 to HomeTimeZone(
+    30280 to HomeTimezone(
         timeZone = "Asia/Macao",
         cityName = "MACAO",
         identifier = 30280,
@@ -2251,7 +2251,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30281 to HomeTimeZone(
+    30281 to HomeTimezone(
         timeZone = "Asia/Macau",
         cityName = "MACAU",
         identifier = 30281,
@@ -2259,7 +2259,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30282 to HomeTimeZone(
+    30282 to HomeTimezone(
         timeZone = "Asia/Magadan",
         cityName = "MAGADAN",
         identifier = 30282,
@@ -2267,7 +2267,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30283 to HomeTimeZone(
+    30283 to HomeTimezone(
         timeZone = "Asia/Makassar",
         cityName = "MAKASSAR",
         identifier = 30283,
@@ -2275,7 +2275,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30284 to HomeTimeZone(
+    30284 to HomeTimezone(
         timeZone = "Asia/Manila",
         cityName = "MANILA",
         identifier = 30284,
@@ -2283,7 +2283,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30285 to HomeTimeZone(
+    30285 to HomeTimezone(
         timeZone = "Asia/Muscat",
         cityName = "MUSCAT",
         identifier = 30285,
@@ -2291,7 +2291,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30286 to HomeTimeZone(
+    30286 to HomeTimezone(
         timeZone = "Asia/Nicosia",
         cityName = "NICOSIA",
         identifier = 30286,
@@ -2299,7 +2299,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 3
     ),
-    30287 to HomeTimeZone(
+    30287 to HomeTimezone(
         timeZone = "Asia/Novokuznetsk",
         cityName = "NOVOKUZNETSK",
         identifier = 30287,
@@ -2307,7 +2307,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30288 to HomeTimeZone(
+    30288 to HomeTimezone(
         timeZone = "Asia/Novosibirsk",
         cityName = "NOVOSIBIRSK",
         identifier = 30288,
@@ -2315,7 +2315,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30289 to HomeTimeZone(
+    30289 to HomeTimezone(
         timeZone = "Asia/Omsk",
         cityName = "OMSK",
         identifier = 30289,
@@ -2323,7 +2323,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30290 to HomeTimeZone(
+    30290 to HomeTimezone(
         timeZone = "Asia/Oral",
         cityName = "ORAL",
         identifier = 30290,
@@ -2331,7 +2331,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30291 to HomeTimeZone(
+    30291 to HomeTimezone(
         timeZone = "Asia/Phnom_Penh",
         cityName = "PHNOM PENH",
         identifier = 30291,
@@ -2339,7 +2339,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30292 to HomeTimeZone(
+    30292 to HomeTimezone(
         timeZone = "Asia/Pontianak",
         cityName = "PONTIANAK",
         identifier = 30292,
@@ -2347,7 +2347,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30293 to HomeTimeZone(
+    30293 to HomeTimezone(
         timeZone = "Asia/Pyongyang",
         cityName = "PYONGYANG",
         identifier = 30293,
@@ -2355,7 +2355,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30294 to HomeTimeZone(
+    30294 to HomeTimezone(
         timeZone = "Asia/Qatar",
         cityName = "QATAR",
         identifier = 30294,
@@ -2363,7 +2363,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30295 to HomeTimeZone(
+    30295 to HomeTimezone(
         timeZone = "Asia/Qyzylorda",
         cityName = "QYZYLORDA",
         identifier = 30295,
@@ -2371,7 +2371,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30296 to HomeTimeZone(
+    30296 to HomeTimezone(
         timeZone = "Asia/Rangoon",
         cityName = "RANGOON",
         identifier = 30296,
@@ -2379,7 +2379,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30297 to HomeTimeZone(
+    30297 to HomeTimezone(
         timeZone = "Asia/Riyadh",
         cityName = "RIYADH",
         identifier = 30297,
@@ -2387,7 +2387,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30298 to HomeTimeZone(
+    30298 to HomeTimezone(
         timeZone = "Asia/Saigon",
         cityName = "SAIGON",
         identifier = 30298,
@@ -2395,7 +2395,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30299 to HomeTimeZone(
+    30299 to HomeTimezone(
         timeZone = "Asia/Sakhalin",
         cityName = "SAKHALIN",
         identifier = 30299,
@@ -2403,7 +2403,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30300 to HomeTimeZone(
+    30300 to HomeTimezone(
         timeZone = "Asia/Samarkand",
         cityName = "SAMARKAND",
         identifier = 30300,
@@ -2411,7 +2411,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30301 to HomeTimeZone(
+    30301 to HomeTimezone(
         timeZone = "Asia/Seoul",
         cityName = "SEOUL",
         identifier = 30301,
@@ -2419,7 +2419,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30302 to HomeTimeZone(
+    30302 to HomeTimezone(
         timeZone = "Asia/Shanghai",
         cityName = "SHANGHAI",
         identifier = 30302,
@@ -2427,7 +2427,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30303 to HomeTimeZone(
+    30303 to HomeTimezone(
         timeZone = "Asia/Singapore",
         cityName = "SINGAPORE",
         identifier = 30303,
@@ -2435,7 +2435,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30304 to HomeTimeZone(
+    30304 to HomeTimezone(
         timeZone = "Asia/Taipei",
         cityName = "TAIPEI",
         identifier = 30304,
@@ -2443,7 +2443,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30305 to HomeTimeZone(
+    30305 to HomeTimezone(
         timeZone = "Asia/Tashkent",
         cityName = "TASHKENT",
         identifier = 30305,
@@ -2451,7 +2451,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30306 to HomeTimeZone(
+    30306 to HomeTimezone(
         timeZone = "Asia/Tbilisi",
         cityName = "TBILISI",
         identifier = 30306,
@@ -2459,7 +2459,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30307 to HomeTimeZone(
+    30307 to HomeTimezone(
         timeZone = "Asia/Tehran",
         cityName = "TEHRAN",
         identifier = 30307,
@@ -2467,7 +2467,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30308 to HomeTimeZone(
+    30308 to HomeTimezone(
         timeZone = "Asia/Tel_Aviv",
         cityName = "TEL AVIV",
         identifier = 30308,
@@ -2475,7 +2475,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 42
     ),
-    30309 to HomeTimeZone(
+    30309 to HomeTimezone(
         timeZone = "Asia/Thimbu",
         cityName = "THIMBU",
         identifier = 30309,
@@ -2483,7 +2483,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30310 to HomeTimeZone(
+    30310 to HomeTimezone(
         timeZone = "Asia/Thimphu",
         cityName = "THIMPHU",
         identifier = 30310,
@@ -2491,7 +2491,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30311 to HomeTimeZone(
+    30311 to HomeTimezone(
         timeZone = "Asia/Tokyo",
         cityName = "TOKYO",
         identifier = 30311,
@@ -2499,7 +2499,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30312 to HomeTimeZone(
+    30312 to HomeTimezone(
         timeZone = "Asia/Ujung_Pandang",
         cityName = "UJUNG PANDANG",
         identifier = 30312,
@@ -2507,7 +2507,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30313 to HomeTimeZone(
+    30313 to HomeTimezone(
         timeZone = "Asia/Ulaanbaatar",
         cityName = "ULAANBAATAR",
         identifier = 30313,
@@ -2515,7 +2515,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30314 to HomeTimeZone(
+    30314 to HomeTimezone(
         timeZone = "Asia/Ulan_Bator",
         cityName = "ULAN BATOR",
         identifier = 30314,
@@ -2523,7 +2523,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30315 to HomeTimeZone(
+    30315 to HomeTimezone(
         timeZone = "Asia/Urumqi",
         cityName = "URUMQI",
         identifier = 30315,
@@ -2531,7 +2531,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30316 to HomeTimeZone(
+    30316 to HomeTimezone(
         timeZone = "Asia/Ust-Nera",
         cityName = "UST-NERA",
         identifier = 30316,
@@ -2539,7 +2539,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30317 to HomeTimeZone(
+    30317 to HomeTimezone(
         timeZone = "Asia/Vientiane",
         cityName = "VIENTIANE",
         identifier = 30317,
@@ -2547,7 +2547,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30318 to HomeTimeZone(
+    30318 to HomeTimezone(
         timeZone = "Asia/Vladivostok",
         cityName = "VLADIVOSTOK",
         identifier = 30318,
@@ -2555,7 +2555,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30319 to HomeTimeZone(
+    30319 to HomeTimezone(
         timeZone = "Asia/Yakutsk",
         cityName = "YAKUTSK",
         identifier = 30319,
@@ -2563,7 +2563,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30320 to HomeTimeZone(
+    30320 to HomeTimezone(
         timeZone = "Asia/Yekaterinburg",
         cityName = "YEKATERINBURG",
         identifier = 30320,
@@ -2571,7 +2571,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30321 to HomeTimeZone(
+    30321 to HomeTimezone(
         timeZone = "Asia/Yerevan",
         cityName = "YEREVAN",
         identifier = 30321,
@@ -2579,7 +2579,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30322 to HomeTimeZone(
+    30322 to HomeTimezone(
         timeZone = "Atlantic/Azores",
         cityName = "AZORES",
         identifier = 30322,
@@ -2587,7 +2587,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30323 to HomeTimeZone(
+    30323 to HomeTimezone(
         timeZone = "Atlantic/Bermuda",
         cityName = "BERMUDA",
         identifier = 30323,
@@ -2595,7 +2595,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30324 to HomeTimeZone(
+    30324 to HomeTimezone(
         timeZone = "Atlantic/Canary",
         cityName = "CANARY",
         identifier = 30324,
@@ -2603,7 +2603,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 14
     ),
-    30325 to HomeTimeZone(
+    30325 to HomeTimezone(
         timeZone = "Atlantic/Cape_Verde",
         cityName = "CAPE VERDE",
         identifier = 30325,
@@ -2611,7 +2611,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30326 to HomeTimeZone(
+    30326 to HomeTimezone(
         timeZone = "Atlantic/Faeroe",
         cityName = "FAEROE",
         identifier = 30326,
@@ -2619,7 +2619,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30327 to HomeTimeZone(
+    30327 to HomeTimezone(
         timeZone = "Atlantic/Faroe",
         cityName = "FAROE",
         identifier = 30327,
@@ -2627,7 +2627,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30328 to HomeTimeZone(
+    30328 to HomeTimezone(
         timeZone = "Atlantic/Jan_Mayen",
         cityName = "JAN MAYEN",
         identifier = 30328,
@@ -2635,7 +2635,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30329 to HomeTimeZone(
+    30329 to HomeTimezone(
         timeZone = "Atlantic/Madeira",
         cityName = "MADEIRA",
         identifier = 30329,
@@ -2643,7 +2643,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30330 to HomeTimeZone(
+    30330 to HomeTimezone(
         timeZone = "Atlantic/Reykjavik",
         cityName = "REYKJAVIK",
         identifier = 30330,
@@ -2651,7 +2651,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30331 to HomeTimeZone(
+    30331 to HomeTimezone(
         timeZone = "Atlantic/South_Georgia",
         cityName = "SOUTH GEORGIA",
         identifier = 30331,
@@ -2659,7 +2659,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30332 to HomeTimeZone(
+    30332 to HomeTimezone(
         timeZone = "Atlantic/St_Helena",
         cityName = "ST HELENA",
         identifier = 30332,
@@ -2667,7 +2667,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30333 to HomeTimeZone(
+    30333 to HomeTimezone(
         timeZone = "Atlantic/Stanley",
         cityName = "STANLEY",
         identifier = 30333,
@@ -2675,7 +2675,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30334 to HomeTimeZone(
+    30334 to HomeTimezone(
         timeZone = "Australia/ACT",
         cityName = "ACT",
         identifier = 30334,
@@ -2683,7 +2683,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 4
     ),
-    30335 to HomeTimeZone(
+    30335 to HomeTimezone(
         timeZone = "Australia/Adelaide",
         cityName = "ADELAIDE",
         identifier = 30335,
@@ -2691,7 +2691,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 4
     ),
-    30336 to HomeTimeZone(
+    30336 to HomeTimezone(
         timeZone = "Australia/Brisbane",
         cityName = "BRISBANE",
         identifier = 30336,
@@ -2699,7 +2699,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30337 to HomeTimeZone(
+    30337 to HomeTimezone(
         timeZone = "Australia/Broken_Hill",
         cityName = "BROKEN HILL",
         identifier = 30337,
@@ -2707,7 +2707,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 4
     ),
-    30338 to HomeTimeZone(
+    30338 to HomeTimezone(
         timeZone = "Australia/Canberra",
         cityName = "CANBERRA",
         identifier = 30338,
@@ -2715,7 +2715,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 4
     ),
-    30339 to HomeTimeZone(
+    30339 to HomeTimezone(
         timeZone = "Australia/Currie",
         cityName = "CURRIE",
         identifier = 30339,
@@ -2723,7 +2723,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 4
     ),
-    30340 to HomeTimeZone(
+    30340 to HomeTimezone(
         timeZone = "Australia/Darwin",
         cityName = "DARWIN",
         identifier = 30340,
@@ -2731,7 +2731,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30341 to HomeTimeZone(
+    30341 to HomeTimezone(
         timeZone = "Australia/Eucla",
         cityName = "EUCLA",
         identifier = 30341,
@@ -2739,7 +2739,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30342 to HomeTimeZone(
+    30342 to HomeTimezone(
         timeZone = "Australia/Hobart",
         cityName = "HOBART",
         identifier = 30342,
@@ -2747,7 +2747,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 4
     ),
-    30343 to HomeTimeZone(
+    30343 to HomeTimezone(
         timeZone = "Australia/LHI",
         cityName = "LHI",
         identifier = 30343,
@@ -2755,7 +2755,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 0.5,
         dstRules = 18
     ),
-    30344 to HomeTimeZone(
+    30344 to HomeTimezone(
         timeZone = "Australia/Lindeman",
         cityName = "LINDEMAN",
         identifier = 30344,
@@ -2763,7 +2763,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30345 to HomeTimeZone(
+    30345 to HomeTimezone(
         timeZone = "Australia/Lord_Howe",
         cityName = "LORD HOWE",
         identifier = 30345,
@@ -2771,7 +2771,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 0.5,
         dstRules = 18
     ),
-    30346 to HomeTimeZone(
+    30346 to HomeTimezone(
         timeZone = "Australia/Melbourne",
         cityName = "MELBOURNE",
         identifier = 30346,
@@ -2779,7 +2779,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 4
     ),
-    30347 to HomeTimeZone(
+    30347 to HomeTimezone(
         timeZone = "Australia/NSW",
         cityName = "NSW",
         identifier = 30347,
@@ -2787,7 +2787,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 4
     ),
-    30348 to HomeTimeZone(
+    30348 to HomeTimezone(
         timeZone = "Australia/North",
         cityName = "NORTH",
         identifier = 30348,
@@ -2795,7 +2795,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30349 to HomeTimeZone(
+    30349 to HomeTimezone(
         timeZone = "Australia/Perth",
         cityName = "PERTH",
         identifier = 30349,
@@ -2803,7 +2803,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30350 to HomeTimeZone(
+    30350 to HomeTimezone(
         timeZone = "Australia/Queensland",
         cityName = "QUEENSLAND",
         identifier = 30350,
@@ -2811,7 +2811,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30351 to HomeTimeZone(
+    30351 to HomeTimezone(
         timeZone = "Australia/South",
         cityName = "SOUTH",
         identifier = 30351,
@@ -2819,7 +2819,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 4
     ),
-    30352 to HomeTimeZone(
+    30352 to HomeTimezone(
         timeZone = "Australia/Sydney",
         cityName = "SYDNEY",
         identifier = 30352,
@@ -2827,7 +2827,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 4
     ),
-    30353 to HomeTimeZone(
+    30353 to HomeTimezone(
         timeZone = "Australia/Tasmania",
         cityName = "TASMANIA",
         identifier = 30353,
@@ -2835,7 +2835,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 4
     ),
-    30354 to HomeTimeZone(
+    30354 to HomeTimezone(
         timeZone = "Australia/Victoria",
         cityName = "VICTORIA",
         identifier = 30354,
@@ -2843,7 +2843,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 4
     ),
-    30355 to HomeTimeZone(
+    30355 to HomeTimezone(
         timeZone = "Australia/West",
         cityName = "WEST",
         identifier = 30355,
@@ -2851,7 +2851,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30356 to HomeTimeZone(
+    30356 to HomeTimezone(
         timeZone = "Australia/Yancowinna",
         cityName = "YANCOWINNA",
         identifier = 30356,
@@ -2859,7 +2859,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 4
     ),
-    30357 to HomeTimeZone(
+    30357 to HomeTimezone(
         timeZone = "Brazil/Acre",
         cityName = "ACRE",
         identifier = 30357,
@@ -2867,7 +2867,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30358 to HomeTimeZone(
+    30358 to HomeTimezone(
         timeZone = "Brazil/DeNoronha",
         cityName = "DENORONHA",
         identifier = 30358,
@@ -2875,7 +2875,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30359 to HomeTimeZone(
+    30359 to HomeTimezone(
         timeZone = "Brazil/East",
         cityName = "EAST",
         identifier = 30359,
@@ -2883,7 +2883,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30360 to HomeTimeZone(
+    30360 to HomeTimezone(
         timeZone = "Brazil/West",
         cityName = "WEST",
         identifier = 30360,
@@ -2891,7 +2891,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30361 to HomeTimeZone(
+    30361 to HomeTimezone(
         timeZone = "CET",
         cityName = "CET",
         identifier = 30361,
@@ -2899,7 +2899,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30362 to HomeTimeZone(
+    30362 to HomeTimezone(
         timeZone = "CST6CDT",
         cityName = "CST6CDT",
         identifier = 30362,
@@ -2907,7 +2907,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30363 to HomeTimeZone(
+    30363 to HomeTimezone(
         timeZone = "Canada/Atlantic",
         cityName = "ATLANTIC",
         identifier = 30363,
@@ -2915,7 +2915,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30364 to HomeTimeZone(
+    30364 to HomeTimezone(
         timeZone = "Canada/Central",
         cityName = "CENTRAL",
         identifier = 30364,
@@ -2923,7 +2923,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30365 to HomeTimeZone(
+    30365 to HomeTimezone(
         timeZone = "Canada/East-Saskatchewan",
         cityName = "EAST-SASKATCHEWAN",
         identifier = 30365,
@@ -2931,7 +2931,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30366 to HomeTimeZone(
+    30366 to HomeTimezone(
         timeZone = "Canada/Eastern",
         cityName = "EASTERN",
         identifier = 30366,
@@ -2939,7 +2939,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30367 to HomeTimeZone(
+    30367 to HomeTimezone(
         timeZone = "Canada/Mountain",
         cityName = "MOUNTAIN",
         identifier = 30367,
@@ -2947,7 +2947,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30368 to HomeTimeZone(
+    30368 to HomeTimezone(
         timeZone = "Canada/Newfoundland",
         cityName = "NEWFOUNDLAND",
         identifier = 30368,
@@ -2955,7 +2955,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30369 to HomeTimeZone(
+    30369 to HomeTimezone(
         timeZone = "Canada/Pacific",
         cityName = "PACIFIC",
         identifier = 30369,
@@ -2963,7 +2963,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30370 to HomeTimeZone(
+    30370 to HomeTimezone(
         timeZone = "Canada/Saskatchewan",
         cityName = "SASKATCHEWAN",
         identifier = 30370,
@@ -2971,7 +2971,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30371 to HomeTimeZone(
+    30371 to HomeTimezone(
         timeZone = "Canada/Yukon",
         cityName = "YUKON",
         identifier = 30371,
@@ -2979,7 +2979,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30372 to HomeTimeZone(
+    30372 to HomeTimezone(
         timeZone = "Chile/Continental",
         cityName = "CONTINENTAL",
         identifier = 30372,
@@ -2987,7 +2987,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 27
     ),
-    30373 to HomeTimeZone(
+    30373 to HomeTimezone(
         timeZone = "Chile/EasterIsland",
         cityName = "EASTERISLAND",
         identifier = 30373,
@@ -2995,7 +2995,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 28
     ),
-    30374 to HomeTimeZone(
+    30374 to HomeTimezone(
         timeZone = "Cuba",
         cityName = "CUBA",
         identifier = 30374,
@@ -3003,7 +3003,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 21
     ),
-    30375 to HomeTimeZone(
+    30375 to HomeTimezone(
         timeZone = "EET",
         cityName = "EET ",
         identifier = 30375,
@@ -3011,7 +3011,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30376 to HomeTimeZone(
+    30376 to HomeTimezone(
         timeZone = "EST",
         cityName = "EST ",
         identifier = 30376,
@@ -3019,7 +3019,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30377 to HomeTimeZone(
+    30377 to HomeTimezone(
         timeZone = "EST5EDT",
         cityName = "EST5EDT",
         identifier = 30377,
@@ -3027,7 +3027,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30378 to HomeTimeZone(
+    30378 to HomeTimezone(
         timeZone = "Egypt",
         cityName = "EGYPT",
         identifier = 30378,
@@ -3035,7 +3035,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 22
     ),
-    30379 to HomeTimeZone(
+    30379 to HomeTimezone(
         timeZone = "Eire",
         cityName = "EIRE",
         identifier = 30379,
@@ -3043,7 +3043,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30380 to HomeTimeZone(
+    30380 to HomeTimezone(
         timeZone = "Etc/GMT",
         cityName = "GMT",
         identifier = 30380,
@@ -3051,7 +3051,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 0.0,
         dstRules = 0
     ),
-    30381 to HomeTimeZone(
+    30381 to HomeTimezone(
         timeZone = "Etc/GMT+0",
         cityName = "GMT+0",
         identifier = 30381,
@@ -3059,7 +3059,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30382 to HomeTimeZone(
+    30382 to HomeTimezone(
         timeZone = "Etc/GMT+1",
         cityName = "GMT+1",
         identifier = 30382,
@@ -3067,7 +3067,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30383 to HomeTimeZone(
+    30383 to HomeTimezone(
         timeZone = "Etc/GMT+10",
         cityName = "GMT+10",
         identifier = 30383,
@@ -3075,7 +3075,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30384 to HomeTimeZone(
+    30384 to HomeTimezone(
         timeZone = "Etc/GMT+11",
         cityName = "GMT+11",
         identifier = 30384,
@@ -3083,7 +3083,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30385 to HomeTimeZone(
+    30385 to HomeTimezone(
         timeZone = "Etc/GMT+12",
         cityName = "GMT+12",
         identifier = 30385,
@@ -3091,7 +3091,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30386 to HomeTimeZone(
+    30386 to HomeTimezone(
         timeZone = "Etc/GMT+2",
         cityName = "GMT+2",
         identifier = 30386,
@@ -3099,7 +3099,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30387 to HomeTimeZone(
+    30387 to HomeTimezone(
         timeZone = "Etc/GMT+3",
         cityName = "GMT+3",
         identifier = 30387,
@@ -3107,7 +3107,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30388 to HomeTimeZone(
+    30388 to HomeTimezone(
         timeZone = "Etc/GMT+4",
         cityName = "GMT+4",
         identifier = 30388,
@@ -3115,7 +3115,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30389 to HomeTimeZone(
+    30389 to HomeTimezone(
         timeZone = "Etc/GMT+5",
         cityName = "GMT+5",
         identifier = 30389,
@@ -3123,7 +3123,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30390 to HomeTimeZone(
+    30390 to HomeTimezone(
         timeZone = "Etc/GMT+6",
         cityName = "GMT+6",
         identifier = 30390,
@@ -3131,7 +3131,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30391 to HomeTimeZone(
+    30391 to HomeTimezone(
         timeZone = "Etc/GMT+7",
         cityName = "GMT+7",
         identifier = 30391,
@@ -3139,7 +3139,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30392 to HomeTimeZone(
+    30392 to HomeTimezone(
         timeZone = "Etc/GMT+8",
         cityName = "GMT+8",
         identifier = 30392,
@@ -3147,7 +3147,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30393 to HomeTimeZone(
+    30393 to HomeTimezone(
         timeZone = "Etc/GMT+9",
         cityName = "GMT+9",
         identifier = 30393,
@@ -3155,7 +3155,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30394 to HomeTimeZone(
+    30394 to HomeTimezone(
         timeZone = "Etc/GMT-0",
         cityName = "GMT-0",
         identifier = 30394,
@@ -3163,7 +3163,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30395 to HomeTimeZone(
+    30395 to HomeTimezone(
         timeZone = "Etc/GMT-1",
         cityName = "GMT-1",
         identifier = 30395,
@@ -3171,7 +3171,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30396 to HomeTimeZone(
+    30396 to HomeTimezone(
         timeZone = "Etc/GMT-10",
         cityName = "GMT-10",
         identifier = 30396,
@@ -3179,7 +3179,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30397 to HomeTimeZone(
+    30397 to HomeTimezone(
         timeZone = "Etc/GMT-11",
         cityName = "GMT-11",
         identifier = 30397,
@@ -3187,7 +3187,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30398 to HomeTimeZone(
+    30398 to HomeTimezone(
         timeZone = "Etc/GMT-12",
         cityName = "GMT-12",
         identifier = 30398,
@@ -3195,7 +3195,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30399 to HomeTimeZone(
+    30399 to HomeTimezone(
         timeZone = "Etc/GMT-13",
         cityName = "GMT-13",
         identifier = 30399,
@@ -3203,7 +3203,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30400 to HomeTimeZone(
+    30400 to HomeTimezone(
         timeZone = "Etc/GMT-14",
         cityName = "GMT-14",
         identifier = 30400,
@@ -3211,7 +3211,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30401 to HomeTimeZone(
+    30401 to HomeTimezone(
         timeZone = "Etc/GMT-2",
         cityName = "GMT-2",
         identifier = 30401,
@@ -3219,7 +3219,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30402 to HomeTimeZone(
+    30402 to HomeTimezone(
         timeZone = "Etc/GMT-3",
         cityName = "GMT-3",
         identifier = 30402,
@@ -3227,7 +3227,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30403 to HomeTimeZone(
+    30403 to HomeTimezone(
         timeZone = "Etc/GMT-4",
         cityName = "GMT-4",
         identifier = 30403,
@@ -3235,7 +3235,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30404 to HomeTimeZone(
+    30404 to HomeTimezone(
         timeZone = "Etc/GMT-5",
         cityName = "GMT-5",
         identifier = 30404,
@@ -3243,7 +3243,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30405 to HomeTimeZone(
+    30405 to HomeTimezone(
         timeZone = "Etc/GMT-6",
         cityName = "GMT-6",
         identifier = 30405,
@@ -3251,7 +3251,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30406 to HomeTimeZone(
+    30406 to HomeTimezone(
         timeZone = "Etc/GMT-7",
         cityName = "GMT-7",
         identifier = 30406,
@@ -3259,7 +3259,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30407 to HomeTimeZone(
+    30407 to HomeTimezone(
         timeZone = "Etc/GMT-8",
         cityName = "GMT-8",
         identifier = 30407,
@@ -3267,7 +3267,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30408 to HomeTimeZone(
+    30408 to HomeTimezone(
         timeZone = "Etc/GMT-9",
         cityName = "GMT-9",
         identifier = 30408,
@@ -3275,7 +3275,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30409 to HomeTimeZone(
+    30409 to HomeTimezone(
         timeZone = "Etc/GMT0",
         cityName = "GMT0",
         identifier = 30409,
@@ -3283,7 +3283,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30410 to HomeTimeZone(
+    30410 to HomeTimezone(
         timeZone = "Etc/Greenwich",
         cityName = "GREENWICH",
         identifier = 30410,
@@ -3291,7 +3291,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 0.0,
         dstRules = 0
     ),
-    30411 to HomeTimeZone(
+    30411 to HomeTimezone(
         timeZone = "Etc/UCT",
         cityName = "UCT",
         identifier = 30411,
@@ -3299,7 +3299,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 0.0,
         dstRules = 0
     ),
-    30412 to HomeTimeZone(
+    30412 to HomeTimezone(
         timeZone = "Etc/UTC",
         cityName = "UTC",
         identifier = 30412,
@@ -3307,7 +3307,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 0.0,
         dstRules = 0
     ),
-    30413 to HomeTimeZone(
+    30413 to HomeTimezone(
         timeZone = "Etc/Universal",
         cityName = "UNIVERSAL",
         identifier = 30413,
@@ -3315,7 +3315,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 0.0,
         dstRules = 0
     ),
-    30414 to HomeTimeZone(
+    30414 to HomeTimezone(
         timeZone = "Etc/Zulu",
         cityName = "ZULU",
         identifier = 30414,
@@ -3323,7 +3323,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 0.0,
         dstRules = 0
     ),
-    30415 to HomeTimeZone(
+    30415 to HomeTimezone(
         timeZone = "Europe/Amsterdam",
         cityName = "AMSTERDAM",
         identifier = 30415,
@@ -3331,7 +3331,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30416 to HomeTimeZone(
+    30416 to HomeTimezone(
         timeZone = "Europe/Andorra",
         cityName = "ANDORRA",
         identifier = 30416,
@@ -3339,7 +3339,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30417 to HomeTimeZone(
+    30417 to HomeTimezone(
         timeZone = "Europe/Athens",
         cityName = "ATHENS",
         identifier = 30417,
@@ -3347,7 +3347,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30418 to HomeTimeZone(
+    30418 to HomeTimezone(
         timeZone = "Europe/Belfast",
         cityName = "BELFAST",
         identifier = 30418,
@@ -3355,7 +3355,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30419 to HomeTimeZone(
+    30419 to HomeTimezone(
         timeZone = "Europe/Belgrade",
         cityName = "BELGRADE",
         identifier = 30419,
@@ -3363,7 +3363,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30420 to HomeTimeZone(
+    30420 to HomeTimezone(
         timeZone = "Europe/Berlin",
         cityName = "BERLIN",
         identifier = 30420,
@@ -3371,7 +3371,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30421 to HomeTimeZone(
+    30421 to HomeTimezone(
         timeZone = "Europe/Bratislava",
         cityName = "BRATISLAVA",
         identifier = 30421,
@@ -3379,7 +3379,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30422 to HomeTimeZone(
+    30422 to HomeTimezone(
         timeZone = "Europe/Brussels",
         cityName = "BRUSSELS",
         identifier = 30422,
@@ -3387,7 +3387,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30423 to HomeTimeZone(
+    30423 to HomeTimezone(
         timeZone = "Europe/Bucharest",
         cityName = "BUCHAREST",
         identifier = 30423,
@@ -3395,7 +3395,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30424 to HomeTimeZone(
+    30424 to HomeTimezone(
         timeZone = "Europe/Budapest",
         cityName = "BUDAPEST",
         identifier = 30424,
@@ -3403,7 +3403,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30425 to HomeTimeZone(
+    30425 to HomeTimezone(
         timeZone = "Europe/Busingen",
         cityName = "BUSINGEN",
         identifier = 30425,
@@ -3411,7 +3411,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30426 to HomeTimeZone(
+    30426 to HomeTimezone(
         timeZone = "Europe/Chisinau",
         cityName = "CHISINAU",
         identifier = 30426,
@@ -3419,7 +3419,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30427 to HomeTimeZone(
+    30427 to HomeTimezone(
         timeZone = "Europe/Copenhagen",
         cityName = "COPENHAGEN",
         identifier = 30427,
@@ -3427,7 +3427,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30428 to HomeTimeZone(
+    30428 to HomeTimezone(
         timeZone = "Europe/Dublin",
         cityName = "DUBLIN",
         identifier = 30428,
@@ -3435,7 +3435,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30429 to HomeTimeZone(
+    30429 to HomeTimezone(
         timeZone = "Europe/Gibraltar",
         cityName = "GIBRALTAR",
         identifier = 30429,
@@ -3443,7 +3443,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30430 to HomeTimeZone(
+    30430 to HomeTimezone(
         timeZone = "Europe/Guernsey",
         cityName = "GUERNSEY",
         identifier = 30430,
@@ -3451,7 +3451,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30431 to HomeTimeZone(
+    30431 to HomeTimezone(
         timeZone = "Europe/Helsinki",
         cityName = "HELSINKI",
         identifier = 30431,
@@ -3459,7 +3459,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30432 to HomeTimeZone(
+    30432 to HomeTimezone(
         timeZone = "Europe/Isle_of_Man",
         cityName = "ISLE OF MAN",
         identifier = 30432,
@@ -3467,7 +3467,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30433 to HomeTimeZone(
+    30433 to HomeTimezone(
         timeZone = "Europe/Istanbul",
         cityName = "ISTANBUL",
         identifier = 30433,
@@ -3475,7 +3475,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30434 to HomeTimeZone(
+    30434 to HomeTimezone(
         timeZone = "Europe/Jersey",
         cityName = "JERSEY",
         identifier = 30434,
@@ -3483,7 +3483,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30435 to HomeTimeZone(
+    30435 to HomeTimezone(
         timeZone = "Europe/Kaliningrad",
         cityName = "KALININGRAD",
         identifier = 30435,
@@ -3491,7 +3491,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30436 to HomeTimeZone(
+    30436 to HomeTimezone(
         timeZone = "Europe/Kiev",
         cityName = "KYIV",
         identifier = 30436,
@@ -3499,7 +3499,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30437 to HomeTimeZone(
+    30437 to HomeTimezone(
         timeZone = "Europe/Lisbon",
         cityName = "LISBON",
         identifier = 30437,
@@ -3507,7 +3507,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30438 to HomeTimeZone(
+    30438 to HomeTimezone(
         timeZone = "Europe/Ljubljana",
         cityName = "LJUBLJANA",
         identifier = 30438,
@@ -3515,7 +3515,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30439 to HomeTimeZone(
+    30439 to HomeTimezone(
         timeZone = "Europe/London",
         cityName = "LONDON",
         identifier = 30439,
@@ -3523,7 +3523,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30440 to HomeTimeZone(
+    30440 to HomeTimezone(
         timeZone = "Europe/Luxembourg",
         cityName = "LUXEMBOURG",
         identifier = 30440,
@@ -3531,7 +3531,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30441 to HomeTimeZone(
+    30441 to HomeTimezone(
         timeZone = "Europe/Madrid",
         cityName = "MADRID",
         identifier = 30441,
@@ -3539,7 +3539,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30442 to HomeTimeZone(
+    30442 to HomeTimezone(
         timeZone = "Europe/Malta",
         cityName = "MALTA",
         identifier = 30442,
@@ -3547,7 +3547,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30443 to HomeTimeZone(
+    30443 to HomeTimezone(
         timeZone = "Europe/Mariehamn",
         cityName = "MARIEHAMN",
         identifier = 30443,
@@ -3555,7 +3555,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30444 to HomeTimeZone(
+    30444 to HomeTimezone(
         timeZone = "Europe/Minsk",
         cityName = "MINSK",
         identifier = 30444,
@@ -3563,7 +3563,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30445 to HomeTimeZone(
+    30445 to HomeTimezone(
         timeZone = "Europe/Monaco",
         cityName = "MONACO",
         identifier = 30445,
@@ -3571,7 +3571,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30446 to HomeTimeZone(
+    30446 to HomeTimezone(
         timeZone = "Europe/Moscow",
         cityName = "MOSCOW",
         identifier = 30446,
@@ -3579,7 +3579,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30447 to HomeTimeZone(
+    30447 to HomeTimezone(
         timeZone = "Europe/Nicosia",
         cityName = "NICOSIA",
         identifier = 30447,
@@ -3587,7 +3587,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 3
     ),
-    30448 to HomeTimeZone(
+    30448 to HomeTimezone(
         timeZone = "Europe/Oslo",
         cityName = "OSLO",
         identifier = 30448,
@@ -3595,7 +3595,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30449 to HomeTimeZone(
+    30449 to HomeTimezone(
         timeZone = "Europe/Paris",
         cityName = "PARIS",
         identifier = 30449,
@@ -3603,7 +3603,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30450 to HomeTimeZone(
+    30450 to HomeTimezone(
         timeZone = "Europe/Podgorica",
         cityName = "PODGORICA",
         identifier = 30450,
@@ -3611,7 +3611,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30451 to HomeTimeZone(
+    30451 to HomeTimezone(
         timeZone = "Europe/Prague",
         cityName = "PRAGUE",
         identifier = 30451,
@@ -3619,7 +3619,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30452 to HomeTimeZone(
+    30452 to HomeTimezone(
         timeZone = "Europe/Riga",
         cityName = "RIGA",
         identifier = 30452,
@@ -3627,7 +3627,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30453 to HomeTimeZone(
+    30453 to HomeTimezone(
         timeZone = "Europe/Rome",
         cityName = "ROME",
         identifier = 30453,
@@ -3635,7 +3635,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30454 to HomeTimeZone(
+    30454 to HomeTimezone(
         timeZone = "Europe/Samara",
         cityName = "SAMARA",
         identifier = 30454,
@@ -3643,7 +3643,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30455 to HomeTimeZone(
+    30455 to HomeTimezone(
         timeZone = "Europe/San_Marino",
         cityName = "SAN MARINO",
         identifier = 30455,
@@ -3651,7 +3651,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30456 to HomeTimeZone(
+    30456 to HomeTimezone(
         timeZone = "Europe/Sarajevo",
         cityName = "SARAJEVO",
         identifier = 30456,
@@ -3659,7 +3659,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30457 to HomeTimeZone(
+    30457 to HomeTimezone(
         timeZone = "Europe/Simferopol",
         cityName = "SIMFEROPOL",
         identifier = 30457,
@@ -3667,7 +3667,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30458 to HomeTimeZone(
+    30458 to HomeTimezone(
         timeZone = "Europe/Skopje",
         cityName = "SKOPJE",
         identifier = 30458,
@@ -3675,7 +3675,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30459 to HomeTimeZone(
+    30459 to HomeTimezone(
         timeZone = "Europe/Sofia",
         cityName = "SOFIA",
         identifier = 30459,
@@ -3683,7 +3683,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30460 to HomeTimeZone(
+    30460 to HomeTimezone(
         timeZone = "Europe/Stockholm",
         cityName = "STOCKHOLM",
         identifier = 30460,
@@ -3691,7 +3691,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30461 to HomeTimeZone(
+    30461 to HomeTimezone(
         timeZone = "Europe/Tallinn",
         cityName = "TALLINN",
         identifier = 30461,
@@ -3699,7 +3699,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30462 to HomeTimeZone(
+    30462 to HomeTimezone(
         timeZone = "Europe/Tirane",
         cityName = "TIRANE",
         identifier = 30462,
@@ -3707,7 +3707,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30463 to HomeTimeZone(
+    30463 to HomeTimezone(
         timeZone = "Europe/Tiraspol",
         cityName = "TIRASPOL",
         identifier = 30463,
@@ -3715,7 +3715,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30464 to HomeTimeZone(
+    30464 to HomeTimezone(
         timeZone = "Europe/Uzhgorod",
         cityName = "UZHGOROD",
         identifier = 30464,
@@ -3723,7 +3723,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30465 to HomeTimeZone(
+    30465 to HomeTimezone(
         timeZone = "Europe/Vaduz",
         cityName = "VADUZ",
         identifier = 30465,
@@ -3731,7 +3731,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30466 to HomeTimeZone(
+    30466 to HomeTimezone(
         timeZone = "Europe/Vatican",
         cityName = "VATICAN",
         identifier = 30466,
@@ -3739,7 +3739,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30467 to HomeTimeZone(
+    30467 to HomeTimezone(
         timeZone = "Europe/Vienna",
         cityName = "VIENNA",
         identifier = 30467,
@@ -3747,7 +3747,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30468 to HomeTimeZone(
+    30468 to HomeTimezone(
         timeZone = "Europe/Vilnius",
         cityName = "VILNIUS",
         identifier = 30468,
@@ -3755,7 +3755,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30469 to HomeTimeZone(
+    30469 to HomeTimezone(
         timeZone = "Europe/Volgograd",
         cityName = "VOLGOGRAD",
         identifier = 30469,
@@ -3763,7 +3763,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30470 to HomeTimeZone(
+    30470 to HomeTimezone(
         timeZone = "Europe/Warsaw",
         cityName = "WARSAW",
         identifier = 30470,
@@ -3771,7 +3771,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30471 to HomeTimeZone(
+    30471 to HomeTimezone(
         timeZone = "Europe/Zagreb",
         cityName = "ZAGREB",
         identifier = 30471,
@@ -3779,7 +3779,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30472 to HomeTimeZone(
+    30472 to HomeTimezone(
         timeZone = "Europe/Zaporozhye",
         cityName = "ZAPOROZHYE",
         identifier = 30472,
@@ -3787,7 +3787,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30473 to HomeTimeZone(
+    30473 to HomeTimezone(
         timeZone = "Europe/Zurich",
         cityName = "ZURICH",
         identifier = 30473,
@@ -3795,7 +3795,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30474 to HomeTimeZone(
+    30474 to HomeTimezone(
         timeZone = "GB",
         cityName = "GB",
         identifier = 30474,
@@ -3803,7 +3803,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30475 to HomeTimeZone(
+    30475 to HomeTimezone(
         timeZone = "GB-Eire",
         cityName = "GB-EIRE",
         identifier = 30475,
@@ -3811,7 +3811,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30476 to HomeTimeZone(
+    30476 to HomeTimezone(
         timeZone = "GMT",
         cityName = "GMT",
         identifier = 30476,
@@ -3819,7 +3819,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 0.0,
         dstRules = 0
     ),
-    30477 to HomeTimeZone(
+    30477 to HomeTimezone(
         timeZone = "GMT+0",
         cityName = "GMT+0",
         identifier = 30477,
@@ -3827,7 +3827,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30478 to HomeTimeZone(
+    30478 to HomeTimezone(
         timeZone = "GMT-0",
         cityName = "GMT-0",
         identifier = 30478,
@@ -3835,7 +3835,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30479 to HomeTimeZone(
+    30479 to HomeTimezone(
         timeZone = "GMT0",
         cityName = "GMT0",
         identifier = 30479,
@@ -3843,7 +3843,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30480 to HomeTimeZone(
+    30480 to HomeTimezone(
         timeZone = "Greenwich",
         cityName = "GREENWICH",
         identifier = 30480,
@@ -3851,7 +3851,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 0.0,
         dstRules = 0
     ),
-    30481 to HomeTimeZone(
+    30481 to HomeTimezone(
         timeZone = "HST",
         cityName = "HST",
         identifier = 30481,
@@ -3859,7 +3859,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30482 to HomeTimeZone(
+    30482 to HomeTimezone(
         timeZone = "Hongkong",
         cityName = "HONGKONG",
         identifier = 30482,
@@ -3867,7 +3867,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30483 to HomeTimeZone(
+    30483 to HomeTimezone(
         timeZone = "Iceland",
         cityName = "ICELAND",
         identifier = 30483,
@@ -3875,7 +3875,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30484 to HomeTimeZone(
+    30484 to HomeTimezone(
         timeZone = "Indian/Antananarivo",
         cityName = "ANTANANARIVO",
         identifier = 30484,
@@ -3883,7 +3883,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30485 to HomeTimeZone(
+    30485 to HomeTimezone(
         timeZone = "Indian/Chagos",
         cityName = "CHAGOS",
         identifier = 30485,
@@ -3891,7 +3891,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30486 to HomeTimeZone(
+    30486 to HomeTimezone(
         timeZone = "Indian/Christmas",
         cityName = "CHRISTMAS",
         identifier = 30486,
@@ -3899,7 +3899,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30487 to HomeTimeZone(
+    30487 to HomeTimezone(
         timeZone = "Indian/Cocos",
         cityName = "COCOS",
         identifier = 30487,
@@ -3907,7 +3907,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30488 to HomeTimeZone(
+    30488 to HomeTimezone(
         timeZone = "Indian/Comoro",
         cityName = "COMORO",
         identifier = 30488,
@@ -3915,7 +3915,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30489 to HomeTimeZone(
+    30489 to HomeTimezone(
         timeZone = "Indian/Kerguelen",
         cityName = "KERGUELEN",
         identifier = 30489,
@@ -3923,7 +3923,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30490 to HomeTimeZone(
+    30490 to HomeTimezone(
         timeZone = "Indian/Mahe",
         cityName = "MAHE",
         identifier = 30490,
@@ -3931,7 +3931,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30491 to HomeTimeZone(
+    30491 to HomeTimezone(
         timeZone = "Indian/Maldives",
         cityName = "MALDIVES",
         identifier = 30491,
@@ -3939,7 +3939,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30492 to HomeTimeZone(
+    30492 to HomeTimezone(
         timeZone = "Indian/Mauritius",
         cityName = "MAURITIUS",
         identifier = 30492,
@@ -3947,7 +3947,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30493 to HomeTimeZone(
+    30493 to HomeTimezone(
         timeZone = "Indian/Mayotte",
         cityName = "MAYOTTE",
         identifier = 30493,
@@ -3955,7 +3955,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30494 to HomeTimeZone(
+    30494 to HomeTimezone(
         timeZone = "Indian/Reunion",
         cityName = "REUNION",
         identifier = 30494,
@@ -3963,7 +3963,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30495 to HomeTimeZone(
+    30495 to HomeTimezone(
         timeZone = "Iran",
         cityName = "IRAN",
         identifier = 30495,
@@ -3971,7 +3971,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30496 to HomeTimeZone(
+    30496 to HomeTimezone(
         timeZone = "Israel",
         cityName = "ISRAEL",
         identifier = 30496,
@@ -3979,7 +3979,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 42
     ),
-    30497 to HomeTimeZone(
+    30497 to HomeTimezone(
         timeZone = "Jamaica",
         cityName = "JAMAICA",
         identifier = 30497,
@@ -3987,7 +3987,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30498 to HomeTimeZone(
+    30498 to HomeTimezone(
         timeZone = "Japan",
         cityName = "JAPAN",
         identifier = 30498,
@@ -3995,7 +3995,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30499 to HomeTimeZone(
+    30499 to HomeTimezone(
         timeZone = "Kwajalein",
         cityName = "KWAJALEIN",
         identifier = 30499,
@@ -4003,7 +4003,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30500 to HomeTimeZone(
+    30500 to HomeTimezone(
         timeZone = "Libya",
         cityName = "LIBYA",
         identifier = 30500,
@@ -4011,7 +4011,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30501 to HomeTimeZone(
+    30501 to HomeTimezone(
         timeZone = "MET",
         cityName = "MET",
         identifier = 30501,
@@ -4019,7 +4019,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30502 to HomeTimeZone(
+    30502 to HomeTimezone(
         timeZone = "MST",
         cityName = "MST",
         identifier = 30502,
@@ -4027,7 +4027,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30503 to HomeTimeZone(
+    30503 to HomeTimezone(
         timeZone = "MST7MDT",
         cityName = "MST7MDT",
         identifier = 30503,
@@ -4035,7 +4035,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30504 to HomeTimeZone(
+    30504 to HomeTimezone(
         timeZone = "Mexico/BajaNorte",
         cityName = "BAJANORTE",
         identifier = 30504,
@@ -4043,7 +4043,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30505 to HomeTimeZone(
+    30505 to HomeTimezone(
         timeZone = "Mexico/BajaSur",
         cityName = "BAJASUR",
         identifier = 30505,
@@ -4051,7 +4051,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30506 to HomeTimeZone(
+    30506 to HomeTimezone(
         timeZone = "Mexico/General",
         cityName = "GENERAL",
         identifier = 30506,
@@ -4059,7 +4059,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30507 to HomeTimeZone(
+    30507 to HomeTimezone(
         timeZone = "NZ",
         cityName = "NZ",
         identifier = 30507,
@@ -4067,7 +4067,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 5
     ),
-    30508 to HomeTimeZone(
+    30508 to HomeTimezone(
         timeZone = "NZ-CHAT",
         cityName = "NZ-CHAT",
         identifier = 30508,
@@ -4075,7 +4075,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 23
     ),
-    30509 to HomeTimeZone(
+    30509 to HomeTimezone(
         timeZone = "Navajo",
         cityName = "NAVAJO",
         identifier = 30509,
@@ -4083,7 +4083,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30510 to HomeTimeZone(
+    30510 to HomeTimezone(
         timeZone = "PRC",
         cityName = "PRC",
         identifier = 30510,
@@ -4091,7 +4091,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30511 to HomeTimeZone(
+    30511 to HomeTimezone(
         timeZone = "PST8PDT",
         cityName = "PST8PDT",
         identifier = 30511,
@@ -4099,7 +4099,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30512 to HomeTimeZone(
+    30512 to HomeTimezone(
         timeZone = "Pacific/Apia",
         cityName = "APIA",
         identifier = 30512,
@@ -4107,7 +4107,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30513 to HomeTimeZone(
+    30513 to HomeTimezone(
         timeZone = "Pacific/Auckland",
         cityName = "AUCKLAND",
         identifier = 30513,
@@ -4115,7 +4115,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 5
     ),
-    30514 to HomeTimeZone(
+    30514 to HomeTimezone(
         timeZone = "Pacific/Chatham",
         cityName = "CHATHAM",
         identifier = 30514,
@@ -4123,7 +4123,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 23
     ),
-    30515 to HomeTimeZone(
+    30515 to HomeTimezone(
         timeZone = "Pacific/Chuuk",
         cityName = "CHUUK",
         identifier = 30515,
@@ -4131,7 +4131,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30516 to HomeTimeZone(
+    30516 to HomeTimezone(
         timeZone = "Pacific/Easter",
         cityName = "EASTER",
         identifier = 30516,
@@ -4139,7 +4139,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 28
     ),
-    30517 to HomeTimeZone(
+    30517 to HomeTimezone(
         timeZone = "Pacific/Efate",
         cityName = "EFATE",
         identifier = 30517,
@@ -4147,7 +4147,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30518 to HomeTimeZone(
+    30518 to HomeTimezone(
         timeZone = "Pacific/Enderbury",
         cityName = "ENDERBURY",
         identifier = 30518,
@@ -4155,7 +4155,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30519 to HomeTimeZone(
+    30519 to HomeTimezone(
         timeZone = "Pacific/Fakaofo",
         cityName = "FAKAOFO",
         identifier = 30519,
@@ -4163,7 +4163,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30520 to HomeTimeZone(
+    30520 to HomeTimezone(
         timeZone = "Pacific/Fiji",
         cityName = "FIJI",
         identifier = 30520,
@@ -4171,7 +4171,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 19
     ),
-    30521 to HomeTimeZone(
+    30521 to HomeTimezone(
         timeZone = "Pacific/Funafuti",
         cityName = "FUNAFUTI",
         identifier = 30521,
@@ -4179,7 +4179,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30522 to HomeTimeZone(
+    30522 to HomeTimezone(
         timeZone = "Pacific/Galapagos",
         cityName = "GALAPAGOS",
         identifier = 30522,
@@ -4187,7 +4187,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30523 to HomeTimeZone(
+    30523 to HomeTimezone(
         timeZone = "Pacific/Gambier",
         cityName = "GAMBIER",
         identifier = 30523,
@@ -4195,7 +4195,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30524 to HomeTimeZone(
+    30524 to HomeTimezone(
         timeZone = "Pacific/Guadalcanal",
         cityName = "GUADALCANAL",
         identifier = 30524,
@@ -4203,7 +4203,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30525 to HomeTimeZone(
+    30525 to HomeTimezone(
         timeZone = "Pacific/Guam",
         cityName = "GUAM",
         identifier = 30525,
@@ -4211,7 +4211,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30526 to HomeTimeZone(
+    30526 to HomeTimezone(
         timeZone = "Pacific/Honolulu",
         cityName = "HONOLULU",
         identifier = 30526,
@@ -4219,7 +4219,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30527 to HomeTimeZone(
+    30527 to HomeTimezone(
         timeZone = "Pacific/Johnston",
         cityName = "JOHNSTON",
         identifier = 30527,
@@ -4227,7 +4227,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30528 to HomeTimeZone(
+    30528 to HomeTimezone(
         timeZone = "Pacific/Kiritimati",
         cityName = "KIRITIMATI",
         identifier = 30528,
@@ -4235,7 +4235,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30529 to HomeTimeZone(
+    30529 to HomeTimezone(
         timeZone = "Pacific/Kosrae",
         cityName = "KOSRAE",
         identifier = 30529,
@@ -4243,7 +4243,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30530 to HomeTimeZone(
+    30530 to HomeTimezone(
         timeZone = "Pacific/Kwajalein",
         cityName = "KWAJALEIN",
         identifier = 30530,
@@ -4251,7 +4251,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30531 to HomeTimeZone(
+    30531 to HomeTimezone(
         timeZone = "Pacific/Majuro",
         cityName = "MAJURO",
         identifier = 30531,
@@ -4259,7 +4259,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30532 to HomeTimeZone(
+    30532 to HomeTimezone(
         timeZone = "Pacific/Marquesas",
         cityName = "MARQUESAS",
         identifier = 30532,
@@ -4267,7 +4267,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30533 to HomeTimeZone(
+    30533 to HomeTimezone(
         timeZone = "Pacific/Midway",
         cityName = "MIDWAY",
         identifier = 30533,
@@ -4275,7 +4275,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30534 to HomeTimeZone(
+    30534 to HomeTimezone(
         timeZone = "Pacific/Nauru",
         cityName = "NAURU",
         identifier = 30534,
@@ -4283,7 +4283,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30535 to HomeTimeZone(
+    30535 to HomeTimezone(
         timeZone = "Pacific/Niue",
         cityName = "NIUE",
         identifier = 30535,
@@ -4291,7 +4291,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30536 to HomeTimeZone(
+    30536 to HomeTimezone(
         timeZone = "Pacific/Norfolk",
         cityName = "NORFOLK",
         identifier = 30536,
@@ -4299,7 +4299,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 4
     ),
-    30537 to HomeTimeZone(
+    30537 to HomeTimezone(
         timeZone = "Pacific/Noumea",
         cityName = "NOUMEA",
         identifier = 30537,
@@ -4307,7 +4307,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30538 to HomeTimeZone(
+    30538 to HomeTimezone(
         timeZone = "Pacific/Pago_Pago",
         cityName = "PAGO PAGO",
         identifier = 30538,
@@ -4315,7 +4315,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30539 to HomeTimeZone(
+    30539 to HomeTimezone(
         timeZone = "Pacific/Palau",
         cityName = "PALAU",
         identifier = 30539,
@@ -4323,7 +4323,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30540 to HomeTimeZone(
+    30540 to HomeTimezone(
         timeZone = "Pacific/Pitcairn",
         cityName = "PITCAIRN",
         identifier = 30540,
@@ -4331,7 +4331,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30541 to HomeTimeZone(
+    30541 to HomeTimezone(
         timeZone = "Pacific/Pohnpei",
         cityName = "POHNPEI",
         identifier = 30541,
@@ -4339,7 +4339,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30542 to HomeTimeZone(
+    30542 to HomeTimezone(
         timeZone = "Pacific/Ponape",
         cityName = "PONAPE",
         identifier = 30542,
@@ -4347,7 +4347,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30543 to HomeTimeZone(
+    30543 to HomeTimezone(
         timeZone = "Pacific/Port_Moresby",
         cityName = "PORT MORESBY",
         identifier = 30543,
@@ -4355,7 +4355,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30544 to HomeTimeZone(
+    30544 to HomeTimezone(
         timeZone = "Pacific/Rarotonga",
         cityName = "RAROTONGA",
         identifier = 30544,
@@ -4363,7 +4363,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30545 to HomeTimeZone(
+    30545 to HomeTimezone(
         timeZone = "Pacific/Saipan",
         cityName = "SAIPAN",
         identifier = 30545,
@@ -4371,7 +4371,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30546 to HomeTimeZone(
+    30546 to HomeTimezone(
         timeZone = "Pacific/Samoa",
         cityName = "SAMOA",
         identifier = 30546,
@@ -4379,7 +4379,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30547 to HomeTimeZone(
+    30547 to HomeTimezone(
         timeZone = "Pacific/Tahiti",
         cityName = "TAHITI",
         identifier = 30547,
@@ -4387,7 +4387,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30548 to HomeTimeZone(
+    30548 to HomeTimezone(
         timeZone = "Pacific/Tarawa",
         cityName = "TARAWA",
         identifier = 30548,
@@ -4395,7 +4395,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30549 to HomeTimeZone(
+    30549 to HomeTimezone(
         timeZone = "Pacific/Tongatapu",
         cityName = "TONGATAPU",
         identifier = 30549,
@@ -4403,7 +4403,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30550 to HomeTimeZone(
+    30550 to HomeTimezone(
         timeZone = "Pacific/Truk",
         cityName = "TRUK",
         identifier = 30550,
@@ -4411,7 +4411,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30551 to HomeTimeZone(
+    30551 to HomeTimezone(
         timeZone = "Pacific/Wake",
         cityName = "WAKE",
         identifier = 30551,
@@ -4419,7 +4419,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30552 to HomeTimeZone(
+    30552 to HomeTimezone(
         timeZone = "Pacific/Wallis",
         cityName = "WALLIS",
         identifier = 30552,
@@ -4427,7 +4427,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30553 to HomeTimeZone(
+    30553 to HomeTimezone(
         timeZone = "Pacific/Yap",
         cityName = "YAP",
         identifier = 30553,
@@ -4435,7 +4435,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30554 to HomeTimeZone(
+    30554 to HomeTimezone(
         timeZone = "Poland",
         cityName = "POLAND",
         identifier = 30554,
@@ -4443,7 +4443,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30555 to HomeTimeZone(
+    30555 to HomeTimezone(
         timeZone = "Portugal",
         cityName = "PORTUGAL",
         identifier = 30555,
@@ -4451,7 +4451,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30556 to HomeTimeZone(
+    30556 to HomeTimezone(
         timeZone = "ROC",
         cityName = "ROC",
         identifier = 30556,
@@ -4459,7 +4459,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30557 to HomeTimeZone(
+    30557 to HomeTimezone(
         timeZone = "ROK",
         cityName = "ROK",
         identifier = 30557,
@@ -4467,7 +4467,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30558 to HomeTimeZone(
+    30558 to HomeTimezone(
         timeZone = "Singapore",
         cityName = "SINGAPORE",
         identifier = 30558,
@@ -4475,7 +4475,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30559 to HomeTimeZone(
+    30559 to HomeTimezone(
         timeZone = "Turkey",
         cityName = "TURKEY",
         identifier = 30559,
@@ -4483,7 +4483,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30560 to HomeTimeZone(
+    30560 to HomeTimezone(
         timeZone = "UCT",
         cityName = "UCT",
         identifier = 30560,
@@ -4491,7 +4491,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 0.0,
         dstRules = 0
     ),
-    30561 to HomeTimeZone(
+    30561 to HomeTimezone(
         timeZone = "US/Alaska",
         cityName = "ALASKA",
         identifier = 30561,
@@ -4499,7 +4499,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30562 to HomeTimeZone(
+    30562 to HomeTimezone(
         timeZone = "US/Aleutian",
         cityName = "ALEUTIAN",
         identifier = 30562,
@@ -4507,7 +4507,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30563 to HomeTimeZone(
+    30563 to HomeTimezone(
         timeZone = "US/Arizona",
         cityName = "ARIZONA",
         identifier = 30563,
@@ -4515,7 +4515,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30564 to HomeTimeZone(
+    30564 to HomeTimezone(
         timeZone = "US/Central",
         cityName = "CENTRAL",
         identifier = 30564,
@@ -4523,7 +4523,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30565 to HomeTimeZone(
+    30565 to HomeTimezone(
         timeZone = "US/East-Indiana",
         cityName = "EAST-INDIANA",
         identifier = 30565,
@@ -4531,7 +4531,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30566 to HomeTimeZone(
+    30566 to HomeTimezone(
         timeZone = "US/Eastern",
         cityName = "EASTERN",
         identifier = 30566,
@@ -4539,7 +4539,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30567 to HomeTimeZone(
+    30567 to HomeTimezone(
         timeZone = "US/Hawaii",
         cityName = "HAWAII",
         identifier = 30567,
@@ -4547,7 +4547,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30568 to HomeTimeZone(
+    30568 to HomeTimezone(
         timeZone = "US/Indiana-Starke",
         cityName = "INDIANA-STARKE",
         identifier = 30568,
@@ -4555,7 +4555,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30569 to HomeTimeZone(
+    30569 to HomeTimezone(
         timeZone = "US/Michigan",
         cityName = "MICHIGAN",
         identifier = 30569,
@@ -4563,7 +4563,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30570 to HomeTimeZone(
+    30570 to HomeTimezone(
         timeZone = "US/Mountain",
         cityName = "MOUNTAIN",
         identifier = 30570,
@@ -4571,7 +4571,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30571 to HomeTimeZone(
+    30571 to HomeTimezone(
         timeZone = "US/Pacific",
         cityName = "PACIFIC",
         identifier = 30571,
@@ -4579,7 +4579,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 1
     ),
-    30572 to HomeTimeZone(
+    30572 to HomeTimezone(
         timeZone = "US/Samoa",
         cityName = "SAMOA",
         identifier = 30572,
@@ -4587,7 +4587,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30573 to HomeTimeZone(
+    30573 to HomeTimezone(
         timeZone = "UTC",
         cityName = "UTC",
         identifier = 30573,
@@ -4595,7 +4595,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 0.0,
         dstRules = 0
     ),
-    30574 to HomeTimeZone(
+    30574 to HomeTimezone(
         timeZone = "Universal",
         cityName = "UNIVERSAL",
         identifier = 30574,
@@ -4603,7 +4603,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 0.0,
         dstRules = 0
     ),
-    30575 to HomeTimeZone(
+    30575 to HomeTimezone(
         timeZone = "W-SU",
         cityName = "W-SU",
         identifier = 30575,
@@ -4611,7 +4611,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30576 to HomeTimeZone(
+    30576 to HomeTimezone(
         timeZone = "WET",
         cityName = "WET",
         identifier = 30576,
@@ -4619,7 +4619,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 2
     ),
-    30577 to HomeTimeZone(
+    30577 to HomeTimezone(
         timeZone = "Zulu",
         cityName = "ZULU",
         identifier = 30577,
@@ -4627,7 +4627,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 0.0,
         dstRules = 0
     ),
-    30578 to HomeTimeZone(
+    30578 to HomeTimezone(
         timeZone = "Asia/Chita",
         cityName = "CHITA",
         identifier = 30578,
@@ -4635,7 +4635,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30579 to HomeTimeZone(
+    30579 to HomeTimezone(
         timeZone = "Asia/Srednekolymsk",
         cityName = "SREDNEKOLYMSK",
         identifier = 30579,
@@ -4643,7 +4643,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30580 to HomeTimeZone(
+    30580 to HomeTimezone(
         timeZone = "Pacific/Bougainville",
         cityName = "BOUGAINVILLE",
         identifier = 30580,
@@ -4651,7 +4651,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30581 to HomeTimeZone(
+    30581 to HomeTimezone(
         timeZone = "Asia/Hanoi",
         cityName = "HANOI",
         identifier = 30581,
@@ -4659,7 +4659,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30582 to HomeTimeZone(
+    30582 to HomeTimezone(
         timeZone = "America/Fort_Nelson",
         cityName = "FORT NELSON",
         identifier = 30582,
@@ -4667,7 +4667,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30583 to HomeTimeZone(
+    30583 to HomeTimezone(
         timeZone = "Asia/Barnaul",
         cityName = "BARNAUL",
         identifier = 30583,
@@ -4675,7 +4675,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30584 to HomeTimeZone(
+    30584 to HomeTimezone(
         timeZone = "Asia/Tomsk",
         cityName = "TOMSK",
         identifier = 30584,
@@ -4683,7 +4683,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30585 to HomeTimeZone(
+    30585 to HomeTimezone(
         timeZone = "Asia/Yangon",
         cityName = "YANGON",
         identifier = 30585,
@@ -4691,7 +4691,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30586 to HomeTimeZone(
+    30586 to HomeTimezone(
         timeZone = "Europe/Astrakhan",
         cityName = "ASTRAKHAN",
         identifier = 30586,
@@ -4699,7 +4699,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30587 to HomeTimeZone(
+    30587 to HomeTimezone(
         timeZone = "Europe/Kirov",
         cityName = "KIROV",
         identifier = 30587,
@@ -4707,7 +4707,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30588 to HomeTimeZone(
+    30588 to HomeTimezone(
         timeZone = "Europe/Ulyanovsk",
         cityName = "ULYANOVSK",
         identifier = 30588,
@@ -4715,7 +4715,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30589 to HomeTimeZone(
+    30589 to HomeTimezone(
         timeZone = "America/Punta_Arenas",
         cityName = "PUNTA ARENAS",
         identifier = 30589,
@@ -4723,7 +4723,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30590 to HomeTimeZone(
+    30590 to HomeTimezone(
         timeZone = "Asia/Atyrau",
         cityName = "ATYRAU",
         identifier = 30590,
@@ -4731,7 +4731,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30591 to HomeTimeZone(
+    30591 to HomeTimezone(
         timeZone = "Asia/Famagusta",
         cityName = "FAMAGUSTA",
         identifier = 30591,
@@ -4739,7 +4739,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 3
     ),
-    30592 to HomeTimeZone(
+    30592 to HomeTimezone(
         timeZone = "Europe/Saratov",
         cityName = "SARATOV",
         identifier = 30592,
@@ -4747,7 +4747,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30593 to HomeTimeZone(
+    30593 to HomeTimezone(
         timeZone = "America/Nuuk",
         cityName = "NUUK",
         identifier = 30593,
@@ -4755,7 +4755,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 31
     ),
-    30594 to HomeTimeZone(
+    30594 to HomeTimezone(
         timeZone = "Asia/Qostanay",
         cityName = "QOSTANAY",
         identifier = 30594,
@@ -4763,7 +4763,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30595 to HomeTimeZone(
+    30595 to HomeTimezone(
         timeZone = "Pacific/Kanton",
         cityName = "KANTON",
         identifier = 30595,
@@ -4771,7 +4771,7 @@ val HomeTimeZoneData: Map<Int, HomeTimeZone> = mapOf(
         dstDiff = 1.0,
         dstRules = 0
     ),
-    30596 to HomeTimeZone(
+    30596 to HomeTimezone(
         timeZone = "Europe/Kyiv",
         cityName = "KYIV",
         identifier = 30596,

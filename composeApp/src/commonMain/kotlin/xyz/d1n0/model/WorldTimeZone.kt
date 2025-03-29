@@ -1,8 +1,9 @@
 package xyz.d1n0.model
 
-import xyz.d1n0.constant.WorldTimeZoneData
+import xyz.d1n0.constant.WorldTimezoneData
+import xyz.d1n0.helper.to8BytesBigEndian
 
-data class WorldTimeZone(
+data class WorldTimezone(
 	val country: String,
 	val city: String,
 	val longitude: Double,
@@ -12,7 +13,7 @@ data class WorldTimeZone(
 	override val offset: Double,
 	override val dstDiff: Double,
 	override val dstRules: Int
-) : TimeZone() {
+) : Timezone() {
 	companion object {
 		/**
 		 * Performs a case-insensitive search for the given keyword across all WorldTimeZone instances.
@@ -21,12 +22,18 @@ data class WorldTimeZone(
 		 * @param keyword The search term to look for in city and country names.
 		 * @return A list of WorldTimeZone objects whose city or country names contain the keyword.
 		 */
-		fun fuzzySearch(keyword: String): List<WorldTimeZone> {
+		fun fuzzySearch(keyword: String): List<WorldTimezone> {
 			val keywordLowerCase = keyword.trim().lowercase()
-			if (keywordLowerCase.isEmpty()) return WorldTimeZoneData.values.toList()
-			return WorldTimeZoneData.values.filter {
+			if (keywordLowerCase.isEmpty()) return WorldTimezoneData.values.toList()
+			return WorldTimezoneData.values.filter {
 				it.city.lowercase().contains(keywordLowerCase) || it.country.lowercase().contains(keywordLowerCase)
 			}
 		}
 	}
+
+	override val coordinatesBytes: ByteArray
+		get() = byteArrayOf(
+			*latitude.to8BytesBigEndian(),
+			*longitude.to8BytesBigEndian(),
+		)
 }

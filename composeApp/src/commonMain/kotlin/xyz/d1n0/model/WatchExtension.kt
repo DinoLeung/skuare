@@ -53,6 +53,12 @@ suspend fun Watch.writeTimeZoneNames() =
         write(it)
     }
 
+// TODO: suspend fun Watch.requestTimeZoneCoordinatesAndRadioId()
+suspend fun Watch.writeTimeZoneCoordinatesAndRadioId() =
+    clocks.coordinatesRadioIdPackets.forEach {
+        write(it)
+    }
+
 suspend fun Watch.writeTime() =
     write(clocks.homeClock.getCurrentDateTimePacket(delay = 0.seconds))
 

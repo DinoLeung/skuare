@@ -146,12 +146,12 @@ class ClocksSettings {
         get() {
             require(isInitialized()) { "Clocks must be initialized" }
             return listOf(
-                byteArrayOf(Command.TIMEZONE_INFO.value.toByte(), 0.toByte()) + homeClock.timeZone.bytes,
-                byteArrayOf(Command.TIMEZONE_INFO.value.toByte(), 1.toByte()) + worldClock1.timeZone.bytes,
-                byteArrayOf(Command.TIMEZONE_INFO.value.toByte(), 2.toByte()) + worldClock2.timeZone.bytes,
-                byteArrayOf(Command.TIMEZONE_INFO.value.toByte(), 3.toByte()) + worldClock3.timeZone.bytes,
-                byteArrayOf(Command.TIMEZONE_INFO.value.toByte(), 4.toByte()) + worldClock4.timeZone.bytes,
-                byteArrayOf(Command.TIMEZONE_INFO.value.toByte(), 5.toByte()) + worldClock5.timeZone.bytes,
+                byteArrayOf(Command.TIMEZONE_CONFIG.value.toByte(), 0.toByte()) + homeClock.timeZone.bytes,
+                byteArrayOf(Command.TIMEZONE_CONFIG.value.toByte(), 1.toByte()) + worldClock1.timeZone.bytes,
+                byteArrayOf(Command.TIMEZONE_CONFIG.value.toByte(), 2.toByte()) + worldClock2.timeZone.bytes,
+                byteArrayOf(Command.TIMEZONE_CONFIG.value.toByte(), 3.toByte()) + worldClock3.timeZone.bytes,
+                byteArrayOf(Command.TIMEZONE_CONFIG.value.toByte(), 4.toByte()) + worldClock4.timeZone.bytes,
+                byteArrayOf(Command.TIMEZONE_CONFIG.value.toByte(), 5.toByte()) + worldClock5.timeZone.bytes,
             )
         }
 
@@ -180,6 +180,33 @@ class ClocksSettings {
                 byteArrayOf(Command.TIMEZONE_NAME.value.toByte(), 3.toByte()) + worldClock3.timeZone.cityNameBytes,
                 byteArrayOf(Command.TIMEZONE_NAME.value.toByte(), 4.toByte()) + worldClock4.timeZone.cityNameBytes,
                 byteArrayOf(Command.TIMEZONE_NAME.value.toByte(), 5.toByte()) + worldClock5.timeZone.cityNameBytes,
+            )
+        }
+
+    /**
+     * Constructs and returns a list of byte arrays representing configuration packets
+     * containing coordinates and radio IDs for all initialized clocks.
+     *
+     * Each packet includes:
+     * - A command code for the timezone location radio ID (`TIMEZONE_LOCATION_RADIO_ID`).
+     * - The clock's position identifier (ranging from 0 for homeClock to 5 for worldClock5).
+     * - The timezone coordinates as a byte array.
+     * - The radio ID associated with the timezone.
+     *
+     * @return A list of byte arrays representing timezone coordinates and radio ID configuration packets.
+     *
+     * @throws IllegalArgumentException if any of the clock instances are not initialized.
+     */
+    val coordinatesRadioIdPackets: List<ByteArray>
+        get() {
+            require(isInitialized()) { "Clocks must be initialized" }
+            return listOf(
+                byteArrayOf(Command.TIMEZONE_LOCATION_RADIO_ID.value.toByte(), 0.toByte()) + homeClock.timeZone.coordinatesBytes + homeClock.timeZone.radioIdByte,
+                byteArrayOf(Command.TIMEZONE_LOCATION_RADIO_ID.value.toByte(), 1.toByte()) + worldClock1.timeZone.coordinatesBytes + worldClock1.timeZone.radioIdByte,
+                byteArrayOf(Command.TIMEZONE_LOCATION_RADIO_ID.value.toByte(), 2.toByte()) + worldClock2.timeZone.coordinatesBytes + worldClock2.timeZone.radioIdByte,
+                byteArrayOf(Command.TIMEZONE_LOCATION_RADIO_ID.value.toByte(), 3.toByte()) + worldClock3.timeZone.coordinatesBytes + worldClock3.timeZone.radioIdByte,
+                byteArrayOf(Command.TIMEZONE_LOCATION_RADIO_ID.value.toByte(), 4.toByte()) + worldClock4.timeZone.coordinatesBytes + worldClock4.timeZone.radioIdByte,
+                byteArrayOf(Command.TIMEZONE_LOCATION_RADIO_ID.value.toByte(), 5.toByte()) + worldClock5.timeZone.coordinatesBytes + worldClock5.timeZone.radioIdByte,
             )
         }
 }

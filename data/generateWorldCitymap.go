@@ -25,7 +25,7 @@ func main() {
 
     // Skip the header and process each line
     var kotlinMap strings.Builder
-    kotlinMap.WriteString("val worldTimeZones: Map<Int, WorldTimeZone> = mapOf(\n")
+    kotlinMap.WriteString("val worldTimezones: Map<Int, WorldTimezone> = mapOf(\n")
 
     for i, record := range records {
         if i == 0 {
@@ -43,7 +43,7 @@ func main() {
         latitude, _ := strconv.ParseFloat(record[8], 64)  // Latitude
 
         kotlinMap.WriteString(fmt.Sprintf(
-            "    %d to WorldTimeZone(\n        country = \"%s\",\n        city = \"%s\",\n        cityName = \"%s\",\n        identifier = %d,\n        offset = %.1f,\n        dstDiff = %.1f,\n        dstRules = %d,\n        longitude = %.5f,\n        latitude = %.5f\n    ),\n",
+            "    %d to WorldTimezone(\n        country = \"%s\",\n        city = \"%s\",\n        cityName = \"%s\",\n        identifier = %d,\n        offset = %.1f,\n        dstDiff = %.1f,\n        dstRules = %d,\n        longitude = %.5f,\n        latitude = %.5f\n    ),\n",
             id, country, city, cityName, id, offset, dstDiff, dstRule, longitude, latitude,
         ))
     }

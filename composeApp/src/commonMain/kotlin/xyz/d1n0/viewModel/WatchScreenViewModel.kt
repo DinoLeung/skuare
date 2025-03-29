@@ -48,6 +48,7 @@ class WatchScreenViewModel(
             watch.writeClocks()
             watch.writeTimeZoneConfigs()
             watch.writeTimeZoneNames()
+            watch.writeTimeZoneCoordinatesAndRadioId()
             watch.writeTime()
         }.onSuccess {
             println("Time sync completed")

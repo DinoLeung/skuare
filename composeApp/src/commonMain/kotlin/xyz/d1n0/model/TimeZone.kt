@@ -1,8 +1,9 @@
 package xyz.d1n0.model
 
+import xyz.d1n0.constant.timezoneRadioIdData
 import xyz.d1n0.helper.to2BytesLittleEndian
 
-abstract class TimeZone {
+abstract class Timezone {
     open abstract val cityName: String
     open abstract val identifier: Int
     open abstract val offset: Double
@@ -57,4 +58,21 @@ abstract class TimeZone {
      */
     val dstOffsetByte: Byte
         get() = (dstDiff * 4).toInt().toByte()
+
+    /**
+     * Retrieves the multiband 6 radio ID associated with the specified timezone offset.
+     *
+     * @param timezoneId The timezone identifier (e.g., "Australia/Adelaide") to find the radio ID for.
+     * @return The corresponding integer radio ID if found; otherwise, returns 0 if no matching timezone ID exists.
+     */
+    val radioId: Int
+        get() = timezoneRadioIdData.entries.firstOrNull {
+            it.key.toDouble() == offset
+        }?.value ?: 0
+
+    val radioIdByte: Byte
+        get() = radioId.toByte()
+
+    open abstract val coordinatesBytes: ByteArray
+
 }

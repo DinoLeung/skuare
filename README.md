@@ -19,6 +19,14 @@ The underlying protocol was reverse-engineered from the official Casio app, with
 
 Currently, Skuare supports the GMW-B5000 and GW-B5600 models, as these are the only watch models I have access to.
 
+## Why rebuilding everything knowing [GShockAPI](https://github.com/izivkov/GShockAPI/tree/main) exists?
+
+[GShockAPI](https://github.com/izivkov/GShockAPI/tree/main) offers broader support for multiple Casio watch models.
+However, I found the existing codebase difficult to navigate and wanted a more approachable, maintainable structure
+tailored to my preferences.
+Additionally, rebuilding from scratch provided an excellent opportunity to deepen my understanding of Kotlin, JetBrain's
+Compose Multiplatform, and core BLE communication concepts.
+
 ## Supported watch features
 
 - [x] Watch settings

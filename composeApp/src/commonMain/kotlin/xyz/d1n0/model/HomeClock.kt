@@ -2,7 +2,7 @@ package xyz.d1n0.model
 
 import kotlinx.datetime.toLocalDateTime
 import xyz.d1n0.constant.Command
-import xyz.d1n0.constant.HomeTimeZoneData
+import xyz.d1n0.constant.HomeTimezoneData
 import xyz.d1n0.helper.toByteArray
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -11,7 +11,7 @@ import kotlinx.datetime.LocalDateTime as KotlinLocalDateTime
 import kotlinx.datetime.TimeZone as KotlinTimeZone
 
 data class HomeClock(
-    override val timeZone: HomeTimeZone,
+    override val timeZone: HomeTimezone,
     override val dstSettings: DstSettings,
 ) : Clock() {
     companion object {
@@ -28,8 +28,8 @@ data class HomeClock(
          * @throws IllegalArgumentException  If the specified time zone ID does not exist in `homeTimeZones`.
          */
         fun fromTimeZoneId(timeZoneId: Int, dstSettings: DstSettings): HomeClock {
-            require(HomeTimeZoneData.containsKey(timeZoneId)) { "Time Zone ID $timeZoneId not found" }
-            return HomeClock(HomeTimeZoneData.getValue(timeZoneId), dstSettings)
+            require(HomeTimezoneData.containsKey(timeZoneId)) { "Time Zone ID $timeZoneId not found" }
+            return HomeClock(HomeTimezoneData.getValue(timeZoneId), dstSettings)
         }
     }
 
