@@ -2,7 +2,7 @@
 
 <img src="skuare.svg" alt="drawing" style="width:250px;"/>
 
-An alternative app that allows connecting G-Shock watches via BLE.
+An alternative app that connects G-Shock watches via BLE.
 
 ## Background
 
