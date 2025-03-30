@@ -36,7 +36,7 @@ class Watch(private val peripheral: Peripheral) {
 		}
 	}
 
-	val watchConfig = WatchInfo()
+	val info = WatchInfo()
 	val clocks = ClocksSettings()
 	val alarms = AlarmsSettings()
 	val timer = TimerSettings()
@@ -148,8 +148,18 @@ class Watch(private val peripheral: Peripheral) {
 				}
 				Command.CONNECTION_SETTINGS -> {
 					runCatching {
-						watchConfig.parseConnectionSettingsPacket(it)
+						info.parseConnectionSettingsPacket(it)
 					}.onFailure { println("Failed to parse auto sync settings packet: ${it.message}") }
+				}
+				Command.WATCH_SETTINGS -> {
+					runCatching {
+						info.parseWatchSettingsPacket(it)
+					}.onFailure { println("Failed to parse settings packet: ${it.message}") }
+				}
+				Command.WATCH_NAME -> {
+					runCatching {
+						info.parseNamePacket(it)
+					}.onFailure { println("Failed to parse name packet: ${it.message}") }
 				}
 				Command.APP_INFO -> {
 					// new/reset watch		22FFFFFFFFFFFFFFFFFFFF00
@@ -157,16 +167,6 @@ class Watch(private val peripheral: Peripheral) {
 					// b5600 newer app ver.	228C8973A1B416502E67DD02
 					// Looks like the app will compare this number to determine if the watch has been paired or not
 					// probably can set to anything
-				}
-				Command.WATCH_SETTINGS -> {
-					runCatching {
-						watchConfig.parseWatchSettingsPacket(it)
-					}.onFailure { println("Failed to parse settings packet: ${it.message}") }
-				}
-				Command.WATCH_NAME -> {
-					runCatching {
-						watchConfig.parseNamePacket(it)
-					}.onFailure { println("Failed to parse name packet: ${it.message}") }
 				}
 				Command.WATCH_CONDITION -> {
 					// 28 13 1F 00
@@ -176,14 +176,16 @@ class Watch(private val peripheral: Peripheral) {
 						clocks.parseClocksPacket(it)
 					}.onFailure { println("Failed to parse clocks packet: ${it.message}") }
 				}
+				Command.TIMEZONE_NAME -> {}
+				Command.TIMEZONE_CONFIG -> {}
 				Command.TIMEZONE_LOCATION_RADIO_ID -> {
-					runCatching {
-						val position = it[1].toInt()
-						val latitude = Double.fromByteArray(it.sliceArray(3..10))
-						val longitude = Double.fromByteArray(it.sliceArray(11..18))
-
-						println("Position $position: $latitude, $longitude")
-					}.onFailure { println("Failed to parse location radio ID packet: ${it.message}") }
+//					runCatching {
+//						val position = it[1].toInt()
+//						val latitude = Double.fromByteArray(it.sliceArray(3..10))
+//						val longitude = Double.fromByteArray(it.sliceArray(11..18))
+//
+//						println("Position $position: $latitude, $longitude")
+//					}.onFailure { println("Failed to parse location radio ID packet: ${it.message}") }
 				}
 				Command.ALARM_A -> {
 					runCatching {

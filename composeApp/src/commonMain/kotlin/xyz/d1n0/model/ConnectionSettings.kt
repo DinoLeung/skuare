@@ -1,12 +1,14 @@
 package xyz.d1n0.model
 
 import xyz.d1n0.constant.AutoSyncBitmask
+import xyz.d1n0.constant.AutoSyncDelay
 import xyz.d1n0.constant.Command
+import xyz.d1n0.constant.ConnectionTimeout
 
 data class ConnectionSettings(
 	var autoSyncEnable: Boolean,
-	var autoSyncOffsetMinute: Byte,
-	var connectionTimeoutMinute: Byte,
+	var autoSyncDelay: AutoSyncDelay,
+	var connectionTimeout: ConnectionTimeout,
 ) {
 	companion object {
         // TODO: don't know what do these bytes mean yet
@@ -23,20 +25,18 @@ data class ConnectionSettings(
 			packet[12].toInt() and AutoSyncBitmask.DISABLE == 0
 			return ConnectionSettings(
                 autoSyncEnable = packet[12].toInt() and AutoSyncBitmask.DISABLE == 0,
-                autoSyncOffsetMinute = packet[13],
-				connectionTimeoutMinute = packet[14],
+                autoSyncDelay = AutoSyncDelay.fromByte(packet[13]),
+				connectionTimeout = ConnectionTimeout.fromByte(packet[14]),
             )
 		}
 	}
-
-	// TODO: write settings to ensure positive values
 
 	val packet: ByteArray
 		get() = byteArrayOf(
 			Command.CONNECTION_SETTINGS.byte,
 			*packetPrefix,
 			(if (autoSyncEnable) 0 else AutoSyncBitmask.DISABLE).toByte(),
-			autoSyncOffsetMinute,
-			connectionTimeoutMinute,
+			autoSyncDelay.byte,
+			connectionTimeout.byte,
 		)
 }

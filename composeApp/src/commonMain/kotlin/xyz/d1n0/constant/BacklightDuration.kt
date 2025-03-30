@@ -7,7 +7,7 @@ enum class BacklightDuration(val byte: Byte) {
     companion object {
         @OptIn(ExperimentalStdlibApi::class)
         fun fromByte(byte: Byte) =
-            BacklightDuration.entries.firstOrNull { it.byte == byte } ?: error("Unknown backlight duration value: ${byte.toHexString(
-                HexFormat.UpperCase)}")
+            BacklightDuration.entries.firstOrNull { it.byte == byte }
+                ?: error("Unknown backlight duration value: ${byte.toHexString(HexFormat.UpperCase)}")
     }
 }

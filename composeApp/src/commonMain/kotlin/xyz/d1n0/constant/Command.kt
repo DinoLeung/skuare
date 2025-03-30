@@ -17,7 +17,6 @@ enum class Command(val byte: Byte) {
 	TIMEZONE_CONFIG(0x1E),
 	TIMEZONE_LOCATION_RADIO_ID(0x24),
 
-
 	ALARM_A(0x15),
 	ALARM_B(0x16),
 

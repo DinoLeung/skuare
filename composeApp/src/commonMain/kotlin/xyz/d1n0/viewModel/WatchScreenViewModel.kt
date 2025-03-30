@@ -37,25 +37,7 @@ class WatchScreenViewModel(
     fun getAlarms() = watch.scope.launch { watch.requestAlarms() }
     fun getTimer() = watch.scope.launch { watch.requestTimer() }
 
-    fun syncTime() = watch.scope.launch {
-        runCatching {
-            watch.requestClocks()
-            withTimeoutOrNull(10.seconds) {
-                while (!watch.clocks.isInitialized) {
-                    delay(100.milliseconds)
-                }
-            } ?: throw IllegalStateException("Timeout waiting for clocks initialization")
-            watch.writeClocks()
-            watch.writeTimeZoneConfigs()
-            watch.writeTimeZoneNames()
-            watch.writeTimeZoneCoordinatesAndRadioId()
-            watch.writeTime()
-        }.onSuccess {
-            println("Time sync completed")
-        }.onFailure { error ->
-            println("Error syncing time: ${error.message}")
-        }
-    }
+    fun syncTime() = watch.scope.launch { watch.adjustTime() }
 
     fun getGPS() = watch.scope.launch {
         watch.requestTimeZoneCoordinatesAndRadioId()

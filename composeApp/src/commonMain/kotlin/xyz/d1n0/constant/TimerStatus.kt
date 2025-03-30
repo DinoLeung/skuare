@@ -8,7 +8,7 @@ enum class TimerStatus(val byte: Byte) {
     companion object {
         @OptIn(ExperimentalStdlibApi::class)
         fun fromByte(byte: Byte) =
-            TimerStatus.entries.firstOrNull { it.byte == byte } ?: error("Unknown timer status value: ${byte.toHexString(
-                HexFormat.UpperCase)}")
+            TimerStatus.entries.firstOrNull { it.byte == byte }
+                ?: error("Unknown timer status value: ${byte.toHexString(HexFormat.UpperCase)}")
     }
 }

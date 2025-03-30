@@ -19,7 +19,7 @@ data class WatchName(private val _name: String) {
                 "Watch name packet must starts with command code ${Command.WATCH_NAME.byte.toHexString(HexFormat.UpperCase)}"
             }
             require(packet.size == 20) {
-                "Watch name packet must be exactly 15 bytes long, e.g. 23 43 41 53 49 4F 20 47 57 2D 42 35 36 30 30 23 00 00 00 00"
+                "Watch name packet must be exactly 20 bytes long, e.g. 23 43 41 53 49 4F 20 47 57 2D 42 35 36 30 30 23 00 00 00 00"
             }
             return WatchName(
                 packet.drop(1)

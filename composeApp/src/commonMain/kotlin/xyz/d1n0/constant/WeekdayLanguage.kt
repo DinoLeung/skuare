@@ -11,7 +11,7 @@ enum class WeekdayLanguage(val byte: Byte) {
     companion object {
         @OptIn(ExperimentalStdlibApi::class)
         fun fromByte(byte: Byte) =
-            WeekdayLanguage.entries.firstOrNull { it.byte == byte } ?: error("Unknown language value: ${byte.toHexString(
-                HexFormat.UpperCase)}")
+            WeekdayLanguage.entries.firstOrNull { it.byte == byte }
+                ?: error("Unknown language value: ${byte.toHexString(HexFormat.UpperCase)}")
     }
 }

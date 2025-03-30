@@ -10,7 +10,7 @@ enum class ConnectReason(val byte: Byte) {
     companion object {
         @OptIn(ExperimentalStdlibApi::class)
         fun fromByte(byte: Byte) =
-            ConnectReason.entries.firstOrNull { it.byte == byte } ?: error("Unknown connect reason value: ${byte.toHexString(
-                HexFormat.UpperCase)}")
+            ConnectReason.entries.firstOrNull { it.byte == byte }
+                ?: error("Unknown connect reason value: ${byte.toHexString(HexFormat.UpperCase)}")
     }
 }
