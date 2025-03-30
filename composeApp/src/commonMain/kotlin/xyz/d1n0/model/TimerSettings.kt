@@ -13,7 +13,7 @@ class TimerSettings {
         require(packet.size == 8) {
             "Timer packet bytes must be exactly 8 bytes long, e.g. 18 17 0F 1E 00 00 00 00"
         }
-        timer = Timer.fromBytes(packet.sliceArray(1..7))
+        timer = Timer.fromBytes(packet.sliceArray(1..packet.lastIndex))
     }
 
     val timerPacket: ByteArray

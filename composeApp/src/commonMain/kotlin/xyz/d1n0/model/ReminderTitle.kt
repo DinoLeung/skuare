@@ -1,0 +1,21 @@
+package xyz.d1n0.model
+
+import xyz.d1n0.helper.fromCasioByteArray
+import xyz.d1n0.helper.toCasioByteArray
+
+data class ReminderTitle(
+    val name: String,
+) {
+    companion object {
+        fun fromBytes(bytes: ByteArray): ReminderTitle {
+            require(bytes.size == 18) {
+                "Reminder Name bytes must be 9 bytes long, e.g. 8D 8C 90 91 92 93 80 87 82 8B 2D 2C 00 00 00 00 00 00"
+            }
+            return ReminderTitle(name = String.fromCasioByteArray(bytes))
+        }
+    }
+
+    val bytes: ByteArray
+        get() = name.toCasioByteArray()
+
+}

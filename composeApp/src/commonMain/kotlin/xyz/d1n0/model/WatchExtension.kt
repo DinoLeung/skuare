@@ -66,6 +66,3 @@ suspend fun Watch.writeTimeZoneCoordinatesAndRadioId() =
 
 suspend fun Watch.writeTime() =
     write(clocks.homeClock.getCurrentDateTimePacket(delay = 0.seconds))
-
-
-

@@ -41,7 +41,7 @@ class WatchScreenViewModel(
         runCatching {
             watch.requestClocks()
             withTimeoutOrNull(10.seconds) {
-                while (!watch.clocks.isInitialized()) {
+                while (!watch.clocks.isInitialized) {
                     delay(100.milliseconds)
                 }
             } ?: throw IllegalStateException("Timeout waiting for clocks initialization")

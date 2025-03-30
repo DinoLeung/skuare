@@ -15,7 +15,8 @@ class ClocksSettings {
      * Checks whether all the clock instances in the Config class are initialized.
      * @return true if homeClock and all worldClocks are initialized; false otherwise.
      */
-    fun isInitialized() = ::homeClock.isInitialized
+    val isInitialized: Boolean
+        get() = ::homeClock.isInitialized
             &&::worldClock1.isInitialized
             &&::worldClock2.isInitialized
             &&::worldClock3.isInitialized
@@ -120,7 +121,7 @@ class ClocksSettings {
      */
     val clocksPackets: List<ByteArray>
         get() {
-            require(isInitialized()) { "Clocks must be initialized" }
+            require(isInitialized) { "Clocks must be initialized" }
             return listOf(
                 getClocksPairPacket(0, 1, homeClock, worldClock1),
                 getClocksPairPacket(2, 3, worldClock2, worldClock3),
@@ -144,7 +145,7 @@ class ClocksSettings {
      */
     val timeZoneConfigPackets: List<ByteArray>
         get() {
-            require(isInitialized()) { "Clocks must be initialized" }
+            require(isInitialized) { "Clocks must be initialized" }
             return listOf(
                 byteArrayOf(Command.TIMEZONE_CONFIG.byte, 0.toByte()) + homeClock.timeZone.bytes,
                 byteArrayOf(Command.TIMEZONE_CONFIG.byte, 1.toByte()) + worldClock1.timeZone.bytes,
@@ -172,7 +173,7 @@ class ClocksSettings {
      */
     val timeZoneNamePackets: List<ByteArray>
         get() {
-            require(isInitialized()) { "Clocks must be initialized" }
+            require(isInitialized) { "Clocks must be initialized" }
             return listOf(
                 byteArrayOf(Command.TIMEZONE_NAME.byte, 0.toByte()) + homeClock.timeZone.cityNameBytes,
                 byteArrayOf(Command.TIMEZONE_NAME.byte, 1.toByte()) + worldClock1.timeZone.cityNameBytes,
@@ -200,7 +201,7 @@ class ClocksSettings {
      */
     val coordinatesRadioIdPackets: List<ByteArray>
         get() {
-            require(isInitialized()) { "Clocks must be initialized" }
+            require(isInitialized) { "Clocks must be initialized" }
             return listOf(
                 byteArrayOf(Command.TIMEZONE_LOCATION_RADIO_ID.byte, 0.toByte(), 1.toByte()) + homeClock.timeZone.coordinatesBytes + homeClock.timeZone.radioIdByte,
                 byteArrayOf(Command.TIMEZONE_LOCATION_RADIO_ID.byte, 1.toByte(), 1.toByte()) + worldClock1.timeZone.coordinatesBytes + worldClock1.timeZone.radioIdByte,

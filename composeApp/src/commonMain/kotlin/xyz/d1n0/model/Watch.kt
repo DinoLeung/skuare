@@ -42,9 +42,6 @@ class Watch(private val peripheral: Peripheral) {
 	val timer = TimerSettings()
 	val reminders = RemindersSettings()
 
-	// TODO: Stopwatch?
-	// TODO: Reminder
-
 	/**
 	 * Provides the [CoroutineScope] associated with the watch connection.
 	 * This scope is used to launch coroutines tied to the lifecycle of the peripheral.
@@ -137,7 +134,6 @@ class Watch(private val peripheral: Peripheral) {
 					when (reason) {
 						ConnectReason.SETUP, ConnectReason.DEFAULT -> {
 							// TODO: Check APP_INFO, up date if required
-							// TODO:
 						}
 						ConnectReason.AUTO_SYNC, ConnectReason.MANUAL_SYNC -> {
 							// TODO: sync time procedure, then disconnect
@@ -203,6 +199,16 @@ class Watch(private val peripheral: Peripheral) {
 					runCatching {
 						timer.parseTimerPacket(it)
 					}.onFailure { println("Failed to parse timer packet: ${it.message}") }
+				}
+				Command.REMINDER_TITLE -> {
+					runCatching {
+						reminders.parseReminderTitlePacket(it)
+					}.onFailure { println("Failed to parse reminder title packet: ${it.message}") }
+				}
+				Command.REMINDER_CONFIG -> {
+					runCatching {
+						reminders.parseReminderConfigPacket(it)
+					}.onFailure { println("Failed to parse reminder config packet: ${it.message}") }
 				}
 
 				Command.ERROR -> {
