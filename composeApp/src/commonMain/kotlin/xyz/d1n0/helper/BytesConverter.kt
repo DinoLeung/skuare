@@ -4,6 +4,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.isoDayNumber
+import xyz.d1n0.constant.*
 import kotlin.time.Duration
 
 /**
@@ -275,3 +276,84 @@ fun Duration.Companion.fromByteArray(bytes: ByteArray): Duration {
     val seconds = bytes[2].toInt()
     return hours.hours + minutes.minutes + seconds.seconds
 }
+
+/**
+ * Decodes a single Casio-encoded byte into its corresponding character.
+ *
+ * The encoding scheme is as follows:
+ * - If the byte's high nibble is 0 (row 0), returns null.
+ * - If the row is 1, returns the fallback character.
+ * - For rows 2 to 7, the byte is interpreted as a standard ASCII code.
+ * - For rows 8 and 9, the character is looked up in the [customCharset] mapping.
+ * - For rows 0xA to 0xD, the character is looked up in the [jisX0201Charset] mapping.
+ * - For any other row, returns the fallback character.
+ *
+ * @param byte a Casio-encoded byte (0x00 to 0xFF)
+ * @return the decoded character, or null if the byte is in row 0.
+ */
+fun Char.Companion.fromCasioByte(byte: Byte): Char? {
+    val unsigned = byte.toInt() and 0xFF
+    val row = unsigned shr 4
+    val col = unsigned and 0x0F
+    return when (row) {
+        0 -> null
+        1 -> fallbackChar
+        in 2..7 -> (unsigned).toChar()
+        in 8..9 -> customCharset[row]?.get(col) ?: fallbackChar
+        in 0xA..0xD -> jisX0201Charset[row]?.get(col) ?: fallbackChar
+        else -> fallbackChar
+    }
+}
+
+/**
+ * Encodes this character into a Casio-encoded byte.
+ *
+ * The encoding logic is as follows:
+ * - If the character’s code is in the range 0x00 to 0x01, returns 0.
+ * - If the character is in the ASCII range (0x20 to 0x7F), it is encoded directly using its code value.
+ * - If the character exists in the [customCharsetByte] mapping, that encoding is used.
+ * - If the character exists in the [jisX0201CharsetByte] mapping, that encoding is used.
+ * - Otherwise, the [fallbackByte] is returned.
+ *
+ * @return a Byte representing the Casio-encoded value of this character.
+ */
+fun Char.toCasioByte(): Byte {
+    if (this.code in 0x00..0x01)
+        return 0
+
+    if (this.code in 0x20..0x7F)
+        return this.code.toByte()
+
+    if (this in customCharsetByte)
+        return customCharsetByte.getValue(this)
+
+    if (this in jisX0201CharsetByte)
+        return jisX0201CharsetByte.getValue(this)
+
+    // 0x10..0x1f || 0xE0..0xFF
+    return fallbackByte
+}
+
+/**
+ * Decodes a ByteArray of Casio-encoded bytes into a String.
+ *
+ * Each byte is processed with [Char.fromCasioByte] and converted to its string representation.
+ * If a byte decodes to null, it is skipped in the output.
+ *
+ * @param bytes a ByteArray containing Casio-encoded bytes.
+ * @return a String representing the decoded characters.
+ */
+fun String.Companion.fromCasioByteArray(bytes: ByteArray): String =
+    bytes.joinToString(separator = "") { Char.fromCasioByte(it)?.toString() ?: "" }
+
+
+/**
+ * Encodes this String into a ByteArray of Casio-encoded bytes.
+ *
+ * Each character in the string is converted using [Char.toCasioByte], and the resulting bytes
+ * are collected into a ByteArray.
+ *
+ * @return a ByteArray containing the Casio-encoded bytes for this string.
+ */
+fun String.toCasioByteArray(): ByteArray =
+    this.map { it.toCasioByte() }.toByteArray()
