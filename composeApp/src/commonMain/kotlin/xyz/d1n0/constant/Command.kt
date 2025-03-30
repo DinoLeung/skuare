@@ -1,6 +1,6 @@
 package xyz.d1n0.constant
 
-enum class Command(val value: Int) {
+enum class Command(val byte: Byte) {
 	CONNECT_REASON(0x10),
 	WATCH_NAME(0x23),
 	CONNECTION_SETTINGS(0x11),
@@ -20,7 +20,7 @@ enum class Command(val value: Int) {
 
 //    reminderTitle(0x30),
 //    reminderTime(0x31),
-	ERROR(0xFF);
+	ERROR(0xFF.toByte());
 //    currentTimeManager(0x39),????
 
 	// ECB-30
@@ -28,8 +28,7 @@ enum class Command(val value: Int) {
 //    findPhone(0x0A);
 
 	companion object {
-		//        fun fromValue(code: Int) = entries.firstOrNull { it.value == code } ?: error("Unknown command code: $code")
-		fun fromValue(code: Int) = entries.firstOrNull { it.value == code }
+		fun fromByte(byte: Byte) = entries.firstOrNull { it.byte == byte }
 	}
 }
 

@@ -9,9 +9,8 @@ import kotlinx.io.IOException
 import xyz.d1n0.constant.BleUuid
 import xyz.d1n0.constant.Command
 import xyz.d1n0.constant.ConnectReason
-import xyz.d1n0.helper.from8BytesBigEndian
+import xyz.d1n0.helper.fromByteArray
 import kotlin.coroutines.cancellation.CancellationException
-import kotlin.time.Duration.Companion.seconds
 import kotlin.uuid.ExperimentalUuidApi
 
 class Watch(private val peripheral: Peripheral) {
@@ -84,7 +83,7 @@ class Watch(private val peripheral: Peripheral) {
 	 */
 	@Throws(CancellationException::class, IOException::class, NotConnectedException::class)
 	suspend fun request(command: Command) =
-		peripheral.write(requestCharacteristic, byteArrayOf(command.value.toByte()))
+		peripheral.write(requestCharacteristic, byteArrayOf(command.byte))
 
 	/**
 	 * Sends a request to the peripheral with a specified command and position.
@@ -96,7 +95,7 @@ class Watch(private val peripheral: Peripheral) {
 	 */
 	@Throws(CancellationException::class, IOException::class, NotConnectedException::class)
 	suspend fun request(command: Command, position: Int) =
-		peripheral.write(requestCharacteristic, byteArrayOf(command.value.toByte(), position.toByte()))
+		peripheral.write(requestCharacteristic, byteArrayOf(command.byte, position.toByte()))
 
 	/**
 	 * Writes data to the peripheral using the IO characteristic.
@@ -132,9 +131,9 @@ class Watch(private val peripheral: Peripheral) {
 		ioCharacteristicObservation.collect {
 			println("ioCharacteristicObservation.collect")
 			println(it.toHexString(HexFormat.UpperCase))
-			when (Command.fromValue(it.first().toInt())) {
+			when (Command.fromByte(it.first())) {
 				Command.CONNECT_REASON -> {
-					val reason = ConnectReason.fromValue(it[8].toInt())
+					val reason = ConnectReason.fromByte(it[8])
 					when (reason) {
 						ConnectReason.SETUP, ConnectReason.DEFAULT -> {
 							// TODO: Check APP_INFO, up date if required
@@ -184,8 +183,8 @@ class Watch(private val peripheral: Peripheral) {
 				Command.TIMEZONE_LOCATION_RADIO_ID -> {
 					runCatching {
 						val position = it[1].toInt()
-						val latitude = Double.from8BytesBigEndian(it.sliceArray(3..10))
-						val longitude = Double.from8BytesBigEndian(it.sliceArray(11..18))
+						val latitude = Double.fromByteArray(it.sliceArray(3..10))
+						val longitude = Double.fromByteArray(it.sliceArray(11..18))
 
 						println("Position $position: $latitude, $longitude")
 					}.onFailure { println("Failed to parse location radio ID packet: ${it.message}") }

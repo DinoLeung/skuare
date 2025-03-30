@@ -16,11 +16,10 @@ import kotlin.time.Duration
  * @return a ByteArray of length 2 representing the integer in little-endian byte order.
  * @throws IllegalArgumentException if the integer is not in the range 0x0000..0xFFFF.
  */
-fun Int.to2BytesLittleEndian(): ByteArray {
-    require(this in 0x0000..0xFFFF) { "Input must be a 16-bit unsigned integer." }
+fun Short.to2BytesLittleEndian(): ByteArray {
     return byteArrayOf(
-        (this and 0xFF).toByte(),        // Least significant byte
-        ((this shr 8) and 0xFF).toByte() // Most significant byte
+        (this.toInt() and 0xFF).toByte(),        // Least significant byte
+        ((this.toInt() shr 8) and 0xFF).toByte() // Most significant byte
     )
 }
 
@@ -34,9 +33,11 @@ fun Int.to2BytesLittleEndian(): ByteArray {
  * @return the integer represented by the byte array.
  * @throws IllegalArgumentException if the byte array does not contain exactly 2 bytes.
  */
-fun Int.Companion.from2BytesLittleEndian(bytes: ByteArray): Int {
+fun Short.Companion.from2BytesLittleEndian(bytes: ByteArray): Short {
     require(bytes.size == 2) { "Input must be a ByteArray of exactly 2 bytes." }
-    return (bytes[1].toInt() shl 8) or (bytes[0].toInt() and 0xFF)
+    val low = bytes[0].toInt() and 0xFF
+    val high = bytes[1].toInt() and 0xFF
+    return ((high shl 8) or low).toShort()
 }
 
 /**
@@ -46,7 +47,7 @@ fun Int.Companion.from2BytesLittleEndian(bytes: ByteArray): Int {
  *
  * @return a ByteArray of length 8 representing the Double.
  */
-fun Double.to8BytesBigEndian(): ByteArray {
+fun Double.toByteArray(): ByteArray {
     val bits = this.toBits()
     val byteArray = ByteArray(8)
     for (i in 0 until 8) {
@@ -65,7 +66,7 @@ fun Double.to8BytesBigEndian(): ByteArray {
  * @return the corresponding Double value.
  * @throws IllegalArgumentException if the byte array does not contain exactly 8 bytes.
  */
-fun Double.Companion.from8BytesBigEndian(bytes: ByteArray): Double {
+fun Double.Companion.fromByteArray(bytes: ByteArray): Double {
     require(bytes.size == 8) { "Input must be exactly 8 bytes long." }
     var bits = 0L
     for (byte in bytes) {
@@ -129,7 +130,7 @@ fun Int.Companion.fromBcdByte(bcd: Byte): Int {
 fun LocalDateTime.toByteArray() =
     byteArrayOf(
         // Year represented in two bytes
-        *this.year.to2BytesLittleEndian(),
+        *this.year.toShort().to2BytesLittleEndian(),
         // Month and Day as single bytes
         this.monthNumber.toByte(),
         this.dayOfMonth.toByte(),

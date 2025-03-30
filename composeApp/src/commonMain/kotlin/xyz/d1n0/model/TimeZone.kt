@@ -3,13 +3,12 @@ package xyz.d1n0.model
 import xyz.d1n0.constant.timezoneRadioIdData
 import xyz.d1n0.helper.to2BytesLittleEndian
 
-// TODO: identifier is 16bit, should change it into UShort
 abstract class Timezone {
     open abstract val cityName: String
-    open abstract val identifier: Int
+    open abstract val identifier: Short
     open abstract val offset: Double
     open abstract val dstDiff: Double
-    open abstract val dstRules: Int
+    open abstract val dstRules: Byte
 
     /**
      * Converts the identifier integer into a little-endian 2-byte array.
@@ -27,7 +26,7 @@ abstract class Timezone {
             *identifierBytes,
             offsetByte,
             dstOffsetByte,
-            dstRules.toByte(),
+            dstRules,
         )
 
     /**

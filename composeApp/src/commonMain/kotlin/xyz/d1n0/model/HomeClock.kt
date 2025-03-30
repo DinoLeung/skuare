@@ -27,9 +27,9 @@ data class HomeClock(
          * @return A `HomeClock` instance configured with the found time zone and the provided DST status.
          * @throws IllegalArgumentException  If the specified time zone ID does not exist in `homeTimeZones`.
          */
-        fun fromTimeZoneId(timeZoneId: Int, dstSettings: DstSettings): HomeClock {
-            require(HomeTimezoneData.containsKey(timeZoneId)) { "Time Zone ID $timeZoneId not found" }
-            return HomeClock(HomeTimezoneData.getValue(timeZoneId), dstSettings)
+        fun fromTimeZoneId(timeZoneId: Short, dstSettings: DstSettings): HomeClock {
+            require(HomeTimezoneData.containsKey(timeZoneId.toInt())) { "Time Zone ID $timeZoneId not found" }
+            return HomeClock(HomeTimezoneData.getValue(timeZoneId.toInt()), dstSettings)
         }
     }
 
@@ -74,7 +74,7 @@ data class HomeClock(
      */
     fun getCurrentDateTimePacket(delay: Duration?) =
         byteArrayOf(
-            Command.CURRENT_TIME.value.toByte(),
+            Command.CURRENT_TIME.byte,
             *getCurrentDateTime(delay).toByteArray(),
             0x01.toByte()
         )

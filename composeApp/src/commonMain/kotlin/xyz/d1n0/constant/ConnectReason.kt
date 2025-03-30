@@ -1,6 +1,6 @@
 package xyz.d1n0.constant
 
-enum class ConnectReason(val value: Int) {
+enum class ConnectReason(val byte: Byte) {
     SETUP(0),       // Lower left button long, need to set the auto sync offset
     DEFAULT(1),     // Lower left button long
     FIND(2),        // Lower right button long
@@ -8,7 +8,9 @@ enum class ConnectReason(val value: Int) {
     MANUAL_SYNC(4); // Lower right button short
 
     companion object {
-        fun fromValue(value: Int) =
-            ConnectReason.entries.firstOrNull { it.value == value } ?: error("Unknown connect reason value: $value")
+        @OptIn(ExperimentalStdlibApi::class)
+        fun fromByte(byte: Byte) =
+            ConnectReason.entries.firstOrNull { it.byte == byte } ?: error("Unknown connect reason value: ${byte.toHexString(
+                HexFormat.UpperCase)}")
     }
 }

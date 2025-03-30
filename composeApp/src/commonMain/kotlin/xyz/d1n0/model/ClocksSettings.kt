@@ -31,8 +31,8 @@ class ClocksSettings {
      *
      * @throws IllegalArgumentException if the position is not within the range 0..5.
      */
-    private fun setClock(position: Int, timeZoneId: Int, dstSettings: DstSettings) =
-        when (position) {
+    private fun setClock(position: Byte, timeZoneId: Short, dstSettings: DstSettings) =
+        when (position.toInt()) {
             0 -> homeClock = HomeClock.fromTimeZoneId(timeZoneId, dstSettings)
             1 -> worldClock1 = WorldClock.fromTimeZoneId(timeZoneId, dstSettings)
             2 -> worldClock2 = WorldClock.fromTimeZoneId(timeZoneId, dstSettings)
@@ -55,13 +55,13 @@ class ClocksSettings {
      * @return A byte array containing a command code, positions of the clocks, DST statuses,
      *         time zone identifiers, and padding bytes for aligning to the expected packet length.
      */
-    private fun getClocksPairPacket(positionA: Int, positionB: Int, clockA: Clock, clockB: Clock) =
+    private fun getClocksPairPacket(positionA: Byte, positionB: Byte, clockA: Clock, clockB: Clock) =
         byteArrayOf(
-            Command.CLOCK.value.toByte(),
-            positionA.toByte(),
-            positionB.toByte(),
-            clockA.dstSettings.value.toByte(),
-            clockB.dstSettings.value.toByte(),
+            Command.CLOCK.byte,
+            positionA,
+            positionB,
+            clockA.dstSettings.byte,
+            clockB.dstSettings.byte,
             *clockA.timeZone.identifierBytes,
             *clockB.timeZone.identifierBytes,
         ).let {
@@ -82,19 +82,19 @@ class ClocksSettings {
      */
     @OptIn(ExperimentalStdlibApi::class)
     fun parseClocksPacket(clocksPacket: ByteArray) {
-        require(clocksPacket.first() == Command.CLOCK.value.toByte()) {
-            "Clocks packet must starts with command code ${Command.CLOCK.value.toHexString(HexFormat.UpperCase)}"
+        require(clocksPacket.first() == Command.CLOCK.byte) {
+            "Clocks packet must starts with command code ${Command.CLOCK.byte.toHexString(HexFormat.UpperCase)}"
         }
         require(clocksPacket.size == 15) {
             "Clocks packet must be exactly 15 bytes long, e.g. 1D 00 01 03 02 7F 76 00 00 FF FF FF FF FF FF"
         }
         runCatching {
-            val positionA = clocksPacket[1].toInt()
-            val positionB = clocksPacket[2].toInt()
-            val dstStatusA = DstSettings.fromValue(clocksPacket[3].toInt())
-            val dstStatusB = DstSettings.fromValue(clocksPacket[4].toInt())
-            val timeZoneIdA = Int.from2BytesLittleEndian(clocksPacket.sliceArray(5..6))
-            val timeZoneIdB = Int.from2BytesLittleEndian(clocksPacket.sliceArray(7..8))
+            val positionA = clocksPacket[1]
+            val positionB = clocksPacket[2]
+            val dstStatusA = DstSettings.fromByte(clocksPacket[3])
+            val dstStatusB = DstSettings.fromByte(clocksPacket[4])
+            val timeZoneIdA = Short.from2BytesLittleEndian(clocksPacket.sliceArray(5..6))
+            val timeZoneIdB = Short.from2BytesLittleEndian(clocksPacket.sliceArray(7..8))
 
             setClock(positionA, timeZoneIdA, dstStatusA)
             setClock(positionB, timeZoneIdB, dstStatusB)
@@ -146,12 +146,12 @@ class ClocksSettings {
         get() {
             require(isInitialized()) { "Clocks must be initialized" }
             return listOf(
-                byteArrayOf(Command.TIMEZONE_CONFIG.value.toByte(), 0.toByte()) + homeClock.timeZone.bytes,
-                byteArrayOf(Command.TIMEZONE_CONFIG.value.toByte(), 1.toByte()) + worldClock1.timeZone.bytes,
-                byteArrayOf(Command.TIMEZONE_CONFIG.value.toByte(), 2.toByte()) + worldClock2.timeZone.bytes,
-                byteArrayOf(Command.TIMEZONE_CONFIG.value.toByte(), 3.toByte()) + worldClock3.timeZone.bytes,
-                byteArrayOf(Command.TIMEZONE_CONFIG.value.toByte(), 4.toByte()) + worldClock4.timeZone.bytes,
-                byteArrayOf(Command.TIMEZONE_CONFIG.value.toByte(), 5.toByte()) + worldClock5.timeZone.bytes,
+                byteArrayOf(Command.TIMEZONE_CONFIG.byte, 0.toByte()) + homeClock.timeZone.bytes,
+                byteArrayOf(Command.TIMEZONE_CONFIG.byte, 1.toByte()) + worldClock1.timeZone.bytes,
+                byteArrayOf(Command.TIMEZONE_CONFIG.byte, 2.toByte()) + worldClock2.timeZone.bytes,
+                byteArrayOf(Command.TIMEZONE_CONFIG.byte, 3.toByte()) + worldClock3.timeZone.bytes,
+                byteArrayOf(Command.TIMEZONE_CONFIG.byte, 4.toByte()) + worldClock4.timeZone.bytes,
+                byteArrayOf(Command.TIMEZONE_CONFIG.byte, 5.toByte()) + worldClock5.timeZone.bytes,
             )
         }
 
@@ -174,12 +174,12 @@ class ClocksSettings {
         get() {
             require(isInitialized()) { "Clocks must be initialized" }
             return listOf(
-                byteArrayOf(Command.TIMEZONE_NAME.value.toByte(), 0.toByte()) + homeClock.timeZone.cityNameBytes,
-                byteArrayOf(Command.TIMEZONE_NAME.value.toByte(), 1.toByte()) + worldClock1.timeZone.cityNameBytes,
-                byteArrayOf(Command.TIMEZONE_NAME.value.toByte(), 2.toByte()) + worldClock2.timeZone.cityNameBytes,
-                byteArrayOf(Command.TIMEZONE_NAME.value.toByte(), 3.toByte()) + worldClock3.timeZone.cityNameBytes,
-                byteArrayOf(Command.TIMEZONE_NAME.value.toByte(), 4.toByte()) + worldClock4.timeZone.cityNameBytes,
-                byteArrayOf(Command.TIMEZONE_NAME.value.toByte(), 5.toByte()) + worldClock5.timeZone.cityNameBytes,
+                byteArrayOf(Command.TIMEZONE_NAME.byte, 0.toByte()) + homeClock.timeZone.cityNameBytes,
+                byteArrayOf(Command.TIMEZONE_NAME.byte, 1.toByte()) + worldClock1.timeZone.cityNameBytes,
+                byteArrayOf(Command.TIMEZONE_NAME.byte, 2.toByte()) + worldClock2.timeZone.cityNameBytes,
+                byteArrayOf(Command.TIMEZONE_NAME.byte, 3.toByte()) + worldClock3.timeZone.cityNameBytes,
+                byteArrayOf(Command.TIMEZONE_NAME.byte, 4.toByte()) + worldClock4.timeZone.cityNameBytes,
+                byteArrayOf(Command.TIMEZONE_NAME.byte, 5.toByte()) + worldClock5.timeZone.cityNameBytes,
             )
         }
 
@@ -202,12 +202,12 @@ class ClocksSettings {
         get() {
             require(isInitialized()) { "Clocks must be initialized" }
             return listOf(
-                byteArrayOf(Command.TIMEZONE_LOCATION_RADIO_ID.value.toByte(), 0.toByte(), 1.toByte()) + homeClock.timeZone.coordinatesBytes + homeClock.timeZone.radioIdByte,
-                byteArrayOf(Command.TIMEZONE_LOCATION_RADIO_ID.value.toByte(), 1.toByte(), 1.toByte()) + worldClock1.timeZone.coordinatesBytes + worldClock1.timeZone.radioIdByte,
-                byteArrayOf(Command.TIMEZONE_LOCATION_RADIO_ID.value.toByte(), 2.toByte(), 1.toByte()) + worldClock2.timeZone.coordinatesBytes + worldClock2.timeZone.radioIdByte,
-                byteArrayOf(Command.TIMEZONE_LOCATION_RADIO_ID.value.toByte(), 3.toByte(), 1.toByte()) + worldClock3.timeZone.coordinatesBytes + worldClock3.timeZone.radioIdByte,
-                byteArrayOf(Command.TIMEZONE_LOCATION_RADIO_ID.value.toByte(), 4.toByte(), 1.toByte()) + worldClock4.timeZone.coordinatesBytes + worldClock4.timeZone.radioIdByte,
-                byteArrayOf(Command.TIMEZONE_LOCATION_RADIO_ID.value.toByte(), 5.toByte(), 1.toByte()) + worldClock5.timeZone.coordinatesBytes + worldClock5.timeZone.radioIdByte,
+                byteArrayOf(Command.TIMEZONE_LOCATION_RADIO_ID.byte, 0.toByte(), 1.toByte()) + homeClock.timeZone.coordinatesBytes + homeClock.timeZone.radioIdByte,
+                byteArrayOf(Command.TIMEZONE_LOCATION_RADIO_ID.byte, 1.toByte(), 1.toByte()) + worldClock1.timeZone.coordinatesBytes + worldClock1.timeZone.radioIdByte,
+                byteArrayOf(Command.TIMEZONE_LOCATION_RADIO_ID.byte, 2.toByte(), 1.toByte()) + worldClock2.timeZone.coordinatesBytes + worldClock2.timeZone.radioIdByte,
+                byteArrayOf(Command.TIMEZONE_LOCATION_RADIO_ID.byte, 3.toByte(), 1.toByte()) + worldClock3.timeZone.coordinatesBytes + worldClock3.timeZone.radioIdByte,
+                byteArrayOf(Command.TIMEZONE_LOCATION_RADIO_ID.byte, 4.toByte(), 1.toByte()) + worldClock4.timeZone.coordinatesBytes + worldClock4.timeZone.radioIdByte,
+                byteArrayOf(Command.TIMEZONE_LOCATION_RADIO_ID.byte, 5.toByte(), 1.toByte()) + worldClock5.timeZone.coordinatesBytes + worldClock5.timeZone.radioIdByte,
             )
         }
 }

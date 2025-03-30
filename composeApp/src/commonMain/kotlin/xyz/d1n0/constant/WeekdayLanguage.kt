@@ -1,6 +1,6 @@
 package xyz.d1n0.constant
 
-enum class WeekdayLanguage(val value: Int) {
+enum class WeekdayLanguage(val byte: Byte) {
     EN(0),
     ES(1),
     FR(2),
@@ -9,7 +9,9 @@ enum class WeekdayLanguage(val value: Int) {
     RU(5);
 
     companion object {
-        fun fromValue(value: Int) =
-            WeekdayLanguage.entries.firstOrNull { it.value == value } ?: error("Unknown language value: $value")
+        @OptIn(ExperimentalStdlibApi::class)
+        fun fromByte(byte: Byte) =
+            WeekdayLanguage.entries.firstOrNull { it.byte == byte } ?: error("Unknown language value: ${byte.toHexString(
+                HexFormat.UpperCase)}")
     }
 }

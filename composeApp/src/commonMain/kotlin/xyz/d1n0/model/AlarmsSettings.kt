@@ -20,8 +20,8 @@ class AlarmsSettings {
 
     @OptIn(ExperimentalStdlibApi::class)
     fun parseAlarmAPacket(packet: ByteArray) {
-        require(packet.first() == Command.ALARM_A.value.toByte()) {
-            "Alarm A packet must starts with command code ${Command.ALARM_A.value.toHexString(HexFormat.UpperCase)}"
+        require(packet.first() == Command.ALARM_A.byte) {
+            "Alarm A packet must starts with command code ${Command.ALARM_A.byte.toHexString(HexFormat.UpperCase)}"
         }
         require(packet.size == 5) {
             "Alarm A packet must be exactly 5 bytes long, e.g. 15 C0 00 0C 1E"
@@ -32,8 +32,8 @@ class AlarmsSettings {
 
     @OptIn(ExperimentalStdlibApi::class)
     fun parseAlarmBPacket(packet: ByteArray) {
-        require(packet.first() == Command.ALARM_B.value.toByte()) {
-            "Alarm B packet must starts with command code ${Command.ALARM_B.value.toHexString(HexFormat.UpperCase)}"
+        require(packet.first() == Command.ALARM_B.byte) {
+            "Alarm B packet must starts with command code ${Command.ALARM_B.byte.toHexString(HexFormat.UpperCase)}"
         }
         require(packet.size == 17) {
             "Alarm B packet must be exactly 17 bytes long, e.g. 16 00 00 01 1E 00 00 0E 0F 00 00 0F 2D 40 00 17 3B"
@@ -52,7 +52,7 @@ class AlarmsSettings {
                 this[0] = this[0] or hourlySignal.byte
             }
             return byteArrayOf(
-                Command.ALARM_A.value.toByte(),
+                Command.ALARM_A.byte,
                 *alarmBytes,
             )
         }
@@ -61,7 +61,7 @@ class AlarmsSettings {
         get() {
             require(isInitialized()) { "Alarms must be initialized" }
             return byteArrayOf(
-                Command.ALARM_B.value.toByte(),
+                Command.ALARM_B.byte,
                 *alarm2.bytes,
                 *alarm3.bytes,
                 *alarm4.bytes,

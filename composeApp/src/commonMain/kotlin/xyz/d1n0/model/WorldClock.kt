@@ -7,9 +7,9 @@ data class WorldClock(
 	override val dstSettings: DstSettings,
 ) : Clock() {
 	companion object {
-		fun fromTimeZoneId(timeZoneId: Int, dstSettings: DstSettings): WorldClock {
-			require(WorldTimezoneData.containsKey(timeZoneId)) { "Time Zone ID $timeZoneId not found" }
-			return WorldClock(WorldTimezoneData.getValue(timeZoneId), dstSettings)
+		fun fromTimeZoneId(timeZoneId: Short, dstSettings: DstSettings): WorldClock {
+			require(WorldTimezoneData.containsKey(timeZoneId.toInt())) { "Time Zone ID $timeZoneId not found" }
+			return WorldClock(WorldTimezoneData.getValue(timeZoneId.toInt()), dstSettings)
 		}
 	}
 }

@@ -1,7 +1,7 @@
 package xyz.d1n0.model
 
 import xyz.d1n0.constant.WorldTimezoneData
-import xyz.d1n0.helper.to8BytesBigEndian
+import xyz.d1n0.helper.toByteArray
 
 data class WorldTimezone(
 	val country: String,
@@ -9,10 +9,10 @@ data class WorldTimezone(
 	val longitude: Double,
 	val latitude: Double,
 	override val cityName: String,
-	override val identifier: Int,
+	override val identifier: Short,
 	override val offset: Double,
 	override val dstDiff: Double,
-	override val dstRules: Int
+	override val dstRules: Byte
 ) : Timezone() {
 	companion object {
 		/**
@@ -33,7 +33,7 @@ data class WorldTimezone(
 
 	override val coordinatesBytes: ByteArray
 		get() = byteArrayOf(
-			*latitude.to8BytesBigEndian(),
-			*longitude.to8BytesBigEndian(),
+			*latitude.toByteArray(),
+			*longitude.toByteArray(),
 		)
 }

@@ -1,12 +1,14 @@
 package xyz.d1n0.constant
 
-enum class TimerStatus(val value: Int) {
+enum class TimerStatus(val byte: Byte) {
     NOT_STARTED(0),
     ACTIVE(1),
     SUSPENDED(2);
 
     companion object {
-        fun fromValue(value: Int) =
-            TimerStatus.entries.firstOrNull { it.value == value } ?: error("Unknown timer status value: $value")
+        @OptIn(ExperimentalStdlibApi::class)
+        fun fromByte(byte: Byte) =
+            TimerStatus.entries.firstOrNull { it.byte == byte } ?: error("Unknown timer status value: ${byte.toHexString(
+                HexFormat.UpperCase)}")
     }
 }

@@ -1,11 +1,13 @@
 package xyz.d1n0.constant
 
-enum class DateFormat(val value: Int) {
+enum class DateFormat(val byte: Byte) {
     MDD(0),
     DDM(1);
 
     companion object {
-        fun fromValue(value: Int) =
-            DateFormat.entries.firstOrNull { it.value == value } ?: error("Unknown date format value: $value")
+        @OptIn(ExperimentalStdlibApi::class)
+        fun fromByte(byte: Byte) =
+            DateFormat.entries.firstOrNull { it.byte == byte } ?: error("Unknown date format value: ${byte.toHexString(
+                HexFormat.UpperCase)}")
     }
 }

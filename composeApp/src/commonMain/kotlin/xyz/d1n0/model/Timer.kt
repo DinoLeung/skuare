@@ -1,13 +1,9 @@
 package xyz.d1n0.model
 
-import xyz.d1n0.constant.Command
 import xyz.d1n0.constant.TimerStatus
 import xyz.d1n0.helper.fromByteArray
 import xyz.d1n0.helper.toByteArray
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.hours
-import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Duration.Companion.seconds
 
 // Writing timer will reset timer status, and timer status cannot be set
 data class Timer(
@@ -21,8 +17,7 @@ data class Timer(
             }
             return Timer(
                 duration = Duration.fromByteArray(bytes.sliceArray(0..2)),
-                status = TimerStatus.fromValue(bytes.last().toInt(),
-                )
+                status = TimerStatus.fromByte(bytes.last()),
             )
         }
     }
@@ -35,7 +30,7 @@ data class Timer(
                     0 -> durationBytes[0]
                     1 -> durationBytes[1]
                     2 -> durationBytes[2]
-                    6 -> status.value.toByte()
+                    6 -> status.byte
                     else -> 0
                 }
             }

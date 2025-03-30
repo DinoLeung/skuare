@@ -20,19 +20,19 @@ data class ReminderConfig(
             require(bytes.size == 9) { "Reminder Config bytes must be 9 bytes long, e.g. 11 25 03 25 25 03 25 12 00" }
             return ReminderConfig(
                 enable = bytes[0].toInt() and ReminderBitmask.ENABLE != 0,
-                recurrence = ReminderRecurrence.fromValue(bytes[1].toInt()),
+                recurrence = ReminderRecurrence.fromByte(bytes[1]),
                 startDate = LocalDate.fromBcdByteArray(bytes.sliceArray(2..4)),
                 endDate = LocalDate.fromBcdByteArray(bytes.sliceArray(5..7)),
-                daysOfWeek = ReminderDayOfWeek.daysFromValue(bytes[8].toInt()),
+                daysOfWeek = ReminderDayOfWeek.daysFromByte(bytes[8]),
                 )
         }
     }
 
     fun toBytes() = byteArrayOf(
-        (recurrence.value or (if (enable) 1 else 0)).toByte(),
+        (recurrence.byte.toInt() or (if (enable) 1 else 0)).toByte(),
         *startDate.toBcdByteArray(),
         *endDate.toBcdByteArray(),
-        ReminderDayOfWeek.valueFromDays(daysOfWeek).toByte(),
+        ReminderDayOfWeek.byteFromDays(daysOfWeek),
     ).copyOf(9)
 
     // 31 01 01 25 03 23 25 03 23 00 00

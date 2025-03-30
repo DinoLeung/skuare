@@ -13,22 +13,24 @@ enum class ReminderRecurrence {
     REPEAT_YEARLY;
 
     companion object {
-        fun fromValue(value: Int) =
-            when {
-                value and MULTIPLE_DAYS == MULTIPLE_DAYS -> ONCE_MULTIPLE_DAYS
-                value and WEEKLY == WEEKLY -> REPEAT_WEEKLY
-                value and YEARLY == YEARLY -> REPEAT_YEARLY
-                value and MONTHLY == MONTHLY -> REPEAT_MONTHLY
-                else -> ONCE_SAME_DAY
+        fun fromByte(byte: Byte) =
+            byte.toInt().let {
+                when {
+                    it and MULTIPLE_DAYS == MULTIPLE_DAYS -> ONCE_MULTIPLE_DAYS
+                    it and WEEKLY == WEEKLY -> REPEAT_WEEKLY
+                    it and YEARLY == YEARLY -> REPEAT_YEARLY
+                    it and MONTHLY == MONTHLY -> REPEAT_MONTHLY
+                    else -> ONCE_SAME_DAY
+                }
             }
         }
 
-    val value: Int
+    val byte: Byte
         get() = when(this) {
             ONCE_SAME_DAY -> 0
-            ONCE_MULTIPLE_DAYS -> MULTIPLE_DAYS
-            REPEAT_WEEKLY -> WEEKLY
-            REPEAT_MONTHLY -> MONTHLY
-            REPEAT_YEARLY -> YEARLY
+            ONCE_MULTIPLE_DAYS -> MULTIPLE_DAYS.toByte()
+            REPEAT_WEEKLY -> WEEKLY.toByte()
+            REPEAT_MONTHLY -> MONTHLY.toByte()
+            REPEAT_YEARLY -> YEARLY.toByte()
         }
 }

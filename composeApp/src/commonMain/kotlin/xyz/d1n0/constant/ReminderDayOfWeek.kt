@@ -10,27 +10,34 @@ enum class ReminderDayOfWeek {
     SATURDAY;
 
     companion object {
-        fun daysFromValue(value: Int): MutableSet<ReminderDayOfWeek> {
-            val days = mutableSetOf<ReminderDayOfWeek>()
-            if ((value and ReminderDayOfWeekBitmask.SUNDAY) != 0) days.add(SUNDAY)
-            if ((value and ReminderDayOfWeekBitmask.MONDAY) != 0) days.add(MONDAY)
-            if ((value and ReminderDayOfWeekBitmask.TUESDAY) != 0) days.add(TUESDAY)
-            if ((value and ReminderDayOfWeekBitmask.WEDNESDAY) != 0) days.add(WEDNESDAY)
-            if ((value and ReminderDayOfWeekBitmask.THURSDAY) != 0) days.add(THURSDAY)
-            if ((value and ReminderDayOfWeekBitmask.FRIDAY) != 0) days.add(FRIDAY)
-            if ((value and ReminderDayOfWeekBitmask.SATURDAY) != 0) days.add(SATURDAY)
-            return days
-        }
-        fun valueFromDays(days: Set<ReminderDayOfWeek>): Int {
-            var value = 0
-            if (SUNDAY in days) value = value or ReminderDayOfWeekBitmask.SUNDAY
-            if (MONDAY in days) value = value or ReminderDayOfWeekBitmask.MONDAY
-            if (TUESDAY in days) value = value or ReminderDayOfWeekBitmask.TUESDAY
-            if (WEDNESDAY in days) value = value or ReminderDayOfWeekBitmask.WEDNESDAY
-            if (THURSDAY in days) value = value or ReminderDayOfWeekBitmask.THURSDAY
-            if (FRIDAY in days) value = value or ReminderDayOfWeekBitmask.FRIDAY
-            if (SATURDAY in days) value = value or ReminderDayOfWeekBitmask.SATURDAY
-            return value
-        }
+        fun daysFromByte(byte: Byte): MutableSet<ReminderDayOfWeek> =
+            byte.toInt().let {
+                listOf(
+                    ReminderDayOfWeekBitmask.SUNDAY to SUNDAY,
+                    ReminderDayOfWeekBitmask.MONDAY to MONDAY,
+                    ReminderDayOfWeekBitmask.TUESDAY to TUESDAY,
+                    ReminderDayOfWeekBitmask.WEDNESDAY to WEDNESDAY,
+                    ReminderDayOfWeekBitmask.THURSDAY to THURSDAY,
+                    ReminderDayOfWeekBitmask.FRIDAY to FRIDAY,
+                    ReminderDayOfWeekBitmask.SATURDAY to SATURDAY,
+                )
+                    .filter { (mask, _) -> it and mask != 0 }
+                    .map { it.second }
+                    .toMutableSet()
+            }
+
+        fun byteFromDays(days: Set<ReminderDayOfWeek>): Byte =
+            listOf(
+                SUNDAY to ReminderDayOfWeekBitmask.SUNDAY,
+                MONDAY to ReminderDayOfWeekBitmask.MONDAY,
+                TUESDAY to ReminderDayOfWeekBitmask.TUESDAY,
+                WEDNESDAY to ReminderDayOfWeekBitmask.WEDNESDAY,
+                THURSDAY to ReminderDayOfWeekBitmask.THURSDAY,
+                FRIDAY to ReminderDayOfWeekBitmask.FRIDAY,
+                SATURDAY to ReminderDayOfWeekBitmask.SATURDAY,
+            )
+                .filter { (day, _) -> day in days }
+                .fold(0) { acc, (_, mask) -> acc or mask }
+                .toByte()
     }
 }
