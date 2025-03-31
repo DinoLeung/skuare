@@ -2,6 +2,8 @@
 
 <img src="skuare.svg" alt="drawing" style="width:250px;"/>
 
+[Logo figma file](https://www.figma.com/design/d3FSprHwpx7VGzW2kGQ22f/skuare-logo?node-id=0-1&t=01zNO7pHsObVP1Ib-1)
+
 An alternative app that connects G-Shock watches via BLE.
 
 ## Background
@@ -55,7 +57,9 @@ excellent opportunity to deepen my understanding of Kotlin, JetBrains Compose Mu
 - [X] Implement BLE communication protocol
 - [ ] Simple UI to pair and interact with the watch
 - [ ] Local sqlite to store device hash to support auto sync procedure
-- [ ] Background process to support auto time adjustment procedure
+- [ ] Support auto time adjustment procedure when app is not in foreground
+  - [ ] Android companion device manager
+  - [ ] iOS bluetooth central
 - [ ] Figure out unknown packets
 
 ## To be fixed
