@@ -170,6 +170,10 @@ class Watch(private val peripheral: Peripheral) {
 				}
 				Command.WATCH_CONDITION -> {
 					// 28 13 1F 00
+					val BATTERY_MAX = 0x13
+					val BATTERY_MIN = 0x09 // ???
+					val batteryLevel = (it[1].toFloat() - BATTERY_MIN) / (BATTERY_MAX - BATTERY_MIN)
+					println("Battery level: $batteryLevel")
 				}
 				Command.CLOCK -> {
 					runCatching {

@@ -4,11 +4,11 @@ import xyz.d1n0.constant.timezoneRadioIdData
 import xyz.d1n0.helper.to2BytesLittleEndian
 
 abstract class Timezone {
-    open abstract val cityName: String
-    open abstract val identifier: Short
-    open abstract val offset: Double
-    open abstract val dstDiff: Double
-    open abstract val dstRules: Byte
+    abstract val cityName: String
+    abstract val identifier: Short
+    abstract val offset: Double
+    abstract val dstDiff: Double
+    abstract val dstRules: Byte
 
     /**
      * Converts the identifier integer into a little-endian 2-byte array.

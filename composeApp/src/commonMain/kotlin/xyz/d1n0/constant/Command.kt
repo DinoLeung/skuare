@@ -46,4 +46,8 @@ enum class Command(val byte: Byte) {
  *
  * CLASS_WATCH_FEATURE_SERVICE_WATCH_CONDITION
  * 28131E00
+ * 28131900
+ * [1] battery level, on gmwb5000 and gwb5600 full charged value is 0x13, bottom value is 0x09?
+ * [2] temperature
+ * [3] flash status(probably not useed on squares)
  */
