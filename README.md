@@ -73,6 +73,6 @@ This project is an independent, open-source implementation for communicating wit
 It is not affiliated with, endorsed by, or sponsored by Casio Computer Co., Ltd.  
 All brand names and trademarks are the property of their respective owners.
 
-The Bluetooth communication protocol and data format used by Casio watches were independently reverse-engineered  
-through behavioral observation and traffic analysis. No proprietary source code or copyrighted assets  
+The Bluetooth communication protocol and data formats used by Casio watches were independently reverse-engineered  
+through behavioral observation and traffic analysis. No proprietary source code or copyrighted assets
 from Casio or its applications are included in this project.
