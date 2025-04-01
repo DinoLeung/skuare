@@ -56,6 +56,9 @@ kotlin {
             implementation(libs.moko.permissions.bluetooth)
             implementation(libs.moko.permissions.location)
         }
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+        }
 //        val desktopMain by getting
 //        desktopMain.dependencies {
 //            implementation(compose.desktop.currentOs)

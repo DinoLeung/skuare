@@ -4,8 +4,13 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.isoDayNumber
-import xyz.d1n0.constant.*
 import kotlin.time.Duration
+import xyz.d1n0.constant.customCharset
+import xyz.d1n0.constant.customCharsetByte
+import xyz.d1n0.constant.fallbackByte
+import xyz.d1n0.constant.fallbackChar
+import xyz.d1n0.constant.jisX0201Charset
+import xyz.d1n0.constant.jisX0201CharsetByte
 
 /**
  * Converts this integer (which must be within the 16-bit unsigned range, 0x0000–0xFFFF)

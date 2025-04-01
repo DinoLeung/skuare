@@ -46,33 +46,32 @@ data class HomeClock(
 
 
     /**
-     * Retrieves the current local date and time with an optional delay adjustment.
+     * Returns the current local date and time, optionally adjusted by a delay.
      *
-     * This function calculates the current date and time based on the system clock, with an optional delay
-     * that can be added to the current time. The resulting date and time are converted to a local date and
-     * time format using a specified time zone.
+     * Uses the system clock to obtain the current time, applies an optional delay,
+     * and converts the result into a [KotlinLocalDateTime] in the clock's time zone.
      *
-     * @param delay An optional `Duration` to adjust the current time by adding a specified delay.
-     * @return A `KotlinLocalDateTime` object representing the adjusted current date and time.
+     * @param delay An optional duration to shift the current time forward (default is no delay).
+     * @return The adjusted local date and time.
      */
-    fun getCurrentDateTime(delay: Duration?): KotlinLocalDateTime {
+    fun getCurrentDateTime(delay: Duration = 0.seconds): KotlinLocalDateTime {
         val timeZone = KotlinTimeZone.of(timeZone.timeZone)
-        val now = KotlinClock.System.now() + (delay ?: 0.seconds)
+        val now = KotlinClock.System.now() + delay
         return now.toLocalDateTime(timeZone)
     }
 
     /**
-     * Constructs a byte array representing the current date and time packet.
+     * Creates a byte array representing the current date and time packet.
      *
-     * This function creates a packet formatted for transmission that includes the current date and time
-     * information, as well as a command identifier byte and a status byte. The packet is constructed by
-     * converting the current date and time, adjusted by an optional delay, into a byte array and
-     * appending necessary metadata for transmission.
+     * The packet includes:
+     * - A command identifier byte
+     * - The current date and time (optionally delayed) as a byte array
+     * - A status byte
      *
-     * @param delay An optional `Duration` to adjust the current time by adding a specified delay.
-     * @return A `ByteArray` containing the command identifier, the byte representation of the adjusted current date and time, and an additional status byte.
+     * @param delay An optional duration to shift the current time forward (default is no delay).
+     * @return A [ByteArray] formatted for transmission.
      */
-    fun getCurrentDateTimePacket(delay: Duration?) =
+    fun getCurrentDateTimePacket(delay: Duration = 0.seconds) =
         byteArrayOf(
             Command.CURRENT_TIME.byte,
             *getCurrentDateTime(delay).toByteArray(),

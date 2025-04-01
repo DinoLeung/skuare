@@ -2,11 +2,25 @@ package xyz.d1n0.model
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withTimeoutOrNull
+import kotlinx.datetime.Instant
 import xyz.d1n0.constant.Command
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
-suspend fun Watch.adjustTime() = runCatching {
+/**
+ * Synchronizes the watch's time, optionally including time zone data.
+ *
+ * This function:
+ * 1. Ensures clock settings are initialized, requesting them if necessary (with a 10-second timeout).
+ * 2. Writes current clock settings to the watch.
+ * 3. Optionally writes time zone configuration, names, and coordinates.
+ * 4. Sends the current date and time (optionally delayed) to the watch.
+ *
+ * @param delay Optional delay to apply to the current time before syncing (default is 0).
+ * @param writeTimezoneData If true, time zone-related data will also be written (default is false).
+ */
+suspend fun Watch.adjustTime(delay: Duration = 0.seconds, writeTimezoneData: Boolean = false) = runCatching {
     if (clocks.isInitialized == false) {
         requestClocks()
         withTimeoutOrNull(10.seconds) {
@@ -16,10 +30,12 @@ suspend fun Watch.adjustTime() = runCatching {
         } ?: throw IllegalStateException("Timeout waiting for clocks initialization")
     }
     writeClocks()
-    writeTimeZoneConfigs()
-    writeTimeZoneNames()
-    writeTimeZoneCoordinatesAndRadioId()
-    writeTime()
+    if (writeTimezoneData) {
+        writeTimeZoneConfigs()
+        writeTimeZoneNames()
+        writeTimeZoneCoordinatesAndRadioId()
+    }
+    writeTime(delay = delay)
 }.onSuccess {
     println("Time sync completed")
 }.onFailure { error ->
@@ -53,8 +69,8 @@ suspend fun Watch.writeClocks() =
         write(it)
     }
 
-suspend fun Watch.writeTime() =
-    write(clocks.homeClock.getCurrentDateTimePacket(delay = 0.seconds))
+suspend fun Watch.writeTime(delay: Duration = 0.seconds) =
+    write(clocks.homeClock.getCurrentDateTimePacket(delay = delay))
 
 suspend fun Watch.requestAlarms() {
     request(Command.ALARM_A)
