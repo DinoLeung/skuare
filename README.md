@@ -67,17 +67,12 @@ excellent opportunity to deepen my understanding of Kotlin, JetBrains Compose Mu
 - [ ] Handle multiple peripheral found when scanning for watches
 - [ ] Default data when invalid data received from watch, including timezone
 
-This is a Kotlin Multiplatform project targeting Android, iOS.
+## Disclaimer
 
-* `/composeApp` is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - `commonMain` is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    `iosMain` would be the right folder for such calls.
+This project is an independent, open-source implementation for communicating with Casio watches over Bluetooth.  
+It is not affiliated with, endorsed by, or sponsored by Casio Computer Co., Ltd.  
+All brand names and trademarks are the property of their respective owners.
 
-* `/iosApp` contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform, 
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
-
-
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+The Bluetooth communication protocol and data format used by Casio watches were independently reverse-engineered  
+through behavioral observation and traffic analysis. No proprietary source code or copyrighted assets  
+from Casio or its applications are included in this project.
