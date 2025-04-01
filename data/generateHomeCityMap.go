@@ -25,7 +25,7 @@ func main() {
 
 	// Skip the header and process each line
 	var kotlinMap strings.Builder
-	kotlinMap.WriteString("val homeTimezones: Map<Int, HomeTimezone> = mapOf(\n")
+	kotlinMap.WriteString("val HomeTimezoneData: Map<Int, HomeTimezone> = mapOf(\n")
 
 	for i, record := range records {
 		if i == 0 {
