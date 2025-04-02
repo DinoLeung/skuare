@@ -13,7 +13,7 @@ import xyz.d1n0.constant.jisX0201Charset
 import xyz.d1n0.constant.jisX0201CharsetByte
 
 /**
- * Converts this Short into a 2-byte array in little-endian order, preserving its two’s complement representation.
+ * Converts this Short into a 2 bytes ByteArray in little-endian order, preserving its two’s complement representation.
  *
  * In little-endian format, the least significant byte is placed at index 0, while the most significant byte is placed at index 1.
  *
@@ -33,8 +33,8 @@ fun Short.toLittleEndianByteArray(): ByteArray {
  * is the most significant.
  *
  * @param bytes a ByteArray of exactly 2 bytes.
- * @return the Short represented by the Byte Array.
- * @throws IllegalArgumentException if the byte array does not contain exactly 2 bytes.
+ * @return the Short represented by the ByteArray.
+ * @throws IllegalArgumentException if the bytearray does not contain exactly 2 bytes.
  */
 fun Short.Companion.fromLittleEndianByteArray(bytes: ByteArray): Short {
     require(bytes.size == 2) { "Input must be a ByteArray of exactly 2 bytes." }
@@ -44,9 +44,9 @@ fun Short.Companion.fromLittleEndianByteArray(bytes: ByteArray): Short {
 }
 
 /**
- * Converts this Double into an 8-byte array in big-endian order.
+ * Converts this Double into 8 bytes ByteArray in big-endian order.
  *
- * The resulting byte array is in big-endian order, with the most significant byte at index 0.
+ * The resulting ByteArray is in big-endian order, with the most significant byte at index 0.
  *
  * @return a ByteArray of length 8 representing the Double.
  */
@@ -61,13 +61,13 @@ fun Double.toByteArray(): ByteArray {
 }
 
 /**
- * Constructs a Double from an 8-byte array in big-endian order.
+ * Constructs a Double from 8 bytes ByteArray in big-endian order.
  *
- * The byte array must be exactly 8 bytes long, with the most significant byte at index 0.
+ * The ByteArray must be exactly 8 bytes long, with the most significant byte at index 0.
  *
  * @param bytes a ByteArray of exactly 8 bytes.
  * @return the corresponding Double value.
- * @throws IllegalArgumentException if the byte array does not contain exactly 8 bytes.
+ * @throws IllegalArgumentException if the ByteArray does not contain exactly 8 bytes.
  */
 fun Double.Companion.fromByteArray(bytes: ByteArray): Double {
     require(bytes.size == 8) { "Input must be exactly 8 bytes long." }
@@ -148,7 +148,7 @@ fun LocalDateTime.toByteArray() =
     )
 
 /**
- * Converts this LocalDate into a 3-byte array where each component is encoded in Binary-Coded Decimal (BCD).
+ * Converts this LocalDate into a 3 bytes ByteArray where each component is encoded in Binary-Coded Decimal (BCD).
  *
  * The encoding scheme is as follows:
  * - Byte 0: Year as a 2-digit number offset from 2000 (e.g., 2025 becomes 25, then encoded as 0x25)
@@ -173,7 +173,7 @@ fun LocalDate.toBcdByteArray() =
 /**
  * Creates a LocalDate from a 3-byte BCD-encoded ByteArray.
  *
- * The byte array must have the following structure:
+ * The ByteArray must have the following structure:
  * - Byte 0: Year offset from 2000 (in BCD), e.g. 0x25 represents 2025.
  * - Byte 1: Month (in BCD)
  * - Byte 2: Day of month (in BCD)
@@ -195,7 +195,7 @@ fun LocalDate.Companion.fromBcdByteArray(bytes: ByteArray): LocalDate {
 }
 
 /**
- * Converts this LocalTime into a 2-byte array.
+ * Converts this LocalTime into a 2 bytes ByteArray.
  *
  * The returned array contains:
  * - Byte 0: Hour (0 to 23)
@@ -212,9 +212,9 @@ fun LocalTime.toByteArray() =
     )
 
 /**
- * Constructs a LocalTime instance from a 2-byte array.
+ * Constructs a LocalTime instance from a 2 bytes ByteArray.
  *
- * The expected byte array structure is:
+ * The expected ByteArray structure is:
  * - Byte 0: Hour (0 to 23)
  * - Byte 1: Minute (0 to 59)
  *
@@ -222,10 +222,10 @@ fun LocalTime.toByteArray() =
  *
  * @param bytes a ByteArray of exactly 2 bytes.
  * @return a LocalTime corresponding to the provided hour and minute.
- * @throws IllegalArgumentException if the byte array does not contain exactly 2 bytes.
+ * @throws IllegalArgumentException if the ByteArray does not contain exactly 2 bytes.
  */
 fun LocalTime.Companion.fromByteArray(bytes: ByteArray): LocalTime {
-    require(bytes.size == 2) { "Time byte array must be exactly 2 bytes" }
+    require(bytes.size == 2) { "Time ByteArray must be exactly 2 bytes" }
     val hour = bytes[0].toInt()
     val minute = bytes[1].toInt()
     return LocalTime(hour = hour, minute = minute)
@@ -233,7 +233,7 @@ fun LocalTime.Companion.fromByteArray(bytes: ByteArray): LocalTime {
 
 
 /**
- * Serializes this Duration into a 3-byte array.
+ * Serializes this Duration into a 3 bytes ByteArray.
  *
  * The duration is decomposed into hours, minutes, and seconds, with each component stored
  * as a single byte. The nanosecond part of the Duration is ignored.
@@ -257,9 +257,9 @@ fun Duration.toByteArray() =
     }
 
 /**
- * Constructs a Duration from a 3-byte array.
+ * Constructs a Duration from a 3 bytes ByteArray.
  *
- * The byte array must be structured as follows:
+ * The ByteArray must be structured as follows:
  * - Byte 0: Hours (0 to 255)
  * - Byte 1: Minutes (0 to 255)
  * - Byte 2: Seconds (0 to 255)
@@ -268,11 +268,11 @@ fun Duration.toByteArray() =
  * For instance, byteArrayOf(0x0C, 0x1E, 0x2D) corresponds to a duration of 12 hours, 30 minutes, and 45 seconds.
  *
  * @param bytes a ByteArray of exactly 3 bytes.
- * @return a Duration representing the interval defined by the byte array.
- * @throws IllegalArgumentException if the byte array length is not exactly 3.
+ * @return a Duration representing the interval defined by the ByteArray.
+ * @throws IllegalArgumentException if the ByteArray length is not exactly 3.
  */
 fun Duration.Companion.fromByteArray(bytes: ByteArray): Duration {
-    require(bytes.size == 3) { "Duration byte array must be exactly 3 bytes" }
+    require(bytes.size == 3) { "Duration ByteArray must be exactly 3 bytes" }
     val hours = bytes[0].toInt()
     val minutes = bytes[1].toInt()
     val seconds = bytes[2].toInt()
