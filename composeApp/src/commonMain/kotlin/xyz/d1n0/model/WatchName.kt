@@ -1,6 +1,6 @@
 package xyz.d1n0.model
 
-import xyz.d1n0.constant.Command
+import xyz.d1n0.constant.OpCode
 
 data class WatchName(private val _name: String) {
     init {
@@ -15,8 +15,8 @@ data class WatchName(private val _name: String) {
     companion object {
         @OptIn(ExperimentalStdlibApi::class)
         fun fromPacket(packet: ByteArray): WatchName {
-            require(packet.first() == Command.WATCH_NAME.byte) {
-                "Watch name packet must starts with command code ${Command.WATCH_NAME.byte.toHexString(HexFormat.UpperCase)}"
+            require(packet.first() == OpCode.WATCH_NAME.byte) {
+                "Watch name packet must starts with command code ${OpCode.WATCH_NAME.byte.toHexString(HexFormat.UpperCase)}"
             }
             require(packet.size == 20) {
                 "Watch name packet must be exactly 20 bytes long, e.g. 23 43 41 53 49 4F 20 47 57 2D 42 35 36 30 30 23 00 00 00 00"
@@ -32,7 +32,7 @@ data class WatchName(private val _name: String) {
     val packet: ByteArray
         get() = ByteArray(20) { index ->
             when (index) {
-                0 -> Command.WATCH_SETTINGS.byte
+                0 -> OpCode.WATCH_SETTINGS.byte
                 in 1.._name.length -> _name.get(index - 1).code.toByte()
                 else -> 0x00.toByte()
             }

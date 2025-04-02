@@ -15,22 +15,22 @@ import kotlin.time.Duration.Companion.seconds
 class BytesConverterTest {
 
     @Test
-    fun testShortTo2BytesLittleEndian() {
+    fun testShortToLittleEndianByteArray() {
         val value: Short = 0x1234.toShort()
-        val result = value.to2BytesLittleEndian()
+        val result = value.toLittleEndianByteArray()
         val expected = byteArrayOf(0x34, 0x12)
         assertContentEquals(expected, result)
     }
 
     @Test
-    fun testShortFrom2BytesLittleEndian() {
+    fun testShortFromLittleEndianByteArray() {
         val bytes = byteArrayOf(0x34, 0x12)
-        val result = Short.from2BytesLittleEndian(bytes)
+        val result = Short.fromLittleEndianByteArray(bytes)
         val expected: Short = 0x1234.toShort()
         assertEquals(expected, result)
 
         assertFailsWith<IllegalArgumentException> {
-            Short.from2BytesLittleEndian(byteArrayOf(0x12))
+            Short.fromLittleEndianByteArray(byteArrayOf(0x12))
         }
     }
 
@@ -74,7 +74,7 @@ class BytesConverterTest {
         val bytes = localDateTime.toByteArray()
         // Expected length: 2 bytes for year, then 1 byte each for month, day, hour, minute, second, weekday, and scaled milliseconds (total 9 bytes)
         assertEquals(9, bytes.size)
-        val expectedYearBytes = localDateTime.year.toShort().to2BytesLittleEndian()
+        val expectedYearBytes = localDateTime.year.toShort().toLittleEndianByteArray()
         assertContentEquals(expectedYearBytes, bytes.sliceArray(0..1))
         assertEquals(localDateTime.monthNumber.toByte(), bytes[2])
     }

@@ -2,8 +2,7 @@ package xyz.d1n0.model
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withTimeoutOrNull
-import kotlinx.datetime.Instant
-import xyz.d1n0.constant.Command
+import xyz.d1n0.constant.OpCode
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
@@ -42,27 +41,27 @@ suspend fun Watch.adjustTime(delay: Duration = 0.seconds, writeTimezoneData: Boo
     println("Error syncing time: ${error.message}")
 }
 
-suspend fun Watch.requestConnectReason() = request(Command.CONNECT_REASON)
+suspend fun Watch.requestConnectReason() = request(OpCode.CONNECT_REASON)
 
-suspend fun Watch.requestAppInfo() = request(Command.APP_INFO)
+suspend fun Watch.requestAppInfo() = request(OpCode.APP_INFO)
 
-suspend fun Watch.requestWatchCondition() = request(Command.WATCH_CONDITION)
+suspend fun Watch.requestWatchCondition() = request(OpCode.WATCH_CONDITION)
 
-suspend fun Watch.requestConnectionSettings() = request(Command.CONNECTION_SETTINGS)
+suspend fun Watch.requestConnectionSettings() = request(OpCode.CONNECTION_SETTINGS)
 suspend fun Watch.writeConnectionSettings() = write(info.connectionSettings.packet)
 
-suspend fun Watch.requestWatchSettings() = request(Command.WATCH_SETTINGS)
+suspend fun Watch.requestWatchSettings() = request(OpCode.WATCH_SETTINGS)
 suspend fun Watch.writeWatchSettings() = write(info.watchSettings.packet)
 
-suspend fun Watch.requestName() = request(Command.WATCH_NAME)
+suspend fun Watch.requestName() = request(OpCode.WATCH_NAME)
 suspend fun Watch.WriteName() = write(info.name.packet)
 
-suspend fun Watch.requestTimer() = request(Command.TIMER)
+suspend fun Watch.requestTimer() = request(OpCode.TIMER)
 suspend fun Watch.writeTimer() = write(timer.timerPacket)
 
 suspend fun Watch.requestClocks() =
     repeat(3) {
-        request(Command.CLOCK)
+        request(OpCode.CLOCK)
     }
 suspend fun Watch.writeClocks() =
     clocks.clocksPackets.forEach {
@@ -73,8 +72,8 @@ suspend fun Watch.writeTime(delay: Duration = 0.seconds) =
     write(clocks.homeClock.getCurrentDateTimePacket(delay = delay))
 
 suspend fun Watch.requestAlarms() {
-    request(Command.ALARM_A)
-    request(Command.ALARM_B)
+    request(OpCode.ALARM_A)
+    request(OpCode.ALARM_B)
 }
 
 suspend fun Watch.writeAlarms() {
@@ -84,7 +83,7 @@ suspend fun Watch.writeAlarms() {
 
 suspend fun Watch.requestTimeZoneConfigs() {
     for(i in 0..5) {
-        request(Command.TIMEZONE_CONFIG, i)
+        request(OpCode.TIMEZONE_CONFIG, i)
     }
 }
 suspend fun Watch.writeTimeZoneConfigs() =
@@ -94,7 +93,7 @@ suspend fun Watch.writeTimeZoneConfigs() =
 
 suspend fun Watch.requestTimeZoneNames() {
     for(i in 0..5) {
-        request(Command.TIMEZONE_NAME, i)
+        request(OpCode.TIMEZONE_NAME, i)
     }
 }
 suspend fun Watch.writeTimeZoneNames() =
@@ -104,7 +103,7 @@ suspend fun Watch.writeTimeZoneNames() =
 
 suspend fun Watch.requestTimeZoneCoordinatesAndRadioId() {
     for(i in 0..5) {
-        request(Command.TIMEZONE_LOCATION_RADIO_ID, i)
+        request(OpCode.TIMEZONE_LOCATION_RADIO_ID, i)
     }
 }
 suspend fun Watch.writeTimeZoneCoordinatesAndRadioId() =

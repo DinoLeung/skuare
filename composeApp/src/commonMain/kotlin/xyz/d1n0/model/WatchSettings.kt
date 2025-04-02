@@ -1,7 +1,7 @@
 package xyz.d1n0.model
 
 import xyz.d1n0.constant.BacklightDuration
-import xyz.d1n0.constant.Command
+import xyz.d1n0.constant.OpCode
 import xyz.d1n0.constant.DateFormat
 import xyz.d1n0.constant.WeekdayLanguage
 
@@ -14,8 +14,8 @@ data class WatchSettings(
 	companion object {
 		@OptIn(ExperimentalStdlibApi::class)
         fun fromPacket(packet: ByteArray): WatchSettings {
-			require(packet.first() == Command.WATCH_SETTINGS.byte) {
-				"Settings packet must starts with command code ${Command.WATCH_SETTINGS.byte.toHexString(HexFormat.UpperCase)}"
+			require(packet.first() == OpCode.WATCH_SETTINGS.byte) {
+				"Settings packet must starts with command code ${OpCode.WATCH_SETTINGS.byte.toHexString(HexFormat.UpperCase)}"
 			}
 			require(packet.size == 12) {
 				"Settings packet must be exactly 15 bytes long, e.g. 13 07 00 00 01 00 00 00 00 00 00 00"
@@ -32,7 +32,7 @@ data class WatchSettings(
     val packet: ByteArray
         get() = ByteArray(12) {
             when (it) {
-                0 -> Command.WATCH_SETTINGS.byte
+                0 -> OpCode.WATCH_SETTINGS.byte
                 1 -> preferences.byte
                 2 -> backlightDuration.byte
                 4 -> dateFormat.byte

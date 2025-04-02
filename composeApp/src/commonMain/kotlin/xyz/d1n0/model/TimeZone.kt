@@ -1,7 +1,7 @@
 package xyz.d1n0.model
 
 import xyz.d1n0.constant.timezoneRadioIdData
-import xyz.d1n0.helper.to2BytesLittleEndian
+import xyz.d1n0.helper.toLittleEndianByteArray
 
 abstract class Timezone {
     abstract val cityName: String
@@ -14,7 +14,7 @@ abstract class Timezone {
      * Converts the identifier integer into a little-endian 2-byte array.
      */
     val identifierBytes: ByteArray
-        get() = identifier.to2BytesLittleEndian()
+        get() = identifier.toLittleEndianByteArray()
 
     /**
      * Represents a 5-byte array constructed from components of the TimeZone object.

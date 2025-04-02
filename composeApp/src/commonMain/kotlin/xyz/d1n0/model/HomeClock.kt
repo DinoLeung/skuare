@@ -1,7 +1,7 @@
 package xyz.d1n0.model
 
 import kotlinx.datetime.toLocalDateTime
-import xyz.d1n0.constant.Command
+import xyz.d1n0.constant.OpCode
 import xyz.d1n0.constant.HomeTimezoneData
 import xyz.d1n0.helper.toByteArray
 import kotlin.time.Duration
@@ -73,7 +73,7 @@ data class HomeClock(
      */
     fun getCurrentDateTimePacket(delay: Duration = 0.seconds) =
         byteArrayOf(
-            Command.CURRENT_TIME.byte,
+            OpCode.CURRENT_TIME.byte,
             *getCurrentDateTime(delay).toByteArray(),
             0x01.toByte()
         )

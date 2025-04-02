@@ -7,9 +7,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.io.IOException
 import xyz.d1n0.constant.BleUuid
-import xyz.d1n0.constant.Command
+import xyz.d1n0.constant.OpCode
 import xyz.d1n0.constant.ConnectReason
-import xyz.d1n0.helper.fromByteArray
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.uuid.ExperimentalUuidApi
 
@@ -75,24 +74,24 @@ class Watch(private val peripheral: Peripheral) {
 	 * Sends a request to the peripheral with a specified command and position.
 	 * Results will be returned through the IO characteristic.
 	 *
-	 * @param command The command to be sent to the peripheral.
+	 * @param opCode The command to be sent to the peripheral.
 	 * @return A [Unit] that completes when the command and position are written successfully.
 	 */
 	@Throws(CancellationException::class, IOException::class, NotConnectedException::class)
-	suspend fun request(command: Command) =
-		peripheral.write(requestCharacteristic, byteArrayOf(command.byte))
+	suspend fun request(opCode: OpCode) =
+		peripheral.write(requestCharacteristic, byteArrayOf(opCode.byte))
 
 	/**
 	 * Sends a request to the peripheral with a specified command and position.
 	 * Results will be returned through the IO characteristic.
 	 *
-	 * @param command The command to be sent to the peripheral.
+	 * @param opCode The command to be sent to the peripheral.
 	 * @param position The position value accompanying the command.
 	 * @return A [Unit] that completes when the command and position are written successfully.
 	 */
 	@Throws(CancellationException::class, IOException::class, NotConnectedException::class)
-	suspend fun request(command: Command, position: Int) =
-		peripheral.write(requestCharacteristic, byteArrayOf(command.byte, position.toByte()))
+	suspend fun request(opCode: OpCode, position: Int) =
+		peripheral.write(requestCharacteristic, byteArrayOf(opCode.byte, position.toByte()))
 
 	/**
 	 * Writes data to the peripheral using the IO characteristic.
@@ -128,8 +127,8 @@ class Watch(private val peripheral: Peripheral) {
 		ioCharacteristicObservation.collect {
 			println("ioCharacteristicObservation.collect")
 			println(it.toHexString(HexFormat.UpperCase))
-			when (Command.fromByte(it.first())) {
-				Command.CONNECT_REASON -> {
+			when (OpCode.fromByte(it.first())) {
+				OpCode.CONNECT_REASON -> {
 					val reason = ConnectReason.fromByte(it[8])
 					when (reason) {
 						ConnectReason.SETUP, ConnectReason.DEFAULT -> {
@@ -146,43 +145,43 @@ class Watch(private val peripheral: Peripheral) {
 					}
 
 				}
-				Command.CONNECTION_SETTINGS -> {
+				OpCode.CONNECTION_SETTINGS -> {
 					runCatching {
 						info.parseConnectionSettingsPacket(it)
 					}.onFailure { println("Failed to parse auto sync settings packet: ${it.message}") }
 				}
-				Command.WATCH_SETTINGS -> {
+				OpCode.WATCH_SETTINGS -> {
 					runCatching {
 						info.parseWatchSettingsPacket(it)
 					}.onFailure { println("Failed to parse settings packet: ${it.message}") }
 				}
-				Command.WATCH_NAME -> {
+				OpCode.WATCH_NAME -> {
 					runCatching {
 						info.parseNamePacket(it)
 					}.onFailure { println("Failed to parse name packet: ${it.message}") }
 				}
-				Command.APP_INFO -> {
+				OpCode.APP_INFO -> {
 					// new/reset watch		22FFFFFFFFFFFFFFFFFFFF00
 					// b5600 old app ver.	222DA85E248C468C74834202
 					// b5600 newer app ver.	228C8973A1B416502E67DD02
 					// Looks like the app will compare this number to determine if the watch has been paired or not
 					// probably can set to anything
 				}
-				Command.WATCH_CONDITION -> {
+				OpCode.WATCH_CONDITION -> {
 					// 28 13 1F 00
 					val BATTERY_MAX = 0x13
 					val BATTERY_MIN = 0x09 // ???
 					val batteryLevel = (it[1].toFloat() - BATTERY_MIN) / (BATTERY_MAX - BATTERY_MIN)
 					println("Battery level: $batteryLevel")
 				}
-				Command.CLOCK -> {
+				OpCode.CLOCK -> {
 					runCatching {
 						clocks.parseClocksPacket(it)
 					}.onFailure { println("Failed to parse clocks packet: ${it.message}") }
 				}
-				Command.TIMEZONE_NAME -> {}
-				Command.TIMEZONE_CONFIG -> {}
-				Command.TIMEZONE_LOCATION_RADIO_ID -> {
+				OpCode.TIMEZONE_NAME -> {}
+				OpCode.TIMEZONE_CONFIG -> {}
+				OpCode.TIMEZONE_LOCATION_RADIO_ID -> {
 //					runCatching {
 //						val position = it[1].toInt()
 //						val latitude = Double.fromByteArray(it.sliceArray(3..10))
@@ -191,33 +190,33 @@ class Watch(private val peripheral: Peripheral) {
 //						println("Position $position: $latitude, $longitude")
 //					}.onFailure { println("Failed to parse location radio ID packet: ${it.message}") }
 				}
-				Command.ALARM_A -> {
+				OpCode.ALARM_A -> {
 					runCatching {
 						alarms.parseAlarmAPacket(it)
 					}.onFailure { println("Failed to parse alarm A packet: ${it.message}") }
 				}
-				Command.ALARM_B -> {
+				OpCode.ALARM_B -> {
 					runCatching {
 						alarms.parseAlarmBPacket(it)
 					}.onFailure { println("Failed to parse alarm B packet: ${it.message}") }
 				}
-				Command.TIMER -> {
+				OpCode.TIMER -> {
 					runCatching {
 						timer.parseTimerPacket(it)
 					}.onFailure { println("Failed to parse timer packet: ${it.message}") }
 				}
-				Command.REMINDER_TITLE -> {
+				OpCode.REMINDER_TITLE -> {
 					runCatching {
 						reminders.parseReminderTitlePacket(it)
 					}.onFailure { println("Failed to parse reminder title packet: ${it.message}") }
 				}
-				Command.REMINDER_CONFIG -> {
+				OpCode.REMINDER_CONFIG -> {
 					runCatching {
 						reminders.parseReminderConfigPacket(it)
 					}.onFailure { println("Failed to parse reminder config packet: ${it.message}") }
 				}
 
-				Command.ERROR -> {
+				OpCode.ERROR -> {
 					println("Error: ${it.toHexString(HexFormat.UpperCase)}")
 				}
 				// TODO: implement other commands

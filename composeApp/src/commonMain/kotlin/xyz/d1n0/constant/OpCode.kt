@@ -1,6 +1,6 @@
 package xyz.d1n0.constant
 
-enum class Command(val byte: Byte) {
+enum class OpCode(val byte: Byte) {
 	CONNECT_REASON(0x10),
 	CONNECTION_SETTINGS(0x11),
 	WATCH_SETTINGS(0x13),

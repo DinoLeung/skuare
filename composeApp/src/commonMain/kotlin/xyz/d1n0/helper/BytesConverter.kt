@@ -13,16 +13,13 @@ import xyz.d1n0.constant.jisX0201Charset
 import xyz.d1n0.constant.jisX0201CharsetByte
 
 /**
- * Converts this integer (which must be within the 16-bit unsigned range, 0x0000–0xFFFF)
- * into a 2-byte array in little-endian order.
+ * Converts this Short into a 2-byte array in little-endian order, preserving its two’s complement representation.
  *
- * In little-endian format, the least significant byte is placed at index 0, while the most
- * significant byte is placed at index 1.
+ * In little-endian format, the least significant byte is placed at index 0, while the most significant byte is placed at index 1.
  *
- * @return a ByteArray of length 2 representing the integer in little-endian byte order.
- * @throws IllegalArgumentException if the integer is not in the range 0x0000..0xFFFF.
+ * @return a ByteArray of length 2 representing the Short in little-endian byte order.
  */
-fun Short.to2BytesLittleEndian(): ByteArray {
+fun Short.toLittleEndianByteArray(): ByteArray {
     return byteArrayOf(
         (this.toInt() and 0xFF).toByte(),        // Least significant byte
         ((this.toInt() shr 8) and 0xFF).toByte() // Most significant byte
@@ -30,16 +27,16 @@ fun Short.to2BytesLittleEndian(): ByteArray {
 }
 
 /**
- * Decodes a 2-byte little-endian ByteArray into its corresponding integer value.
+ * Decodes a 2-byte little-endian ByteArray into its corresponding Short value.
  *
  * In little-endian order, the byte at index 0 is the least significant, and the byte at index 1
  * is the most significant.
  *
  * @param bytes a ByteArray of exactly 2 bytes.
- * @return the integer represented by the byte array.
+ * @return the Short represented by the Byte Array.
  * @throws IllegalArgumentException if the byte array does not contain exactly 2 bytes.
  */
-fun Short.Companion.from2BytesLittleEndian(bytes: ByteArray): Short {
+fun Short.Companion.fromLittleEndianByteArray(bytes: ByteArray): Short {
     require(bytes.size == 2) { "Input must be a ByteArray of exactly 2 bytes." }
     val low = bytes[0].toInt() and 0xFF
     val high = bytes[1].toInt() and 0xFF
@@ -136,7 +133,7 @@ fun Int.Companion.fromBcdByte(bcd: Byte): Int {
 fun LocalDateTime.toByteArray() =
     byteArrayOf(
         // Year represented in two bytes
-        *this.year.toShort().to2BytesLittleEndian(),
+        *this.year.toShort().toLittleEndianByteArray(),
         // Month and Day as single bytes
         this.monthNumber.toByte(),
         this.dayOfMonth.toByte(),

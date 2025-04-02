@@ -1,6 +1,6 @@
 package xyz.d1n0.model
 
-import xyz.d1n0.constant.Command
+import xyz.d1n0.constant.OpCode
 
 class RemindersSettings {
     lateinit var reminderTitle1: ReminderTitle
@@ -31,8 +31,8 @@ class RemindersSettings {
 
     @OptIn(ExperimentalStdlibApi::class)
     fun parseReminderTitlePacket(packet: ByteArray) {
-        require(packet.first() == Command.REMINDER_TITLE.byte) {
-            "Reminder title packet must starts with command code ${Command.REMINDER_TITLE.byte.toHexString(HexFormat.UpperCase)}"
+        require(packet.first() == OpCode.REMINDER_TITLE.byte) {
+            "Reminder title packet must starts with command code ${OpCode.REMINDER_TITLE.byte.toHexString(HexFormat.UpperCase)}"
         }
         require(packet.size == 20) {
             "Reminder title packet must be exactly 20 bytes long, e.g. 30 01 8D 8C 90 91 92 93 80 87 82 8B 2D 2C 00 00 00 00 00 00"
@@ -48,8 +48,8 @@ class RemindersSettings {
 
     @OptIn(ExperimentalStdlibApi::class)
     fun parseReminderConfigPacket(packet: ByteArray) {
-        require(packet.first() == Command.REMINDER_CONFIG.byte) {
-            "Reminder config packet must starts with command code ${Command.REMINDER_CONFIG.byte.toHexString(HexFormat.UpperCase)}"
+        require(packet.first() == OpCode.REMINDER_CONFIG.byte) {
+            "Reminder config packet must starts with command code ${OpCode.REMINDER_CONFIG.byte.toHexString(HexFormat.UpperCase)}"
         }
         require(packet.size == 11) {
             "Reminder config packet must be exactly 11 bytes long, e.g. 31 01 11 25 03 25 25 03 25 12 00"
@@ -67,11 +67,11 @@ class RemindersSettings {
         get() {
             require(isTitlesInitialized) { "Reminder titles must be initialized" }
             return listOf(
-                byteArrayOf(Command.REMINDER_TITLE.byte, 1) + reminderTitle1.bytes,
-                byteArrayOf(Command.REMINDER_TITLE.byte, 2) + reminderTitle2.bytes,
-                byteArrayOf(Command.REMINDER_TITLE.byte, 3) + reminderTitle3.bytes,
-                byteArrayOf(Command.REMINDER_TITLE.byte, 4) + reminderTitle4.bytes,
-                byteArrayOf(Command.REMINDER_TITLE.byte, 5) + reminderTitle5.bytes,
+                byteArrayOf(OpCode.REMINDER_TITLE.byte, 1) + reminderTitle1.bytes,
+                byteArrayOf(OpCode.REMINDER_TITLE.byte, 2) + reminderTitle2.bytes,
+                byteArrayOf(OpCode.REMINDER_TITLE.byte, 3) + reminderTitle3.bytes,
+                byteArrayOf(OpCode.REMINDER_TITLE.byte, 4) + reminderTitle4.bytes,
+                byteArrayOf(OpCode.REMINDER_TITLE.byte, 5) + reminderTitle5.bytes,
             )
         }
 
@@ -79,11 +79,11 @@ class RemindersSettings {
         get() {
             require(isConfigsInitialized) { "Reminder config packet must be initialized" }
             return listOf(
-                byteArrayOf(Command.REMINDER_CONFIG.byte, 1) + reminderConfig1.bytes,
-                byteArrayOf(Command.REMINDER_CONFIG.byte, 2) + reminderConfig2.bytes,
-                byteArrayOf(Command.REMINDER_CONFIG.byte, 3) + reminderConfig3.bytes,
-                byteArrayOf(Command.REMINDER_CONFIG.byte, 4) + reminderConfig4.bytes,
-                byteArrayOf(Command.REMINDER_CONFIG.byte, 5) + reminderConfig5.bytes,
+                byteArrayOf(OpCode.REMINDER_CONFIG.byte, 1) + reminderConfig1.bytes,
+                byteArrayOf(OpCode.REMINDER_CONFIG.byte, 2) + reminderConfig2.bytes,
+                byteArrayOf(OpCode.REMINDER_CONFIG.byte, 3) + reminderConfig3.bytes,
+                byteArrayOf(OpCode.REMINDER_CONFIG.byte, 4) + reminderConfig4.bytes,
+                byteArrayOf(OpCode.REMINDER_CONFIG.byte, 5) + reminderConfig5.bytes,
             )
         }
 }
