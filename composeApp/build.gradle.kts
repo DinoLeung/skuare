@@ -28,8 +28,6 @@ kotlin {
         }
     }
 
-//    jvm("desktop")
-
     sourceSets {
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -45,6 +43,7 @@ kotlin {
             implementation(libs.androidx.navigation.compose)
             implementation(libs.kotlinx.coroutines)
             implementation(libs.kotlinx.datetime)
+
             implementation(libs.kable)
 
             api(libs.koin.core)
@@ -59,10 +58,6 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
-//        val desktopMain by getting
-//        desktopMain.dependencies {
-//            implementation(compose.desktop.currentOs)
-//        }
 
 //        listOf(
 //            macosX64(),
@@ -114,15 +109,3 @@ android {
 dependencies {
     debugImplementation(compose.uiTooling)
 }
-
-//compose.desktop {
-//    application {
-//        mainClass = "xyz.d1n0.MainKt"
-//
-//        nativeDistributions {
-//            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-//            packageName = "xyz.d1n0"
-//            packageVersion = "1.0.0"
-//        }
-//    }
-//}

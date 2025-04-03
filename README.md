@@ -1,8 +1,6 @@
 # Skuare
 
-<img src="skuare.svg" alt="drawing" style="width:250px;"/>
-
-[Logo figma file](https://www.figma.com/design/d3FSprHwpx7VGzW2kGQ22f/skuare-logo?node-id=0-1&t=01zNO7pHsObVP1Ib-1)
+[<img src="skuare.svg" alt="Skuare logo" style="width:250px;"/>](https://www.figma.com/design/d3FSprHwpx7VGzW2kGQ22f/skuare-logo?node-id=0-1&t=pECI8TgSyTc6zGij-1)
 
 An alternative app that connects G-Shock watches via BLE.
 
@@ -21,7 +19,15 @@ operating entirely offline to ensure that no personal data is transmitted over t
 The underlying protocol was reverse-engineered from the official Casio app, with significant assistance from
 [GShockAPI](https://github.com/izivkov/GShockAPI/tree/main).
 
-Currently, Skuare supports the GMW-B5000 and GW-B5600 models, as these are the only watch models I have access to.
+## Compatibility
+
+Skuare is currently supported and has been tested on the following Casio modules:
+
+- [Module 3539](https://shockbase.org/watches/modules_dyn.php?module=3539)
+- [Module 3540](https://shockbase.org/watches/modules_dyn.php?module=3540)
+- [Module 3461](https://shockbase.org/watches/modules_dyn.php?module=3461)
+
+Support for [Module 3459](https://shockbase.org/watches/modules_dyn.php?module=3459) is coming soon
 
 ## Why rebuild everything when [GShockAPI](https://github.com/izivkov/GShockAPI/tree/main) already exists?
 
@@ -56,7 +62,7 @@ excellent opportunity to deepen my understanding of Kotlin, JetBrains Compose Mu
 - [x] Map out the data models
 - [X] Implement BLE communication protocol
 - [ ] Simple UI to pair and interact with the watch
-- [ ] Local sqlite to store device hash to support auto sync procedure
+- [ ] Local sqlite or shared preference to keep track of paired watches
 - [ ] Support auto time adjustment procedure when app is not in foreground
   - [ ] Android companion device manager
   - [ ] iOS bluetooth central
