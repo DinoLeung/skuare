@@ -21,6 +21,7 @@ kermit = "2.0.5"
 kable = "0.36.0"
 koin = "4.0.2"
 moko-permissions = "0.19.1"
+compose-icons = "1.1.1"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -57,6 +58,9 @@ moko-permissions-core = { group = "dev.icerock.moko", name = "permissions", vers
 moko-permissions-compose = { group = "dev.icerock.moko", name = "permissions-compose", version.ref = "moko-permissions"}
 moko-permissions-bluetooth = { group = "dev.icerock.moko", name = "permissions-bluetooth", version.ref = "moko-permissions"}
 moko-permissions-location = { group = "dev.icerock.moko", name = "permissions-location", version.ref = "moko-permissions"}
+
+compose-icons-tabler = { group = "br.com.devsrsouza.compose.icons", name = "tabler-icons", version.ref = "compose-icons" }
+
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
