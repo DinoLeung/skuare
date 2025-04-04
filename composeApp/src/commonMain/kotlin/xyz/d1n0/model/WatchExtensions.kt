@@ -88,9 +88,9 @@ suspend fun Watch.writeTimeZoneCoordinatesAndRadioId() =
  * 4. Sends the current date and time (optionally delayed) to the watch.
  *
  * @param delay Optional delay to apply to the current time before syncing (default is 0).
- * @param writeTimezoneData If true, time zone-related data will also be written (default is false).
+ * @param writeTimezoneMetadata If true, timezone metadata will also be written (default is false).
  */
-suspend fun Watch.adjustTime(delay: Duration = 0.seconds, writeTimezoneData: Boolean = false) = runCatching {
+suspend fun Watch.adjustTime(delay: Duration = 0.seconds, writeTimezoneMetadata: Boolean = false) = runCatching {
     if (clocks.isInitialized == false) {
         requestClocks()
         withTimeoutOrNull(10.seconds) {
@@ -100,8 +100,8 @@ suspend fun Watch.adjustTime(delay: Duration = 0.seconds, writeTimezoneData: Boo
         } ?: throw IllegalStateException("Timeout waiting for clocks initialization")
     }
     writeClocks()
-    if (writeTimezoneData) {
-        writeTimeZoneConfigs()
+    writeTimeZoneConfigs()
+    if (writeTimezoneMetadata) {
         writeTimeZoneNames()
         writeTimeZoneCoordinatesAndRadioId()
     }
