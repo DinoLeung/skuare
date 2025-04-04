@@ -3,9 +3,7 @@ package xyz.d1n0.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.juul.kable.Peripheral
-import dev.icerock.moko.permissions.Permission
-import dev.icerock.moko.permissions.PermissionState
-import dev.icerock.moko.permissions.PermissionsController
+import dev.icerock.moko.permissions.*
 import dev.icerock.moko.permissions.bluetooth.BLUETOOTH_SCAN
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
@@ -17,6 +15,8 @@ import xyz.d1n0.model.Watch
 
 data class ScanScreenState(
     val isScanning: Boolean = false,
+    val hasScanPermission: Boolean = false,
+    val scanPermissionState:PermissionState = PermissionState.NotDetermined,
 )
 
 class ScanScreenViewModel: ViewModel(), KoinComponent {
@@ -26,16 +26,6 @@ class ScanScreenViewModel: ViewModel(), KoinComponent {
     private val _state = MutableStateFlow(ScanScreenState())
     val state: StateFlow<ScanScreenState> = _state.asStateFlow()
     private var scanJob: Job? = null
-
-    private val _scanPermissionState = MutableStateFlow<PermissionState>(PermissionState.NotDetermined)
-    val scanPermissionState: StateFlow<PermissionState> = _scanPermissionState.asStateFlow()
-
-    init {
-        viewModelScope.launch {
-            val permissionState = permissionsController.getPermissionState(Permission.BLUETOOTH_SCAN)
-            _scanPermissionState.value = permissionState
-        }
-    }
 
     fun startScanning(onWatchFound: () -> Unit) {
         scanJob = viewModelScope.launch {
@@ -53,6 +43,45 @@ class ScanScreenViewModel: ViewModel(), KoinComponent {
     fun stopScanning() {
         scanJob?.cancel().also {
             _state.update { it.copy(isScanning = false) }
+        }
+    }
+
+//    permissionsController.providePermission(Permission.BLUETOOTH_LE)
+//    permissionsController.providePermission(Permission.BACKGROUND_LOCATION)
+
+    fun checkScanPermissions() = viewModelScope.launch {
+        val isGranted = permissionsController.isPermissionGranted(Permission.BLUETOOTH_SCAN)
+        _state.value = _state.value.copy(hasScanPermission = isGranted)
+        if (isGranted) return@launch
+
+        runCatching {
+            if (state.value.hasScanPermission == false
+                && state.value.scanPermissionState != PermissionState.DeniedAlways) {
+                permissionsController.providePermission(Permission.BLUETOOTH_SCAN)
+                _state.value = _state.value.copy(
+                    hasScanPermission = true,
+                    scanPermissionState = PermissionState.Granted,
+                )
+            }
+        }.onFailure {
+            when (it) {
+                is DeniedAlwaysException -> {
+                    _state.value = _state.value.copy(
+                        hasScanPermission = false,
+                        scanPermissionState = PermissionState.DeniedAlways,
+                    )
+                }
+                is DeniedException -> {
+                    _state.value = _state.value.copy(
+                        hasScanPermission = false,
+                        scanPermissionState = PermissionState.Denied,
+                    )
+                }
+                is RequestCanceledException -> {
+                    _state.value = _state.value.copy(hasScanPermission = false)
+                    log.e { "Request was canceled: ${it.stackTraceToString()}" }
+                }
+            }
         }
     }
 }

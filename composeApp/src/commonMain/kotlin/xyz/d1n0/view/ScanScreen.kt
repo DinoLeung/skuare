@@ -5,19 +5,20 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Button
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import dev.icerock.moko.permissions.DeniedAlwaysException
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import dev.icerock.moko.permissions.Permission
-import dev.icerock.moko.permissions.PermissionState
 import dev.icerock.moko.permissions.bluetooth.BLUETOOTH_SCAN
 import dev.icerock.moko.permissions.compose.BindEffect
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
-import xyz.d1n0.viewModel.ScanScreenState
 import xyz.d1n0.viewModel.ScanScreenViewModel
 
 @Composable
@@ -27,36 +28,20 @@ fun ScanScreen(
 ) {
     val viewModel = koinViewModel<ScanScreenViewModel>()
     val state by viewModel.state.collectAsState()
-    val coroutineScope: CoroutineScope = rememberCoroutineScope()
+    val scope: CoroutineScope = rememberCoroutineScope()
 
     BindEffect(viewModel.permissionsController)
 
-    LaunchedEffect(Unit) {
-        coroutineScope.launch {
-//            controller.providePermission(Permission.BLUETOOTH_LE)
-//            if (viewModel.scanPermissionState.value != PermissionState.Granted)
-
-            runCatching {
-                viewModel.permissionsController.providePermission(Permission.BLUETOOTH_SCAN)
-            }.onFailure {
-                if (it is DeniedAlwaysException) {
-                    viewModel.log.e { viewModel.scanPermissionState.value.name }
-                }
-            }
-//            controller.providePermission(Permission.BACKGROUND_LOCATION)
-        }
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        viewModel.checkScanPermissions()
     }
-
-
 
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        if (viewModel.scanPermissionState.value != PermissionState.Granted) {
-            Text("No permission")
-        } else {
+        if (state.hasScanPermission) {
             Button(
                 onClick = { viewModel.startScanning(onWatchFound = navToWatch) },
                 enabled = !state.isScanning,
@@ -68,6 +53,12 @@ fun ScanScreen(
                 enabled = state.isScanning,
             ) {
                 Text("Stop!")
+            }
+        } else {
+            Button(
+                onClick = viewModel.permissionsController::openAppSettings,
+            ) {
+                Text("Grant permissions from app settings")
             }
         }
     }
