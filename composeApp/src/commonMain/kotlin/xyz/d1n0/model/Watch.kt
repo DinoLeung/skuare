@@ -6,12 +6,15 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.io.IOException
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
+import xyz.d1n0.Log
 import xyz.d1n0.constant.BleUuid
 import xyz.d1n0.constant.OpCode
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.uuid.ExperimentalUuidApi
 
-class Watch(private val peripheral: Peripheral) {
+class Watch(private val peripheral: Peripheral): KoinComponent {
 
 	@OptIn(ExperimentalUuidApi::class)
 	companion object {
@@ -33,6 +36,8 @@ class Watch(private val peripheral: Peripheral) {
 			}
 		}
 	}
+
+	val log: Log by inject()
 
 	val info = WatchInfo()
 	val clocks = ClocksSettings()
@@ -62,7 +67,7 @@ class Watch(private val peripheral: Peripheral) {
 	 * Starts observing the IO characteristic for incoming data packets.
 	 *
 	 * This function collects data emitted by `ioCharacteristicObservation` in the IO coroutine context
-	 * and processes them based on the command type. If the packet type is unsupported, it will print
+	 * and processes them based on the command type. If the packet type is unsupported, it will log
 	 * the packet data in hexadecimal format.
 	 *
 	 * This function is a coroutine and should be invoked within a coroutine scope.
@@ -92,9 +97,12 @@ class Watch(private val peripheral: Peripheral) {
 	 * @param opCode The command to be sent to the peripheral.
 	 * @return A [Unit] that completes when the command and position are written successfully.
 	 */
+	@OptIn(ExperimentalStdlibApi::class)
 	@Throws(CancellationException::class, IOException::class, NotConnectedException::class)
-	suspend fun request(opCode: OpCode) =
+	suspend fun request(opCode: OpCode) {
+		log.d { "Requesting: ${opCode.byte.toHexString(HexFormat.UpperCase)}" }
 		peripheral.write(requestCharacteristic, byteArrayOf(opCode.byte))
+	}
 
 	/**
 	 * Sends a request to the peripheral with a specified command and position.
@@ -104,9 +112,12 @@ class Watch(private val peripheral: Peripheral) {
 	 * @param position The position value accompanying the command.
 	 * @return A [Unit] that completes when the command and position are written successfully.
 	 */
+	@OptIn(ExperimentalStdlibApi::class)
 	@Throws(CancellationException::class, IOException::class, NotConnectedException::class)
-	suspend fun request(opCode: OpCode, position: Int) =
+	suspend fun request(opCode: OpCode, position: Int) {
+		log.d { "Requesting: ${opCode.byte.toHexString(HexFormat.UpperCase)} position: $position" }
 		peripheral.write(requestCharacteristic, byteArrayOf(opCode.byte, position.toByte()))
+	}
 
 	/**
 	 * Writes data to the peripheral using the IO characteristic.
@@ -121,7 +132,7 @@ class Watch(private val peripheral: Peripheral) {
 	@OptIn(ExperimentalStdlibApi::class)
 	@Throws(CancellationException::class, IOException::class, NotConnectedException::class)
 	suspend fun write(data: ByteArray) {
-		println("Writing: ${data.toHexString(HexFormat.UpperCase)}")
+		log.d { "Writing: ${data.toHexString(HexFormat.UpperCase)}" }
 		peripheral.write(ioCharacteristic, data, WriteType.WithResponse)
 	}
 }

@@ -25,9 +25,8 @@ Skuare is currently supported and has been tested on the following Casio modules
 
 - [Module 3539](https://shockbase.org/watches/modules_dyn.php?module=3539)
 - [Module 3540](https://shockbase.org/watches/modules_dyn.php?module=3540)
-- [Module 3461](https://shockbase.org/watches/modules_dyn.php?module=3461)
-
-Support for [Module 3459](https://shockbase.org/watches/modules_dyn.php?module=3459) is coming soon
+- [Module 3461](https://shockbase.org/watches/modules_dyn.php?module=3461) (not tested)
+- [Module 3459](https://shockbase.org/watches/modules_dyn.php?module=3459) (not tested)
 
 ## Why rebuild everything when [GShockAPI](https://github.com/izivkov/GShockAPI/tree/main) already exists?
 

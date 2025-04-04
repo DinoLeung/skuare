@@ -7,13 +7,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import xyz.d1n0.model.* // TODO: import all for now :(
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
-class WatchScreenViewModel(
-    private val watch: Watch
-): ViewModel() {
+class WatchScreenViewModel: ViewModel(), KoinComponent {
+    private val watch: Watch by inject()
+
     val connectionState: State = watch.state.value
 
     fun connect(onConnectionLost: () -> Unit) = viewModelScope.launch {

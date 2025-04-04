@@ -107,9 +107,9 @@ suspend fun Watch.adjustTime(delay: Duration = 0.seconds, writeTimezoneMetadata:
     }
     writeTime(delay = delay)
 }.onSuccess {
-    println("Time sync completed")
+    log.d { "Time sync completed" }
 }.onFailure { error ->
-    println("Error syncing time: ${error.message}")
+    log.e { "Error syncing time: ${error.message}" }
 }
 
 /**
@@ -147,17 +147,17 @@ suspend fun Watch.handlePacket(packet: ByteArray) = when (OpCode.fromByte(packet
     OpCode.CONNECTION_SETTINGS -> {
         runCatching {
             info.parseConnectionSettingsPacket(packet)
-        }.onFailure { println("Failed to parse auto sync settings packet: ${it.message}") }
+        }.onFailure { log.e { "Failed to parse auto sync settings packet: ${it.message}" } }
     }
     OpCode.WATCH_SETTINGS -> {
         runCatching {
             info.parseWatchSettingsPacket(packet)
-        }.onFailure { println("Failed to parse settings packet: ${it.message}") }
+        }.onFailure { log.e { "Failed to parse settings packet: ${it.message}" } }
     }
     OpCode.WATCH_NAME -> {
         runCatching {
             info.parseNamePacket(packet)
-        }.onFailure { println("Failed to parse name packet: ${it.message}") }
+        }.onFailure { log.e { "Failed to parse name packet: ${it.message}" } }
     }
     OpCode.APP_INFO -> {
         // new/reset watch		22FFFFFFFFFFFFFFFFFFFF00
@@ -171,12 +171,12 @@ suspend fun Watch.handlePacket(packet: ByteArray) = when (OpCode.fromByte(packet
         val BATTERY_MAX = 0x13
         val BATTERY_MIN = 0x09 // ???
         val batteryLevel = (packet[1].toFloat() - BATTERY_MIN) / (BATTERY_MAX - BATTERY_MIN)
-        println("Battery level: $batteryLevel")
+        log.d{ "Battery level: $batteryLevel"}
     }
     OpCode.CLOCK -> {
         runCatching {
             clocks.parseClocksPacket(packet)
-        }.onFailure { println("Failed to parse clocks packet: ${it.message}") }
+        }.onFailure { log.e { "Failed to parse clocks packet: ${it.message}" } }
     }
     OpCode.TIMEZONE_NAME -> { /* Do Nothing */}
     OpCode.TIMEZONE_CONFIG -> { /* Do Nothing */ }
@@ -192,28 +192,28 @@ suspend fun Watch.handlePacket(packet: ByteArray) = when (OpCode.fromByte(packet
     OpCode.ALARM_A -> {
         runCatching {
             alarms.parseAlarmAPacket(packet)
-        }.onFailure { println("Failed to parse alarm A packet: ${it.message}") }
+        }.onFailure { log.e { "Failed to parse alarm A packet: ${it.message}" } }
     }
     OpCode.ALARM_B -> {
         runCatching {
             alarms.parseAlarmBPacket(packet)
-        }.onFailure { println("Failed to parse alarm B packet: ${it.message}") }
+        }.onFailure { log.e { "Failed to parse alarm B packet: ${it.message}" } }
     }
     OpCode.TIMER -> {
         runCatching {
             timer.parseTimerPacket(packet)
-        }.onFailure { println("Failed to parse timer packet: ${it.message}") }
+        }.onFailure { log.e { "Failed to parse timer packet: ${it.message}" } }
     }
     OpCode.REMINDER_TITLE -> {
         runCatching {
             reminders.parseReminderTitlePacket(packet)
-        }.onFailure { println("Failed to parse reminder title packet: ${it.message}") }
+        }.onFailure { log.e { "Failed to parse reminder title packet: ${it.message}" } }
     }
     OpCode.REMINDER_CONFIG -> {
         runCatching {
             reminders.parseReminderConfigPacket(packet)
-        }.onFailure { println("Failed to parse reminder config packet: ${it.message}") }
+        }.onFailure { log.e { "Failed to parse reminder config packet: ${it.message}" } }
     }
-    OpCode.ERROR -> println("Error: ${packet.toHexString(HexFormat.UpperCase)}")
-    else -> println("Unsupported packet: ${packet.toHexString(HexFormat.UpperCase)}")
+    OpCode.ERROR -> log.e { "Error: ${packet.toHexString(HexFormat.UpperCase)}" }
+    else -> log.e { "Unsupported packet: ${packet.toHexString(HexFormat.UpperCase)}" }
 }
