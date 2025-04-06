@@ -12,8 +12,9 @@ import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun NavBarScaffold(
-    navController: NavHostController,
+    rootNavController: NavHostController,
 ) {
+    val navController: NavHostController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute by remember(navBackStackEntry) {
         derivedStateOf {
@@ -44,7 +45,7 @@ fun NavBarScaffold(
     ) { innerPadding ->
         NavBarGraph(
             navController = navController,
-            innerPadding = innerPadding,
+//            innerPadding = innerPadding,
         )
     }
 }
