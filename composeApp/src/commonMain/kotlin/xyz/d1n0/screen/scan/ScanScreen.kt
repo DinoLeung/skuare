@@ -1,4 +1,4 @@
-package xyz.d1n0.view
+package xyz.d1n0.screen.scan
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,13 +13,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
-import dev.icerock.moko.permissions.Permission
-import dev.icerock.moko.permissions.bluetooth.BLUETOOTH_SCAN
 import dev.icerock.moko.permissions.compose.BindEffect
 import kotlinx.coroutines.CoroutineScope
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
-import xyz.d1n0.viewModel.ScanScreenViewModel
 
 @Composable
 @Preview

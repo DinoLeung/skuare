@@ -1,4 +1,4 @@
-package xyz.d1n0.viewModel
+package xyz.d1n0.screen.scan
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

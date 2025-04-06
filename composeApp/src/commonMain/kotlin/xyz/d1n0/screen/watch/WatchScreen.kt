@@ -1,4 +1,4 @@
-package xyz.d1n0.view
+package xyz.d1n0.screen.watch
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,7 +12,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
-import xyz.d1n0.viewModel.WatchScreenViewModel
 
 @Composable
 @Preview

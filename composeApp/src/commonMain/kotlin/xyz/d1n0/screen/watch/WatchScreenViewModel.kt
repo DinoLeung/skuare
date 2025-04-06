@@ -1,17 +1,13 @@
-package xyz.d1n0.viewModel
+package xyz.d1n0.screen.watch
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.juul.kable.State
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeoutOrNull
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import xyz.d1n0.model.* // TODO: import all for now :(
-import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.seconds
 
 class WatchScreenViewModel: ViewModel(), KoinComponent {
     private val watch: Watch by inject()
