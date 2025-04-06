@@ -21,7 +21,6 @@ fun NavBar(
                 onClick = { onItemClick(it) },
                 icon = {
                     Icon(
-//                        imageVector = if (currentRoute == it.route) it.iconActive else it.iconInactive,
                         imageVector = it.icon,
                         contentDescription = it.title,
                     )
@@ -29,7 +28,6 @@ fun NavBar(
                 label = {
                     Text(
                         text = it.title,
-//                        style = if (currentRoute == it.route) MaterialTheme.typography.labelLarge else MaterialTheme.typography.labelMedium,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )

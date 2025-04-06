@@ -8,6 +8,7 @@ import androidx.navigation.compose.rememberNavController
 import dev.icerock.moko.permissions.compose.rememberPermissionsControllerFactory
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinApplication
+import xyz.d1n0.navigation.NavScaffold
 
 @Composable
 @Preview
@@ -17,10 +18,10 @@ fun App() {
 		val permissionsControllerFactory = rememberPermissionsControllerFactory()
 		val permissionsController = remember { permissionsControllerFactory.createPermissionsController() }
 
-		val rootNavController: NavHostController = rememberNavController()
+		val navController: NavHostController = rememberNavController()
 
 		KoinApplication(application = KoinApp(permissionsController)) {
-			NavGraph(rootNavController = rootNavController)
+			NavScaffold(navController = navController)
 		}
 	}
 }

@@ -6,8 +6,15 @@ import androidx.compose.material.icons.sharp.Schedule
 import androidx.compose.material.icons.sharp.TaskAlt
 import androidx.compose.material.icons.sharp.Timer
 import androidx.compose.material.icons.sharp.Tune
+import androidx.compose.ui.graphics.vector.ImageVector
 
-val navItemList = listOf(
+data class NavBarItem (
+    val title: String,
+    val route: NavBarRoute,
+    val icon: ImageVector,
+)
+
+val navBarItems = listOf(
     NavBarItem(
         title = "Clocks",
         route = NavBarRoute.Clocks,
