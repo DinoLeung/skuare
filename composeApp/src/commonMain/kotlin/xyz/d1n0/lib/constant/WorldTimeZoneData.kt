@@ -1,6 +1,6 @@
 package xyz.d1n0.lib.constant
 
-import xyz.d1n0.model.WorldTimezone
+import xyz.d1n0.lib.model.WorldTimezone
 
 val WorldTimezoneData: Map<Int, WorldTimezone> = mapOf(
 	0 to WorldTimezone(

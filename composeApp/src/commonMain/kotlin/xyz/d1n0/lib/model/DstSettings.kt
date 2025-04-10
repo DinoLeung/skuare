@@ -1,6 +1,6 @@
 package xyz.d1n0.lib.model
 
-import xyz.d1n0.constant.DstBitMask
+import xyz.d1n0.lib.constant.DstBitMask
 
 data class DstSettings(
 	var enable: Boolean,

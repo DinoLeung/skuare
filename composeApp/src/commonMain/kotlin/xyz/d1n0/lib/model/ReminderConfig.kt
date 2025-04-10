@@ -1,9 +1,9 @@
 package xyz.d1n0.lib.model
 
 import kotlinx.datetime.LocalDate
-import xyz.d1n0.constant.ReminderBitmask
-import xyz.d1n0.constant.ReminderDayOfWeek
-import xyz.d1n0.constant.ReminderRecurrence
+import xyz.d1n0.lib.constant.ReminderBitmask
+import xyz.d1n0.lib.constant.ReminderDayOfWeek
+import xyz.d1n0.lib.constant.ReminderRecurrence
 import xyz.d1n0.lib.helper.fromBcdByteArray
 import xyz.d1n0.lib.helper.toBcdByteArray
 import kotlinx.datetime.Clock as KotlinClock

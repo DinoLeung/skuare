@@ -1,6 +1,6 @@
 package xyz.d1n0.lib.model
 
-import xyz.d1n0.constant.OpCode
+import xyz.d1n0.lib.constant.OpCode
 import xyz.d1n0.lib.helper.fromLittleEndianByteArray
 
 class ClocksSettings {

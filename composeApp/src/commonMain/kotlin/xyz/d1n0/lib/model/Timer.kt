@@ -1,6 +1,6 @@
 package xyz.d1n0.lib.model
 
-import xyz.d1n0.constant.TimerStatus
+import xyz.d1n0.lib.constant.TimerStatus
 import xyz.d1n0.lib.helper.fromByteArray
 import xyz.d1n0.lib.helper.toByteArray
 import kotlin.time.Duration

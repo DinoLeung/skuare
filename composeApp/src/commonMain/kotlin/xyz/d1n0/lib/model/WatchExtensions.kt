@@ -2,8 +2,8 @@ package xyz.d1n0.lib.model
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withTimeoutOrNull
-import xyz.d1n0.constant.ConnectReason
-import xyz.d1n0.constant.OpCode
+import xyz.d1n0.lib.constant.ConnectReason
+import xyz.d1n0.lib.constant.OpCode
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds

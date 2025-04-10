@@ -1,8 +1,8 @@
 package xyz.d1n0.lib.model
 
 import kotlinx.datetime.toLocalDateTime
-import xyz.d1n0.constant.OpCode
-import xyz.d1n0.constant.HomeTimezoneData
+import xyz.d1n0.lib.constant.OpCode
+import xyz.d1n0.lib.constant.HomeTimezoneData
 import xyz.d1n0.lib.helper.toByteArray
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds

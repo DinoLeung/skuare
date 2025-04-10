@@ -1,6 +1,6 @@
 package xyz.d1n0.lib.model
 
-import xyz.d1n0.constant.AlarmBitMask
+import xyz.d1n0.lib.constant.AlarmBitMask
 
 data class SignalAlarm(
     var enable: Boolean,

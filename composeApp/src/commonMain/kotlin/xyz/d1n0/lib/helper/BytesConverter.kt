@@ -5,12 +5,12 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.isoDayNumber
 import kotlin.time.Duration
-import xyz.d1n0.constant.customCharset
-import xyz.d1n0.constant.customCharsetByte
-import xyz.d1n0.constant.fallbackByte
-import xyz.d1n0.constant.fallbackChar
-import xyz.d1n0.constant.jisX0201Charset
-import xyz.d1n0.constant.jisX0201CharsetByte
+import xyz.d1n0.lib.constant.customCharset
+import xyz.d1n0.lib.constant.customCharsetByte
+import xyz.d1n0.lib.constant.fallbackByte
+import xyz.d1n0.lib.constant.fallbackChar
+import xyz.d1n0.lib.constant.jisX0201Charset
+import xyz.d1n0.lib.constant.jisX0201CharsetByte
 
 /**
  * Converts this Short into a 2 bytes ByteArray in little-endian order, preserving its two’s complement representation.

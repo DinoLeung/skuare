@@ -1,7 +1,7 @@
 package xyz.d1n0.lib.model
 
 import kotlinx.datetime.LocalTime
-import xyz.d1n0.constant.AlarmBitMask
+import xyz.d1n0.lib.constant.AlarmBitMask
 import xyz.d1n0.lib.helper.fromByteArray
 import xyz.d1n0.lib.helper.toByteArray
 

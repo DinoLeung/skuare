@@ -1,6 +1,6 @@
 package xyz.d1n0.lib.model
 
-import xyz.d1n0.constant.timezoneRadioIdData
+import xyz.d1n0.lib.constant.timezoneRadioIdData
 import xyz.d1n0.lib.helper.toLittleEndianByteArray
 
 abstract class Timezone {

@@ -1,6 +1,6 @@
 package xyz.d1n0.lib.constant
 
-import xyz.d1n0.model.HomeTimezone
+import xyz.d1n0.lib.model.HomeTimezone
 
 val HomeTimezoneData: Map<Int, HomeTimezone> = mapOf(
     30000 to HomeTimezone(

@@ -1,9 +1,9 @@
 package xyz.d1n0.lib.model
 
-import xyz.d1n0.constant.AutoSyncBitmask
-import xyz.d1n0.constant.AutoSyncDelay
-import xyz.d1n0.constant.OpCode
-import xyz.d1n0.constant.ConnectionTimeout
+import xyz.d1n0.lib.constant.AutoSyncBitmask
+import xyz.d1n0.lib.constant.AutoSyncDelay
+import xyz.d1n0.lib.constant.OpCode
+import xyz.d1n0.lib.constant.ConnectionTimeout
 
 data class ConnectionSettings(
 	var autoSyncEnable: Boolean,

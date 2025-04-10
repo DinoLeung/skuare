@@ -1,9 +1,9 @@
 package xyz.d1n0.lib.constant
 
-import xyz.d1n0.constant.ReminderBitmask.MULTIPLE_DAYS
-import xyz.d1n0.constant.ReminderBitmask.WEEKLY
-import xyz.d1n0.constant.ReminderBitmask.YEARLY
-import xyz.d1n0.constant.ReminderBitmask.MONTHLY
+import xyz.d1n0.lib.constant.ReminderBitmask.MULTIPLE_DAYS
+import xyz.d1n0.lib.constant.ReminderBitmask.WEEKLY
+import xyz.d1n0.lib.constant.ReminderBitmask.YEARLY
+import xyz.d1n0.lib.constant.ReminderBitmask.MONTHLY
 
 enum class ReminderRecurrence {
     ONCE_SAME_DAY,

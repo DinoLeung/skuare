@@ -1,4 +1,4 @@
-package xyz.d1n0.ui.navigation
+package xyz.d1n0.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
@@ -10,8 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import xyz.d1n0.ui.components.NavBar
-import xyz.d1n0.ui.components.navBarItems
+import xyz.d1n0.ui.navigation.NavGraph
 
 @Composable
 fun NavScaffold() {
