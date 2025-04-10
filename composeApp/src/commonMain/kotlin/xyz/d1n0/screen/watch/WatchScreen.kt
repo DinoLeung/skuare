@@ -15,14 +15,8 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 @Preview
-fun WatchScreen(
-    navBack: () -> Unit
-) {
+fun WatchScreen() {
     val viewModel = koinViewModel<WatchScreenViewModel>()
-
-    LaunchedEffect(Unit) {
-        viewModel.connect(onConnectionLost = navBack)
-    }
 
     MaterialTheme {
         Column(
@@ -68,7 +62,7 @@ fun WatchScreen(
                 Text("GPS")
             }
 
-            Button(onClick = { viewModel.disconnect(onDisconnected = navBack) }) {
+            Button(onClick = { viewModel.disconnect() }) {
                 Text("Disconnect")
             }
         }

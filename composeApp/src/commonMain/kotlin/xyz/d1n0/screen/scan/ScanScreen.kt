@@ -21,7 +21,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 @Preview
 fun ScanScreen(
-    navToWatch: () -> Unit
+    onWatchFound: () -> Unit,
 ) {
     val viewModel = koinViewModel<ScanScreenViewModel>()
     val state by viewModel.state.collectAsState()
@@ -40,7 +40,7 @@ fun ScanScreen(
     ) {
         if (state.hasScanPermission) {
             Button(
-                onClick = { viewModel.startScanning(onWatchFound = navToWatch) },
+                onClick = { viewModel.startScanning(onWatchFound = onWatchFound) },
                 enabled = !state.isScanning,
             ) {
                 Text("Scan!")

@@ -8,14 +8,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun NavScaffold(
-    navController: NavHostController,
-) {
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
+fun NavScaffold() {
+    val navHostController = rememberNavController()
+    val navBackStackEntry by navHostController.currentBackStackEntryAsState()
     val currentBottomNavBarRoute by remember(navBackStackEntry) {
         derivedStateOf {
             navBackStackEntry?.destination?.route?.let { route ->
@@ -37,9 +36,9 @@ fun NavScaffold(
                     items = navBarItems,
                     currentRoute = currentBottomNavBarRoute,
                     onItemClick = { item ->
-                        navController.navigate(item.route.route) {
-                            navController.graph.startDestinationRoute?.let {
-                                popUpTo(it) { saveState = true }
+                        navHostController.navigate(item.route.route) {
+                            navHostController.graph.startDestinationRoute?.let {
+                                popUpTo(it) { saveState = false }
                             }
                             launchSingleTop = true
                             restoreState = true
@@ -50,7 +49,7 @@ fun NavScaffold(
         }
     ) { innerPadding ->
         NavGraph(
-            navController = navController,
+            navHostController = navHostController,
             innerPadding = innerPadding,
         )
     }

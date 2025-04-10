@@ -8,23 +8,14 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import xyz.d1n0.model.* // TODO: import all for now :(
+import xyz.d1n0.navigation.RootNavRoute
 
 class WatchScreenViewModel: ViewModel(), KoinComponent {
     private val watch: Watch by inject()
 
     val connectionState: State = watch.state.value
 
-    fun connect(onConnectionLost: () -> Unit) = viewModelScope.launch {
-        watch.connect()
-            .invokeOnCompletion {
-                viewModelScope.launch(Dispatchers.Main) { onConnectionLost() }
-            }
-    }
-
-    fun disconnect(onDisconnected: () -> Unit) = viewModelScope.launch {
-        watch.disconnect()
-        onDisconnected()
-    }
+    fun disconnect() = viewModelScope.launch(Dispatchers.Main) { watch.disconnect() }
 
     fun getConnectReason() = watch.scope.launch { watch.requestConnectReason() }
     fun getConnectionSettings() = watch.scope.launch { watch.requestConnectionSettings() }
