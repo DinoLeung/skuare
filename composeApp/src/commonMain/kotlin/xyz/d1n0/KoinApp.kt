@@ -9,9 +9,9 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
-import xyz.d1n0.model.Watch
-import xyz.d1n0.screen.scan.ScanScreenViewModel
-import xyz.d1n0.screen.watch.WatchScreenViewModel
+import xyz.d1n0.lib.model.Watch
+import xyz.d1n0.ui.screen.scan.ScanScreenViewModel
+import xyz.d1n0.ui.screen.watch.WatchScreenViewModel
 
 fun KoinApp(
     rootNavHostController: NavHostController,
