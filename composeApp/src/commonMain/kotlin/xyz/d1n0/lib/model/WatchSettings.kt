@@ -1,9 +1,9 @@
 package xyz.d1n0.lib.model
 
-import xyz.d1n0.constant.BacklightDuration
-import xyz.d1n0.constant.OpCode
-import xyz.d1n0.constant.DateFormat
-import xyz.d1n0.constant.WeekdayLanguage
+import xyz.d1n0.lib.constant.BacklightDuration
+import xyz.d1n0.lib.constant.OpCode
+import xyz.d1n0.lib.constant.DateFormat
+import xyz.d1n0.lib.constant.WeekdayLanguage
 
 data class WatchSettings(
     var preferences: WatchPreferences,

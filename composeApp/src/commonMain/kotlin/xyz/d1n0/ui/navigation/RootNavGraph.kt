@@ -1,6 +1,5 @@
 package xyz.d1n0.ui.navigation
 
-
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -19,7 +18,6 @@ fun RootNavGraph() {
             popUpTo(RootNavRoute.Scan.route) { inclusive = true }
         }
     }
-
     NavHost(
         navController = rootNavHostController,
         startDestination = RootNavRoute.Scan.route,

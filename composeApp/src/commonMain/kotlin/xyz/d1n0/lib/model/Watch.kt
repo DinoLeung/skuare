@@ -101,7 +101,9 @@ class Watch(private val peripheral: Peripheral): KoinComponent {
 	@Throws(CancellationException::class, IOException::class, NotConnectedException::class)
 	suspend fun request(opCode: OpCode) {
 		log.d { "Requesting: ${opCode.byte.toHexString(HexFormat.UpperCase)}" }
-		peripheral.write(requestCharacteristic, byteArrayOf(opCode.byte))
+		runCatching { peripheral.write(requestCharacteristic, byteArrayOf(opCode.byte)) }
+			.onFailure { log.e { "Failed to request ${opCode.name}: ${it.message}" } }
+
 	}
 
 	/**
@@ -116,7 +118,8 @@ class Watch(private val peripheral: Peripheral): KoinComponent {
 	@Throws(CancellationException::class, IOException::class, NotConnectedException::class)
 	suspend fun request(opCode: OpCode, position: Int) {
 		log.d { "Requesting: ${opCode.byte.toHexString(HexFormat.UpperCase)} position: $position" }
-		peripheral.write(requestCharacteristic, byteArrayOf(opCode.byte, position.toByte()))
+		runCatching { peripheral.write(requestCharacteristic, byteArrayOf(opCode.byte, position.toByte())) }
+			.onFailure { log.e { "Failed to request ${opCode.name} on $position: ${it.message}" } }
 	}
 
 	/**
@@ -133,7 +136,9 @@ class Watch(private val peripheral: Peripheral): KoinComponent {
 	@Throws(CancellationException::class, IOException::class, NotConnectedException::class)
 	suspend fun write(data: ByteArray) {
 		log.d { "Writing: ${data.toHexString(HexFormat.UpperCase)}" }
-		peripheral.write(ioCharacteristic, data, WriteType.WithResponse)
+		runCatching { peripheral.write(ioCharacteristic, data, WriteType.WithResponse) }
+			.onFailure {log.e { "Failed to write ${data.toHexString(HexFormat.UpperCase)}: ${it.message}" }}
+
 	}
 }
 

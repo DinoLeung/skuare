@@ -1,5 +1,7 @@
 package xyz.d1n0.lib.model
 
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import xyz.d1n0.lib.constant.OpCode
 
 class RemindersSettings {
@@ -15,19 +17,29 @@ class RemindersSettings {
     lateinit var reminderConfig4: ReminderConfig
     lateinit var reminderConfig5: ReminderConfig
 
-    val isTitlesInitialized: Boolean
-        get() = ::reminderTitle1.isInitialized
-                && ::reminderTitle2.isInitialized
-                && ::reminderTitle3.isInitialized
-                && ::reminderTitle4.isInitialized
-                && ::reminderTitle5.isInitialized
+    val isTitlesInitialized: StateFlow<Boolean> get() = _isTitlesInitialized
+    private val _isTitlesInitialized = MutableStateFlow(false)
+    private fun updateIsTitlesInitializedState() {
+        _isTitlesInitialized.value = (
+            ::reminderTitle1.isInitialized
+            && ::reminderTitle2.isInitialized
+            && ::reminderTitle3.isInitialized
+            && ::reminderTitle4.isInitialized
+            && ::reminderTitle5.isInitialized
+        )
+    }
 
-    val isConfigsInitialized: Boolean
-        get() = ::reminderConfig1.isInitialized
-                && ::reminderConfig2.isInitialized
-                && ::reminderConfig3.isInitialized
-                && ::reminderConfig4.isInitialized
-                && ::reminderConfig5.isInitialized
+    val isConfigsInitialized: StateFlow<Boolean> get() = _isConfigsInitialized
+    private val _isConfigsInitialized = MutableStateFlow(false)
+    private fun updateIsConfigsInitializedState() {
+        _isConfigsInitialized.value = (
+            ::reminderConfig1.isInitialized
+            && ::reminderConfig2.isInitialized
+            && ::reminderConfig3.isInitialized
+            && ::reminderConfig4.isInitialized
+            && ::reminderConfig5.isInitialized
+        )
+    }
 
     @OptIn(ExperimentalStdlibApi::class)
     fun parseReminderTitlePacket(packet: ByteArray) {
@@ -43,7 +55,8 @@ class RemindersSettings {
             3 -> reminderTitle3 = ReminderTitle.fromBytes(packet.sliceArray(2..packet.lastIndex))
             4 -> reminderTitle4 = ReminderTitle.fromBytes(packet.sliceArray(2..packet.lastIndex))
             5 -> reminderTitle5 = ReminderTitle.fromBytes(packet.sliceArray(2..packet.lastIndex))
-        }
+            else -> require(packet[1] in 1..5) { "Reminder position must be in 1..5" }
+        }.also { updateIsTitlesInitializedState() }
     }
 
     @OptIn(ExperimentalStdlibApi::class)
@@ -60,12 +73,13 @@ class RemindersSettings {
             3 -> reminderConfig3 = ReminderConfig.fromBytes(packet.sliceArray(2..packet.lastIndex))
             4 -> reminderConfig4 = ReminderConfig.fromBytes(packet.sliceArray(2..packet.lastIndex))
             5 -> reminderConfig5 = ReminderConfig.fromBytes(packet.sliceArray(2..packet.lastIndex))
-        }
+            else -> require(packet[1] in 1..5) { "Reminder position must be in 1..5" }
+        }.also { updateIsConfigsInitializedState() }
     }
 
     val reminderTitlePackets: List<ByteArray>
         get() {
-            require(isTitlesInitialized) { "Reminder titles must be initialized" }
+            require(isTitlesInitialized.value) { "Reminder titles must be initialized" }
             return listOf(
                 byteArrayOf(OpCode.REMINDER_TITLE.byte, 1) + reminderTitle1.bytes,
                 byteArrayOf(OpCode.REMINDER_TITLE.byte, 2) + reminderTitle2.bytes,
@@ -77,7 +91,7 @@ class RemindersSettings {
 
     val reminderConfigPackets: List<ByteArray>
         get() {
-            require(isConfigsInitialized) { "Reminder config packet must be initialized" }
+            require(isConfigsInitialized.value) { "Reminder config packet must be initialized" }
             return listOf(
                 byteArrayOf(OpCode.REMINDER_CONFIG.byte, 1) + reminderConfig1.bytes,
                 byteArrayOf(OpCode.REMINDER_CONFIG.byte, 2) + reminderConfig2.bytes,

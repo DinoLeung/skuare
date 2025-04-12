@@ -5,6 +5,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
+import xyz.d1n0.ui.navigation.NavBarItem
 import xyz.d1n0.ui.navigation.NavBarRoute
 
 @Composable
@@ -36,5 +37,4 @@ fun NavBar(
             )
         }
     }
-
 }

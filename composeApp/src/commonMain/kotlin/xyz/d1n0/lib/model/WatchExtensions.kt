@@ -28,6 +28,7 @@ suspend fun Watch.writeTimer() = write(timer.timerPacket)
 
 suspend fun Watch.requestClocks() =
     repeat(3) {
+        log.d { "requestClocks" }
         request(OpCode.CLOCK)
     }
 suspend fun Watch.writeClocks() =
@@ -91,10 +92,10 @@ suspend fun Watch.writeTimeZoneCoordinatesAndRadioId() =
  * @param writeTimezoneMetadata If true, timezone metadata will also be written (default is false).
  */
 suspend fun Watch.adjustTime(delay: Duration = 0.seconds, writeTimezoneMetadata: Boolean = false) = runCatching {
-    if (clocks.isInitialized == false) {
+    if (clocks.isInitialized.value == false) {
         requestClocks()
         withTimeoutOrNull(10.seconds) {
-            while (clocks.isInitialized == false) {
+            while (clocks.isInitialized.value == false) {
                 delay(100.milliseconds)
             }
         } ?: throw IllegalStateException("Timeout waiting for clocks initialization")
@@ -177,6 +178,7 @@ suspend fun Watch.handlePacket(packet: ByteArray) = when (OpCode.fromByte(packet
     }
     OpCode.CLOCK -> {
         runCatching {
+            log.d { packet.toHexString(HexFormat.UpperCase) }
             clocks.parseClocksPacket(packet)
         }.onFailure { log.e { "Failed to parse clocks packet: ${it.message}" } }
     }

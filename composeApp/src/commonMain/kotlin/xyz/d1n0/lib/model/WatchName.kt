@@ -1,6 +1,6 @@
 package xyz.d1n0.lib.model
 
-import xyz.d1n0.constant.OpCode
+import xyz.d1n0.lib.constant.OpCode
 
 data class WatchName(private val _name: String) {
     init {

@@ -1,6 +1,6 @@
 package xyz.d1n0.lib.model
 
-import xyz.d1n0.constant.PreferencesBitmask
+import xyz.d1n0.lib.constant.PreferencesBitmask
 
 data class WatchPreferences(
     var is24HourTime: Boolean,

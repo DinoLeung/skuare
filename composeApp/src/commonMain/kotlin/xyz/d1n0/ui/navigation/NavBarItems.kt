@@ -1,4 +1,4 @@
-package xyz.d1n0.ui.components
+package xyz.d1n0.ui.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.Alarm
@@ -7,7 +7,6 @@ import androidx.compose.material.icons.sharp.TaskAlt
 import androidx.compose.material.icons.sharp.Timer
 import androidx.compose.material.icons.sharp.Tune
 import androidx.compose.ui.graphics.vector.ImageVector
-import xyz.d1n0.ui.navigation.NavBarRoute
 
 data class NavBarItem (
     val title: String,

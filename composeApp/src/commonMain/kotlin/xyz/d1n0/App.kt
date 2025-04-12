@@ -1,6 +1,6 @@
 package xyz.d1n0
 
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.compose.rememberNavController
@@ -22,6 +22,7 @@ fun App() {
 			permissionsController = permissionsController,
 		)) {
 			RootNavGraph()
+//			NavScaffold()
 		}
 	}
 }
