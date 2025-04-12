@@ -32,7 +32,7 @@ fun NavScaffold() {
         }
     }
 
-    val watchState = viewModel.watch.state.collectAsState(initial = PeripheralState.Disconnected())
+    val watchConnectionState = viewModel.watchState.collectAsState(initial = PeripheralState.Disconnected())
     val onDisconnect = {
         rootNavHostController.navigate(RootNavRoute.Scan.route) {
             popUpTo(RootNavRoute.Watch.route) { inclusive = true }
@@ -66,7 +66,7 @@ fun NavScaffold() {
             }
         }
     ) { innerPadding ->
-        if (watchState.value is PeripheralState.Connected)
+        if (watchConnectionState.value is PeripheralState.Connected)
             NavGraph(
                 navHostController = navHostController,
                 innerPadding = innerPadding,

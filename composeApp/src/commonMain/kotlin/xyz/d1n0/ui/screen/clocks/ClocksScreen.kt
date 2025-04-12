@@ -19,11 +19,10 @@ fun ClocksScreen(
     val viewModel = koinViewModel<ClocksScreenViewModel>()
     val log = koinInject<Log>()
 
-    val watchConnectionState = viewModel.watch.state.collectAsState()
-    val isClocksInitialized = viewModel.watch.clocks.isInitialized.collectAsState(initial = false)
+    val isInitialized = viewModel.isInitialized.collectAsState(initial = false)
 
     LaunchedEffect(Unit) {
-        if (isClocksInitialized.value == false)
+        if (isInitialized.value == false)
             viewModel.requestClocks()
     }
 
@@ -33,13 +32,13 @@ fun ClocksScreen(
         verticalArrangement = Arrangement.Center,
 
     ) {
-        if (isClocksInitialized.value == true) {
-            Text(viewModel.watch.clocks.homeClock.timeZone.cityName, color = MaterialTheme.colorScheme.onBackground)
-            Text(viewModel.watch.clocks.worldClock1.timeZone.cityName, color = MaterialTheme.colorScheme.onBackground)
-            Text(viewModel.watch.clocks.worldClock2.timeZone.cityName, color = MaterialTheme.colorScheme.onBackground)
-            Text(viewModel.watch.clocks.worldClock3.timeZone.cityName, color = MaterialTheme.colorScheme.onBackground)
-            Text(viewModel.watch.clocks.worldClock4.timeZone.cityName, color = MaterialTheme.colorScheme.onBackground)
-            Text(viewModel.watch.clocks.worldClock5.timeZone.cityName, color = MaterialTheme.colorScheme.onBackground)
+        if (isInitialized.value == true) {
+            Text(viewModel.clocks.homeClock.timeZone.toString(), color = MaterialTheme.colorScheme.onBackground)
+            Text(viewModel.clocks.worldClock1.timeZone.toString(), color = MaterialTheme.colorScheme.onBackground)
+            Text(viewModel.clocks.worldClock2.timeZone.toString(), color = MaterialTheme.colorScheme.onBackground)
+            Text(viewModel.clocks.worldClock3.timeZone.toString(), color = MaterialTheme.colorScheme.onBackground)
+            Text(viewModel.clocks.worldClock4.timeZone.toString(), color = MaterialTheme.colorScheme.onBackground)
+            Text(viewModel.clocks.worldClock5.timeZone.toString(), color = MaterialTheme.colorScheme.onBackground)
         }
     }
 }

@@ -79,6 +79,28 @@ suspend fun Watch.writeTimeZoneCoordinatesAndRadioId() =
         write(it)
     }
 
+suspend fun Watch.requestReminderTitles() {
+    for(i in 1..5) {
+        request(OpCode.REMINDER_TITLE, i)
+    }
+}
+suspend fun Watch.writeReminderTitles() {
+    reminders.reminderTitlePackets.forEach {
+        write(it)
+    }
+}
+
+suspend fun Watch.requestReminderConfigs() {
+    for(i in 1..5) {
+        request(OpCode.REMINDER_CONFIG, i)
+    }
+}
+suspend fun Watch.writeReminderConfigs() {
+    reminders.reminderConfigPackets.forEach {
+        write(it)
+    }
+}
+
 /**
  * Synchronizes the watch's time, optionally including time zone data.
  *

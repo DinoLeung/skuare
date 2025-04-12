@@ -12,6 +12,9 @@ import org.koin.dsl.module
 import xyz.d1n0.lib.model.Watch
 import xyz.d1n0.ui.components.NavBarViewModel
 import xyz.d1n0.ui.screen.clocks.ClocksScreenViewModel
+import xyz.d1n0.ui.screen.alarms.AlarmsScreenViewModel
+import xyz.d1n0.ui.screen.timer.TimerScreenViewModel
+import xyz.d1n0.ui.screen.reminders.RemindersScreenViewModel
 import xyz.d1n0.ui.screen.scan.ScanScreenViewModel
 import xyz.d1n0.ui.screen.watch.WatchScreenViewModel
 
@@ -30,9 +33,14 @@ fun KoinApp(
 
         singleOf(::Watch)
 
+        viewModelOf(::ScanScreenViewModel)
+        viewModelOf(::WatchScreenViewModel) // TODO: should remove
+
         viewModelOf(::NavBarViewModel)
         viewModelOf(::ClocksScreenViewModel)
-        viewModelOf(::ScanScreenViewModel)
-        viewModelOf(::WatchScreenViewModel)
+        viewModelOf(::AlarmsScreenViewModel)
+        viewModelOf(::TimerScreenViewModel)
+        viewModelOf(::RemindersScreenViewModel)
+
     })
 }
