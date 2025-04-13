@@ -3,22 +3,31 @@ package xyz.d1n0.ui.components
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.*
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.qualifier.named
 import xyz.d1n0.ui.navigation.NavGraph
-import xyz.d1n0.ui.navigation.RootNavRoute
 import xyz.d1n0.ui.navigation.navBarItems
 import com.juul.kable.State as PeripheralState
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NavScaffold() {
-    val viewModel = viewModel<NavBarViewModel>()
+fun NavScaffold(
+    onDisconnect: () -> Unit,
+) {
+    val viewModel = koinViewModel<NavBarViewModel>()
     val rootNavHostController = koinInject<NavHostController>(named("rootNavHostController"))
     val navHostController = rememberNavController()
     val navBackStackEntry by navHostController.currentBackStackEntryAsState()
@@ -33,17 +42,20 @@ fun NavScaffold() {
     }
 
     val watchConnectionState = viewModel.watchState.collectAsState(initial = PeripheralState.Disconnected())
-    val onDisconnect = {
-        rootNavHostController.navigate(RootNavRoute.Scan.route) {
-            popUpTo(RootNavRoute.Watch.route) { inclusive = true }
-        }
-    }
 
     LaunchedEffect(Unit) {
-        viewModel.connect(onConnectionLost = onDisconnect)
+        viewModel.watchState.filterIsInstance<PeripheralState.Disconnected>()
+            .onEach { onDisconnect() }
+            .launchIn(viewModel.viewModelScope)
     }
 
+
     Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Square") }
+            )
+        },
         bottomBar = {
             AnimatedVisibility(
                 visible = currentBottomNavBarRoute != null,

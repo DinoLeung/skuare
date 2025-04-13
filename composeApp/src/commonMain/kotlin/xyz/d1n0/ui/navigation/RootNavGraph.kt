@@ -18,15 +18,22 @@ fun RootNavGraph() {
             popUpTo(RootNavRoute.Scan.route) { inclusive = true }
         }
     }
+
+    val onDisconnect = {
+        rootNavHostController.navigate(RootNavRoute.Scan.route) {
+            popUpTo(RootNavRoute.Watch.route) { inclusive = true }
+        }
+    }
+
     NavHost(
         navController = rootNavHostController,
         startDestination = RootNavRoute.Scan.route,
     ) {
         composable(RootNavRoute.Scan.route) {
-            ScanScreen(onWatchFound = onConnect)
+            ScanScreen(onConnect = onConnect)
         }
         composable(RootNavRoute.Watch.route) {
-            NavScaffold()
+            NavScaffold(onDisconnect = onDisconnect)
         }
     }
 }

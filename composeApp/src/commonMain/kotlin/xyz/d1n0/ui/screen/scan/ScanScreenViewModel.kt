@@ -12,6 +12,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import xyz.d1n0.Log
 import xyz.d1n0.lib.model.Watch
+import com.juul.kable.State as PeripheralState
 
 data class ScanScreenState(
     val isScanning: Boolean = false,
@@ -27,16 +28,26 @@ class ScanScreenViewModel: ViewModel(), KoinComponent {
     val state: StateFlow<ScanScreenState> = _state.asStateFlow()
     private var scanJob: Job? = null
 
-    fun startScanning(onWatchFound: () -> Unit) {
+    fun startScanning(
+        onConnect: () -> Unit,
+    ) {
         scanJob = viewModelScope.launch {
             _state.update { it.copy(isScanning = true) }
             // TODO: what if there are more than 1 peripheral found
             Watch.scanner.advertisements.firstOrNull()?.let {
+                val watch = Watch(Peripheral(it))
                 // declare watch in koin, so it knows how to inject it to other places
-                getKoin().declare(Watch(Peripheral(it)))
+                getKoin().declare(watch)
+
+                watch.connect()
+
+                watch.state.collect {
+                    if (it is PeripheralState.Connected) {
+                        onConnect()
+                        stopScanning()
+                    }
+                }
             }
-                .also { stopScanning() }
-                .also { onWatchFound() }
         }
     }
 

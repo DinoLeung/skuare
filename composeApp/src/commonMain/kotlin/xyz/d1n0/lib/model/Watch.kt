@@ -58,32 +58,20 @@ class Watch(private val peripheral: Peripheral): KoinComponent {
 	val state: StateFlow<State> get() = peripheral.state
 
 	/**
-	 * Observes incoming data from the IO characteristic of the peripheral.
-	 * This observation emits incoming BLE packets which are then processed by [observeIoCharacteristic].
+	 * A coroutine Job that continuously observes the peripheral’s IO characteristic.
+	 *
+	 * This job is launched in the [peripheral]'s coroutine scope and collects data packets emitted by the IO characteristic.
+	 * Each received packet is processed by the [handlePacket] function.
+	 * The job will automatically be cancelled when the peripheral's scope is cancelled.
 	 */
-	private val ioCharacteristicObservation = peripheral.observe(ioCharacteristic)
+	val ioDataObserverJob = peripheral.scope.launch {
+		peripheral.observe(ioCharacteristic).collect { handlePacket(it) }
+	}
 
 	/**
-	 * Starts observing the IO characteristic for incoming data packets.
-	 *
-	 * This function collects data emitted by `ioCharacteristicObservation` in the IO coroutine context
-	 * and processes them based on the command type. If the packet type is unsupported, it will log
-	 * the packet data in hexadecimal format.
-	 *
-	 * This function is a coroutine and should be invoked within a coroutine scope.
-	 *
-	 * Note: This is an experimental API and usage may require enabling the `ExperimentalStdlibApi` opt-in.
-	 */
-	@OptIn(ExperimentalStdlibApi::class)
-	@Throws(IllegalArgumentException::class, CancellationException::class)
-	private suspend fun observeIoCharacteristic() =
-		ioCharacteristicObservation.collect { handlePacket(it) }
-
-	/**
-	 * Disconnects from the peripheral watch, terminating any ongoing data observations.
+	 * Connects to q peripheral watch.
 	 */
 	suspend fun connect() = peripheral.connect()
-		.launch { observeIoCharacteristic() }
 
 	/**
 	 * Disconnects the BLE connection from the peripheral.

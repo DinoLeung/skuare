@@ -19,13 +19,12 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 @Preview
 fun ScanScreen(
-    onWatchFound: () -> Unit,
+    onConnect: () -> Unit,
 ) {
     val viewModel = koinViewModel<ScanScreenViewModel>()
     val state by viewModel.state.collectAsState()
 
     BindEffect(viewModel.permissionsController)
-
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         viewModel.checkScanPermissions()
     }
@@ -37,7 +36,7 @@ fun ScanScreen(
     ) {
         if (state.hasScanPermission) {
             Button(
-                onClick = { viewModel.startScanning(onWatchFound = onWatchFound) },
+                onClick = { viewModel.startScanning(onConnect = onConnect) },
                 enabled = !state.isScanning,
             ) {
                 Text("Scan!")
