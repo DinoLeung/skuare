@@ -186,7 +186,7 @@ suspend fun Watch.handlePacket(packet: ByteArray) = when (OpCode.fromByte(packet
         // b5600 old app ver.	222DA85E248C468C74834202
         // b5600 newer app ver.	228C8973A1B416502E67DD02
         // Looks like the app will compare this number to determine if the watch has been paired or not
-        // probably can set to anything
+        // probably can set to anything except the last byte.
         log.d { packet.toHexString(HexFormat.UpperCase) }
     }
     OpCode.WATCH_CONDITION -> {
@@ -206,15 +206,7 @@ suspend fun Watch.handlePacket(packet: ByteArray) = when (OpCode.fromByte(packet
     }
     OpCode.TIMEZONE_NAME -> { /* Do Nothing */}
     OpCode.TIMEZONE_CONFIG -> { /* Do Nothing */ }
-    OpCode.TIMEZONE_LOCATION_RADIO_ID -> {
-//        runCatching {
-//            val position = packet[1].toInt()
-//            val latitude = Double.fromByteArray(it.sliceArray(3..10))
-//            val longitude = Double.fromByteArray(it.sliceArray(11..18))
-//
-//            println("Position $position: $latitude, $longitude")
-//        }.onFailure { println("Failed to parse location radio ID packet: ${it.message}") }
-    }
+    OpCode.TIMEZONE_LOCATION_RADIO_ID -> { /* Do Nothing */ }
     OpCode.ALARM_A -> {
         runCatching {
             alarms.parseAlarmAPacket(packet)

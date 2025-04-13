@@ -16,6 +16,7 @@ class WatchInfo {
 
     fun parseNamePacket(packet: ByteArray) {
         name = WatchName.fromPacket(packet)
+        updateNameInitializedState()
     }
 
     val isWatchSettingsInitialized: StateFlow<Boolean> get() = _isWatchSettingsInitializedFlow
@@ -26,6 +27,7 @@ class WatchInfo {
 
 	fun parseWatchSettingsPacket(packet: ByteArray) {
 		watchSettings = WatchSettings.fromPacket(packet)
+        updateWatchSettingsInitializedState()
 	}
 
     val isConnectionSettingsInitialized: StateFlow<Boolean> get() = _isConnectionSettingsInitializedFlow
@@ -36,6 +38,7 @@ class WatchInfo {
 
     fun parseConnectionSettingsPacket(packet: ByteArray) {
         connectionSettings = ConnectionSettings.fromPacket(packet)
+        updateConnectionSettingsInitializedState()
     }
 
 }
