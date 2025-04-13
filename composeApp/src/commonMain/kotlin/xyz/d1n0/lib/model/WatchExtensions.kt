@@ -21,7 +21,7 @@ suspend fun Watch.requestWatchSettings() = request(OpCode.WATCH_SETTINGS)
 suspend fun Watch.writeWatchSettings() = write(info.watchSettings.packet)
 
 suspend fun Watch.requestName() = request(OpCode.WATCH_NAME)
-suspend fun Watch.WriteName() = write(info.name.packet)
+suspend fun Watch.writeName() = write(info.name.packet)
 
 suspend fun Watch.requestTimer() = request(OpCode.TIMER)
 suspend fun Watch.writeTimer() = write(timer.timerPacket)

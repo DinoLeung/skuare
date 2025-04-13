@@ -5,10 +5,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import xyz.d1n0.lib.model.Watch
-import xyz.d1n0.lib.model.requestConnectionSettings
-import xyz.d1n0.lib.model.requestName
-import xyz.d1n0.lib.model.requestWatchSettings
+import xyz.d1n0.lib.model.*
 
 class SettingsScreenViewModel: ViewModel(), KoinComponent {
     private val watch: Watch by inject()
@@ -20,6 +17,10 @@ class SettingsScreenViewModel: ViewModel(), KoinComponent {
     val info = watch.info
 
     fun requestName() = watch.scope.launch { watch.requestName() }
+    fun writeName() = watch.scope.launch {
+        watch.writeName()
+        watch.requestName()
+    }
 
     fun requestWatchSettings() = watch.scope.launch { watch.requestWatchSettings() }
 

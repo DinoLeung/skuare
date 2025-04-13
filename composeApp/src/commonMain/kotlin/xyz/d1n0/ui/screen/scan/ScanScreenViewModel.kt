@@ -12,6 +12,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import xyz.d1n0.Log
 import xyz.d1n0.lib.model.Watch
+import xyz.d1n0.lib.model.adjustTime
 import com.juul.kable.State as PeripheralState
 
 data class ScanScreenState(
@@ -43,6 +44,7 @@ class ScanScreenViewModel: ViewModel(), KoinComponent {
 
                 watch.state.collect {
                     if (it is PeripheralState.Connected) {
+                        watch.scope.run { watch.adjustTime() }
                         onConnect()
                         stopScanning()
                     }

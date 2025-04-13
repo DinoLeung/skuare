@@ -2,14 +2,15 @@ package xyz.d1n0.lib.model
 
 import xyz.d1n0.lib.constant.OpCode
 
-data class WatchName(private val _name: String) {
+data class WatchName(private var _value: String) {
     init {
-        require(_name.length <= 19) { "Watch name length must be <= 19 characters" }
+        require(_value.length <= 19) { "Watch name length must be <= 19 characters" }
     }
-    var name: String = _name
+    var value: String
+        get() = _value
         set(value) {
-            require(_name.length <= 19) { "Watch name length must be <= 19 characters" }
-            field = value
+            require(_value.length <= 19) { "Watch name length must be <= 19 characters" }
+            _value = value
         }
 
     companion object {
@@ -32,8 +33,8 @@ data class WatchName(private val _name: String) {
     val packet: ByteArray
         get() = ByteArray(20) { index ->
             when (index) {
-                0 -> OpCode.WATCH_SETTINGS.byte
-                in 1.._name.length -> _name.get(index - 1).code.toByte()
+                0 -> OpCode.WATCH_NAME.byte
+                in 1.._value.length -> _value.get(index - 1).code.toByte()
                 else -> 0x00.toByte()
             }
         }
