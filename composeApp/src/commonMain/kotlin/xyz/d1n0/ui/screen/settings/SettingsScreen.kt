@@ -15,35 +15,29 @@ fun SettingsScreen(
     innerPadding: PaddingValues,
 ) {
     val viewModel = koinViewModel<SettingsScreenViewModel>()
-    val isNameInitialized = viewModel.isNameInitialized.collectAsState(initial = false)
-    val isWatchSettingsInitialized = viewModel.isWatchSettingsInitialized.collectAsState(initial = false)
-    val isConnectionSettingsInitialized = viewModel.isConnectionSettingsInitialized.collectAsState(initial = false)
+    val name = viewModel.name.collectAsState()
+    val watchSettings = viewModel.watchSettings.collectAsState()
+    val connectionSettings = viewModel.connectionSettings.collectAsState()
 
     LaunchedEffect(Unit) {
-        if (isNameInitialized.value == false)
+        if (name.value == null)
             viewModel.requestName()
-        if (isWatchSettingsInitialized.value == false)
+        if (watchSettings.value == null)
             viewModel.requestWatchSettings()
-        if (isConnectionSettingsInitialized.value == false)
+        if (connectionSettings.value == null)
             viewModel.requestConnectionSettings()
     }
-
-//    val name by remember(viewModel.info.name) { mutableStateOf(viewModel.info.name) }
 
     Column (
         modifier = Modifier.fillMaxSize().padding(innerPadding),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        if (isNameInitialized.value) {
-            Text(viewModel.info.name.value, color = MaterialTheme.colorScheme.onBackground)
-            Button(onClick = viewModel::writeName) {
-                Text("WRITE NAME", color = MaterialTheme.colorScheme.onBackground)
-            }
+        Text(name.value.toString(), color = MaterialTheme.colorScheme.onBackground)
+        Button(onClick = viewModel::writeName) {
+            Text("WRITE NAME", color = MaterialTheme.colorScheme.onBackground)
         }
-        if (isWatchSettingsInitialized.value)
-            Text(viewModel.info.watchSettings.toString(), color = MaterialTheme.colorScheme.onBackground)
-        if (isConnectionSettingsInitialized.value)
-            Text(viewModel.info.connectionSettings.toString(), color = MaterialTheme.colorScheme.onBackground)
+        Text(watchSettings.value.toString(), color = MaterialTheme.colorScheme.onBackground)
+        Text(connectionSettings.value.toString(), color = MaterialTheme.colorScheme.onBackground)
     }
 }

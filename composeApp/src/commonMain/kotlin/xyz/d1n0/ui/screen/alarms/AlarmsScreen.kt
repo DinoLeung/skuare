@@ -20,6 +20,9 @@ fun AlarmsScreen(
     val log = koinInject<Log>()
 
     val isAlarmsInitialized = viewModel.isInitialized.collectAsState(initial = false)
+    val hourlySignal = viewModel.hourlySignal.collectAsState(initial = null)
+    val alarms = viewModel.alarms.collectAsState(initial = List(4) { null })
+    val alarmSnooze = viewModel.snoozeAlarm.collectAsState(initial = null)
 
     LaunchedEffect(Unit) {
         if (isAlarmsInitialized.value == false)
@@ -33,12 +36,14 @@ fun AlarmsScreen(
 
     ) {
         if (isAlarmsInitialized.value == true) {
-            Text(viewModel.alarms.hourlySignal.toString(), color = MaterialTheme.colorScheme.onBackground)
-            Text(viewModel.alarms.alarm1.toString(), color = MaterialTheme.colorScheme.onBackground)
-            Text(viewModel.alarms.alarm2.toString(), color = MaterialTheme.colorScheme.onBackground)
-            Text(viewModel.alarms.alarm3.toString(), color = MaterialTheme.colorScheme.onBackground)
-            Text(viewModel.alarms.alarm4.toString(), color = MaterialTheme.colorScheme.onBackground)
-            Text(viewModel.alarms.alarmSnooze.toString(), color = MaterialTheme.colorScheme.onBackground)
+            Text(hourlySignal.value.toString(), color = MaterialTheme.colorScheme.onBackground)
+
+            alarms.value.forEach { alarm ->
+                alarm?.let {
+                    Text(it.toString(), color = MaterialTheme.colorScheme.onBackground)
+                }
+            }
+            Text(alarmSnooze.value.toString(), color = MaterialTheme.colorScheme.onBackground)
         }
     }
 }

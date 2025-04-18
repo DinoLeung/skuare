@@ -2,33 +2,28 @@ package xyz.d1n0.lib.model
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import xyz.d1n0.lib.constant.OpCode
 import xyz.d1n0.lib.helper.fromLittleEndianByteArray
+import xyz.d1n0.lib.helper.requireIn
 
 class ClocksSettings {
-    lateinit var homeClock: HomeClock
-    lateinit var worldClock1: WorldClock
-    lateinit var worldClock2: WorldClock
-    lateinit var worldClock3: WorldClock
-    lateinit var worldClock4: WorldClock
-    lateinit var worldClock5: WorldClock
+    private val _homeClock = MutableStateFlow<HomeClock?>(null)
+    val homeClock: StateFlow<HomeClock?> get() = _homeClock.asStateFlow()
 
-    /**
-     * Checks whether all the clock instances in the Config class are initialized.
-     * @return true if homeClock and all worldClocks are initialized; false otherwise.
-     */
-    val isInitialized: StateFlow<Boolean> get() = _isInitializedFlow
-    private val _isInitializedFlow = MutableStateFlow(false)
-    private fun updateInitializedState() {
-        _isInitializedFlow.value = (
-            ::homeClock.isInitialized
-            &&::worldClock1.isInitialized
-            &&::worldClock2.isInitialized
-            &&::worldClock3.isInitialized
-            &&::worldClock4.isInitialized
-            &&::worldClock5.isInitialized
+    private val _worldClocks = MutableStateFlow<List<WorldClock?>>(List(5) { null })
+    val worldClocks: StateFlow<List<WorldClock?>> get() = _worldClocks.asStateFlow()
+
+    private val allClocks: List<Clock> get() =
+        listOfNotNull(
+            homeClock.value,
+            *worldClocks.value.toTypedArray(),
         )
-    }
+
+    val isInitialized: StateFlow<Boolean> get() = _isInitialized.asStateFlow()
+    private val _isInitialized = MutableStateFlow(false)
+    private fun updateIsInitialized() = _isInitialized.update { allClocks.size == 6 }
 
     /**
      * Sets a clock for the specified position with the given time zone ID and DST status.
@@ -41,15 +36,17 @@ class ClocksSettings {
      */
     private fun setClock(position: Byte, timeZoneId: Short, dstSettings: DstSettings) =
         when (position.toInt()) {
-            0 -> homeClock = HomeClock.fromTimeZoneId(timeZoneId, dstSettings)
-            1 -> worldClock1 = WorldClock.fromTimeZoneId(timeZoneId, dstSettings)
-            2 -> worldClock2 = WorldClock.fromTimeZoneId(timeZoneId, dstSettings)
-            3 -> worldClock3 = WorldClock.fromTimeZoneId(timeZoneId, dstSettings)
-            4 -> worldClock4 = WorldClock.fromTimeZoneId(timeZoneId, dstSettings)
-            5 -> worldClock5 = WorldClock.fromTimeZoneId(timeZoneId, dstSettings)
-            else -> require(position in 0..5) { "TimeZones position must be in 0..5" }
-        }.also { updateInitializedState() }
-
+            0 -> _homeClock.update { HomeClock.fromTimeZoneId(timeZoneId, dstSettings) }
+            else -> {
+                val index = position.toInt()
+                    .requireIn(1..5) { "TimeZones position must be in 0..5" }
+                    .minus(1)
+                val clock = WorldClock.fromTimeZoneId(timeZoneId, dstSettings)
+                _worldClocks.update {
+                    it.toMutableList().also { it[index] = clock }
+                }
+            }
+        }.also { updateIsInitialized() }
 
     /**
      * Constructs a byte array representing a pair of clocks for packet transmission.
@@ -130,9 +127,9 @@ class ClocksSettings {
         get() {
             require(isInitialized.value) { "Clocks must be initialized" }
             return listOf(
-                getClocksPairPacket(0, 1, homeClock, worldClock1),
-                getClocksPairPacket(2, 3, worldClock2, worldClock3),
-                getClocksPairPacket(4, 5, worldClock4, worldClock5)
+                getClocksPairPacket(0, 1, allClocks[0], allClocks[1]),
+                getClocksPairPacket(2, 3, allClocks[2], allClocks[3]),
+                getClocksPairPacket(4, 5, allClocks[4], allClocks[5])
             )
         }
 
@@ -153,14 +150,9 @@ class ClocksSettings {
     val timeZoneConfigPackets: List<ByteArray>
         get() {
             require(isInitialized.value) { "Clocks must be initialized" }
-            return listOf(
-                byteArrayOf(OpCode.TIMEZONE_CONFIG.byte, 0.toByte()) + homeClock.timeZone.bytes,
-                byteArrayOf(OpCode.TIMEZONE_CONFIG.byte, 1.toByte()) + worldClock1.timeZone.bytes,
-                byteArrayOf(OpCode.TIMEZONE_CONFIG.byte, 2.toByte()) + worldClock2.timeZone.bytes,
-                byteArrayOf(OpCode.TIMEZONE_CONFIG.byte, 3.toByte()) + worldClock3.timeZone.bytes,
-                byteArrayOf(OpCode.TIMEZONE_CONFIG.byte, 4.toByte()) + worldClock4.timeZone.bytes,
-                byteArrayOf(OpCode.TIMEZONE_CONFIG.byte, 5.toByte()) + worldClock5.timeZone.bytes,
-            )
+            return allClocks.mapIndexed { index, clock ->
+                byteArrayOf(OpCode.TIMEZONE_CONFIG.byte, index.toByte()) + clock.timeZone.bytes
+            }
         }
 
     /**
@@ -181,14 +173,9 @@ class ClocksSettings {
     val timeZoneNamePackets: List<ByteArray>
         get() {
             require(isInitialized.value) { "Clocks must be initialized" }
-            return listOf(
-                byteArrayOf(OpCode.TIMEZONE_NAME.byte, 0.toByte()) + homeClock.timeZone.cityNameBytes,
-                byteArrayOf(OpCode.TIMEZONE_NAME.byte, 1.toByte()) + worldClock1.timeZone.cityNameBytes,
-                byteArrayOf(OpCode.TIMEZONE_NAME.byte, 2.toByte()) + worldClock2.timeZone.cityNameBytes,
-                byteArrayOf(OpCode.TIMEZONE_NAME.byte, 3.toByte()) + worldClock3.timeZone.cityNameBytes,
-                byteArrayOf(OpCode.TIMEZONE_NAME.byte, 4.toByte()) + worldClock4.timeZone.cityNameBytes,
-                byteArrayOf(OpCode.TIMEZONE_NAME.byte, 5.toByte()) + worldClock5.timeZone.cityNameBytes,
-            )
+            return allClocks.mapIndexed { index, clock ->
+                byteArrayOf(OpCode.TIMEZONE_NAME.byte, index.toByte()) + clock.timeZone.cityNameBytes
+            }
         }
 
     /**
@@ -209,13 +196,8 @@ class ClocksSettings {
     val coordinatesRadioIdPackets: List<ByteArray>
         get() {
             require(isInitialized.value) { "Clocks must be initialized" }
-            return listOf(
-                byteArrayOf(OpCode.TIMEZONE_LOCATION_RADIO_ID.byte, 0.toByte(), 1.toByte()) + homeClock.timeZone.coordinatesBytes + homeClock.timeZone.radioIdByte,
-                byteArrayOf(OpCode.TIMEZONE_LOCATION_RADIO_ID.byte, 1.toByte(), 1.toByte()) + worldClock1.timeZone.coordinatesBytes + worldClock1.timeZone.radioIdByte,
-                byteArrayOf(OpCode.TIMEZONE_LOCATION_RADIO_ID.byte, 2.toByte(), 1.toByte()) + worldClock2.timeZone.coordinatesBytes + worldClock2.timeZone.radioIdByte,
-                byteArrayOf(OpCode.TIMEZONE_LOCATION_RADIO_ID.byte, 3.toByte(), 1.toByte()) + worldClock3.timeZone.coordinatesBytes + worldClock3.timeZone.radioIdByte,
-                byteArrayOf(OpCode.TIMEZONE_LOCATION_RADIO_ID.byte, 4.toByte(), 1.toByte()) + worldClock4.timeZone.coordinatesBytes + worldClock4.timeZone.radioIdByte,
-                byteArrayOf(OpCode.TIMEZONE_LOCATION_RADIO_ID.byte, 5.toByte(), 1.toByte()) + worldClock5.timeZone.coordinatesBytes + worldClock5.timeZone.radioIdByte,
-            )
+            return allClocks.mapIndexed { index, clock ->
+                byteArrayOf(OpCode.TIMEZONE_LOCATION_RADIO_ID.byte, index.toByte(), 1.toByte()) + clock.timeZone.coordinatesBytes + clock.timeZone.radioIdByte
+            }
         }
 }

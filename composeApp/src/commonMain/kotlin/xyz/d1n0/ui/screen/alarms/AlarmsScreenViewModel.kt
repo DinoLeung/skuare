@@ -5,7 +5,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import xyz.d1n0.lib.model.AlarmsSettings
+import xyz.d1n0.lib.model.Alarm
+import xyz.d1n0.lib.model.SignalAlarm
 import xyz.d1n0.lib.model.Watch
 import xyz.d1n0.lib.model.requestAlarms
 import xyz.d1n0.lib.model.writeAlarms
@@ -14,7 +15,9 @@ class AlarmsScreenViewModel: ViewModel(), KoinComponent {
     private val watch: Watch by inject()
 
     val isInitialized: StateFlow<Boolean> get() = watch.alarms.isInitialized
-    val alarms: AlarmsSettings = watch.alarms
+    val hourlySignal: StateFlow<SignalAlarm?> get() = watch.alarms.hourlySignal
+    val alarms: StateFlow<List<Alarm?>> get() = watch.alarms.alarms
+    val snoozeAlarm: StateFlow<Alarm?> get() = watch.alarms.snoozeAlarm
 
     fun requestAlarms() = watch.scope.launch { watch.requestAlarms() }
 

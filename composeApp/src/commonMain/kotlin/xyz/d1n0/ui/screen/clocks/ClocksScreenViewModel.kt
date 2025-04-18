@@ -12,7 +12,9 @@ class ClocksScreenViewModel: ViewModel(), KoinComponent {
     private val watch: Watch by inject()
 
     val isInitialized: StateFlow<Boolean> get() = watch.clocks.isInitialized
-    val clocks: ClocksSettings get() = watch.clocks
+
+    val homeClock: StateFlow<HomeClock?> get() =  watch.clocks.homeClock
+    val worldClocks: StateFlow<List<WorldClock?>> get() =  watch.clocks.worldClocks
 
     fun requestClocks() = watch.scope.launch { watch.requestClocks() }
 

@@ -2,45 +2,29 @@ package xyz.d1n0.lib.model
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import xyz.d1n0.lib.constant.ConnectionTimeout
 
 class WatchInfo {
-    lateinit var name: WatchName
-    lateinit var watchSettings: WatchSettings
-	lateinit var connectionSettings: ConnectionSettings
+    private val _name = MutableStateFlow<WatchName?>(null)
+    val name: StateFlow<WatchName?> get() = _name.asStateFlow()
 
-    val isNameInitialized: StateFlow<Boolean> get() = _isNameInitializedFlow
-    private val _isNameInitializedFlow = MutableStateFlow(false)
-    private fun updateNameInitializedState() {
-        _isNameInitializedFlow.value = ::name.isInitialized
-    }
+    private val _watchSettings = MutableStateFlow<WatchSettings?>(null)
+    val watchSettings: StateFlow<WatchSettings?> get() = _watchSettings.asStateFlow()
 
-    fun parseNamePacket(packet: ByteArray) {
-        name = WatchName.fromPacket(packet)
-        updateNameInitializedState()
-    }
+    private val _connectionSettings = MutableStateFlow<ConnectionSettings?>(null)
+    val connectionSettings: StateFlow<ConnectionSettings?> get() = _connectionSettings.asStateFlow()
 
-    val isWatchSettingsInitialized: StateFlow<Boolean> get() = _isWatchSettingsInitializedFlow
-    private val _isWatchSettingsInitializedFlow = MutableStateFlow(false)
-    private fun updateWatchSettingsInitializedState() {
-        _isWatchSettingsInitializedFlow.value = ::watchSettings.isInitialized
-    }
 
-	fun parseWatchSettingsPacket(packet: ByteArray) {
-		watchSettings = WatchSettings.fromPacket(packet)
-        updateWatchSettingsInitializedState()
-	}
+    fun parseNamePacket(packet: ByteArray) =
+        _name.update { WatchName.fromPacket(packet) }
 
-    val isConnectionSettingsInitialized: StateFlow<Boolean> get() = _isConnectionSettingsInitializedFlow
-    private val _isConnectionSettingsInitializedFlow = MutableStateFlow(false)
-    private fun updateConnectionSettingsInitializedState() {
-        _isConnectionSettingsInitializedFlow.value = ::connectionSettings.isInitialized
-    }
+	fun parseWatchSettingsPacket(packet: ByteArray) =
+		_watchSettings.update { WatchSettings.fromPacket(packet) }
 
-    fun parseConnectionSettingsPacket(packet: ByteArray) {
-        connectionSettings = ConnectionSettings.fromPacket(packet)
-        updateConnectionSettingsInitializedState()
-    }
-
+    fun parseConnectionSettingsPacket(packet: ByteArray) =
+        _connectionSettings.update { ConnectionSettings.fromPacket(packet) }
 }
 
 

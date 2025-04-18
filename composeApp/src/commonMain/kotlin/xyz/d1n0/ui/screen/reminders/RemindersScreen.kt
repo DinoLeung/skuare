@@ -22,6 +22,9 @@ fun RemindersScreen(
     val isTitlesInitialized = viewModel.isTitlesInitialized.collectAsState(initial = false)
     val isConfigsInitialized = viewModel.isConfigsInitialized.collectAsState(initial = false)
 
+    val reminderTitles = viewModel.reminderTitles.collectAsState(List(5) { null })
+    val reminderConfigs = viewModel.reminderConfigs.collectAsState(List(5) { null })
+
     LaunchedEffect(Unit) {
         if (isTitlesInitialized.value == false)
             viewModel.requestTitles()
@@ -35,16 +38,14 @@ fun RemindersScreen(
         verticalArrangement = Arrangement.Center,
     ) {
         if (isTitlesInitialized.value == true && isConfigsInitialized.value == true) {
-            Text(viewModel.reminders.reminderTitle1.toString(), color = MaterialTheme.colorScheme.onBackground)
-            Text(viewModel.reminders.reminderConfig1.toString(), color = MaterialTheme.colorScheme.onBackground)
-            Text(viewModel.reminders.reminderTitle2.toString(), color = MaterialTheme.colorScheme.onBackground)
-            Text(viewModel.reminders.reminderConfig2.toString(), color = MaterialTheme.colorScheme.onBackground)
-            Text(viewModel.reminders.reminderTitle3.toString(), color = MaterialTheme.colorScheme.onBackground)
-            Text(viewModel.reminders.reminderConfig3.toString(), color = MaterialTheme.colorScheme.onBackground)
-            Text(viewModel.reminders.reminderTitle4.toString(), color = MaterialTheme.colorScheme.onBackground)
-            Text(viewModel.reminders.reminderConfig4.toString(), color = MaterialTheme.colorScheme.onBackground)
-            Text(viewModel.reminders.reminderTitle5.toString(), color = MaterialTheme.colorScheme.onBackground)
-            Text(viewModel.reminders.reminderConfig5.toString(), color = MaterialTheme.colorScheme.onBackground)
+            for(i in 0..4) {
+                reminderTitles.value[i]?.let {
+                    Text(it.toString(), color = MaterialTheme.colorScheme.onBackground)
+                }
+                reminderConfigs.value[i]?.let {
+                    Text(it.toString(), color = MaterialTheme.colorScheme.onBackground)
+                }
+            }
         }
     }
 }

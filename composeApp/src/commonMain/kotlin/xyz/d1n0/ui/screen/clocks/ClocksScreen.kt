@@ -17,6 +17,8 @@ fun ClocksScreen(
 ) {
     val viewModel = koinViewModel<ClocksScreenViewModel>()
     val isInitialized = viewModel.isInitialized.collectAsState(initial = false)
+    val homeClock = viewModel.homeClock.collectAsState(null)
+    val worldClocks = viewModel.worldClocks.collectAsState(List(5) { null })
 
     LaunchedEffect(Unit) {
         if (isInitialized.value == false)
@@ -29,12 +31,14 @@ fun ClocksScreen(
         verticalArrangement = Arrangement.Center,
     ) {
         if (isInitialized.value == true) {
-            Text(viewModel.clocks.homeClock.timeZone.toString(), color = MaterialTheme.colorScheme.onBackground)
-            Text(viewModel.clocks.worldClock1.timeZone.toString(), color = MaterialTheme.colorScheme.onBackground)
-            Text(viewModel.clocks.worldClock2.timeZone.toString(), color = MaterialTheme.colorScheme.onBackground)
-            Text(viewModel.clocks.worldClock3.timeZone.toString(), color = MaterialTheme.colorScheme.onBackground)
-            Text(viewModel.clocks.worldClock4.timeZone.toString(), color = MaterialTheme.colorScheme.onBackground)
-            Text(viewModel.clocks.worldClock5.timeZone.toString(), color = MaterialTheme.colorScheme.onBackground)
+            homeClock.value?.let {
+                Text(it.timeZone.toString(), color = MaterialTheme.colorScheme.onBackground)
+            }
+            worldClocks.value.map { clock ->
+                clock?.let {
+                    Text(it.timeZone.toString(), color = MaterialTheme.colorScheme.onBackground)
+                }
+            }
         }
     }
 }

@@ -3,8 +3,8 @@ package xyz.d1n0.ui.screen.scan
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Button
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -35,18 +35,16 @@ fun ScanScreen(
         verticalArrangement = Arrangement.Center,
     ) {
         if (state.hasScanPermission) {
-            Button(
-                onClick = { viewModel.startScanning(onConnect = onConnect) },
-                enabled = !state.isScanning,
-            ) {
-                Text("Scan!")
-            }
-            Button(
-                onClick = viewModel::stopScanning,
-                enabled = state.isScanning,
-            ) {
-                Text("Stop!")
-            }
+            if (state.isScanning)
+                Button(
+                    onClick = viewModel::stopScanning,
+                    enabled = state.isScanning,
+                ) { Text("Stop!") }
+            else
+                Button(
+                    onClick = { viewModel.startScanning(onConnect = onConnect) },
+                    enabled = !state.isScanning,
+                ) { Text("Scan!") }
         } else {
             Button(
                 onClick = viewModel.permissionsController::openAppSettings,

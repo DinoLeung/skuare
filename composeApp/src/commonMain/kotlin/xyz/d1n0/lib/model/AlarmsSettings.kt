@@ -2,29 +2,34 @@ package xyz.d1n0.lib.model
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
+import xyz.d1n0.Log
 import xyz.d1n0.lib.constant.OpCode
 import kotlin.experimental.or
+import kotlin.getValue
 
-class AlarmsSettings {
-    lateinit var hourlySignal: SignalAlarm
-    lateinit var alarm1: Alarm
-    lateinit var alarm2: Alarm
-    lateinit var alarm3: Alarm
-    lateinit var alarm4: Alarm
-    lateinit var alarmSnooze: Alarm
+class AlarmsSettings{
+    private val _hourlySignal = MutableStateFlow<SignalAlarm?>(null)
+    val hourlySignal: StateFlow<SignalAlarm?> get() = _hourlySignal.asStateFlow()
 
-    val isInitialized: StateFlow<Boolean> get() = _isInitializedFlow
-    private val _isInitializedFlow = MutableStateFlow(false)
-    private fun updateInitializedState() {
-        _isInitializedFlow.value = (
-            ::hourlySignal.isInitialized
-            && ::alarm1.isInitialized
-            && ::alarm2.isInitialized
-            && ::alarm3.isInitialized
-            && ::alarm4.isInitialized
-            && ::alarmSnooze.isInitialized
+    private val _alarms = MutableStateFlow<List<Alarm?>>(List(4) { null })
+    val alarms: StateFlow<List<Alarm?>> get() = _alarms.asStateFlow()
+
+    private val _snoozeAlarm = MutableStateFlow<Alarm?>(null)
+    val snoozeAlarm: StateFlow<Alarm?> get() = _snoozeAlarm.asStateFlow()
+
+    private val allAlarms: List<Alarm> get() =
+        listOfNotNull(
+            *alarms.value.toTypedArray(),
+            snoozeAlarm.value
         )
-    }
+
+    val isInitialized: StateFlow<Boolean> get() = _isInitialized.asStateFlow()
+    private val _isInitialized = MutableStateFlow(false)
+    private fun updateIsInitialized() = _isInitialized.update { _hourlySignal.value != null && allAlarms.size == 5 }
 
     @OptIn(ExperimentalStdlibApi::class)
     fun parseAlarmAPacket(packet: ByteArray) {
@@ -34,9 +39,11 @@ class AlarmsSettings {
         require(packet.size == 5) {
             "Alarm A packet must be exactly 5 bytes long, e.g. 15 C0 00 0C 1E"
         }
-        hourlySignal = SignalAlarm.fromByte(packet[0])
-        alarm1 = Alarm.fromBytes(packet.sliceArray(1..packet.lastIndex))
-        updateInitializedState()
+        _hourlySignal.update { SignalAlarm.fromByte(packet[0]) }
+        _alarms.update {
+            it.toMutableList().also { it[0] = Alarm.fromBytes(packet.sliceArray(1..packet.lastIndex)) }
+        }
+        updateIsInitialized()
     }
 
     @OptIn(ExperimentalStdlibApi::class)
@@ -47,19 +54,23 @@ class AlarmsSettings {
         require(packet.size == 17) {
             "Alarm B packet must be exactly 17 bytes long, e.g. 16 00 00 01 1E 00 00 0E 0F 00 00 0F 2D 40 00 17 3B"
         }
-        alarm2 = Alarm.fromBytes(packet.sliceArray(1..4))
-        alarm3 = Alarm.fromBytes(packet.sliceArray(5..8))
-        alarm4 = Alarm.fromBytes(packet.sliceArray(9..12))
-        alarmSnooze = Alarm.fromBytes(packet.sliceArray(13..packet.lastIndex))
-        updateInitializedState()
+        _alarms.update {
+            it.toMutableList()
+                .also { it[1] = Alarm.fromBytes(packet.sliceArray(1..4)) }
+                .also { it[2] = Alarm.fromBytes(packet.sliceArray(5..8)) }
+                .also { it[3] = Alarm.fromBytes(packet.sliceArray(9..12)) }
+        }
+        _snoozeAlarm.update { Alarm.fromBytes(packet.sliceArray(13..packet.lastIndex)) }
+        updateIsInitialized()
     }
 
     val alarmAPacket: ByteArray
         get() {
-            require(isInitialized.value) { "Alarms must be initialized" }
-            val signalBytes = hourlySignal.byte
-            val alarmBytes = alarm1.bytes.apply {
-                this[0] = this[0] or hourlySignal.byte
+            val signal = requireNotNull(hourlySignal.value) { "Alarms must be initialized" }
+            val firstAlarm = requireNotNull(alarms.value.first()) { "Alarms must be initialized" }
+            val signalBytes = signal.byte
+            val alarmBytes = firstAlarm.bytes.apply {
+                this[0] = this[0] or signal.byte
             }
             return byteArrayOf(
                 OpCode.ALARM_A.byte,
@@ -68,14 +79,10 @@ class AlarmsSettings {
         }
 
     val alarmBPacket: ByteArray
-        get() {
-            require(isInitialized.value) { "Alarms must be initialized" }
-            return byteArrayOf(
-                OpCode.ALARM_B.byte,
-                *alarm2.bytes,
-                *alarm3.bytes,
-                *alarm4.bytes,
-                *alarmSnooze.bytes,
+        get() = listOf<Alarm?>(
+                *alarms.value.drop(1).toTypedArray(),
+                snoozeAlarm.value,
             )
-        }
+            .map { requireNotNull(it) { "Alarms must be initialized" } }
+            .fold(byteArrayOf(OpCode.ALARM_B.byte)) { acc, alarm -> acc + alarm.bytes }
 }

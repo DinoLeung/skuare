@@ -15,13 +15,13 @@ suspend fun Watch.requestAppInfo() = request(OpCode.APP_INFO)
 suspend fun Watch.requestWatchCondition() = request(OpCode.WATCH_CONDITION)
 
 suspend fun Watch.requestConnectionSettings() = request(OpCode.CONNECTION_SETTINGS)
-suspend fun Watch.writeConnectionSettings() = write(info.connectionSettings.packet)
+suspend fun Watch.writeConnectionSettings() = info.connectionSettings.value?.let { write(it.packet) }
 
 suspend fun Watch.requestWatchSettings() = request(OpCode.WATCH_SETTINGS)
-suspend fun Watch.writeWatchSettings() = write(info.watchSettings.packet)
+suspend fun Watch.writeWatchSettings() = info.watchSettings.value?.let { write(it.packet) }
 
 suspend fun Watch.requestName() = request(OpCode.WATCH_NAME)
-suspend fun Watch.writeName() = write(info.name.packet)
+suspend fun Watch.writeName() = info.name.value?.let { write(it.packet) }
 
 suspend fun Watch.requestTimer() = request(OpCode.TIMER)
 suspend fun Watch.writeTimer() = write(timer.timerPacket)
@@ -37,7 +37,7 @@ suspend fun Watch.writeClocks() =
     }
 
 suspend fun Watch.writeTime(delay: Duration = 0.seconds) =
-    write(clocks.homeClock.getCurrentDateTimePacket(delay = delay))
+    clocks.homeClock.value?.let { write(it.getCurrentDateTimePacket(delay = delay)) }
 
 suspend fun Watch.requestAlarms() {
     request(OpCode.ALARM_A)
@@ -179,6 +179,7 @@ suspend fun Watch.handlePacket(packet: ByteArray) = when (OpCode.fromByte(packet
     OpCode.WATCH_NAME -> {
         runCatching {
             info.parseNamePacket(packet)
+            log.d { "Water name packet: ${info.name.value}" }
         }.onFailure { log.e { "Failed to parse name packet: ${it.message}" } }
     }
     OpCode.APP_INFO -> {
