@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import xyz.d1n0.Log
+import xyz.d1n0.lib.model.Reminder
 
 @Composable
 fun RemindersScreen(
@@ -22,8 +23,7 @@ fun RemindersScreen(
     val isTitlesInitialized = viewModel.isTitlesInitialized.collectAsState(initial = false)
     val isConfigsInitialized = viewModel.isConfigsInitialized.collectAsState(initial = false)
 
-    val reminderTitles = viewModel.reminderTitles.collectAsState(List(5) { null })
-    val reminderConfigs = viewModel.reminderConfigs.collectAsState(List(5) { null })
+    val reminders = viewModel.reminders.collectAsState(List(5) { Reminder() })
 
     LaunchedEffect(Unit) {
         if (isTitlesInitialized.value == false)
@@ -38,13 +38,9 @@ fun RemindersScreen(
         verticalArrangement = Arrangement.Center,
     ) {
         if (isTitlesInitialized.value == true && isConfigsInitialized.value == true) {
-            for(i in 0..4) {
-                reminderTitles.value[i]?.let {
-                    Text(it.toString(), color = MaterialTheme.colorScheme.onBackground)
-                }
-                reminderConfigs.value[i]?.let {
-                    Text(it.toString(), color = MaterialTheme.colorScheme.onBackground)
-                }
+            reminders.value.forEach { reminder ->
+                Text(reminder!!.title.toString(), color = MaterialTheme.colorScheme.onBackground)
+                Text(reminder!!.config.toString(), color = MaterialTheme.colorScheme.onBackground)
             }
         }
     }

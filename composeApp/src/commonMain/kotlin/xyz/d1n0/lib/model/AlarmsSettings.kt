@@ -4,16 +4,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
-import xyz.d1n0.Log
 import xyz.d1n0.lib.constant.OpCode
 import kotlin.experimental.or
-import kotlin.getValue
 
 class AlarmsSettings{
-    private val _hourlySignal = MutableStateFlow<SignalAlarm?>(null)
-    val hourlySignal: StateFlow<SignalAlarm?> get() = _hourlySignal.asStateFlow()
+    private val _hourlySignal = MutableStateFlow<HourlySignal?>(null)
+    val hourlySignal: StateFlow<HourlySignal?> get() = _hourlySignal.asStateFlow()
 
     private val _alarms = MutableStateFlow<List<Alarm?>>(List(4) { null })
     val alarms: StateFlow<List<Alarm?>> get() = _alarms.asStateFlow()
@@ -39,7 +35,7 @@ class AlarmsSettings{
         require(packet.size == 5) {
             "Alarm A packet must be exactly 5 bytes long, e.g. 15 C0 00 0C 1E"
         }
-        _hourlySignal.update { SignalAlarm.fromByte(packet[0]) }
+        _hourlySignal.update { HourlySignal.fromByte(packet[0]) }
         _alarms.update {
             it.toMutableList().also { it[0] = Alarm.fromBytes(packet.sliceArray(1..packet.lastIndex)) }
         }
@@ -66,8 +62,8 @@ class AlarmsSettings{
 
     val alarmAPacket: ByteArray
         get() {
-            val signal = requireNotNull(hourlySignal.value) { "Alarms must be initialized" }
-            val firstAlarm = requireNotNull(alarms.value.first()) { "Alarms must be initialized" }
+            val signal = requireNotNull(hourlySignal.value) { "HourlySignal must be initialized" }
+            val firstAlarm = requireNotNull(alarms.value.first()) { "Alarm at position 0 must be initialized" }
             val signalBytes = signal.byte
             val alarmBytes = firstAlarm.bytes.apply {
                 this[0] = this[0] or signal.byte
@@ -79,10 +75,17 @@ class AlarmsSettings{
         }
 
     val alarmBPacket: ByteArray
-        get() = listOf<Alarm?>(
+        get() {
+            val alarmList = listOf<Alarm?>(
                 *alarms.value.drop(1).toTypedArray(),
                 snoozeAlarm.value,
             )
-            .map { requireNotNull(it) { "Alarms must be initialized" } }
-            .fold(byteArrayOf(OpCode.ALARM_B.byte)) { acc, alarm -> acc + alarm.bytes }
+            return alarmList.mapIndexed { index, alarm ->
+                requireNotNull(alarm) {
+                    if (index == alarmList.lastIndex) "SnoozeAlarm must be initialized"
+                    else "Alarm at position ${index + 1} must be initialized"
+                }
+            }
+                .fold(byteArrayOf(OpCode.ALARM_B.byte)) { acc, alarm -> acc + alarm.bytes }
+        }
 }

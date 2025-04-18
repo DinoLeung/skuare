@@ -2,12 +2,12 @@ package xyz.d1n0.lib.model
 
 import xyz.d1n0.lib.constant.AlarmBitMask
 
-data class SignalAlarm(
+data class HourlySignal(
     var enable: Boolean,
 ) {
     companion object {
-        fun fromByte(byte: Byte): SignalAlarm {
-            return SignalAlarm(
+        fun fromByte(byte: Byte): HourlySignal {
+            return HourlySignal(
                 enable = byte.toInt() and AlarmBitMask.HOURLY_SIG != 0,
             )
         }

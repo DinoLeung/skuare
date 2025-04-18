@@ -150,6 +150,7 @@ suspend fun Watch.adjustTime(delay: Duration = 0.seconds, writeTimezoneMetadata:
 @OptIn(ExperimentalStdlibApi::class)
 suspend fun Watch.handlePacket(packet: ByteArray) = when (OpCode.fromByte(packet.first())) {
     OpCode.CONNECT_REASON -> {
+        info.parseConnectReasonPacket(packet)
         val reason = ConnectReason.fromByte(packet[8])
         when (reason) {
             ConnectReason.SETUP, ConnectReason.DEFAULT -> {
@@ -230,6 +231,7 @@ suspend fun Watch.handlePacket(packet: ByteArray) = when (OpCode.fromByte(packet
     }
     OpCode.REMINDER_CONFIG -> {
         runCatching {
+            // it returns 3101000000000000000000 on new watches
             reminders.parseReminderConfigPacket(packet)
         }.onFailure { log.e { "Failed to parse reminder config packet: ${it.message}" } }
     }
