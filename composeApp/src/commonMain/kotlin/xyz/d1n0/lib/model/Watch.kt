@@ -3,7 +3,9 @@ package xyz.d1n0.lib.model
 import com.juul.kable.*
 import com.juul.kable.logs.Logging
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.io.IOException
 import org.koin.core.component.KoinComponent
@@ -39,11 +41,20 @@ class Watch(private val peripheral: Peripheral): KoinComponent {
 
 	val log: Log by inject()
 
-	val info = WatchInfo()
-	val clocks = ClocksSettings()
-	val alarms = AlarmsSettings()
-	val timer = TimerSettings()
-	val reminders = RemindersSettings()
+	internal val _info = MutableStateFlow(WatchInfo())
+	val info: StateFlow<WatchInfo> =_info.asStateFlow()
+
+	internal val _clocks = MutableStateFlow(ClocksSettings())
+	val clocks: StateFlow<ClocksSettings> get() = _clocks.asStateFlow()
+
+	internal val _alarms = MutableStateFlow(AlarmsSettings())
+	val alarms: StateFlow<AlarmsSettings> get() = _alarms.asStateFlow()
+
+	internal val _timer = MutableStateFlow(TimerSettings())
+	val timer: StateFlow<TimerSettings> get() = _timer.asStateFlow()
+
+	internal val _reminders = MutableStateFlow(RemindersSettings())
+	val reminders: StateFlow<RemindersSettings> = _reminders.asStateFlow()
 
 	/**
 	 * Provides the [CoroutineScope] associated with the watch connection.

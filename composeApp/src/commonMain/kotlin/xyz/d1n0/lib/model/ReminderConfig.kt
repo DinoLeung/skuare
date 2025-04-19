@@ -1,6 +1,7 @@
 package xyz.d1n0.lib.model
 
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.toLocalDateTime
 import xyz.d1n0.lib.constant.ReminderBitmask
 import xyz.d1n0.lib.constant.ReminderDayOfWeek
 import xyz.d1n0.lib.constant.ReminderRecurrence
@@ -8,7 +9,6 @@ import xyz.d1n0.lib.helper.fromBcdByteArray
 import xyz.d1n0.lib.helper.toBcdByteArray
 import kotlinx.datetime.Clock as KotlinClock
 import kotlinx.datetime.TimeZone as KotlinTimeZone
-import kotlinx.datetime.toLocalDateTime
 
 data class ReminderConfig(
     val enable: Boolean,
@@ -20,11 +20,24 @@ data class ReminderConfig(
     companion object {
         fun fromBytes(bytes: ByteArray): ReminderConfig {
             require(bytes.size == 9) { "Reminder Config bytes must be 9 bytes long, e.g. 11 25 03 25 25 03 25 12 00" }
+
+            val startDate = runCatching {
+                LocalDate.fromBcdByteArray(bytes.sliceArray(1..3))
+            }.getOrElse {
+                KotlinClock.System.now().toLocalDateTime(KotlinTimeZone.currentSystemDefault()).date
+            }
+
+            val endDate = runCatching {
+                LocalDate.fromBcdByteArray(bytes.sliceArray(4..6))
+            }.getOrElse {
+                KotlinClock.System.now().toLocalDateTime(KotlinTimeZone.currentSystemDefault()).date
+            }
+
             return ReminderConfig(
                 enable = bytes[0].toInt() and ReminderBitmask.ENABLE != 0,
                 recurrence = ReminderRecurrence.fromByte(bytes[0]),
-                startDate = LocalDate.fromBcdByteArray(bytes.sliceArray(1..3)),
-                endDate = LocalDate.fromBcdByteArray(bytes.sliceArray(4..6)),
+                startDate = startDate,
+                endDate = endDate,
                 daysOfWeek = ReminderDayOfWeek.daysFromByte(bytes[7]),
                 )
         }

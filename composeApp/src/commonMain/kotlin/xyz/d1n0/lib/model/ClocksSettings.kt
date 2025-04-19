@@ -1,30 +1,20 @@
 package xyz.d1n0.lib.model
 
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.update
 import xyz.d1n0.lib.constant.OpCode
 import xyz.d1n0.lib.helper.fromLittleEndianByteArray
 import xyz.d1n0.lib.helper.requireIn
 
 class ClocksSettings {
-    private val _homeClock = MutableStateFlow<HomeClock?>(null)
-    val homeClock: StateFlow<HomeClock?> get() = _homeClock.asStateFlow()
-
-    private val _worldClocks = MutableStateFlow<List<WorldClock?>>(List(5) { null })
-    val worldClocks: StateFlow<List<WorldClock?>> get() = _worldClocks.asStateFlow()
+    var homeClock: HomeClock? = null
+    var worldClocks: List<WorldClock?> = List(5) { null }
 
     private val allClocks: List<Clock?> get() =
         listOf(
-            homeClock.value,
-            *worldClocks.value.toTypedArray(),
+            homeClock,
+            *worldClocks.toTypedArray(),
         )
 
-    val isInitialized: StateFlow<Boolean> get() = _isInitialized.asStateFlow()
-    private val _isInitialized = MutableStateFlow(false)
-    private fun updateIsInitialized() = _isInitialized.update { listOfNotNull(*allClocks.toTypedArray()).size == 6 }
+    val isInitialized: Boolean get() = listOfNotNull(*allClocks.toTypedArray()).size == 6
 
     /**
      * Sets a clock for the specified position with the given time zone ID and DST status.
@@ -37,17 +27,18 @@ class ClocksSettings {
      */
     private fun setClock(position: Byte, timeZoneId: Short, dstSettings: DstSettings) =
         when (position.toInt()) {
-            0 -> _homeClock.update { HomeClock.fromTimeZoneId(timeZoneId, dstSettings) }
+            0 -> {
+                homeClock = HomeClock.fromTimeZoneId(timeZoneId, dstSettings)
+            }
+
             else -> {
                 val index = position.toInt()
                     .requireIn(1..5) { "TimeZones position must be in 0..5" }
                     .minus(1)
                 val clock = WorldClock.fromTimeZoneId(timeZoneId, dstSettings)
-                _worldClocks.update {
-                    it.toMutableList().also { it[index] = clock }
-                }
+                worldClocks = worldClocks.toMutableList().also { it[index] = clock }
             }
-        }.also { updateIsInitialized() }
+        }
 
     /**
      * Constructs a byte array representing a pair of clocks for packet transmission.
@@ -126,8 +117,8 @@ class ClocksSettings {
      */
     val clocksPackets: List<ByteArray>
         get() {
-            val homeClockValue = requireNotNull(homeClock.value) { "HomeClock must be initialized" }
-            val worldClockValues = worldClocks.value.mapIndexed { index, clock ->
+            val homeClockValue = requireNotNull(homeClock) { "HomeClock must be initialized" }
+            val worldClockValues = worldClocks.mapIndexed { index, clock ->
                 requireNotNull(clock) { "WorldClock at position $index must be initialized" } }
             return listOf(
                 getClocksPairPacket(0, 1, homeClockValue, worldClockValues[0]),

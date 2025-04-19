@@ -1,6 +1,7 @@
 package xyz.d1n0.lib.model
 
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withTimeoutOrNull
 import xyz.d1n0.lib.constant.ConnectReason
 import xyz.d1n0.lib.constant.OpCode
@@ -15,29 +16,33 @@ suspend fun Watch.requestAppInfo() = request(OpCode.APP_INFO)
 suspend fun Watch.requestWatchCondition() = request(OpCode.WATCH_CONDITION)
 
 suspend fun Watch.requestConnectionSettings() = request(OpCode.CONNECTION_SETTINGS)
-suspend fun Watch.writeConnectionSettings() = info.connectionSettings.value?.let { write(it.packet) }
+suspend fun Watch.writeConnectionSettings(connectionSettings: ConnectionSettings) = write(connectionSettings.packet)
+    .also { requestConnectionSettings() }
 
 suspend fun Watch.requestWatchSettings() = request(OpCode.WATCH_SETTINGS)
-suspend fun Watch.writeWatchSettings() = info.watchSettings.value?.let { write(it.packet) }
+suspend fun Watch.writeWatchSettings(watchSettings: WatchSettings) = write(watchSettings.packet)
+    .also { requestWatchSettings() }
 
 suspend fun Watch.requestName() = request(OpCode.WATCH_NAME)
-suspend fun Watch.writeName() = info.name.value?.let { write(it.packet) }
+suspend fun Watch.writeName(watchName: WatchName) = write(watchName.packet)
+    .also { requestName() }
 
 suspend fun Watch.requestTimer() = request(OpCode.TIMER)
-suspend fun Watch.writeTimer() = write(timer.timerPacket)
+suspend fun Watch.writeTimer(timer: Timer) = write(timer.packet)
+        .also { requestTimer() }
 
 suspend fun Watch.requestClocks() =
     repeat(3) {
         log.d { "requestClocks" }
         request(OpCode.CLOCK)
     }
-suspend fun Watch.writeClocks() =
-    clocks.clocksPackets.forEach {
-        write(it)
-    }
+// TODO:
+suspend fun Watch.writeClocks(clocksSettings: ClocksSettings) =
+    clocksSettings.clocksPackets.forEach { write(it) }
+        .also { requestClocks() }
 
 suspend fun Watch.writeTime(delay: Duration = 0.seconds) =
-    clocks.homeClock.value?.let { write(it.getCurrentDateTimePacket(delay = delay)) }
+    clocks.value.homeClock?.let { write(it.getCurrentDateTimePacket(delay = delay)) }
 
 suspend fun Watch.requestAlarms() {
     request(OpCode.ALARM_A)
@@ -45,8 +50,8 @@ suspend fun Watch.requestAlarms() {
 }
 
 suspend fun Watch.writeAlarms() {
-    write(alarms.alarmAPacket)
-    write(alarms.alarmBPacket)
+    write(alarms.value.alarmAPacket)
+    write(alarms.value.alarmBPacket)
 }
 
 suspend fun Watch.requestTimeZoneConfigs() {
@@ -54,52 +59,46 @@ suspend fun Watch.requestTimeZoneConfigs() {
         request(OpCode.TIMEZONE_CONFIG, i)
     }
 }
-suspend fun Watch.writeTimeZoneConfigs() =
-    clocks.timeZoneConfigPackets.forEach {
-        write(it)
-    }
+suspend fun Watch.writeTimeZoneConfigs(clocksSettings: ClocksSettings) =
+    clocksSettings.timeZoneConfigPackets.forEach { write(it) }
+//        .also { requestTimeZoneConfigs() }
 
 suspend fun Watch.requestTimeZoneNames() {
     for(i in 0..5) {
         request(OpCode.TIMEZONE_NAME, i)
     }
 }
-suspend fun Watch.writeTimeZoneNames() =
-    clocks.timeZoneNamePackets.forEach {
-        write(it)
-    }
+suspend fun Watch.writeTimeZoneNames(clocksSettings: ClocksSettings) =
+    clocksSettings.timeZoneNamePackets.forEach { write(it) }
+//        .also { requestTimeZoneNames() }
 
 suspend fun Watch.requestTimeZoneCoordinatesAndRadioId() {
     for(i in 0..5) {
         request(OpCode.TIMEZONE_LOCATION_RADIO_ID, i)
     }
 }
-suspend fun Watch.writeTimeZoneCoordinatesAndRadioId() =
-    clocks.coordinatesRadioIdPackets.forEach {
-        write(it)
-    }
+suspend fun Watch.writeTimeZoneCoordinatesAndRadioId(clocksSettings: ClocksSettings) =
+    clocksSettings.coordinatesRadioIdPackets.forEach { write(it) }
+//        .also { requestTimeZoneNames() }
 
 suspend fun Watch.requestReminderTitles() {
     for(i in 1..5) {
         request(OpCode.REMINDER_TITLE, i)
     }
 }
-suspend fun Watch.writeReminderTitles() {
-    reminders.reminderTitlePackets.forEach {
-        write(it)
-    }
-}
+suspend fun Watch.writeReminderTitles(remindersSettings: RemindersSettings) =
+    remindersSettings.reminderTitlePackets.forEach { write(it) }
+        .also { requestReminderTitles() }
+
 
 suspend fun Watch.requestReminderConfigs() {
     for(i in 1..5) {
         request(OpCode.REMINDER_CONFIG, i)
     }
 }
-suspend fun Watch.writeReminderConfigs() {
-    reminders.reminderConfigPackets.forEach {
-        write(it)
-    }
-}
+suspend fun Watch.writeReminderConfigs(remindersSettings: RemindersSettings) =
+    remindersSettings.reminderConfigPackets.forEach { write(it) }
+        .also { requestReminderConfigs() }
 
 /**
  * Synchronizes the watch's time, optionally including time zone data.
@@ -114,19 +113,19 @@ suspend fun Watch.writeReminderConfigs() {
  * @param writeTimezoneMetadata If true, timezone metadata will also be written (default is false).
  */
 suspend fun Watch.adjustTime(delay: Duration = 0.seconds, writeTimezoneMetadata: Boolean = false) = runCatching {
-    if (clocks.isInitialized.value == false) {
+    if (clocks.value.isInitialized == false) {
         requestClocks()
         withTimeoutOrNull(10.seconds) {
-            while (clocks.isInitialized.value == false) {
+            while (clocks.value.isInitialized == false) {
                 delay(100.milliseconds)
             }
         } ?: throw IllegalStateException("Timeout waiting for clocks initialization")
     }
-    writeClocks()
-    writeTimeZoneConfigs()
-    writeTimeZoneNames()
+    writeClocks(clocks.value)
+    writeTimeZoneConfigs(clocks.value)
+    writeTimeZoneNames(clocks.value)
     if (writeTimezoneMetadata)
-        writeTimeZoneCoordinatesAndRadioId()
+        writeTimeZoneCoordinatesAndRadioId(clocks.value)
     writeTime(delay = delay)
 }.onSuccess {
     log.d { "Time sync completed" }
@@ -150,7 +149,7 @@ suspend fun Watch.adjustTime(delay: Duration = 0.seconds, writeTimezoneMetadata:
 @OptIn(ExperimentalStdlibApi::class)
 suspend fun Watch.handlePacket(packet: ByteArray) = when (OpCode.fromByte(packet.first())) {
     OpCode.CONNECT_REASON -> {
-        info.parseConnectReasonPacket(packet)
+        _info.update { it.apply { parseConnectReasonPacket(packet) } }
         val reason = ConnectReason.fromByte(packet[8])
         when (reason) {
             ConnectReason.SETUP, ConnectReason.DEFAULT -> {
@@ -169,18 +168,17 @@ suspend fun Watch.handlePacket(packet: ByteArray) = when (OpCode.fromByte(packet
     }
     OpCode.CONNECTION_SETTINGS -> {
         runCatching {
-            info.parseConnectionSettingsPacket(packet)
+            _info.update { it.apply { parseConnectionSettingsPacket(packet) } }
         }.onFailure { log.e { "Failed to parse auto sync settings packet: ${it.message}" } }
     }
     OpCode.WATCH_SETTINGS -> {
         runCatching {
-            info.parseWatchSettingsPacket(packet)
+            _info.update { it.apply { parseWatchSettingsPacket(packet) } }
         }.onFailure { log.e { "Failed to parse settings packet: ${it.message}" } }
     }
     OpCode.WATCH_NAME -> {
         runCatching {
-            info.parseNamePacket(packet)
-            log.d { "Water name packet: ${info.name.value}" }
+            _info.update { it.apply { parseNamePacket(packet) } }
         }.onFailure { log.e { "Failed to parse name packet: ${it.message}" } }
     }
     OpCode.APP_INFO -> {
@@ -203,7 +201,9 @@ suspend fun Watch.handlePacket(packet: ByteArray) = when (OpCode.fromByte(packet
     OpCode.CLOCK -> {
         runCatching {
             log.d { packet.toHexString(HexFormat.UpperCase) }
-            clocks.parseClocksPacket(packet)
+            _clocks.update {
+                it.apply { parseClocksPacket(packet) }
+            }
         }.onFailure { log.e { "Failed to parse clocks packet: ${it.message}" } }
     }
     OpCode.TIMEZONE_NAME -> { /* Do Nothing */}
@@ -211,28 +211,32 @@ suspend fun Watch.handlePacket(packet: ByteArray) = when (OpCode.fromByte(packet
     OpCode.TIMEZONE_LOCATION_RADIO_ID -> { /* Do Nothing */ }
     OpCode.ALARM_A -> {
         runCatching {
-            alarms.parseAlarmAPacket(packet)
+            _alarms.update {
+                it.apply { parseAlarmAPacket(packet) }
+            }
         }.onFailure { log.e { "Failed to parse alarm A packet: ${it.message}" } }
     }
     OpCode.ALARM_B -> {
         runCatching {
-            alarms.parseAlarmBPacket(packet)
+            _alarms.update {
+                it.apply { parseAlarmBPacket(packet) }
+            }
         }.onFailure { log.e { "Failed to parse alarm B packet: ${it.message}" } }
     }
     OpCode.TIMER -> {
         runCatching {
-            timer.parseTimerPacket(packet)
+            _timer.update { it.apply { parseTimerPacket(packet) } }
         }.onFailure { log.e { "Failed to parse timer packet: ${it.message}" } }
     }
     OpCode.REMINDER_TITLE -> {
         runCatching {
-            reminders.parseReminderTitlePacket(packet)
+            _reminders.update { it.apply { parseReminderTitlePacket(packet) } }
         }.onFailure { log.e { "Failed to parse reminder title packet: ${it.message}" } }
     }
     OpCode.REMINDER_CONFIG -> {
         runCatching {
             // it returns 3101000000000000000000 on new watches
-            reminders.parseReminderConfigPacket(packet)
+            _reminders.update { it.apply { parseReminderConfigPacket(packet) } }
         }.onFailure { log.e { "Failed to parse reminder config packet: ${it.message}" } }
     }
     OpCode.ERROR -> log.e { "Error: ${packet.toHexString(HexFormat.UpperCase)}" }

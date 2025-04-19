@@ -1,7 +1,6 @@
 package xyz.d1n0.ui.screen.timer
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,7 +32,7 @@ fun TimerScreen(
 
         ) {
         if (isInitialized.value == true) {
-            Text(viewModel.timer.timer.toString())
+            Text(viewModel.timer.value.toString())
         }
     }
 }

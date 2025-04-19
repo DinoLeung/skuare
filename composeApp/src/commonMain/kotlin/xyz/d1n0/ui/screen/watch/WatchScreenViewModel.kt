@@ -7,8 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import xyz.d1n0.lib.model.* // TODO: import all for now :(
-import xyz.d1n0.ui.navigation.RootNavRoute
+import xyz.d1n0.lib.model.*
 
 class WatchScreenViewModel: ViewModel(), KoinComponent {
     private val watch: Watch by inject()
@@ -33,5 +32,7 @@ class WatchScreenViewModel: ViewModel(), KoinComponent {
     }
 
     fun writeAlarms() = watch.scope.launch { watch.writeAlarms() }
-    fun writeTimer() = watch.scope.launch { watch.writeTimer() }
+    fun writeTimer() = watch.scope.launch {
+//        watch.writeTimer()
+    }
 }

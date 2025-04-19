@@ -1,5 +1,6 @@
 package xyz.d1n0.lib.model
 
+import xyz.d1n0.lib.constant.OpCode
 import xyz.d1n0.lib.constant.TimerStatus
 import xyz.d1n0.lib.helper.fromByteArray
 import xyz.d1n0.lib.helper.toByteArray
@@ -11,26 +12,36 @@ data class Timer(
     val status: TimerStatus
 ) {
     companion object {
-        fun fromBytes(bytes: ByteArray): Timer {
-            require(bytes.size == 7) {
-                "Timer bytes must be exactly 7 bytes long, e.g. 17 0F 1E 00 00 00 00"
+
+        @OptIn(ExperimentalStdlibApi::class)
+        fun fromPacket(packet: ByteArray): Timer {
+            require(packet.first() == OpCode.TIMER.byte) {
+                "Timer packet must starts with command code ${OpCode.TIMER.byte.toHexString(HexFormat.UpperCase)}"
             }
-            return Timer(
-                duration = Duration.fromByteArray(bytes.sliceArray(0..2)),
-                status = TimerStatus.fromByte(bytes.last()),
-            )
+            require(packet.size == 8) {
+                "Timer packet bytes must be exactly 8 bytes long, e.g. 18 17 0F 1E 00 00 00 00"
+            }
+            return packet.drop(1)
+                .toByteArray()
+                .let {
+                    Timer(
+                        duration = Duration.fromByteArray(it.sliceArray(0..2)),
+                        status = TimerStatus.fromByte(it.last()),
+                    )
+                }
         }
     }
 
-    val bytes: ByteArray
+    val packet: ByteArray
         get() {
             val durationBytes = duration.toByteArray()
-            return ByteArray(7) {
+            return ByteArray(8) {
                 when (it) {
-                    0 -> durationBytes[0]
-                    1 -> durationBytes[1]
-                    2 -> durationBytes[2]
-                    6 -> status.byte
+                    0 -> OpCode.TIMER.byte
+                    1 -> durationBytes[0]
+                    2 -> durationBytes[1]
+                    3 -> durationBytes[2]
+                    7 -> status.byte
                     else -> 0
                 }
             }
