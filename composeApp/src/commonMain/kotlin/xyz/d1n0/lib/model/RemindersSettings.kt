@@ -40,7 +40,7 @@ class RemindersSettings {
                 .requireIn(1..5) { "Reminder position must be in 1..5" }
                 .minus(1)
             val title = ReminderTitle.fromBytes(packet.sliceArray(2..packet.lastIndex))
-            it.toMutableList().also { it[index].title = title }
+            it.toMutableList().also { it[index] = it[index].copy(title = title) }
         }.also { updateIsInitialized() }
     }
 
@@ -57,7 +57,7 @@ class RemindersSettings {
                 .requireIn(1..5) { "Reminder position must be in 1..5" }
                 .minus(1)
             val config = ReminderConfig.fromBytes(packet.sliceArray(2..packet.lastIndex))
-            it.toMutableList().also { it[index].config = config }
+            it.toMutableList().also { it[index] = it[index].copy(config = config) }
         }.also { updateIsInitialized() }
     }
 

@@ -19,7 +19,7 @@ class RemindersScreenViewModel: ViewModel(), KoinComponent {
     val isTitlesInitialized: StateFlow<Boolean> get() = watch.reminders.isTitlesInitialized
     val isConfigsInitialized: StateFlow<Boolean> get() = watch.reminders.isConfigsInitialized
 
-    val reminders: StateFlow<List<Reminder?>> get() = watch.reminders.reminders
+    val reminders: StateFlow<List<Reminder>> get() = watch.reminders.reminders
 
     fun requestTitles() = watch.scope.launch { watch.requestReminderTitles() }
     fun requestConfigs() = watch.scope.launch { watch.requestReminderConfigs() }
