@@ -3,11 +3,11 @@ package xyz.d1n0.lib.model
 import xyz.d1n0.lib.constant.OpCode
 import kotlin.experimental.or
 
-class AlarmsSettings{
-    var hourlySignal: HourlySignal? = null
-    var alarms: List<Alarm?> = List(4) { null }
-    var snoozeAlarm: Alarm? = null
-
+data class AlarmsSettings (
+    var hourlySignal: HourlySignal? = null,
+    var alarms: List<Alarm?> = List(4) { null },
+    var snoozeAlarm: Alarm? = null,
+) {
     private val allAlarms: List<Alarm> get() =
         listOfNotNull(
             *alarms.toTypedArray(),
@@ -37,7 +37,7 @@ class AlarmsSettings{
         require(packet.size == 17) {
             "Alarm B packet must be exactly 17 bytes long, e.g. 16 00 00 01 1E 00 00 0E 0F 00 00 0F 2D 40 00 17 3B"
         }
-        alarms = allAlarms.toMutableList()
+        alarms = alarms.toMutableList()
             .also { it[1] = Alarm.fromBytes(packet.sliceArray(1..4)) }
             .also { it[2] = Alarm.fromBytes(packet.sliceArray(5..8)) }
             .also { it[3] = Alarm.fromBytes(packet.sliceArray(9..12)) }

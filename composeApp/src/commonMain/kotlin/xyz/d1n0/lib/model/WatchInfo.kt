@@ -3,12 +3,12 @@ package xyz.d1n0.lib.model
 import xyz.d1n0.lib.constant.ConnectReason
 import xyz.d1n0.lib.constant.OpCode
 
-class WatchInfo {
-    var name: WatchName? = null
-    var connectReason: ConnectReason? = null
-    var watchSettings: WatchSettings? = null
-    var connectionSettings: ConnectionSettings? = null
-
+data class WatchInfo (
+    var name: WatchName? = null,
+    var connectReason: ConnectReason? = null,
+    var watchSettings: WatchSettings? = null,
+    var connectionSettings: ConnectionSettings? = null,
+) {
     fun parseNamePacket(packet: ByteArray) { name = WatchName.fromPacket(packet) }
 
     @OptIn(ExperimentalStdlibApi::class)

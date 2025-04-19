@@ -19,6 +19,7 @@ fun TimerScreen(
     val log = koinInject<Log>()
 
     val isInitialized = viewModel.isInitialized.collectAsState(initial = false)
+    val timer = viewModel.timer.collectAsState(initial = null)
 
     LaunchedEffect(Unit) {
         if (isInitialized.value == false)
@@ -31,8 +32,6 @@ fun TimerScreen(
         verticalArrangement = Arrangement.Center,
 
         ) {
-        if (isInitialized.value == true) {
-            Text(viewModel.timer.value.toString())
-        }
+        Text(timer.value.toString())
     }
 }

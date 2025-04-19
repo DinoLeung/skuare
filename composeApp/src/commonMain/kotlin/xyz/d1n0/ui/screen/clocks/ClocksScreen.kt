@@ -30,14 +30,12 @@ fun ClocksScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        if (isInitialized.value == true) {
-            homeClock.value?.let {
+        homeClock.value?.let {
+            Text(it.timeZone.toString(), color = MaterialTheme.colorScheme.onBackground)
+        }
+        worldClocks.value.map { clock ->
+            clock?.let {
                 Text(it.timeZone.toString(), color = MaterialTheme.colorScheme.onBackground)
-            }
-            worldClocks.value.map { clock ->
-                clock?.let {
-                    Text(it.timeZone.toString(), color = MaterialTheme.colorScheme.onBackground)
-                }
             }
         }
     }

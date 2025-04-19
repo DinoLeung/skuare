@@ -4,10 +4,10 @@ import xyz.d1n0.lib.constant.OpCode
 import xyz.d1n0.lib.helper.fromLittleEndianByteArray
 import xyz.d1n0.lib.helper.requireIn
 
-class ClocksSettings {
-    var homeClock: HomeClock? = null
-    var worldClocks: List<WorldClock?> = List(5) { null }
-
+data class ClocksSettings (
+    var homeClock: HomeClock? = null,
+    var worldClocks: List<WorldClock?> = List(5) { null },
+) {
     private val allClocks: List<Clock?> get() =
         listOf(
             homeClock,

@@ -3,9 +3,9 @@ package xyz.d1n0.lib.model
 import xyz.d1n0.lib.constant.OpCode
 import xyz.d1n0.lib.helper.requireIn
 
-class RemindersSettings {
+data class RemindersSettings (
     var reminders: List<Reminder> = List(5) { Reminder() }
-
+) {
     val isTitlesInitialized: Boolean get() = reminders.all { it.title != null }
     val isConfigsInitialized: Boolean get() = reminders.all { it.config != null }
 
