@@ -16,13 +16,14 @@ import xyz.d1n0.lib.model.Alarm
 
 @Preview
 @Composable
-fun Alarm(
+fun AlarmCard(
     alarm: Alarm,
     isSnooze: Boolean = false,
     modifier: Modifier = Modifier
 ) {
 
     CardView(
+        modifier = modifier,
         leadingIcon = {
             if (isSnooze)
                 Icon(
@@ -35,18 +36,19 @@ fun Alarm(
                     contentDescription = "Alarm",
                 )
         },
+        title = {
+            Text(
+                text = alarm.time.toHourMinuteString(),
+                textAlign = TextAlign.Start,
+                style = MaterialTheme.typography.headlineLarge,
+            )
+        },
         indicator = {
             Switch(
                 checked = alarm.enable,
                 onCheckedChange = {  },
             )
         },
-        content = {
-            Text(
-                text = alarm.time.toHourMinuteString(),
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.headlineLarge,
-            )
-        }
+        content = { }
     )
 }

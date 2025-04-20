@@ -1,5 +1,6 @@
 package xyz.d1n0.ui.component
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.Home
 import androidx.compose.material.icons.sharp.Public
@@ -16,11 +17,12 @@ import xyz.d1n0.lib.model.HomeClock
 
 @Preview
 @Composable
-fun Clock (
+fun ClockCard (
     clock: Clock,
     modifier: Modifier = Modifier,
 ) {
     CardView(
+        modifier = modifier,
         leadingIcon = {
             if (clock is HomeClock) {
                 Icon(
@@ -34,6 +36,12 @@ fun Clock (
                 )
             }
         },
+        title = {
+            Text(
+                text = clock.timeZone.cityName.lowercase().replaceFirstChar { it.uppercase() },
+                style = MaterialTheme.typography.headlineSmall,
+            )
+        },
         indicator = {
             AssistChip(
                 enabled = clock.dstSettings.enable,
@@ -43,12 +51,9 @@ fun Clock (
         },
         content = {
             Text(
-                text = clock.timeZone.cityName.lowercase().replaceFirstChar { it.uppercase() },
-                style = MaterialTheme.typography.headlineLarge,
-            )
-            Text(
                 text = clock.offsetString(),
                 textAlign = TextAlign.End,
+                modifier = Modifier.fillMaxWidth(),
                 style = MaterialTheme.typography.titleMedium,
             )
         }

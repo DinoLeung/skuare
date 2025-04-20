@@ -9,10 +9,10 @@ import xyz.d1n0.lib.model.DstSettings
 @Composable
 fun ClockPreview() {
     Column {
-        Clock(
+        ClockCard(
             clock = xyz.d1n0.lib.model.HomeClock.fromTimeZoneId(30335, DstSettings(false, true))
         )
-        Clock(
+        ClockCard(
             clock = xyz.d1n0.lib.model.WorldClock.fromTimeZoneId(95, DstSettings(true, false))
         )
     }

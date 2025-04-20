@@ -1,8 +1,8 @@
 package xyz.d1n0.ui.screen.reminders
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -12,6 +12,7 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import xyz.d1n0.Log
 import xyz.d1n0.lib.model.Reminder
+import xyz.d1n0.ui.component.ReminderCard
 
 @Composable
 fun RemindersScreen(
@@ -33,15 +34,15 @@ fun RemindersScreen(
     }
 
     Column (
-        modifier = Modifier.fillMaxSize().padding(innerPadding),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(innerPadding)
+            .verticalScroll(rememberScrollState()),
     ) {
         if (isTitlesInitialized.value == true && isConfigsInitialized.value == true) {
-            reminders.value.forEach { reminder ->
-                Text(reminder!!.title.toString(), color = MaterialTheme.colorScheme.onBackground)
-                Text(reminder!!.config.toString(), color = MaterialTheme.colorScheme.onBackground)
-            }
+            reminders.value.forEach { ReminderCard(reminder = it) }
         }
     }
 }

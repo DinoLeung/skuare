@@ -7,6 +7,9 @@ import xyz.d1n0.lib.constant.ReminderDayOfWeek
 import xyz.d1n0.lib.constant.ReminderRecurrence
 import xyz.d1n0.lib.helper.fromBcdByteArray
 import xyz.d1n0.lib.helper.toBcdByteArray
+import xyz.d1n0.lib.helper.toDayMonth
+import xyz.d1n0.lib.helper.toDayMonthYear
+import xyz.d1n0.lib.helper.toOrdinalString
 import kotlinx.datetime.Clock as KotlinClock
 import kotlinx.datetime.TimeZone as KotlinTimeZone
 
@@ -15,7 +18,7 @@ data class ReminderConfig(
     val recurrence: ReminderRecurrence,
     var startDate: LocalDate,
     var endDate: LocalDate,
-    val daysOfWeek: MutableSet<ReminderDayOfWeek>,
+    val daysOfWeek: Set<ReminderDayOfWeek>,
 ) {
     companion object {
         fun fromBytes(bytes: ByteArray): ReminderConfig {
@@ -60,4 +63,16 @@ data class ReminderConfig(
             *endDate.toBcdByteArray(),
             ReminderDayOfWeek.byteFromDays(daysOfWeek),
         ).copyOf(9)
+
+    val daysOfWeekDisplayString: String
+        get() = daysOfWeek.map { it.abbreviatedName }.joinToString(separator = ", ")
+
+    val recurrenceDisplayString: String
+        get() = when (recurrence) {
+            ReminderRecurrence.ONCE_SAME_DAY -> startDate.toDayMonthYear()
+            ReminderRecurrence.REPEAT_DAYS -> "${startDate.toDayMonthYear()} - ${startDate.toDayMonthYear()}"
+            ReminderRecurrence.REPEAT_WEEKLY -> daysOfWeekDisplayString
+            ReminderRecurrence.REPEAT_MONTHLY -> startDate.dayOfMonth.toOrdinalString()
+            ReminderRecurrence.REPEAT_YEARLY -> startDate.toDayMonth()
+        }
 }

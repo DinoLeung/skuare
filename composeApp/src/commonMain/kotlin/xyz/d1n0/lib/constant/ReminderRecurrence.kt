@@ -7,7 +7,7 @@ import xyz.d1n0.lib.constant.ReminderBitmask.MONTHLY
 
 enum class ReminderRecurrence {
     ONCE_SAME_DAY,
-    ONCE_MULTIPLE_DAYS,
+    REPEAT_DAYS,
     REPEAT_WEEKLY,
     REPEAT_MONTHLY,
     REPEAT_YEARLY;
@@ -16,7 +16,7 @@ enum class ReminderRecurrence {
         fun fromByte(byte: Byte) =
             byte.toInt().let {
                 when {
-                    it and MULTIPLE_DAYS == MULTIPLE_DAYS -> ONCE_MULTIPLE_DAYS
+                    it and MULTIPLE_DAYS == MULTIPLE_DAYS -> REPEAT_DAYS
                     it and WEEKLY == WEEKLY -> REPEAT_WEEKLY
                     it and YEARLY == YEARLY -> REPEAT_YEARLY
                     it and MONTHLY == MONTHLY -> REPEAT_MONTHLY
@@ -28,9 +28,18 @@ enum class ReminderRecurrence {
     val byte: Byte
         get() = when(this) {
             ONCE_SAME_DAY -> 0
-            ONCE_MULTIPLE_DAYS -> MULTIPLE_DAYS.toByte()
+            REPEAT_DAYS -> MULTIPLE_DAYS.toByte()
             REPEAT_WEEKLY -> WEEKLY.toByte()
             REPEAT_MONTHLY -> MONTHLY.toByte()
             REPEAT_YEARLY -> YEARLY.toByte()
+        }
+
+    val displayName: String
+        get() = when(this) {
+            ONCE_SAME_DAY -> "Once"
+            REPEAT_DAYS -> "Repeat"
+            REPEAT_WEEKLY -> "Weekly"
+            REPEAT_MONTHLY -> "Monthly"
+            REPEAT_YEARLY -> "Yearly"
         }
 }

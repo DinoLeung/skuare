@@ -15,7 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
-import xyz.d1n0.ui.component.Clock
+import xyz.d1n0.ui.component.ClockCard
 
 @Preview
 @Composable
@@ -41,14 +41,14 @@ fun ClocksScreen(
             .verticalScroll(rememberScrollState()),
     ) {
         homeClock.value?.let {
-            Clock(
+            ClockCard(
                 modifier = Modifier.fillMaxWidth(),
                 clock = it,
             )
         }
         worldClocks.value.map { clock ->
             clock?.let {
-                Clock(
+                ClockCard(
                     modifier = Modifier.fillMaxWidth(),
                     clock = it
                 )

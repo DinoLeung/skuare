@@ -9,17 +9,17 @@ import kotlinx.datetime.LocalTime
 @Composable
 fun AlarmPreview() {
     Column {
-        Alarm(
+        AlarmCard(
             alarm = xyz.d1n0.lib.model.Alarm(true, LocalTime(hour = 23, minute = 59))
         )
-        Alarm(
+        AlarmCard(
             alarm = xyz.d1n0.lib.model.Alarm(false, LocalTime(hour = 11, minute = 0))
         )
-        Alarm(
+        AlarmCard(
             alarm = xyz.d1n0.lib.model.Alarm(false, LocalTime(hour = 7, minute = 30)),
             isSnooze = true
         )
-        HourlySignal(
+        HourlySignalCard(
             hourlySignal = xyz.d1n0.lib.model.HourlySignal(enable = true)
         )
     }

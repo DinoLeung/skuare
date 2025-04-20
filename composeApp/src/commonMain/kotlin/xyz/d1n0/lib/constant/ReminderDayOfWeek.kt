@@ -10,7 +10,7 @@ enum class ReminderDayOfWeek {
     SATURDAY;
 
     companion object {
-        fun daysFromByte(byte: Byte): MutableSet<ReminderDayOfWeek> =
+        fun daysFromByte(byte: Byte): Set<ReminderDayOfWeek> =
             byte.toInt().let {
                 listOf(
                     ReminderDayOfWeekBitmask.SUNDAY to SUNDAY,
@@ -23,7 +23,7 @@ enum class ReminderDayOfWeek {
                 )
                     .filter { (mask, _) -> it and mask != 0 }
                     .map { it.second }
-                    .toMutableSet()
+                    .toSet()
             }
 
         fun byteFromDays(days: Set<ReminderDayOfWeek>): Byte =
@@ -40,4 +40,17 @@ enum class ReminderDayOfWeek {
                 .fold(0) { acc, (_, mask) -> acc or mask }
                 .toByte()
     }
+
+    val abbreviatedName: String
+        get() = when (this) {
+            SUNDAY -> "Sun"
+            MONDAY -> "Mon"
+            TUESDAY -> "Tue"
+            WEDNESDAY -> "Wed"
+            THURSDAY -> "Thu"
+            FRIDAY -> "Fri"
+            SATURDAY -> "Sat"
+        }
+
+    override fun toString() = abbreviatedName
 }

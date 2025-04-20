@@ -15,8 +15,8 @@ import androidx.compose.ui.Modifier
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import xyz.d1n0.Log
-import xyz.d1n0.ui.component.Alarm
-import xyz.d1n0.ui.component.HourlySignal
+import xyz.d1n0.ui.component.AlarmCard
+import xyz.d1n0.ui.component.HourlySignalCard
 
 @Composable
 fun AlarmsScreen(
@@ -45,14 +45,14 @@ fun AlarmsScreen(
     ) {
         alarms.value.forEach { alarm ->
             alarm?.let {
-                Alarm(alarm = it)
+                AlarmCard(alarm = it)
             }
         }
         alarmSnooze.value?.let {
-            Alarm(alarm = it, isSnooze = true)
+            AlarmCard(alarm = it, isSnooze = true)
         }
         hourlySignal.value?.let {
-            HourlySignal(hourlySignal = it)
+            HourlySignalCard(hourlySignal = it)
         }
     }
 }

@@ -17,6 +17,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 fun CardView(
     leadingIcon: @Composable (() -> Unit),
+    title: @Composable (() -> Unit),
     indicator: @Composable (() -> Unit),
     content: @Composable (() -> Unit),
     modifier: Modifier = Modifier
@@ -31,15 +32,10 @@ fun CardView(
                 modifier = Modifier.align(Alignment.Start).fillMaxWidth(),
             ) {
                 leadingIcon()
+                title()
                 indicator()
             }
-            content
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.align(Alignment.Start).fillMaxWidth(),
-            ) {
-                content()
-            }
+            content()
         }
     }
 }

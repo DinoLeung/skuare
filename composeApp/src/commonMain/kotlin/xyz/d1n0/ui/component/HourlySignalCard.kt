@@ -14,15 +14,23 @@ import xyz.d1n0.lib.model.HourlySignal
 
 @Preview
 @Composable
-fun HourlySignal(
+fun HourlySignalCard(
     hourlySignal: HourlySignal,
     modifier: Modifier = Modifier
 ) {
     CardView(
+        modifier = modifier,
         leadingIcon = {
             Icon(
                 imageVector = Icons.Sharp.NotificationsActive,
-                contentDescription = "Home Time",
+                contentDescription = "Hourly Signal",
+            )
+        },
+        title = {
+            Text(
+                text = "Hourly Signal",
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.headlineSmall,
             )
         },
         indicator = {
@@ -31,12 +39,6 @@ fun HourlySignal(
                 onCheckedChange = { },
             )
         },
-        content = {
-            Text(
-                text = "Hourly Signal",
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.headlineLarge,
-            )
-        }
+        content = {}
     )
 }
