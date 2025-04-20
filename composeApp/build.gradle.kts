@@ -59,8 +59,8 @@ kotlin {
             api(libs.moko.permissions.compose)
             implementation(libs.moko.permissions.bluetooth)
             implementation(libs.moko.permissions.location)
-
         }
+
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
@@ -80,8 +80,7 @@ kotlin {
             implementation(libs.androidx.activity.compose)
         }
 
-        iosMain.dependencies {
-        }
+        iosMain.dependencies {}
     }
 }
 

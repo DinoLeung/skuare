@@ -1,16 +1,21 @@
 package xyz.d1n0.ui.screen.clocks
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import org.koin.compose.koinInject
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
+import xyz.d1n0.ui.component.Clock
 
+@Preview
 @Composable
 fun ClocksScreen(
     innerPadding: PaddingValues,
@@ -31,11 +36,17 @@ fun ClocksScreen(
         verticalArrangement = Arrangement.Center,
     ) {
         homeClock.value?.let {
-            Text(it.timeZone.toString(), color = MaterialTheme.colorScheme.onBackground)
+            Clock(
+                modifier = Modifier.fillMaxWidth(),
+                clock = it,
+            )
         }
         worldClocks.value.map { clock ->
             clock?.let {
-                Text(it.timeZone.toString(), color = MaterialTheme.colorScheme.onBackground)
+                Clock(
+                    modifier = Modifier.fillMaxWidth(),
+                    clock = it
+                )
             }
         }
     }

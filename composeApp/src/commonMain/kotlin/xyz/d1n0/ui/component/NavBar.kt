@@ -1,4 +1,4 @@
-package xyz.d1n0.ui.components
+package xyz.d1n0.ui.component
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.*

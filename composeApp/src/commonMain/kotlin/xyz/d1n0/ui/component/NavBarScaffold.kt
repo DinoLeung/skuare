@@ -1,4 +1,4 @@
-package xyz.d1n0.ui.components
+package xyz.d1n0.ui.component
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
