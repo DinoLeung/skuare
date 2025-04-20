@@ -4,6 +4,8 @@
 
 An alternative app that connects G-Shock watches via BLE.
 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/J3J1WRFA)
+
 ## Background
 
 In October 2024, a significant [data breach](https://world.casio.com/news/2025/0107-incident) occurred,
