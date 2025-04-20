@@ -6,12 +6,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.sharp.Home
-import androidx.compose.material.icons.sharp.Public
-import androidx.compose.material3.AssistChip
+import androidx.compose.material.icons.sharp.Alarm
+import androidx.compose.material.icons.sharp.Snooze
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,56 +19,48 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import xyz.d1n0.lib.model.Clock
-import xyz.d1n0.lib.model.HomeClock
+import xyz.d1n0.lib.helper.toHourMinuteString
+import xyz.d1n0.lib.model.Alarm
 
 @Preview
 @Composable
-fun Clock (
-    clock: Clock,
-    modifier: Modifier = Modifier,
+fun Alarm(
+    alarm: Alarm,
+    isSnooze: Boolean = false,
+    modifier: Modifier = Modifier
 ) {
     Card (
-        modifier = modifier.padding(8.dp),
+        modifier = Modifier.padding(8.dp),
         shape = MaterialTheme.shapes.large,
     ) {
         Column (modifier = Modifier.padding(16.dp)) {
-            Row (
+            Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.align(Alignment.Start).fillMaxWidth(),
             ) {
-                if (clock is HomeClock) {
+                if (isSnooze)
                     Icon(
-                        imageVector = Icons.Sharp.Home,
-                        contentDescription = "Home Time",
+                        imageVector = Icons.Sharp.Snooze,
+                        contentDescription = "Snooze Alarm",
                     )
-                } else {
+                else
                     Icon(
-                        imageVector = Icons.Sharp.Public,
-                        contentDescription = "World Time",
+                        imageVector = Icons.Sharp.Alarm,
+                        contentDescription = "Alarm",
                     )
-                }
-
-                AssistChip(
-                    enabled = clock.dstSettings.enable,
-                    label = { Text("DST") },
-                    onClick = { },
+                Switch(
+                    checked = alarm.enable,
+                    onCheckedChange = {  },
                 )
             }
-            Row (
+            Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.align(Alignment.CenterHorizontally).fillMaxWidth(),
+                modifier = Modifier.align(Alignment.Start).fillMaxWidth(),
             ) {
                 Text(
-                    text = clock.timeZone.cityName.lowercase().replaceFirstChar { it.uppercase() },
+                    text = alarm.time.toHourMinuteString(),
+                    textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.headlineLarge,
-                    modifier = Modifier.weight(2f)
-                )
-                Text(
-                    text = clock.offsetString(),
-                    textAlign = TextAlign.End,
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.weight(0.5f)
                 )
             }
         }

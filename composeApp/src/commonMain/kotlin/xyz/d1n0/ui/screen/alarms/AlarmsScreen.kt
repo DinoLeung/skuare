@@ -1,8 +1,12 @@
 package xyz.d1n0.ui.screen.alarms
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -11,6 +15,8 @@ import androidx.compose.ui.Modifier
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import xyz.d1n0.Log
+import xyz.d1n0.ui.component.Alarm
+import xyz.d1n0.ui.component.HourlySignal
 
 @Composable
 fun AlarmsScreen(
@@ -30,18 +36,23 @@ fun AlarmsScreen(
     }
 
     Column (
-        modifier = Modifier.fillMaxSize().padding(innerPadding),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
-
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(innerPadding)
+            .verticalScroll(rememberScrollState()),
     ) {
-        Text(hourlySignal.value.toString(), color = MaterialTheme.colorScheme.onBackground)
-
         alarms.value.forEach { alarm ->
             alarm?.let {
-                Text(it.toString(), color = MaterialTheme.colorScheme.onBackground)
+                Alarm(alarm = it)
             }
         }
-        Text(alarmSnooze.value.toString(), color = MaterialTheme.colorScheme.onBackground)
+        alarmSnooze.value?.let {
+            Alarm(alarm = it, isSnooze = true)
+        }
+        hourlySignal.value?.let {
+            HourlySignal(hourlySignal = it)
+        }
     }
 }
