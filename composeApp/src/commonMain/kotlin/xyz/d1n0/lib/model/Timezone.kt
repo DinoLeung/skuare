@@ -73,6 +73,6 @@ abstract class Timezone {
     val radioIdByte: Byte
         get() = radioId.toByte()
 
-    open abstract val coordinatesBytes: ByteArray
+    abstract val coordinatesBytes: ByteArray
 
 }

@@ -5,11 +5,12 @@ import xyz.d1n0.lib.constant.TimerStatus
 import xyz.d1n0.lib.helper.fromByteArray
 import xyz.d1n0.lib.helper.toByteArray
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.days
 
 // Writing timer will reset timer status, and timer status cannot be set
 data class Timer(
     val duration: Duration,
-    val status: TimerStatus
+    val status: TimerStatus = TimerStatus.NOT_STARTED,
 ) {
     companion object {
 
@@ -30,6 +31,10 @@ data class Timer(
                     )
                 }
         }
+    }
+
+    init {
+        require(duration < 1.days) { "Timer must not exceed 24 hours" }
     }
 
     val packet: ByteArray

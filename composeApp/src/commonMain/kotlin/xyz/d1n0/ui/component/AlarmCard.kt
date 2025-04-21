@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import xyz.d1n0.lib.helper.toHourMinuteString
+import xyz.d1n0.lib.helper.toHHMMString
 import xyz.d1n0.lib.model.Alarm
 
 @Preview
@@ -38,7 +38,7 @@ fun AlarmCard(
         },
         title = {
             Text(
-                text = alarm.time.toHourMinuteString(),
+                text = alarm.time.toHHMMString(),
                 textAlign = TextAlign.Start,
                 style = MaterialTheme.typography.headlineLarge,
             )
