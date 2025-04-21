@@ -1,6 +1,7 @@
 package xyz.d1n0.ui.component
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -31,9 +32,9 @@ fun CardView(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.align(Alignment.Start).fillMaxWidth(),
             ) {
-                leadingIcon()
-                title()
-                indicator()
+                Box { leadingIcon() }
+                Box { title() }
+                Box { indicator() }
             }
             content()
         }

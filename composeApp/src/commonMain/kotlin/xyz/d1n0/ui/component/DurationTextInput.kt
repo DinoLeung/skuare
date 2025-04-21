@@ -34,7 +34,7 @@ fun DurationTextInput (
         placeholder = { Text("00:00:00") },
         visualTransformation = transformation,
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-        isError = duration.toHHMMSSString().length > 6,     // simple length guard
+        isError = duration.toHHMMSSString().length > 6,
         supportingText = {
             if (duration.toHHMMSSString().length > 6)
                 Text("Max 6 digits (HHMMSS)")

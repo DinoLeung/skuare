@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.AssistChip
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -21,7 +22,9 @@ fun TimerCard (
         title = { },
         indicator = {
             AssistChip(
-                label = { timer.status.name },
+                label = {
+                    Text(timer.status.displayName)
+                },
                 onClick = { },
             )
         },

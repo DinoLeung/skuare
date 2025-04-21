@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import xyz.d1n0.Log
+import xyz.d1n0.ui.component.TimerCard
 
 @Composable
 fun TimerScreen(
@@ -32,6 +33,6 @@ fun TimerScreen(
         verticalArrangement = Arrangement.Center,
 
         ) {
-        Text(timer.value.toString())
+        timer.value?.let { TimerCard(timer = it)  }
     }
 }
