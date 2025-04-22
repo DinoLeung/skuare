@@ -6,6 +6,9 @@ import kotlinx.datetime.Month
 import kotlinx.datetime.Month.*
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 fun Int.toOrdinalString(): String = when {
         this % 100 in 11..13 -> "${this}th"
@@ -22,7 +25,7 @@ fun Double.toSignedString(): String = when {
 }
 
 fun Duration.toHHMMSSString(): String {
-    require (this < 1.days) { "Duration must not exceed 24 hours" }
+    require (this <= 99.hours + 99.minutes + 99.seconds) { "Duration must not exceed 99:99:99" }
     val hours = this.inWholeHours.toString().padStart(2, '0')
     val minutes = (this.inWholeMinutes - (this.inWholeHours * 60)).toString().padStart(2, '0')
     val seconds = (this.inWholeSeconds - (this.inWholeMinutes * 60)).toString().padStart(2, '0')
@@ -35,7 +38,7 @@ fun Duration.Companion.fromHHMMSS(text: String): Duration {
     val minutes = text.slice(2..3).toInt().minutes
     val seconds = text.slice(4..5).toInt().seconds
     val duration = hours + minutes + seconds
-    require (duration < 1.days) { "Duration must not exceed 24 hours" }
+    require (duration <= 99.hours + 99.minutes + 99.seconds) { "Duration must not exceed 99:99:99" }
     return duration
 }
 

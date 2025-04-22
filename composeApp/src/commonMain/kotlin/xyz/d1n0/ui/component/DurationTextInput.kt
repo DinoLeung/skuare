@@ -6,10 +6,16 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -22,47 +28,74 @@ import kotlin.time.Duration
 @OptIn(ExperimentalMaterial3Api::class)
 fun DurationTextInput (
     duration: Duration,
-    onDurationChange: (Duration) -> Unit
+    onDurationChange: (Duration) -> Unit,
+    label: @Composable (() -> Unit) = { Text("Duration") },
+    placeholder: @Composable (() -> Unit) = { Text("00:00:00") },
+    supportingText: @Composable (() -> Unit)? = null,
+    isError: Boolean = false,
+    modifier: Modifier = Modifier
 ) {
-    val mask = "##:##:##"
-    val transformation = MaskVisualTransformation(mask)
+    var textFieldValue by remember {
+        mutableStateOf(
+            TextFieldValue(
+                text = duration.toHHMMSSString(),
+                selection = TextRange(duration.toHHMMSSString().length)
+            )
+        )
+    }
 
     OutlinedTextField(
-        value = duration.toHHMMSSString(),
-        onValueChange = { input -> onDurationChange(Duration.fromHHMMSS(input)) },
-        label = { Text("Duration") },
-        placeholder = { Text("00:00:00") },
-        visualTransformation = transformation,
-        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-        isError = duration.toHHMMSSString().length > 6,
-        supportingText = {
-            if (duration.toHHMMSSString().length > 6)
-                Text("Max 6 digits (HHMMSS)")
+        value = textFieldValue,
+        onValueChange = { input ->
+            val raw = input.text.filter { it.isDigit() }
+                .trimStart { it == '0' }
+                .take(6)
+                .padStart(6, '0')
+            val newDuration = Duration.fromHHMMSS(raw)
+            textFieldValue = input.copy(
+                text = raw,
+                selection = TextRange(raw.length),
+            )
+            onDurationChange(newDuration)
         },
+        label = label,
+        placeholder = placeholder,
+        visualTransformation = MaskVisualTransformation(),
+        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+        isError = isError,
+        supportingText = supportingText,
         singleLine = true,
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
     )
 }
 
-class MaskVisualTransformation(private val mask: String) : VisualTransformation {
+private class MaskVisualTransformation: VisualTransformation {
+    private val mask = "##:##:##"
     override fun filter(text: AnnotatedString): TransformedText {
         val digits = text.text.padStart(mask.count { it=='#' }, '0')
-        val out = StringBuilder()
-        var di = 0
+        val formatted = StringBuilder()
+        var digitIndex = 0
         mask.forEach { m ->
             if (m == '#')
-                out.append(digits[di++])
+                formatted.append(digits[digitIndex++])
             else
-                out.append(m)
+                formatted.append(m)
         }
         val offsetMapping = object : OffsetMapping {
-            override fun originalToTransformed(offset: Int) =
-                (0 until mask.length).count {
-                    mask[it] != '#' || it < offset + (mask.take(it).count { it!='#' })
+            override fun originalToTransformed(offset: Int): Int {
+                var transformedIndex = 0
+                var digitsSeen = 0
+                while (digitsSeen < offset && transformedIndex < mask.length) {
+                    if (mask[transformedIndex] == '#') {
+                        digitsSeen++
+                    }
+                    transformedIndex++
                 }
+                return transformedIndex
+            }
             override fun transformedToOriginal(offset: Int) =
                 mask.take(offset).count { it == '#' }
         }
-        return TransformedText(AnnotatedString(out.toString()), offsetMapping)
+        return TransformedText(AnnotatedString(formatted.toString()), offsetMapping)
     }
 }

@@ -1,7 +1,6 @@
 package xyz.d1n0.ui.screen.timer
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -33,6 +32,6 @@ fun TimerScreen(
         verticalArrangement = Arrangement.Center,
 
         ) {
-        timer.value?.let { TimerCard(timer = it)  }
+        timer.value?.let { TimerCard(timer = it, onValueChange = {})  }
     }
 }
