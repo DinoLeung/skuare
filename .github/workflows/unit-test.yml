@@ -1,14 +1,11 @@
-name: Dependency Submission
+name: "Unit Test"
 
 on:
   push:
-    branches: [ 'main' ]
-
-permissions:
-  contents: write
+  pull_request:
 
 jobs:
-  dependency-submission:
+  validation:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
@@ -18,5 +15,7 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: 21
-      - name: Generate and submit dependency graph
-        uses: gradle/actions/dependency-submission@v4
+      - name: Gradle Check
+        run: ./gradlew check
+      - name: Gradle Check
+        run: ./gradlew allTests
