@@ -3,18 +3,6 @@ package xyz.d1n0.lib.helper
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.Month
-import kotlinx.datetime.Month.APRIL
-import kotlinx.datetime.Month.AUGUST
-import kotlinx.datetime.Month.DECEMBER
-import kotlinx.datetime.Month.FEBRUARY
-import kotlinx.datetime.Month.JANUARY
-import kotlinx.datetime.Month.JULY
-import kotlinx.datetime.Month.JUNE
-import kotlinx.datetime.Month.MARCH
-import kotlinx.datetime.Month.MAY
-import kotlinx.datetime.Month.NOVEMBER
-import kotlinx.datetime.Month.OCTOBER
-import kotlinx.datetime.Month.SEPTEMBER
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
@@ -60,18 +48,18 @@ fun LocalTime.toHHMMString() =
 	this.hour.toString().padStart(2, '0') + ":" + this.minute.toString().padStart(2, '0')
 
 fun Month.abbreviatedName(): String = when (this) {
-	JANUARY -> "Jan"
-	FEBRUARY -> "Feb"
-	MARCH -> "Mar"
-	APRIL -> "Apr"
-	MAY -> "May"
-	JUNE -> "Jun"
-	JULY -> "Jul"
-	AUGUST -> "Aug"
-	SEPTEMBER -> "Sep"
-	OCTOBER -> "Oct"
-	NOVEMBER -> "Nov"
-	DECEMBER -> "Dec"
+	Month.JANUARY -> "Jan"
+	Month.FEBRUARY -> "Feb"
+	Month.MARCH -> "Mar"
+	Month.APRIL -> "Apr"
+	Month.MAY -> "May"
+	Month.JUNE -> "Jun"
+	Month.JULY -> "Jul"
+	Month.AUGUST -> "Aug"
+	Month.SEPTEMBER -> "Sep"
+	Month.OCTOBER -> "Oct"
+	Month.NOVEMBER -> "Nov"
+	Month.DECEMBER -> "Dec"
 	else -> error("Unknown month: $this")
 }
 
