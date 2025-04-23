@@ -9,42 +9,36 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import xyz.d1n0.lib.model.*
+import xyz.d1n0.lib.model.Alarm
+import xyz.d1n0.lib.model.AlarmsSettings
+import xyz.d1n0.lib.model.HourlySignal
+import xyz.d1n0.lib.model.Watch
+import xyz.d1n0.lib.model.requestAlarms
+import xyz.d1n0.lib.model.writeAlarms
 
-class AlarmsScreenViewModel: ViewModel(), KoinComponent {
-    private val watch: Watch by inject()
+class AlarmsScreenViewModel : ViewModel(), KoinComponent {
+	private val watch: Watch by inject()
 
-    private val alarmsSettings: StateFlow<AlarmsSettings> = watch.alarms
+	private val alarmsSettings: StateFlow<AlarmsSettings> = watch.alarms
 
-    val hourlySignal: StateFlow<HourlySignal?> = alarmsSettings.map { it.hourlySignal }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.Lazily,
-            initialValue = null
-        )
+	val hourlySignal: StateFlow<HourlySignal?> = alarmsSettings.map { it.hourlySignal }.stateIn(
+			scope = viewModelScope, started = SharingStarted.Lazily, initialValue = null
+		)
 
-    val alarms: StateFlow<List<Alarm?>> = alarmsSettings.map { it.alarms }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.Lazily,
-            initialValue = List(4) { null }
-        )
+	val alarms: StateFlow<List<Alarm?>> = alarmsSettings.map { it.alarms }.stateIn(
+			scope = viewModelScope,
+			started = SharingStarted.Lazily,
+			initialValue = List(4) { null })
 
-    val snoozeAlarm: StateFlow<Alarm?> = alarmsSettings.map { it.snoozeAlarm }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.Lazily,
-            initialValue = null
-        )
+	val snoozeAlarm: StateFlow<Alarm?> = alarmsSettings.map { it.snoozeAlarm }.stateIn(
+			scope = viewModelScope, started = SharingStarted.Lazily, initialValue = null
+		)
 
-    val isInitialized: StateFlow<Boolean> = alarmsSettings.map { it.isInitialized }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.Lazily,
-            initialValue = false
-        )
+	val isInitialized: StateFlow<Boolean> = alarmsSettings.map { it.isInitialized }.stateIn(
+			scope = viewModelScope, started = SharingStarted.Lazily, initialValue = false
+		)
 
-    fun requestAlarms() = watch.scope.launch { watch.requestAlarms() }
+	fun requestAlarms() = watch.scope.launch { watch.requestAlarms() }
 
-    fun writeAlarms() = watch.scope.launch { watch.writeAlarms() }
+	fun writeAlarms() = watch.scope.launch { watch.writeAlarms() }
 }

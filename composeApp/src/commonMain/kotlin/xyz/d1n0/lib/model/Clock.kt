@@ -7,7 +7,8 @@ abstract class Clock {
 	abstract val dstSettings: DstSettings
 
 	fun offsetString(): String {
-		val finalOffset = if (dstSettings.enable) timeZone.offset + timeZone.dstDiff else timeZone.offset
+		val finalOffset =
+			if (dstSettings.enable) timeZone.offset + timeZone.dstDiff else timeZone.offset
 		return finalOffset.toSignedString()
 	}
 }

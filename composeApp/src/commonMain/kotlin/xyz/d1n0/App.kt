@@ -15,14 +15,16 @@ fun App() {
 	MaterialTheme {
 
 		val permissionsControllerFactory = rememberPermissionsControllerFactory()
-		val permissionsController = remember { permissionsControllerFactory.createPermissionsController() }
+		val permissionsController =
+			remember { permissionsControllerFactory.createPermissionsController() }
 
-		KoinApplication(application = KoinApp(
-			rootNavHostController = rememberNavController(),
-			permissionsController = permissionsController,
-		)) {
+		KoinApplication(
+			application = KoinApp(
+				rootNavHostController = rememberNavController(),
+				permissionsController = permissionsController,
+			)
+		) {
 			RootNavGraph()
-//			NavScaffold()
 		}
 	}
 }

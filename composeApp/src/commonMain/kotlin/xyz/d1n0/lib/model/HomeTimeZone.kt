@@ -9,7 +9,7 @@ data class HomeTimezone(
 	override val identifier: Short,
 	override val offset: Double,
 	override val dstDiff: Double,
-	override val dstRules: Byte
+	override val dstRules: Byte,
 ) : Timezone() {
 	companion object {
 		/**
@@ -20,11 +20,14 @@ data class HomeTimezone(
 		fun fuzzySearch(keyword: String): List<HomeTimezone> {
 			val keywordLowerCase = keyword.trim().lowercase()
 			if (keywordLowerCase.isEmpty()) return HomeTimezoneData.values.toList()
-			return HomeTimezoneData.values.filter { it.timeZone.lowercase().contains(keywordLowerCase) }
+			return HomeTimezoneData.values.filter {
+				it.timeZone.lowercase().contains(keywordLowerCase)
+			}
 		}
 	}
 
-	private fun getEquivalentWorldTimezone() = WorldTimezoneData.values.find { it.cityName == this.cityName }
+	private fun getEquivalentWorldTimezone() =
+		WorldTimezoneData.values.find { it.cityName == this.cityName }
 
 	/**
 	 * Retrieves the coordinates associated with this HomeTimezone as a ByteArray.
@@ -34,7 +37,5 @@ data class HomeTimezone(
 	 *         otherwise, a 16-byte array filled with zeros.
 	 */
 	override val coordinatesBytes: ByteArray
-		get() = getEquivalentWorldTimezone()
-			?.let { it.coordinatesBytes }
-			?: ByteArray(16) { 0 }
+		get() = getEquivalentWorldTimezone()?.let { it.coordinatesBytes } ?: ByteArray(16) { 0 }
 }

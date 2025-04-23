@@ -20,28 +20,28 @@ import xyz.d1n0.ui.screen.timer.TimerScreenViewModel
 import xyz.d1n0.ui.screen.watch.WatchScreenViewModel
 
 fun KoinApp(
-    rootNavHostController: NavHostController,
-    permissionsController: PermissionsController,
+	rootNavHostController: NavHostController,
+	permissionsController: PermissionsController,
 ): KoinApplication.() -> Unit =
-{
-	logger(
-        KermitKoinLogger(Logger.withTag("koin"))
-	)
-	modules(module {
-        single { Log }
-        single<NavHostController>(named("rootNavHostController")) { rootNavHostController }
-        single<PermissionsController> { permissionsController }
+	{
+		logger(
+			KermitKoinLogger(Logger.withTag("koin"))
+		)
+		modules(module {
+			single { Log }
+			single<NavHostController>(named("rootNavHostController")) { rootNavHostController }
+			single<PermissionsController> { permissionsController }
 
-        singleOf(::Watch)
+			singleOf(::Watch)
 
-        viewModelOf(::ScanScreenViewModel)
-        viewModelOf(::WatchScreenViewModel) // TODO: should remove
+			viewModelOf(::ScanScreenViewModel)
+			viewModelOf(::WatchScreenViewModel) // TODO: should remove
 
-        viewModelOf(::NavBarViewModel)
-        viewModelOf(::ClocksScreenViewModel)
-        viewModelOf(::AlarmsScreenViewModel)
-        viewModelOf(::TimerScreenViewModel)
-        viewModelOf(::RemindersScreenViewModel)
-        viewModelOf(::SettingsScreenViewModel)
-    })
-}
+			viewModelOf(::NavBarViewModel)
+			viewModelOf(::ClocksScreenViewModel)
+			viewModelOf(::AlarmsScreenViewModel)
+			viewModelOf(::TimerScreenViewModel)
+			viewModelOf(::RemindersScreenViewModel)
+			viewModelOf(::SettingsScreenViewModel)
+		})
+	}

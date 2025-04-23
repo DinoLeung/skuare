@@ -8,10 +8,11 @@ data class DstSettings(
 ) {
 	companion object {
 		fun fromByte(byte: Byte) = DstSettings(
-            enable = byte.toInt() and DstBitMask.MASK_ENABLE != 0,
-            auto = byte.toInt() and DstBitMask.MASK_AUTO != 0
-        )
+			enable = byte.toInt() and DstBitMask.MASK_ENABLE != 0,
+			auto = byte.toInt() and DstBitMask.MASK_AUTO != 0
+		)
 	}
+
 	val byte: Byte
 		get() {
 			var bitMask = 0

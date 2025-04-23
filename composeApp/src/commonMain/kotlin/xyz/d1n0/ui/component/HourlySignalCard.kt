@@ -15,30 +15,24 @@ import xyz.d1n0.lib.model.HourlySignal
 @Preview
 @Composable
 fun HourlySignalCard(
-    hourlySignal: HourlySignal,
-    modifier: Modifier = Modifier
+	hourlySignal: HourlySignal,
+	modifier: Modifier = Modifier,
 ) {
-    CardView(
-        modifier = modifier,
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Sharp.NotificationsActive,
-                contentDescription = "Hourly Signal",
-            )
-        },
-        title = {
-            Text(
-                text = "Hourly Signal",
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.headlineSmall,
-            )
-        },
-        indicator = {
-            Switch(
-                checked = hourlySignal.enable,
-                onCheckedChange = { },
-            )
-        },
-        content = {}
-    )
+	CardView(modifier = modifier, leadingIcon = {
+		Icon(
+			imageVector = Icons.Sharp.NotificationsActive,
+			contentDescription = "Hourly Signal",
+		)
+	}, title = {
+		Text(
+			text = "Hourly Signal",
+			textAlign = TextAlign.Center,
+			style = MaterialTheme.typography.headlineSmall,
+		)
+	}, indicator = {
+		Switch(
+			checked = hourlySignal.enable,
+			onCheckedChange = { },
+		)
+	}, content = {})
 }

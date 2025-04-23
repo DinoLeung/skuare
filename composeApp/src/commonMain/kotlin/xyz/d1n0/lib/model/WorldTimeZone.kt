@@ -12,7 +12,7 @@ data class WorldTimezone(
 	override val identifier: Short,
 	override val offset: Double,
 	override val dstDiff: Double,
-	override val dstRules: Byte
+	override val dstRules: Byte,
 ) : Timezone() {
 	companion object {
 		/**
@@ -26,7 +26,8 @@ data class WorldTimezone(
 			val keywordLowerCase = keyword.trim().lowercase()
 			if (keywordLowerCase.isEmpty()) return WorldTimezoneData.values.toList()
 			return WorldTimezoneData.values.filter {
-				it.city.lowercase().contains(keywordLowerCase) || it.country.lowercase().contains(keywordLowerCase)
+				it.city.lowercase().contains(keywordLowerCase) || it.country.lowercase()
+					.contains(keywordLowerCase)
 			}
 		}
 	}

@@ -15,43 +15,37 @@ import xyz.d1n0.lib.model.Reminder
 
 @Preview
 @Composable
-fun ReminderCard (
-    reminder: Reminder,
-    modifier: Modifier = Modifier,
+fun ReminderCard(
+	reminder: Reminder,
+	modifier: Modifier = Modifier,
 ) {
-    CardView(
-        modifier = modifier,
-        leadingIcon = { },
-        title = {
-            Text(
-                text = reminder.title?.let { it.value } ?: "<Empty>",
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.headlineSmall,
-            )
-        },
-        indicator = {
-            Switch(
-                checked = reminder.config?.enable ?: false,
-                onCheckedChange = { },
-            )
-        },
-        content = {
-            Row (
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                reminder.config?.let {
-                    Text(
-                        text = it.recurrence.displayName,
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                    Text(
-                        text = it.recurrenceDisplayString,
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                }
-            }
-        }
-    )
+	CardView(modifier = modifier, leadingIcon = { }, title = {
+		Text(
+			text = reminder.title?.let { it.value } ?: "<Empty>",
+			textAlign = TextAlign.Center,
+			style = MaterialTheme.typography.headlineSmall,
+		)
+	}, indicator = {
+		Switch(
+			checked = reminder.config?.enable ?: false,
+			onCheckedChange = { },
+		)
+	}, content = {
+		Row(
+			horizontalArrangement = Arrangement.SpaceBetween,
+			modifier = Modifier.fillMaxWidth(),
+			verticalAlignment = Alignment.CenterVertically
+		) {
+			reminder.config?.let {
+				Text(
+					text = it.recurrence.displayName,
+					style = MaterialTheme.typography.titleMedium,
+				)
+				Text(
+					text = it.recurrenceDisplayString,
+					style = MaterialTheme.typography.titleMedium,
+				)
+			}
+		}
+	})
 }

@@ -17,45 +17,39 @@ import xyz.d1n0.lib.model.HomeClock
 
 @Preview
 @Composable
-fun ClockCard (
-    clock: Clock,
-    modifier: Modifier = Modifier,
+fun ClockCard(
+	clock: Clock,
+	modifier: Modifier = Modifier,
 ) {
-    CardView(
-        modifier = modifier,
-        leadingIcon = {
-            if (clock is HomeClock) {
-                Icon(
-                    imageVector = Icons.Sharp.Home,
-                    contentDescription = "Home Time",
-                )
-            } else {
-                Icon(
-                    imageVector = Icons.Sharp.Public,
-                    contentDescription = "World Time",
-                )
-            }
-        },
-        title = {
-            Text(
-                text = clock.timeZone.cityName.lowercase().replaceFirstChar { it.uppercase() },
-                style = MaterialTheme.typography.headlineSmall,
-            )
-        },
-        indicator = {
-            AssistChip(
-                enabled = clock.dstSettings.enable,
-                label = { Text("DST") },
-                onClick = { },
-            )
-        },
-        content = {
-            Text(
-                text = clock.offsetString(),
-                textAlign = TextAlign.End,
-                modifier = Modifier.fillMaxWidth(),
-                style = MaterialTheme.typography.titleMedium,
-            )
-        }
-    )
+	CardView(modifier = modifier, leadingIcon = {
+		if (clock is HomeClock) {
+			Icon(
+				imageVector = Icons.Sharp.Home,
+				contentDescription = "Home Time",
+			)
+		} else {
+			Icon(
+				imageVector = Icons.Sharp.Public,
+				contentDescription = "World Time",
+			)
+		}
+	}, title = {
+		Text(
+			text = clock.timeZone.cityName.lowercase().replaceFirstChar { it.uppercase() },
+			style = MaterialTheme.typography.headlineSmall,
+		)
+	}, indicator = {
+		AssistChip(
+			enabled = clock.dstSettings.enable,
+			label = { Text("DST") },
+			onClick = { },
+		)
+	}, content = {
+		Text(
+			text = clock.offsetString(),
+			textAlign = TextAlign.End,
+			modifier = Modifier.fillMaxWidth(),
+			style = MaterialTheme.typography.titleMedium,
+		)
+	})
 }

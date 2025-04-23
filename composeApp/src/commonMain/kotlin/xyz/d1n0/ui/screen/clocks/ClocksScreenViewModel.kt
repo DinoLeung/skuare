@@ -9,43 +9,43 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import xyz.d1n0.lib.model.*
+import xyz.d1n0.lib.model.ClocksSettings
+import xyz.d1n0.lib.model.HomeClock
+import xyz.d1n0.lib.model.Watch
+import xyz.d1n0.lib.model.WorldClock
+import xyz.d1n0.lib.model.requestClocks
+import xyz.d1n0.lib.model.writeClocks
+import xyz.d1n0.lib.model.writeTimeZoneConfigs
+import xyz.d1n0.lib.model.writeTimeZoneCoordinatesAndRadioId
+import xyz.d1n0.lib.model.writeTimeZoneNames
 
 
-class ClocksScreenViewModel: ViewModel(), KoinComponent {
-    private val watch: Watch by inject()
+class ClocksScreenViewModel : ViewModel(), KoinComponent {
+	private val watch: Watch by inject()
 
-    private val clocks: StateFlow<ClocksSettings> = watch.clocks
+	private val clocks: StateFlow<ClocksSettings> = watch.clocks
 
-    val homeClock: StateFlow<HomeClock?> = clocks.map { it.homeClock }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.Lazily,
-            initialValue = null
-        )
+	val homeClock: StateFlow<HomeClock?> = clocks.map { it.homeClock }.stateIn(
+			scope = viewModelScope, started = SharingStarted.Lazily, initialValue = null
+		)
 
-    val worldClocks: StateFlow<List<WorldClock?>> = clocks.map { it.worldClocks }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.Lazily,
-            initialValue = List(5) { null }
-        )
+	val worldClocks: StateFlow<List<WorldClock?>> = clocks.map { it.worldClocks }.stateIn(
+			scope = viewModelScope,
+			started = SharingStarted.Lazily,
+			initialValue = List(5) { null })
 
-    val isInitialized: StateFlow<Boolean> = clocks.map { it.isInitialized }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.Lazily,
-            initialValue = false
-        )
+	val isInitialized: StateFlow<Boolean> = clocks.map { it.isInitialized }.stateIn(
+			scope = viewModelScope, started = SharingStarted.Lazily, initialValue = false
+		)
 
-    fun requestClocks() = watch.scope.launch { watch.requestClocks() }
+	fun requestClocks() = watch.scope.launch { watch.requestClocks() }
 
-    fun writeClocks() = watch.scope.launch {
-        clocks.value.let {
-            watch.writeClocks(it)
-            watch.writeTimeZoneConfigs(it)
-            watch.writeTimeZoneCoordinatesAndRadioId(it)
-            watch.writeTimeZoneNames(it)
-        }
-    }
+	fun writeClocks() = watch.scope.launch {
+		clocks.value.let {
+			watch.writeClocks(it)
+			watch.writeTimeZoneConfigs(it)
+			watch.writeTimeZoneCoordinatesAndRadioId(it)
+			watch.writeTimeZoneNames(it)
+		}
+	}
 }

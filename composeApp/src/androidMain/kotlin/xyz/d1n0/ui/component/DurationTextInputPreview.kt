@@ -17,19 +17,19 @@ import kotlin.time.Duration.Companion.minutes
 @Preview
 @Composable
 fun DurationTextInputPreview() {
-    var duration by remember { mutableStateOf(69.minutes) }
+	var duration by remember { mutableStateOf(69.minutes) }
 
-    Card(modifier = Modifier.padding(8.dp)) {
-        DurationTextInput(
-            duration = duration,
-            onDurationChange = { duration = it },
-            modifier = Modifier.padding(8.dp),
-            isError = duration > 12.hours,
-            supportingText = {
-                if (duration > 12.hours) {
-                    Text("Cannot exceed 12 hours.")
-                }
-            }
-        )
-    }
+	Card(modifier = Modifier.padding(8.dp)) {
+		DurationTextInput(
+			duration = duration,
+			onDurationChange = { duration = it },
+			modifier = Modifier.padding(8.dp),
+			isError = duration > 12.hours,
+			supportingText = {
+				if (duration > 12.hours) {
+					Text("Cannot exceed 12 hours.")
+				}
+			}
+		)
+	}
 }

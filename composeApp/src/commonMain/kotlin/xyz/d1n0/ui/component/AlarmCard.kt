@@ -17,38 +17,30 @@ import xyz.d1n0.lib.model.Alarm
 @Preview
 @Composable
 fun AlarmCard(
-    alarm: Alarm,
-    isSnooze: Boolean = false,
-    modifier: Modifier = Modifier
+	alarm: Alarm,
+	isSnooze: Boolean = false,
+	modifier: Modifier = Modifier,
 ) {
 
-    CardView(
-        modifier = modifier,
-        leadingIcon = {
-            if (isSnooze)
-                Icon(
-                    imageVector = Icons.Sharp.Snooze,
-                    contentDescription = "Snooze Alarm",
-                )
-            else
-                Icon(
-                    imageVector = Icons.Sharp.Alarm,
-                    contentDescription = "Alarm",
-                )
-        },
-        title = {
-            Text(
-                text = alarm.time.toHHMMString(),
-                textAlign = TextAlign.Start,
-                style = MaterialTheme.typography.headlineLarge,
-            )
-        },
-        indicator = {
-            Switch(
-                checked = alarm.enable,
-                onCheckedChange = {  },
-            )
-        },
-        content = { }
-    )
+	CardView(modifier = modifier, leadingIcon = {
+		if (isSnooze) Icon(
+			imageVector = Icons.Sharp.Snooze,
+			contentDescription = "Snooze Alarm",
+		)
+		else Icon(
+			imageVector = Icons.Sharp.Alarm,
+			contentDescription = "Alarm",
+		)
+	}, title = {
+		Text(
+			text = alarm.time.toHHMMString(),
+			textAlign = TextAlign.Start,
+			style = MaterialTheme.typography.headlineLarge,
+		)
+	}, indicator = {
+		Switch(
+			checked = alarm.enable,
+			onCheckedChange = { },
+		)
+	}, content = { })
 }

@@ -20,39 +20,35 @@ import xyz.d1n0.ui.component.ClockCard
 @Preview
 @Composable
 fun ClocksScreen(
-    innerPadding: PaddingValues,
+	innerPadding: PaddingValues,
 ) {
-    val viewModel = koinViewModel<ClocksScreenViewModel>()
-    val isInitialized = viewModel.isInitialized.collectAsState(initial = false)
-    val homeClock = viewModel.homeClock.collectAsState(null)
-    val worldClocks = viewModel.worldClocks.collectAsState(List(5) { null })
+	val viewModel = koinViewModel<ClocksScreenViewModel>()
+	val isInitialized = viewModel.isInitialized.collectAsState(initial = false)
+	val homeClock = viewModel.homeClock.collectAsState(null)
+	val worldClocks = viewModel.worldClocks.collectAsState(List(5) { null })
 
-    LaunchedEffect(Unit) {
-        if (isInitialized.value == false)
-            viewModel.requestClocks()
-    }
+	LaunchedEffect(Unit) {
+		if (isInitialized.value == false) viewModel.requestClocks()
+	}
 
-    Column (
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(innerPadding)
-            .verticalScroll(rememberScrollState()),
-    ) {
-        homeClock.value?.let {
-            ClockCard(
-                modifier = Modifier.fillMaxWidth(),
-                clock = it,
-            )
-        }
-        worldClocks.value.map { clock ->
-            clock?.let {
-                ClockCard(
-                    modifier = Modifier.fillMaxWidth(),
-                    clock = it
-                )
-            }
-        }
-    }
+	Column(
+		horizontalAlignment = Alignment.CenterHorizontally,
+		verticalArrangement = Arrangement.Center,
+		modifier = Modifier.fillMaxSize().padding(innerPadding)
+			.verticalScroll(rememberScrollState()),
+	) {
+		homeClock.value?.let {
+			ClockCard(
+				modifier = Modifier.fillMaxWidth(),
+				clock = it,
+			)
+		}
+		worldClocks.value.map { clock ->
+			clock?.let {
+				ClockCard(
+					modifier = Modifier.fillMaxWidth(), clock = it
+				)
+			}
+		}
+	}
 }

@@ -20,39 +20,36 @@ import xyz.d1n0.ui.component.HourlySignalCard
 
 @Composable
 fun AlarmsScreen(
-    innerPadding: PaddingValues,
+	innerPadding: PaddingValues,
 ) {
-    val viewModel = koinViewModel<AlarmsScreenViewModel>()
-    val log = koinInject<Log>()
+	val viewModel = koinViewModel<AlarmsScreenViewModel>()
+	val log = koinInject<Log>()
 
-    val isInitialized = viewModel.isInitialized.collectAsState(initial = false)
-    val hourlySignal = viewModel.hourlySignal.collectAsState(initial = null)
-    val alarms = viewModel.alarms.collectAsState(initial = List(4) { null })
-    val alarmSnooze = viewModel.snoozeAlarm.collectAsState(initial = null)
+	val isInitialized = viewModel.isInitialized.collectAsState(initial = false)
+	val hourlySignal = viewModel.hourlySignal.collectAsState(initial = null)
+	val alarms = viewModel.alarms.collectAsState(initial = List(4) { null })
+	val alarmSnooze = viewModel.snoozeAlarm.collectAsState(initial = null)
 
-    LaunchedEffect(Unit) {
-        if (isInitialized.value == false)
-            viewModel.requestAlarms()
-    }
+	LaunchedEffect(Unit) {
+		if (isInitialized.value == false) viewModel.requestAlarms()
+	}
 
-    Column (
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(innerPadding)
-            .verticalScroll(rememberScrollState()),
-    ) {
-        alarms.value.forEach { alarm ->
-            alarm?.let {
-                AlarmCard(alarm = it)
-            }
-        }
-        alarmSnooze.value?.let {
-            AlarmCard(alarm = it, isSnooze = true)
-        }
-        hourlySignal.value?.let {
-            HourlySignalCard(hourlySignal = it)
-        }
-    }
+	Column(
+		horizontalAlignment = Alignment.CenterHorizontally,
+		verticalArrangement = Arrangement.Center,
+		modifier = Modifier.fillMaxSize().padding(innerPadding)
+			.verticalScroll(rememberScrollState()),
+	) {
+		alarms.value.forEach { alarm ->
+			alarm?.let {
+				AlarmCard(alarm = it)
+			}
+		}
+		alarmSnooze.value?.let {
+			AlarmCard(alarm = it, isSnooze = true)
+		}
+		hourlySignal.value?.let {
+			HourlySignalCard(hourlySignal = it)
+		}
+	}
 }

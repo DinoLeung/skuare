@@ -13,25 +13,25 @@ import xyz.d1n0.ui.component.TimerCard
 
 @Composable
 fun TimerScreen(
-    innerPadding: PaddingValues,
+	innerPadding: PaddingValues,
 ) {
-    val viewModel = koinViewModel<TimerScreenViewModel>()
-    val log = koinInject<Log>()
+	val viewModel = koinViewModel<TimerScreenViewModel>()
+	val log = koinInject<Log>()
 
-    val isInitialized = viewModel.isInitialized.collectAsState(initial = false)
-    val timer = viewModel.timer.collectAsState(initial = null)
+	val isInitialized = viewModel.isInitialized.collectAsState(initial = false)
+	val timer = viewModel.timer.collectAsState(initial = null)
 
-    LaunchedEffect(Unit) {
-        if (isInitialized.value == false)
-            viewModel.requestTimer()
-    }
+	LaunchedEffect(Unit) {
+		if (isInitialized.value == false)
+			viewModel.requestTimer()
+	}
 
-    Column (
-        modifier = Modifier.fillMaxSize().padding(innerPadding),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+	Column(
+		modifier = Modifier.fillMaxSize().padding(innerPadding),
+		horizontalAlignment = Alignment.CenterHorizontally,
+		verticalArrangement = Arrangement.Center,
 
-        ) {
-        timer.value?.let { TimerCard(timer = it, onValueChange = {})  }
-    }
+		) {
+		timer.value?.let { TimerCard(timer = it, onValueChange = {}) }
+	}
 }

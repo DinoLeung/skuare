@@ -11,30 +11,30 @@ import xyz.d1n0.ui.screen.scan.ScanScreen
 
 @Composable
 fun RootNavGraph() {
-    val rootNavHostController = koinInject<NavHostController>(named("rootNavHostController"))
+	val rootNavHostController = koinInject<NavHostController>(named("rootNavHostController"))
 
-    val onConnect = {
-        rootNavHostController.navigate(RootNavRoute.Watch.route) {
-            popUpTo(RootNavRoute.Scan.route) { inclusive = true }
-        }
-    }
+	val onConnect = {
+		rootNavHostController.navigate(RootNavRoute.Watch.route) {
+			popUpTo(RootNavRoute.Scan.route) { inclusive = true }
+		}
+	}
 
-    val onDisconnect = {
-        rootNavHostController.navigate(RootNavRoute.Scan.route) {
-            popUpTo(RootNavRoute.Watch.route) { inclusive = true }
-        }
-    }
+	val onDisconnect = {
+		rootNavHostController.navigate(RootNavRoute.Scan.route) {
+			popUpTo(RootNavRoute.Watch.route) { inclusive = true }
+		}
+	}
 
-    NavHost(
-        navController = rootNavHostController,
-        startDestination = RootNavRoute.Scan.route,
-    ) {
-        composable(RootNavRoute.Scan.route) {
-            ScanScreen(onConnect = onConnect)
-        }
-        composable(RootNavRoute.Watch.route) {
-            NavScaffold(onDisconnect = onDisconnect)
-        }
-    }
+	NavHost(
+		navController = rootNavHostController,
+		startDestination = RootNavRoute.Scan.route,
+	) {
+		composable(RootNavRoute.Scan.route) {
+			ScanScreen(onConnect = onConnect)
+		}
+		composable(RootNavRoute.Watch.route) {
+			NavScaffold(onDisconnect = onDisconnect)
+		}
+	}
 }
 

@@ -19,38 +19,36 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 @Preview
 fun ScanScreen(
-    onConnect: () -> Unit,
+	onConnect: () -> Unit,
 ) {
-    val viewModel = koinViewModel<ScanScreenViewModel>()
-    val state by viewModel.state.collectAsState()
+	val viewModel = koinViewModel<ScanScreenViewModel>()
+	val state by viewModel.state.collectAsState()
 
-    BindEffect(viewModel.permissionsController)
-    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
-        viewModel.checkScanPermissions()
-    }
+	BindEffect(viewModel.permissionsController)
+	LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+		viewModel.checkScanPermissions()
+	}
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        if (state.hasScanPermission) {
-            if (state.isScanning)
-                Button(
-                    onClick = viewModel::stopScanning,
-                    enabled = state.isScanning,
-                ) { Text("Stop!") }
-            else
-                Button(
-                    onClick = { viewModel.startScanning(onConnect = onConnect) },
-                    enabled = !state.isScanning,
-                ) { Text("Scan!") }
-        } else {
-            Button(
-                onClick = viewModel.permissionsController::openAppSettings,
-            ) {
-                Text("Grant permissions from app settings")
-            }
-        }
-    }
+	Column(
+		modifier = Modifier.fillMaxSize(),
+		horizontalAlignment = Alignment.CenterHorizontally,
+		verticalArrangement = Arrangement.Center,
+	) {
+		if (state.hasScanPermission) {
+			if (state.isScanning) Button(
+				onClick = viewModel::stopScanning,
+				enabled = state.isScanning,
+			) { Text("Stop!") }
+			else Button(
+				onClick = { viewModel.startScanning(onConnect = onConnect) },
+				enabled = !state.isScanning,
+			) { Text("Scan!") }
+		} else {
+			Button(
+				onClick = viewModel.permissionsController::openAppSettings,
+			) {
+				Text("Grant permissions from app settings")
+			}
+		}
+	}
 }

@@ -1,7 +1,13 @@
 package xyz.d1n0.lib.model
 
-import com.juul.kable.*
+import com.juul.kable.NotConnectedException
+import com.juul.kable.Peripheral
+import com.juul.kable.Scanner
+import com.juul.kable.State
+import com.juul.kable.WriteType
+import com.juul.kable.characteristicOf
 import com.juul.kable.logs.Logging
+import com.juul.kable.peripheral
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,14 +22,18 @@ import xyz.d1n0.lib.constant.OpCode
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.uuid.ExperimentalUuidApi
 
-class Watch(private val peripheral: Peripheral): KoinComponent {
+class Watch(private val peripheral: Peripheral) : KoinComponent {
 
 	@OptIn(ExperimentalUuidApi::class)
 	companion object {
-		private val requestCharacteristic =
-			characteristicOf(service = BleUuid.ALL_FEATURES_CHARACTERISTIC_UUID, characteristic = BleUuid.REQUEST_CHARACTERISTIC_UUID)
-		private val ioCharacteristic =
-			characteristicOf(service = BleUuid.ALL_FEATURES_CHARACTERISTIC_UUID, characteristic = BleUuid.IO_CHARACTERISTIC_UUID)
+		private val requestCharacteristic = characteristicOf(
+			service = BleUuid.ALL_FEATURES_CHARACTERISTIC_UUID,
+			characteristic = BleUuid.REQUEST_CHARACTERISTIC_UUID
+		)
+		private val ioCharacteristic = characteristicOf(
+			service = BleUuid.ALL_FEATURES_CHARACTERISTIC_UUID,
+			characteristic = BleUuid.IO_CHARACTERISTIC_UUID
+		)
 
 		val scanner by lazy {
 			Scanner {
@@ -42,7 +52,7 @@ class Watch(private val peripheral: Peripheral): KoinComponent {
 	val log: Log by inject()
 
 	internal val _info = MutableStateFlow(WatchInfo())
-	val info: StateFlow<WatchInfo> =_info.asStateFlow()
+	val info: StateFlow<WatchInfo> = _info.asStateFlow()
 
 	internal val _clocks = MutableStateFlow(ClocksSettings())
 	val clocks: StateFlow<ClocksSettings> get() = _clocks.asStateFlow()
@@ -100,8 +110,12 @@ class Watch(private val peripheral: Peripheral): KoinComponent {
 	@Throws(CancellationException::class, IOException::class, NotConnectedException::class)
 	suspend fun request(opCode: OpCode) {
 		log.d { "Requesting: ${opCode.byte.toHexString(HexFormat.UpperCase)}" }
-		runCatching { peripheral.write(requestCharacteristic, byteArrayOf(opCode.byte)) }
-			.onFailure { log.e { "Failed to request ${opCode.name}: ${it.message}" } }
+		runCatching {
+			peripheral.write(
+				requestCharacteristic,
+				byteArrayOf(opCode.byte)
+			)
+		}.onFailure { log.e { "Failed to request ${opCode.name}: ${it.message}" } }
 
 	}
 
@@ -117,8 +131,11 @@ class Watch(private val peripheral: Peripheral): KoinComponent {
 	@Throws(CancellationException::class, IOException::class, NotConnectedException::class)
 	suspend fun request(opCode: OpCode, position: Int) {
 		log.d { "Requesting: ${opCode.byte.toHexString(HexFormat.UpperCase)} position: $position" }
-		runCatching { peripheral.write(requestCharacteristic, byteArrayOf(opCode.byte, position.toByte())) }
-			.onFailure { log.e { "Failed to request ${opCode.name} on $position: ${it.message}" } }
+		runCatching {
+			peripheral.write(
+				requestCharacteristic, byteArrayOf(opCode.byte, position.toByte())
+			)
+		}.onFailure { log.e { "Failed to request ${opCode.name} on $position: ${it.message}" } }
 	}
 
 	/**
@@ -135,8 +152,13 @@ class Watch(private val peripheral: Peripheral): KoinComponent {
 	@Throws(CancellationException::class, IOException::class, NotConnectedException::class)
 	suspend fun write(data: ByteArray) {
 		log.d { "Writing: ${data.toHexString(HexFormat.UpperCase)}" }
-		runCatching { peripheral.write(ioCharacteristic, data, WriteType.WithResponse) }
-			.onFailure {log.e { "Failed to write ${data.toHexString(HexFormat.UpperCase)}: ${it.message}" }}
+		runCatching {
+			peripheral.write(
+				ioCharacteristic,
+				data,
+				WriteType.WithResponse
+			)
+		}.onFailure { log.e { "Failed to write ${data.toHexString(HexFormat.UpperCase)}: ${it.message}" } }
 
 	}
 }

@@ -7,8 +7,8 @@ import org.koin.core.component.inject
 import xyz.d1n0.lib.model.Watch
 import com.juul.kable.State as PeripheralState
 
-class NavBarViewModel: ViewModel(), KoinComponent {
-    private val watch: Watch by inject()
+class NavBarViewModel : ViewModel(), KoinComponent {
+	private val watch: Watch by inject()
 
-    val watchState: StateFlow<PeripheralState> get() = watch.state
+	val watchState: StateFlow<PeripheralState> get() = watch.state
 }

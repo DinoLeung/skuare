@@ -20,10 +20,10 @@ enum class OpCode(val byte: Byte) {
 	ALARM_A(0x15),
 	ALARM_B(0x16),
 
-    TIMER(0x18),
+	TIMER(0x18),
 
-    REMINDER_TITLE(0x30),
-    REMINDER_CONFIG(0x31),
+	REMINDER_TITLE(0x30),
+	REMINDER_CONFIG(0x31),
 
 	ERROR(0xFF.toByte());
 //    currentTimeManager(0x39),????

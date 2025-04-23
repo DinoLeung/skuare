@@ -14,36 +14,27 @@ import kotlin.time.Duration.Companion.hours
 
 @Preview
 @Composable
-fun TimerCard (
-    timer: Timer,
-    onValueChange: (Duration) -> Unit,
-    modifier: Modifier = Modifier,
+fun TimerCard(
+	timer: Timer,
+	onValueChange: (Duration) -> Unit,
+	modifier: Modifier = Modifier,
 ) {
-    CardView(
-        modifier = modifier,
-        leadingIcon = { },
-        title = { },
-        indicator = {
-            AssistChip(
-                label = { Text(timer.status.displayName) },
-                onClick = { },
-            )
-        },
-        content = {
-            Row(
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                DurationTextInput(
-                    duration = timer.duration,
-                    onDurationChange = { onValueChange(it) },
-                    isError = timer.duration >= 24.hours,
-                    supportingText = {
-                        if (timer.duration >= 24.hours)
-                            Text("Timer duration must not exceed 24 hours")
-                    }
-                )
-            }
-        }
-    )
+	CardView(modifier = modifier, leadingIcon = { }, title = { }, indicator = {
+		AssistChip(
+			label = { Text(timer.status.displayName) },
+			onClick = { },
+		)
+	}, content = {
+		Row(
+			horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()
+		) {
+			DurationTextInput(
+				duration = timer.duration,
+				onDurationChange = { onValueChange(it) },
+				isError = timer.duration >= 24.hours,
+				supportingText = {
+					if (timer.duration >= 24.hours) Text("Timer duration must not exceed 24 hours")
+				})
+		}
+	})
 }

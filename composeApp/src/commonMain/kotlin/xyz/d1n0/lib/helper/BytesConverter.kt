@@ -4,13 +4,13 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.isoDayNumber
-import kotlin.time.Duration
 import xyz.d1n0.lib.constant.customCharset
 import xyz.d1n0.lib.constant.customCharsetByte
 import xyz.d1n0.lib.constant.fallbackByte
 import xyz.d1n0.lib.constant.fallbackChar
 import xyz.d1n0.lib.constant.jisX0201Charset
 import xyz.d1n0.lib.constant.jisX0201CharsetByte
+import kotlin.time.Duration
 
 /**
  * Converts this Short into a 2 bytes ByteArray in little-endian order, preserving its two’s complement representation.
@@ -20,10 +20,10 @@ import xyz.d1n0.lib.constant.jisX0201CharsetByte
  * @return a ByteArray of length 2 representing the Short in little-endian byte order.
  */
 fun Short.toLittleEndianByteArray(): ByteArray {
-    return byteArrayOf(
-        (this.toInt() and 0xFF).toByte(),        // Least significant byte
-        ((this.toInt() shr 8) and 0xFF).toByte() // Most significant byte
-    )
+	return byteArrayOf(
+		(this.toInt() and 0xFF).toByte(),        // Least significant byte
+		((this.toInt() shr 8) and 0xFF).toByte() // Most significant byte
+	)
 }
 
 /**
@@ -37,10 +37,10 @@ fun Short.toLittleEndianByteArray(): ByteArray {
  * @throws IllegalArgumentException if the bytearray does not contain exactly 2 bytes.
  */
 fun Short.Companion.fromLittleEndianByteArray(bytes: ByteArray): Short {
-    require(bytes.size == 2) { "Input must be a ByteArray of exactly 2 bytes." }
-    val low = bytes[0].toInt() and 0xFF
-    val high = bytes[1].toInt() and 0xFF
-    return ((high shl 8) or low).toShort()
+	require(bytes.size == 2) { "Input must be a ByteArray of exactly 2 bytes." }
+	val low = bytes[0].toInt() and 0xFF
+	val high = bytes[1].toInt() and 0xFF
+	return ((high shl 8) or low).toShort()
 }
 
 /**
@@ -51,13 +51,13 @@ fun Short.Companion.fromLittleEndianByteArray(bytes: ByteArray): Short {
  * @return a ByteArray of length 8 representing the Double.
  */
 fun Double.toByteArray(): ByteArray {
-    val bits = this.toBits()
-    val byteArray = ByteArray(8)
-    for (i in 0 until 8) {
-        // Extract the least-significant byte and place it in reverse order
-        byteArray[7 - i] = ((bits shr (8 * i)) and 0xFF).toByte()
-    }
-    return byteArray
+	val bits = this.toBits()
+	val byteArray = ByteArray(8)
+	for (i in 0 until 8) {
+		// Extract the least-significant byte and place it in reverse order
+		byteArray[7 - i] = ((bits shr (8 * i)) and 0xFF).toByte()
+	}
+	return byteArray
 }
 
 /**
@@ -70,12 +70,12 @@ fun Double.toByteArray(): ByteArray {
  * @throws IllegalArgumentException if the ByteArray does not contain exactly 8 bytes.
  */
 fun Double.Companion.fromByteArray(bytes: ByteArray): Double {
-    require(bytes.size == 8) { "Input must be exactly 8 bytes long." }
-    var bits = 0L
-    for (byte in bytes) {
-        bits = (bits shl 8) or (byte.toLong() and 0xFF)
-    }
-    return Double.fromBits(bits)
+	require(bytes.size == 8) { "Input must be exactly 8 bytes long." }
+	var bits = 0L
+	for (byte in bytes) {
+		bits = (bits shl 8) or (byte.toLong() and 0xFF)
+	}
+	return Double.fromBits(bits)
 }
 
 /**
@@ -91,10 +91,10 @@ fun Double.Companion.fromByteArray(bytes: ByteArray): Double {
  * @throws IllegalArgumentException if the integer is not in the range 0..99.
  */
 fun Int.toBcdByte(): Byte {
-    require(this in 0..99) { "Value must be between 0 and 99 for BCD encoding" }
-    val tens = this / 10
-    val ones = this % 10
-    return ((tens shl 4) or ones).toByte()
+	require(this in 0..99) { "Value must be between 0 and 99 for BCD encoding" }
+	val tens = this / 10
+	val ones = this % 10
+	return ((tens shl 4) or ones).toByte()
 }
 
 /**
@@ -109,12 +109,12 @@ fun Int.toBcdByte(): Byte {
  */
 @OptIn(ExperimentalStdlibApi::class)
 fun Int.Companion.fromBcdByte(bcd: Byte): Int {
-    val highNibble = (bcd.toInt() ushr 4) and 0x0F
-    val lowNibble = bcd.toInt() and 0x0F
-    require(highNibble in 0..9 && lowNibble in 0..9) {
-        "Invalid BCD byte: contains non-decimal digits ${bcd.toHexString(HexFormat.UpperCase)}"
-    }
-    return highNibble * 10 + lowNibble
+	val highNibble = (bcd.toInt() ushr 4) and 0x0F
+	val lowNibble = bcd.toInt() and 0x0F
+	require(highNibble in 0..9 && lowNibble in 0..9) {
+		"Invalid BCD byte: contains non-decimal digits ${bcd.toHexString(HexFormat.UpperCase)}"
+	}
+	return highNibble * 10 + lowNibble
 }
 
 /**
@@ -130,22 +130,18 @@ fun Int.Companion.fromBcdByte(bcd: Byte): Int {
  * @receiver The `LocalDateTime` instance to be converted.
  * @return A `ByteArray` containing the serialized date-time information.
  */
-fun LocalDateTime.toByteArray() =
-    byteArrayOf(
-        // Year represented in two bytes
-        *this.year.toShort().toLittleEndianByteArray(),
-        // Month and Day as single bytes
-        this.monthNumber.toByte(),
-        this.dayOfMonth.toByte(),
-        // Hour, Minute, and Second as single bytes
-        this.hour.toByte(),
-        this.minute.toByte(),
-        this.second.toByte(),
-        // Weekday (Monday = 1, ..., Sunday = 7)
-        this.dayOfWeek.isoDayNumber.toByte(),
-        // Milliseconds, scaled to 0-255 for 1 byte
-        ((this.nanosecond / 1_000_000) * 255 / 999).toByte()
-    )
+fun LocalDateTime.toByteArray() = byteArrayOf(
+	// Year represented in two bytes
+	*this.year.toShort().toLittleEndianByteArray(),
+	// Month and Day as single bytes
+	this.monthNumber.toByte(), this.dayOfMonth.toByte(),
+	// Hour, Minute, and Second as single bytes
+	this.hour.toByte(), this.minute.toByte(), this.second.toByte(),
+	// Weekday (Monday = 1, ..., Sunday = 7)
+	this.dayOfWeek.isoDayNumber.toByte(),
+	// Milliseconds, scaled to 0-255 for 1 byte
+	((this.nanosecond / 1_000_000) * 255 / 999).toByte()
+)
 
 /**
  * Converts this LocalDate into a 3 bytes ByteArray where each component is encoded in Binary-Coded Decimal (BCD).
@@ -163,12 +159,9 @@ fun LocalDateTime.toByteArray() =
  * @return a ByteArray of length 3 containing the BCD-encoded date.
  * @throws IllegalArgumentException if any date component is out of the valid range for BCD encoding.
  */
-fun LocalDate.toBcdByteArray() =
-    byteArrayOf(
-        (this.year - 2000).toBcdByte(),
-        this.monthNumber.toBcdByte(),
-        this.dayOfMonth.toBcdByte()
-    )
+fun LocalDate.toBcdByteArray() = byteArrayOf(
+	(this.year - 2000).toBcdByte(), this.monthNumber.toBcdByte(), this.dayOfMonth.toBcdByte()
+)
 
 /**
  * Creates a LocalDate from a 3-byte BCD-encoded ByteArray.
@@ -185,13 +178,13 @@ fun LocalDate.toBcdByteArray() =
  * @throws IllegalArgumentException if the array length is not 3 or if the BCD values are invalid.
  */
 fun LocalDate.Companion.fromBcdByteArray(bytes: ByteArray): LocalDate {
-    require(bytes.size == 3) { "BCD date array must be exactly 3 bytes" }
+	require(bytes.size == 3) { "BCD date array must be exactly 3 bytes" }
 
-    val year = 2000 + Int.fromBcdByte(bytes[0])
-    val month = Int.fromBcdByte(bytes[1])
-    val day = Int.fromBcdByte(bytes[2])
+	val year = 2000 + Int.fromBcdByte(bytes[0])
+	val month = Int.fromBcdByte(bytes[1])
+	val day = Int.fromBcdByte(bytes[2])
 
-    return LocalDate(year = year, monthNumber = month, dayOfMonth = day)
+	return LocalDate(year = year, monthNumber = month, dayOfMonth = day)
 }
 
 /**
@@ -205,11 +198,10 @@ fun LocalDate.Companion.fromBcdByteArray(bytes: ByteArray): LocalDate {
  *
  * @return a ByteArray of length 2 representing this LocalTime.
  */
-fun LocalTime.toByteArray() =
-    byteArrayOf(
-        this.hour.toByte(),
-        this.minute.toByte(),
-    )
+fun LocalTime.toByteArray() = byteArrayOf(
+	this.hour.toByte(),
+	this.minute.toByte(),
+)
 
 /**
  * Constructs a LocalTime instance from a 2 bytes ByteArray.
@@ -225,10 +217,10 @@ fun LocalTime.toByteArray() =
  * @throws IllegalArgumentException if the ByteArray does not contain exactly 2 bytes.
  */
 fun LocalTime.Companion.fromByteArray(bytes: ByteArray): LocalTime {
-    require(bytes.size == 2) { "Time ByteArray must be exactly 2 bytes" }
-    val hour = bytes[0].toInt()
-    val minute = bytes[1].toInt()
-    return LocalTime(hour = hour, minute = minute)
+	require(bytes.size == 2) { "Time ByteArray must be exactly 2 bytes" }
+	val hour = bytes[0].toInt()
+	val minute = bytes[1].toInt()
+	return LocalTime(hour = hour, minute = minute)
 }
 
 
@@ -247,14 +239,13 @@ fun LocalTime.Companion.fromByteArray(bytes: ByteArray): LocalTime {
  *
  * @return a ByteArray of length 3 containing the hours, minutes, and seconds.
  */
-fun Duration.toByteArray() =
-    this.toComponents { hours, minutes, seconds, _ ->
-        byteArrayOf(
-            hours.toByte(),
-            minutes.toByte(),
-            seconds.toByte(),
-        )
-    }
+fun Duration.toByteArray() = this.toComponents { hours, minutes, seconds, _ ->
+	byteArrayOf(
+		hours.toByte(),
+		minutes.toByte(),
+		seconds.toByte(),
+	)
+}
 
 /**
  * Constructs a Duration from a 3 bytes ByteArray.
@@ -272,11 +263,11 @@ fun Duration.toByteArray() =
  * @throws IllegalArgumentException if the ByteArray length is not exactly 3.
  */
 fun Duration.Companion.fromByteArray(bytes: ByteArray): Duration {
-    require(bytes.size == 3) { "Duration ByteArray must be exactly 3 bytes" }
-    val hours = bytes[0].toInt()
-    val minutes = bytes[1].toInt()
-    val seconds = bytes[2].toInt()
-    return hours.hours + minutes.minutes + seconds.seconds
+	require(bytes.size == 3) { "Duration ByteArray must be exactly 3 bytes" }
+	val hours = bytes[0].toInt()
+	val minutes = bytes[1].toInt()
+	val seconds = bytes[2].toInt()
+	return hours.hours + minutes.minutes + seconds.seconds
 }
 
 /**
@@ -294,17 +285,17 @@ fun Duration.Companion.fromByteArray(bytes: ByteArray): Duration {
  * @return the decoded character, or null if the byte is in row 0.
  */
 fun Char.Companion.fromCasioByte(byte: Byte): Char? {
-    val unsigned = byte.toInt() and 0xFF
-    val row = unsigned shr 4
-    val col = unsigned and 0x0F
-    return when (row) {
-        0 -> null
-        1 -> fallbackChar
-        in 2..7 -> (unsigned).toChar()
-        in 8..9 -> customCharset[row]?.get(col) ?: fallbackChar
-        in 0xA..0xD -> jisX0201Charset[row]?.get(col) ?: fallbackChar
-        else -> fallbackChar
-    }
+	val unsigned = byte.toInt() and 0xFF
+	val row = unsigned shr 4
+	val col = unsigned and 0x0F
+	return when (row) {
+		0 -> null
+		1 -> fallbackChar
+		in 2..7 -> (unsigned).toChar()
+		in 8..9 -> customCharset[row]?.get(col) ?: fallbackChar
+		in 0xA..0xD -> jisX0201Charset[row]?.get(col) ?: fallbackChar
+		else -> fallbackChar
+	}
 }
 
 /**
@@ -320,20 +311,16 @@ fun Char.Companion.fromCasioByte(byte: Byte): Char? {
  * @return a Byte representing the Casio-encoded value of this character.
  */
 fun Char.toCasioByte(): Byte {
-    if (this.code in 0x00..0x01)
-        return 0
+	if (this.code in 0x00..0x01) return 0
 
-    if (this.code in 0x20..0x7F)
-        return this.code.toByte()
+	if (this.code in 0x20..0x7F) return this.code.toByte()
 
-    if (this in customCharsetByte)
-        return customCharsetByte.getValue(this)
+	if (this in customCharsetByte) return customCharsetByte.getValue(this)
 
-    if (this in jisX0201CharsetByte)
-        return jisX0201CharsetByte.getValue(this)
+	if (this in jisX0201CharsetByte) return jisX0201CharsetByte.getValue(this)
 
-    // 0x10..0x1f || 0xE0..0xFF
-    return fallbackByte
+	// 0x10..0x1f || 0xE0..0xFF
+	return fallbackByte
 }
 
 /**
@@ -346,7 +333,7 @@ fun Char.toCasioByte(): Byte {
  * @return a String representing the decoded characters.
  */
 fun String.Companion.fromCasioByteArray(bytes: ByteArray): String =
-    bytes.joinToString(separator = "") { Char.fromCasioByte(it)?.toString() ?: "" }
+	bytes.joinToString(separator = "") { Char.fromCasioByte(it)?.toString() ?: "" }
 
 
 /**
@@ -357,5 +344,4 @@ fun String.Companion.fromCasioByteArray(bytes: ByteArray): String =
  *
  * @return a ByteArray containing the Casio-encoded bytes for this string.
  */
-fun String.toCasioByteArray(): ByteArray =
-    this.map { it.toCasioByte() }.toByteArray()
+fun String.toCasioByteArray(): ByteArray = this.map { it.toCasioByte() }.toByteArray()

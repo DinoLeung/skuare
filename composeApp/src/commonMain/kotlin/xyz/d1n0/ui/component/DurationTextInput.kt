@@ -26,76 +26,72 @@ import kotlin.time.Duration
 @Preview
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun DurationTextInput (
-    duration: Duration,
-    onDurationChange: (Duration) -> Unit,
-    label: @Composable (() -> Unit) = { Text("Duration") },
-    placeholder: @Composable (() -> Unit) = { Text("00:00:00") },
-    supportingText: @Composable (() -> Unit)? = null,
-    isError: Boolean = false,
-    modifier: Modifier = Modifier
+fun DurationTextInput(
+	duration: Duration,
+	onDurationChange: (Duration) -> Unit,
+	label: @Composable (() -> Unit) = { Text("Duration") },
+	placeholder: @Composable (() -> Unit) = { Text("00:00:00") },
+	supportingText: @Composable (() -> Unit)? = null,
+	isError: Boolean = false,
+	modifier: Modifier = Modifier,
 ) {
-    var textFieldValue by remember {
-        mutableStateOf(
-            TextFieldValue(
-                text = duration.toHHMMSSString(),
-                selection = TextRange(duration.toHHMMSSString().length)
-            )
-        )
-    }
+	var textFieldValue by remember {
+		mutableStateOf(
+			TextFieldValue(
+				text = duration.toHHMMSSString(),
+				selection = TextRange(duration.toHHMMSSString().length)
+			)
+		)
+	}
 
-    OutlinedTextField(
-        value = textFieldValue,
-        onValueChange = { input ->
-            val raw = input.text.filter { it.isDigit() }
-                .trimStart { it == '0' }
-                .take(6)
-                .padStart(6, '0')
-            val newDuration = Duration.fromHHMMSS(raw)
-            textFieldValue = input.copy(
-                text = raw,
-                selection = TextRange(raw.length),
-            )
-            onDurationChange(newDuration)
-        },
-        label = label,
-        placeholder = placeholder,
-        visualTransformation = MaskVisualTransformation(),
-        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-        isError = isError,
-        supportingText = supportingText,
-        singleLine = true,
-        modifier = modifier.fillMaxWidth()
-    )
+	OutlinedTextField(
+		value = textFieldValue,
+		onValueChange = { input ->
+			val raw =
+				input.text.filter { it.isDigit() }.trimStart { it == '0' }.take(6).padStart(6, '0')
+			val newDuration = Duration.fromHHMMSS(raw)
+			textFieldValue = input.copy(
+				text = raw,
+				selection = TextRange(raw.length),
+			)
+			onDurationChange(newDuration)
+		},
+		label = label,
+		placeholder = placeholder,
+		visualTransformation = MaskVisualTransformation(),
+		keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+		isError = isError,
+		supportingText = supportingText,
+		singleLine = true,
+		modifier = modifier.fillMaxWidth()
+	)
 }
 
-private class MaskVisualTransformation: VisualTransformation {
-    private val mask = "##:##:##"
-    override fun filter(text: AnnotatedString): TransformedText {
-        val digits = text.text.padStart(mask.count { it=='#' }, '0')
-        val formatted = StringBuilder()
-        var digitIndex = 0
-        mask.forEach { m ->
-            if (m == '#')
-                formatted.append(digits[digitIndex++])
-            else
-                formatted.append(m)
-        }
-        val offsetMapping = object : OffsetMapping {
-            override fun originalToTransformed(offset: Int): Int {
-                var transformedIndex = 0
-                var digitsSeen = 0
-                while (digitsSeen < offset && transformedIndex < mask.length) {
-                    if (mask[transformedIndex] == '#') {
-                        digitsSeen++
-                    }
-                    transformedIndex++
-                }
-                return transformedIndex
-            }
-            override fun transformedToOriginal(offset: Int) =
-                mask.take(offset).count { it == '#' }
-        }
-        return TransformedText(AnnotatedString(formatted.toString()), offsetMapping)
-    }
+private class MaskVisualTransformation : VisualTransformation {
+	private val mask = "##:##:##"
+	override fun filter(text: AnnotatedString): TransformedText {
+		val digits = text.text.padStart(mask.count { it == '#' }, '0')
+		val formatted = StringBuilder()
+		var digitIndex = 0
+		mask.forEach { m ->
+			if (m == '#') formatted.append(digits[digitIndex++])
+			else formatted.append(m)
+		}
+		val offsetMapping = object : OffsetMapping {
+			override fun originalToTransformed(offset: Int): Int {
+				var transformedIndex = 0
+				var digitsSeen = 0
+				while (digitsSeen < offset && transformedIndex < mask.length) {
+					if (mask[transformedIndex] == '#') {
+						digitsSeen++
+					}
+					transformedIndex++
+				}
+				return transformedIndex
+			}
+
+			override fun transformedToOriginal(offset: Int) = mask.take(offset).count { it == '#' }
+		}
+		return TransformedText(AnnotatedString(formatted.toString()), offsetMapping)
+	}
 }

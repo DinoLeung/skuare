@@ -14,28 +14,22 @@ import xyz.d1n0.lib.model.TimerSettings
 import xyz.d1n0.lib.model.Watch
 import xyz.d1n0.lib.model.requestTimer
 
-class TimerScreenViewModel: ViewModel(), KoinComponent {
-    private val watch: Watch by inject()
+class TimerScreenViewModel : ViewModel(), KoinComponent {
+	private val watch: Watch by inject()
 
-    private val timerSettings: StateFlow<TimerSettings> = watch.timer
+	private val timerSettings: StateFlow<TimerSettings> = watch.timer
 
-    val timer: StateFlow<Timer?> = timerSettings.map { it.timer }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.Lazily,
-            initialValue = null
-        )
+	val timer: StateFlow<Timer?> = timerSettings.map { it.timer }.stateIn(
+			scope = viewModelScope, started = SharingStarted.Lazily, initialValue = null
+		)
 
-    val isInitialized: StateFlow<Boolean> = timerSettings.map { it.isInitialized }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.Lazily,
-            initialValue = false
-        )
+	val isInitialized: StateFlow<Boolean> = timerSettings.map { it.isInitialized }.stateIn(
+			scope = viewModelScope, started = SharingStarted.Lazily, initialValue = false
+		)
 
-    fun requestTimer() = watch.scope.launch { watch.requestTimer() }
+	fun requestTimer() = watch.scope.launch { watch.requestTimer() }
 
-    fun writeTimer() = watch.scope.launch {
+	fun writeTimer() = watch.scope.launch {
 //        watch.writeTimer()
-    }
+	}
 }

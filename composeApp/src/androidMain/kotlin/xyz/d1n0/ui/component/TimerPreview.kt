@@ -14,19 +14,19 @@ import kotlin.time.Duration.Companion.minutes
 @Preview
 @Composable
 fun TimerPreview() {
-    var timer by remember {
-        mutableStateOf(
-            Timer(
-                status = TimerStatus.NOT_STARTED,
-                duration = 69.minutes
-            )
-        )
-    }
+	var timer by remember {
+		mutableStateOf(
+			Timer(
+				status = TimerStatus.NOT_STARTED,
+				duration = 69.minutes
+			)
+		)
+	}
 
-    Column {
-        TimerCard(
-            timer = timer,
-            onValueChange = { timer = timer.copy(duration = it) }
-        )
-    }
+	Column {
+		TimerCard(
+			timer = timer,
+			onValueChange = { timer = timer.copy(duration = it) }
+		)
+	}
 }

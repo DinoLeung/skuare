@@ -13,27 +13,27 @@ import xyz.d1n0.ui.screen.timer.TimerScreen
 
 @Composable
 fun NavGraph(
-    navHostController: NavHostController,
-    innerPadding: PaddingValues,
+	navHostController: NavHostController,
+	innerPadding: PaddingValues,
 ) {
-    NavHost(
-        navController = navHostController,
-        startDestination = NavBarRoute.Clocks.route,
-    ) {
-        composable(route = NavBarRoute.Clocks.route) {
-            ClocksScreen(innerPadding = innerPadding)
-        }
-        composable(route = NavBarRoute.Alarms.route) {
-            AlarmsScreen(innerPadding = innerPadding)
-        }
-        composable(route = NavBarRoute.Timer.route) {
-            TimerScreen(innerPadding = innerPadding)
-        }
-        composable(route = NavBarRoute.Reminders.route) {
-            RemindersScreen(innerPadding = innerPadding)
-        }
-        composable(route = NavBarRoute.Settings.route) {
-            SettingsScreen(innerPadding = innerPadding)
-        }
-    }
+	NavHost(
+		navController = navHostController,
+		startDestination = NavBarRoute.Clocks.route,
+	) {
+		composable(route = NavBarRoute.Clocks.route) {
+			ClocksScreen(innerPadding = innerPadding)
+		}
+		composable(route = NavBarRoute.Alarms.route) {
+			AlarmsScreen(innerPadding = innerPadding)
+		}
+		composable(route = NavBarRoute.Timer.route) {
+			TimerScreen(innerPadding = innerPadding)
+		}
+		composable(route = NavBarRoute.Reminders.route) {
+			RemindersScreen(innerPadding = innerPadding)
+		}
+		composable(route = NavBarRoute.Settings.route) {
+			SettingsScreen(innerPadding = innerPadding)
+		}
+	}
 }

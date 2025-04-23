@@ -17,26 +17,26 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Preview
 @Composable
 fun CardView(
-    leadingIcon: @Composable (() -> Unit),
-    title: @Composable (() -> Unit),
-    indicator: @Composable (() -> Unit),
-    content: @Composable (() -> Unit),
-    modifier: Modifier = Modifier
+	leadingIcon: @Composable (() -> Unit),
+	title: @Composable (() -> Unit),
+	indicator: @Composable (() -> Unit),
+	content: @Composable (() -> Unit),
+	modifier: Modifier = Modifier,
 ) {
-    Card (
-        modifier = Modifier.padding(8.dp),
-        shape = MaterialTheme.shapes.large,
-    ) {
-        Column (modifier = Modifier.padding(16.dp)) {
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.align(Alignment.Start).fillMaxWidth(),
-            ) {
-                Box { leadingIcon() }
-                Box { title() }
-                Box { indicator() }
-            }
-            content()
-        }
-    }
+	Card(
+		modifier = Modifier.padding(8.dp),
+		shape = MaterialTheme.shapes.large,
+	) {
+		Column(modifier = Modifier.padding(16.dp)) {
+			Row(
+				horizontalArrangement = Arrangement.SpaceBetween,
+				modifier = Modifier.align(Alignment.Start).fillMaxWidth(),
+			) {
+				Box { leadingIcon() }
+				Box { title() }
+				Box { indicator() }
+			}
+			content()
+		}
+	}
 }

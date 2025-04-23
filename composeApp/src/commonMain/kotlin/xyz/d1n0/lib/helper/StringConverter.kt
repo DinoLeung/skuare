@@ -3,67 +3,76 @@ package xyz.d1n0.lib.helper
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.Month
-import kotlinx.datetime.Month.*
+import kotlinx.datetime.Month.APRIL
+import kotlinx.datetime.Month.AUGUST
+import kotlinx.datetime.Month.DECEMBER
+import kotlinx.datetime.Month.FEBRUARY
+import kotlinx.datetime.Month.JANUARY
+import kotlinx.datetime.Month.JULY
+import kotlinx.datetime.Month.JUNE
+import kotlinx.datetime.Month.MARCH
+import kotlinx.datetime.Month.MAY
+import kotlinx.datetime.Month.NOVEMBER
+import kotlinx.datetime.Month.OCTOBER
+import kotlinx.datetime.Month.SEPTEMBER
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 fun Int.toOrdinalString(): String = when {
-        this % 100 in 11..13 -> "${this}th"
-        this % 10 == 1 -> "${this}st"
-        this % 10 == 2 -> "${this}nd"
-        this % 10 == 3 -> "${this}rd"
-        else -> "${this}th"
-    }
+	this % 100 in 11..13 -> "${this}th"
+	this % 10 == 1 -> "${this}st"
+	this % 10 == 2 -> "${this}nd"
+	this % 10 == 3 -> "${this}rd"
+	else -> "${this}th"
+}
 
 fun Double.toSignedString(): String = when {
-    this == 0.0 -> "±${this.toString()}"
-    this > 0.0 -> "+${this.toString()}"
-    else -> this.toString()
+	this == 0.0 -> "±${this.toString()}"
+	this > 0.0 -> "+${this.toString()}"
+	else -> this.toString()
 }
 
 fun Duration.toHHMMSSString(): String {
-    require(this <= 99.hours + 99.minutes + 99.seconds) { "Duration must not exceed 99:99:99" }
-    val totalSeconds = this.inWholeSeconds
+	require(this <= 99.hours + 99.minutes + 99.seconds) { "Duration must not exceed 99:99:99" }
+	val totalSeconds = this.inWholeSeconds
 
-    val hours = (totalSeconds / 3600).toInt().coerceAtMost(99)
-    val minutes = ((totalSeconds - hours * 3600) / 60).toInt().coerceAtMost(99)
-    val seconds = (totalSeconds - hours * 3600 - minutes * 60).toInt().coerceAtMost(99)
+	val hours = (totalSeconds / 3600).toInt().coerceAtMost(99)
+	val minutes = ((totalSeconds - hours * 3600) / 60).toInt().coerceAtMost(99)
+	val seconds = (totalSeconds - hours * 3600 - minutes * 60).toInt().coerceAtMost(99)
 
-    return hours.toString().padStart(2, '0') +
-            minutes.toString().padStart(2, '0') +
-            seconds.toString().padStart(2, '0')
+	return hours.toString().padStart(2, '0') + minutes.toString()
+		.padStart(2, '0') + seconds.toString().padStart(2, '0')
 }
 
 fun Duration.Companion.fromHHMMSS(text: String): Duration {
-    require (text.length == 6) { "HHMMSS text must be exactly 6 characters in length" }
-    val hours = text.slice(0..1).toInt().hours
-    val minutes = text.slice(2..3).toInt().minutes
-    val seconds = text.slice(4..5).toInt().seconds
-    val duration = hours + minutes + seconds
-    require (duration <= 99.hours + 99.minutes + 99.seconds) { "Duration must not exceed 99:99:99" }
-    return duration
+	require(text.length == 6) { "HHMMSS text must be exactly 6 characters in length" }
+	val hours = text.slice(0..1).toInt().hours
+	val minutes = text.slice(2..3).toInt().minutes
+	val seconds = text.slice(4..5).toInt().seconds
+	val duration = hours + minutes + seconds
+	require(duration <= 99.hours + 99.minutes + 99.seconds) { "Duration must not exceed 99:99:99" }
+	return duration
 }
 
 fun LocalTime.toHHMMString() =
-    this.hour.toString().padStart(2, '0') + ":" + this.minute.toString().padStart(2, '0')
+	this.hour.toString().padStart(2, '0') + ":" + this.minute.toString().padStart(2, '0')
 
 fun Month.abbreviatedName(): String = when (this) {
-    JANUARY -> "Jan"
-    FEBRUARY -> "Feb"
-    MARCH -> "Mar"
-    APRIL -> "Apr"
-    MAY -> "May"
-    JUNE -> "Jun"
-    JULY -> "Jul"
-    AUGUST -> "Aug"
-    SEPTEMBER -> "Sep"
-    OCTOBER -> "Oct"
-    NOVEMBER -> "Nov"
-    DECEMBER -> "Dec"
-    else -> error("Unknown month: $this")
+	JANUARY -> "Jan"
+	FEBRUARY -> "Feb"
+	MARCH -> "Mar"
+	APRIL -> "Apr"
+	MAY -> "May"
+	JUNE -> "Jun"
+	JULY -> "Jul"
+	AUGUST -> "Aug"
+	SEPTEMBER -> "Sep"
+	OCTOBER -> "Oct"
+	NOVEMBER -> "Nov"
+	DECEMBER -> "Dec"
+	else -> error("Unknown month: $this")
 }
 
 fun LocalDate.toDayMonth() = "${this.dayOfMonth} ${this.month.abbreviatedName()}"
