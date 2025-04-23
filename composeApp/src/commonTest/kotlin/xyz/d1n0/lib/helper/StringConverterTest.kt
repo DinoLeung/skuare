@@ -40,23 +40,27 @@ class StringConverterTest {
     }
 
     @Test
-    fun `Duration toHHMMSSString formats durations under 24h`() {
+    fun `Duration toHHMMSSString formats durations under 100h`() {
         assertEquals("000000", 0.seconds.toHHMMSSString())
         assertEquals("000001", 1.seconds.toHHMMSSString())
         assertEquals("000100", 1.minutes.toHHMMSSString())
         assertEquals("010000", 1.hours.toHHMMSSString())
-        val max = 23.hours + 59.minutes + 59.seconds
-        assertEquals("235959", max.toHHMMSSString())
+        assertEquals("995959", (100.hours - 1.seconds).toHHMMSSString())
     }
 
     @Test
-    fun `Duration toHHMMSSString throws for 24h or more`() {
-        val exactly24h = 24.hours
-        val over24h = 24.hours + 1.seconds
-        listOf(exactly24h, over24h).forEach { duration ->
-            assertFailsWith<IllegalArgumentException>("Durations >=24h should throw") {
-                duration.toHHMMSSString()
-            }
+    fun `Duration toHHMMSSString formats durations over 100h`() {
+        assertEquals("996000", 100.hours.toHHMMSSString())
+        assertEquals("999900", (99.hours + 99.minutes).toHHMMSSString())
+        assertEquals("999960", (99.hours + 100.minutes).toHHMMSSString())
+        assertEquals("999999", (99.hours + 99.minutes + 99.seconds).toHHMMSSString())
+    }
+
+    @Test
+    fun `Duration toHHMMSSString throws for 99h99m99s or more`() {
+        val max = 99.hours + 99.minutes + 99.seconds
+        assertFailsWith<IllegalArgumentException>("Durations >=99h99m99s should throw") {
+            (max + 1.seconds).toHHMMSSString()
         }
     }
 
@@ -65,21 +69,18 @@ class StringConverterTest {
         assertEquals(Duration.ZERO, Duration.fromHHMMSS("000000"))
         assertEquals(1.seconds, Duration.fromHHMMSS("000001"))
         assertEquals(1.minutes, Duration.fromHHMMSS("000100"))
-        assertEquals(1.hours + 2.minutes + 3.seconds,
-            Duration.fromHHMMSS("010203"))
-        val max = 23.hours + 59.minutes + 59.seconds
-        assertEquals(max, Duration.fromHHMMSS("235959"))
+        assertEquals(1.hours + 2.minutes + 3.seconds, Duration.fromHHMMSS("010203"))
+        assertEquals(23.hours + 59.minutes + 59.seconds, Duration.fromHHMMSS("235959"))
+
+        assertEquals(100.hours, Duration.fromHHMMSS("996000"))
+        assertEquals(99.hours + 99.minutes, Duration.fromHHMMSS("999900"))
+        assertEquals(99.hours + 100.minutes, Duration.fromHHMMSS("999960"))
+        assertEquals(99.hours + 99.minutes + 99.seconds, Duration.fromHHMMSS("999999"))
     }
 
     @Test
     fun `Duration fromHHMMSS throws for invalid input`() {
-        // Wrong length
-        assertFailsWith<IllegalArgumentException> {
-            Duration.fromHHMMSS("123")
-        }
-        // Exactly 24h
-        assertFailsWith<IllegalArgumentException> {
-            Duration.fromHHMMSS("240000")
-        }
+        assertFailsWith<IllegalArgumentException> { Duration.fromHHMMSS("123") }
+        assertFailsWith<IllegalArgumentException> { Duration.fromHHMMSS("1234567") }
     }
 }

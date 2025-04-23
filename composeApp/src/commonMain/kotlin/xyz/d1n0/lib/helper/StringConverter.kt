@@ -25,11 +25,16 @@ fun Double.toSignedString(): String = when {
 }
 
 fun Duration.toHHMMSSString(): String {
-    require (this <= 99.hours + 99.minutes + 99.seconds) { "Duration must not exceed 99:99:99" }
-    val hours = this.inWholeHours.toString().padStart(2, '0')
-    val minutes = (this.inWholeMinutes - (this.inWholeHours * 60)).toString().padStart(2, '0')
-    val seconds = (this.inWholeSeconds - (this.inWholeMinutes * 60)).toString().padStart(2, '0')
-    return "$hours$minutes$seconds"
+    require(this <= 99.hours + 99.minutes + 99.seconds) { "Duration must not exceed 99:99:99" }
+    val totalSeconds = this.inWholeSeconds
+
+    val hours = (totalSeconds / 3600).toInt().coerceAtMost(99)
+    val minutes = ((totalSeconds - hours * 3600) / 60).toInt().coerceAtMost(99)
+    val seconds = (totalSeconds - hours * 3600 - minutes * 60).toInt().coerceAtMost(99)
+
+    return hours.toString().padStart(2, '0') +
+            minutes.toString().padStart(2, '0') +
+            seconds.toString().padStart(2, '0')
 }
 
 fun Duration.Companion.fromHHMMSS(text: String): Duration {
