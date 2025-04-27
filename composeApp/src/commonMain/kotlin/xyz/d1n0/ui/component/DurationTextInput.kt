@@ -49,6 +49,7 @@ fun DurationTextInput(
 			text = duration.toHHMMSSString(),
 			selection = TextRange(duration.toHHMMSSString().length)
 		)
+		onDurationChange(duration)
 	}
 
 	OutlinedTextField(
