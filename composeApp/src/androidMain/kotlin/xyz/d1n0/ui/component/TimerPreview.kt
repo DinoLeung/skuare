@@ -26,7 +26,8 @@ fun TimerPreview() {
 	Column {
 		TimerCard(
 			timer = timer,
-			onValueChange = { timer = timer.copy(duration = it) }
+			onValueChange = { timer = timer.copy(duration = it) },
+			saveButtonOnClick = {}
 		)
 	}
 }

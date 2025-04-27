@@ -6,10 +6,11 @@ import xyz.d1n0.lib.helper.fromByteArray
 import xyz.d1n0.lib.helper.toByteArray
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.seconds
 
 // Writing timer will reset timer status, and timer status cannot be set
 data class Timer(
-	val duration: Duration,
+	val duration: Duration = 0.seconds,
 	val status: TimerStatus = TimerStatus.NOT_STARTED,
 ) {
 	companion object {
@@ -27,11 +28,11 @@ data class Timer(
 				"Timer packet bytes must be exactly 8 bytes long, e.g. 18 17 0F 1E 00 00 00 00"
 			}
 			return packet.drop(1).toByteArray().let {
-					Timer(
-						duration = Duration.fromByteArray(it.sliceArray(0..2)),
-						status = TimerStatus.fromByte(it.last()),
-					)
-				}
+				Timer(
+					duration = Duration.fromByteArray(it.sliceArray(0..2)),
+					status = TimerStatus.fromByte(it.last()),
+				)
+			}
 		}
 	}
 

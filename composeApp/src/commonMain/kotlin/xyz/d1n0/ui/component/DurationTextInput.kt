@@ -1,11 +1,11 @@
 package xyz.d1n0.ui.component
 
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,7 +30,7 @@ fun DurationTextInput(
 	duration: Duration,
 	onDurationChange: (Duration) -> Unit,
 	label: @Composable (() -> Unit) = { Text("Duration") },
-	placeholder: @Composable (() -> Unit) = { Text("00:00:00") },
+	placeholder: @Composable (() -> Unit) = { Text("00h 00m 00s") },
 	supportingText: @Composable (() -> Unit)? = null,
 	isError: Boolean = false,
 	modifier: Modifier = Modifier,
@@ -41,6 +41,13 @@ fun DurationTextInput(
 				text = duration.toHHMMSSString(),
 				selection = TextRange(duration.toHHMMSSString().length)
 			)
+		)
+	}
+
+	LaunchedEffect(duration) {
+		textFieldValue = textFieldValue.copy(
+			text = duration.toHHMMSSString(),
+			selection = TextRange(duration.toHHMMSSString().length)
 		)
 	}
 
@@ -63,12 +70,12 @@ fun DurationTextInput(
 		isError = isError,
 		supportingText = supportingText,
 		singleLine = true,
-		modifier = modifier.fillMaxWidth()
+		modifier = modifier
 	)
 }
 
 private class MaskVisualTransformation : VisualTransformation {
-	private val mask = "##:##:##"
+	private val mask = "##h ##m ##s"
 	override fun filter(text: AnnotatedString): TransformedText {
 		val digits = text.text.padStart(mask.count { it == '#' }, '0')
 		val formatted = StringBuilder()
