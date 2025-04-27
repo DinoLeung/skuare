@@ -6,12 +6,11 @@ import xyz.d1n0.lib.helper.fromByteArray
 import xyz.d1n0.lib.helper.toByteArray
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
-import kotlin.time.Duration.Companion.seconds
 
 // Writing timer will reset timer status, and timer status cannot be set
 data class Timer(
-	val duration: Duration = 0.seconds,
-	val status: TimerStatus = TimerStatus.NOT_STARTED,
+	val duration: Duration,
+	val status: TimerStatus,
 ) {
 	companion object {
 
