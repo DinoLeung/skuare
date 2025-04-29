@@ -36,10 +36,10 @@ class TimerScreenViewModel : ViewModel(), KoinComponent {
 	)
 	val error = MutableStateFlow<Throwable?>(null)
 
-	private val timerLocal = MutableStateFlow<Timer>(timer.value)
+	private val pendingTimer = MutableStateFlow<Timer>(timer.value)
 
-	fun updateTimerInput(duration: Duration) =
-		runCatching { timerLocal.update { it.copy(duration = duration) } }
+	fun updatePendingTimer(duration: Duration) =
+		runCatching { pendingTimer.update { it.copy(duration = duration) } }
 			.onSuccess { error.update { null } }
 			.onFailure { e -> error.update { e } }
 
@@ -48,7 +48,7 @@ class TimerScreenViewModel : ViewModel(), KoinComponent {
 
 	fun writeTimer() = watch.scope.launch {
 		_waitingUpdates.update { true }
-		watch.writeTimer(timer = timerLocal.value)
+		watch.writeTimer(timer = pendingTimer.value)
 		watch.requestTimer()
 	}
 
@@ -63,7 +63,7 @@ class TimerScreenViewModel : ViewModel(), KoinComponent {
 		}
 	}
 
-	val hasUpdates = combine(timerSettings, timerLocal) { timerSettings, inputTimer ->
+	val hasUpdates = combine(timerSettings, pendingTimer) { timerSettings, inputTimer ->
 		timerSettings.timer?.duration != inputTimer.duration
 	}.stateIn(scope = viewModelScope, started = SharingStarted.Lazily, initialValue = false)
 }

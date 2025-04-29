@@ -50,7 +50,7 @@ fun TimerScreen(
 		)
 		TimerCard(
 			timer = timer.value,
-			onValueChange = { viewModel.updateTimerInput(it) },
+			onValueChange = { viewModel.updatePendingTimer(it) },
 			saveButtonEnabled = hasUpdates.value && error.value == null,
 			saveButtonOnClick = { viewModel.writeTimer() },
 			isError = error.value != null,
