@@ -30,6 +30,7 @@ import xyz.d1n0.lib.model.requestWatchSettings
 import xyz.d1n0.lib.model.writeConnectionSettings
 import xyz.d1n0.lib.model.writeName
 import xyz.d1n0.lib.model.writeWatchSettings
+import xyz.d1n0.ui.boilerplate.updateCatching
 
 class SettingsScreenViewModel : ViewModel(), KoinComponent {
 	private val watch: Watch by inject()
@@ -72,21 +73,42 @@ class SettingsScreenViewModel : ViewModel(), KoinComponent {
 			initialValue = defaultConnectionSettings
 		)
 
-	private val nameLocal = MutableStateFlow<WatchName>(name.value)
+	private val pendingName = MutableStateFlow<WatchName>(name.value)
+	val pendingNameError = MutableStateFlow<Throwable?>(null)
+
+	fun updatePendingName(name: String) =
+		pendingName.updateCatching(pendingNameError) {
+			it.copy(_value = name)
+		}
 
 	fun requestName() = watch.scope.launch { watch.requestName() }
 	fun writeName() = watch.scope.launch {
 		_waitingUpdates.update { true }
-		watch.writeName(nameLocal.value)
+		watch.writeName(pendingName.value)
 		watch.requestName()
 	}
 
-	private val watchSettingsLocal = MutableStateFlow<WatchSettings>(watchSettings.value)
+	private val pendingWatchSettings = MutableStateFlow<WatchSettings>(watchSettings.value)
+	val pendingWatchSettingsError = MutableStateFlow<Throwable?>(null)
+
+	fun updatePendingWatchSettings(
+		preferences: WatchPreferences? = null,
+		backlightDuration: BacklightDuration? = null,
+		dateFormat: DateFormat? = null,
+		weekdayLanguage: WeekdayLanguage? = null,
+	) = pendingWatchSettings.updateCatching(pendingWatchSettingsError) {
+		it.copy(
+			preferences = preferences ?: it.preferences,
+			backlightDuration = backlightDuration ?: it.backlightDuration,
+			dateFormat = dateFormat ?: it.dateFormat,
+			weekdayLanguage = weekdayLanguage ?: it.weekdayLanguage
+		)
+	}
 
 	fun requestWatchSettings() = watch.scope.launch { watch.requestWatchSettings() }
 	fun writeWatchSettings() = watch.scope.launch {
 		_waitingUpdates.update { true }
-		watch.writeWatchSettings(watchSettingsLocal.value)
+		watch.writeWatchSettings(pendingWatchSettings.value)
 		watch.requestWatchSettings()
 	}
 
@@ -113,8 +135,8 @@ class SettingsScreenViewModel : ViewModel(), KoinComponent {
 
 	val hasUpdate = combine(
 		watchInfo,
-		nameLocal,
-		watchSettingsLocal,
+		pendingName,
+		pendingWatchSettings,
 		connectionSettingsLocal
 	) { watchInfo, nameLocal, watchSettingsLocal, connectionSettingsLocal ->
 		watchInfo.name != nameLocal && watchInfo.watchSettings != watchSettingsLocal && watchInfo.connectionSettings != connectionSettingsLocal

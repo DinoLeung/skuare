@@ -19,6 +19,7 @@ import xyz.d1n0.lib.model.TimerSettings
 import xyz.d1n0.lib.model.Watch
 import xyz.d1n0.lib.model.requestTimer
 import xyz.d1n0.lib.model.writeTimer
+import xyz.d1n0.ui.boilerplate.updateCatching
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -39,9 +40,7 @@ class TimerScreenViewModel : ViewModel(), KoinComponent {
 	private val pendingTimer = MutableStateFlow<Timer>(timer.value)
 
 	fun updatePendingTimer(duration: Duration) =
-		runCatching { pendingTimer.update { it.copy(duration = duration) } }
-			.onSuccess { error.update { null } }
-			.onFailure { e -> error.update { e } }
+		pendingTimer.updateCatching(error) { it.copy(duration = duration) }
 
 
 	fun requestTimer() = watch.scope.launch { watch.requestTimer() }

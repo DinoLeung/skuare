@@ -144,6 +144,7 @@ suspend fun Watch.adjustTime(delay: Duration = 0.seconds, writeTimezoneMetadata:
  * If an error occurs during parsing, the function logs an appropriate error message.
  *
  * TODO: setup proper logging
+ * TODO: now all top level properties are MutableStateFlow, should make all underlying properties val
  *
  * @param packet A [ByteArray] containing the raw BLE packet data received from the peripheral.
  */
