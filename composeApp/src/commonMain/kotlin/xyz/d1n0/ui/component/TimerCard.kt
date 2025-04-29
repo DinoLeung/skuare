@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import xyz.d1n0.lib.model.Timer
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.hours
 
 @Preview
 @Composable
@@ -22,6 +21,8 @@ fun TimerCard(
 	onValueChange: (Duration) -> Unit,
 	saveButtonEnabled: Boolean = true,
 	saveButtonOnClick: () -> Unit,
+	isError: Boolean = false,
+	supportingText: @Composable() (() -> Unit)? = null,
 	modifier: Modifier = Modifier,
 ) {
 	CardView(modifier = modifier, leadingIcon = { }, title = { }, indicator = {
@@ -36,10 +37,8 @@ fun TimerCard(
 			DurationTextInput(
 				duration = timer.duration,
 				onDurationChange = { onValueChange(it) },
-				isError = timer.duration >= 24.hours,
-				supportingText = {
-					if (timer.duration >= 24.hours) Text("Timer duration must not exceed 24 hours")
-				},
+				isError = isError,
+				supportingText = supportingText,
 				modifier = Modifier.weight(3f)
 			)
 			Spacer(modifier = Modifier.weight(0.2f))

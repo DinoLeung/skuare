@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -29,6 +30,7 @@ fun TimerScreen(
 	val timer = viewModel.timer.collectAsState()
 	val hasUpdates = viewModel.hasUpdates.collectAsState()
 	val waitingUpdates = viewModel.waitingUpdates.collectAsState()
+	val error = viewModel.error.collectAsState()
 
 	LaunchedEffect(Unit) {
 		if (isInitialized.value == false)
@@ -49,8 +51,12 @@ fun TimerScreen(
 		TimerCard(
 			timer = timer.value,
 			onValueChange = { viewModel.updateTimerInput(it) },
-			saveButtonEnabled = hasUpdates.value,
-			saveButtonOnClick = { viewModel.writeTimer() }
+			saveButtonEnabled = hasUpdates.value && error.value == null,
+			saveButtonOnClick = { viewModel.writeTimer() },
+			isError = error.value != null,
+			supportingText = {
+				error.value?.let { Text(it.message ?: "Unknown errors") }
+			}
 		)
 	}
 }

@@ -34,10 +34,15 @@ class TimerScreenViewModel : ViewModel(), KoinComponent {
 	val isInitialized: StateFlow<Boolean> = timerSettings.map { it.isInitialized }.stateIn(
 		scope = viewModelScope, started = SharingStarted.Lazily, initialValue = false
 	)
+	val error = MutableStateFlow<Throwable?>(null)
 
 	private val timerLocal = MutableStateFlow<Timer>(timer.value)
 
-	fun updateTimerInput(duration: Duration) = timerLocal.update { it.copy(duration = duration) }
+	fun updateTimerInput(duration: Duration) =
+		runCatching { timerLocal.update { it.copy(duration = duration) } }
+			.onSuccess { error.update { null } }
+			.onFailure { e -> error.update { e } }
+
 
 	fun requestTimer() = watch.scope.launch { watch.requestTimer() }
 
