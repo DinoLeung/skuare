@@ -3,12 +3,8 @@ package xyz.d1n0.ui.screen.timer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -19,50 +15,74 @@ import xyz.d1n0.lib.model.TimerSettings
 import xyz.d1n0.lib.model.Watch
 import xyz.d1n0.lib.model.requestTimer
 import xyz.d1n0.lib.model.writeTimer
-import xyz.d1n0.ui.boilerplate.updateCatching
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
+
+data class TimerUiState(
+	val isInitialized: Boolean = false,
+	val waitingUpdates: Boolean = true,
+	val hasUpdates: Boolean = false,
+	val savedTimer: Timer = Timer(duration = 0.seconds, status = TimerStatus.NOT_STARTED),
+	val pendingTimer: Timer = Timer(duration = 0.seconds, status = TimerStatus.NOT_STARTED),
+	val pendingTimerError: Throwable? = null,
+)
+
+sealed interface TimerUiEvent {
+	data class TimerInputChange(val duration: Duration) : TimerUiEvent
+	object Submit : TimerUiEvent
+	object Refresh : TimerUiEvent
+}
 
 class TimerScreenViewModel : ViewModel(), KoinComponent {
 	private val watch: Watch by inject()
 	private val timerSettings: StateFlow<TimerSettings> = watch.timer
 
-	private val defaultTimer = Timer(duration = 0.seconds, status = TimerStatus.NOT_STARTED)
+	private val _uiState = MutableStateFlow(TimerUiState())
+	val uiState: StateFlow<TimerUiState> = _uiState.asStateFlow()
 
-	val timer: StateFlow<Timer> = timerSettings.map { it.timer ?: defaultTimer }.stateIn(
-		scope = viewModelScope, started = SharingStarted.Lazily, initialValue = defaultTimer
-	)
-	val isInitialized: StateFlow<Boolean> = timerSettings.map { it.isInitialized }.stateIn(
-		scope = viewModelScope, started = SharingStarted.Lazily, initialValue = false
-	)
-	val error = MutableStateFlow<Throwable?>(null)
-
-	private val pendingTimer = MutableStateFlow<Timer>(timer.value)
-
-	fun updatePendingTimer(duration: Duration) =
-		pendingTimer.updateCatching(error) { it.copy(duration = duration) }
-
-
-	fun requestTimer() = watch.scope.launch { watch.requestTimer() }
-
-	fun writeTimer() = watch.scope.launch {
-		_waitingUpdates.update { true }
-		watch.writeTimer(timer = pendingTimer.value)
-		watch.requestTimer()
-	}
-
-	private val _waitingUpdates = MutableStateFlow(true)
-	val waitingUpdates: StateFlow<Boolean> = _waitingUpdates.asStateFlow()
-
-	init {
-		viewModelScope.launch {
-			timerSettings.collect {
-				_waitingUpdates.update { false }
+	fun onEvent(event: TimerUiEvent) {
+		when (event) {
+			TimerUiEvent.Refresh -> watch.scope.launch {
+				_uiState.update { it.copy(waitingUpdates = true) }
+				watch.requestTimer()
 			}
+
+			TimerUiEvent.Submit -> watch.scope.launch {
+				_uiState.update { it.copy(waitingUpdates = true) }
+				watch.writeTimer(timer = _uiState.value.pendingTimer)
+				watch.requestTimer()
+			}
+
+			is TimerUiEvent.TimerInputChange -> runCatching {
+				_uiState.value.pendingTimer.copy(
+					duration = event.duration
+				)
+			}.onSuccess { newTimer ->
+				_uiState.update {
+					it.copy(
+						pendingTimer = newTimer,
+						pendingTimerError = null
+					)
+				}
+			}.onFailure { e -> _uiState.update { it.copy(pendingTimerError = e) } }
 		}
 	}
 
-	val hasUpdates = combine(timerSettings, pendingTimer) { timerSettings, inputTimer ->
-		timerSettings.timer?.duration != inputTimer.duration
-	}.stateIn(scope = viewModelScope, started = SharingStarted.Lazily, initialValue = false)
+	init {
+		viewModelScope.launch {
+			timerSettings.collect { settings ->
+				_uiState.update {
+					it.copy(
+						isInitialized = settings.isInitialized,
+						savedTimer = settings.timer ?: Timer(
+							duration = 0.seconds,
+							status = TimerStatus.NOT_STARTED
+						),
+						waitingUpdates = false,
+						hasUpdates = settings.timer?.duration != it.pendingTimer.duration,
+					)
+				}
+			}
+		}
+	}
 }

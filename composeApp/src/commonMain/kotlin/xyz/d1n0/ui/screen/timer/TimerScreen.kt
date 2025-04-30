@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,16 +26,11 @@ fun TimerScreen(
 	innerPadding: PaddingValues,
 ) {
 	val viewModel = koinViewModel<TimerScreenViewModel>()
-
-	val isInitialized = viewModel.isInitialized.collectAsState()
-	val timer = viewModel.timer.collectAsState()
-	val hasUpdates = viewModel.hasUpdates.collectAsState()
-	val waitingUpdates = viewModel.waitingUpdates.collectAsState()
-	val error = viewModel.error.collectAsState()
+	val state by viewModel.uiState.collectAsState()
 
 	LaunchedEffect(Unit) {
-		if (isInitialized.value == false)
-			viewModel.requestTimer()
+		if (state.isInitialized == false)
+			viewModel.onEvent(TimerUiEvent.Refresh)
 	}
 
 	Column(
@@ -46,16 +42,16 @@ fun TimerScreen(
 		Box(
 			modifier = Modifier.fillMaxWidth()
 				.height(5.dp)
-				.background(if (waitingUpdates.value) Color.Red else Color.Green)
+				.background(if (state.waitingUpdates) Color.Red else Color.Green)
 		)
 		TimerCard(
-			timer = timer.value,
-			onValueChange = { viewModel.updatePendingTimer(it) },
-			saveButtonEnabled = hasUpdates.value && error.value == null,
-			saveButtonOnClick = { viewModel.writeTimer() },
-			isError = error.value != null,
+			timer = state.savedTimer,
+			onValueChange = { viewModel.onEvent(TimerUiEvent.TimerInputChange(it)) },
+			saveButtonEnabled = state.hasUpdates && state.pendingTimerError == null,
+			saveButtonOnClick = { viewModel.onEvent(TimerUiEvent.Submit) },
+			isError = state.pendingTimerError != null,
 			supportingText = {
-				error.value?.let { Text(it.message ?: "Unknown errors") }
+				state.pendingTimerError?.let { Text(it.message ?: "Unknown errors") }
 			}
 		)
 	}
