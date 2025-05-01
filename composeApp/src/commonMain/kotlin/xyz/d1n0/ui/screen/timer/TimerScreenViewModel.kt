@@ -22,8 +22,8 @@ data class TimerUiState(
 	val isInitialized: Boolean = false,
 	val waitingUpdates: Boolean = true,
 	val hasUpdates: Boolean = false,
-	val savedTimer: Timer = Timer(duration = 0.seconds, status = TimerStatus.NOT_STARTED),
-	val pendingTimer: Timer = Timer(duration = 0.seconds, status = TimerStatus.NOT_STARTED),
+	val savedTimer: Timer = defaultTimer,
+	val pendingTimer: Timer = defaultTimer,
 	val pendingTimerError: Throwable? = null,
 )
 
@@ -40,47 +40,48 @@ class TimerScreenViewModel : ViewModel(), KoinComponent {
 	private val _uiState = MutableStateFlow(TimerUiState())
 	val uiState: StateFlow<TimerUiState> = _uiState.asStateFlow()
 
-	fun onEvent(event: TimerUiEvent) = when (event) {
-		TimerUiEvent.Refresh -> watch.scope.launch {
-			_uiState.update { it.copy(waitingUpdates = true) }
-			watch.requestTimer()
-		}
-
-		TimerUiEvent.Submit -> watch.scope.launch {
-			_uiState.update { it.copy(waitingUpdates = true) }
-			watch.writeTimer(timer = _uiState.value.pendingTimer)
-			watch.requestTimer()
-		}
-
-		is TimerUiEvent.TimerInputChange -> runCatching {
-			_uiState.value.pendingTimer.copy(
-				duration = event.duration
-			)
-		}.onSuccess { newTimer ->
-			_uiState.update {
-				it.copy(
-					pendingTimer = newTimer,
-					pendingTimerError = null
-				)
-			}
-		}.onFailure { e -> _uiState.update { it.copy(pendingTimerError = e) } }
-	}
-
 	init {
 		viewModelScope.launch {
 			timerSettings.collect { settings ->
 				_uiState.update {
 					it.copy(
 						isInitialized = settings.isInitialized,
-						savedTimer = settings.timer ?: Timer(
-							duration = 0.seconds,
-							status = TimerStatus.NOT_STARTED
-						),
 						waitingUpdates = false,
 						hasUpdates = settings.timer?.duration != it.pendingTimer.duration,
+						savedTimer = settings.timer ?: defaultTimer,
 					)
 				}
 			}
 		}
 	}
+
+	fun onEvent(event: TimerUiEvent) = when (event) {
+		TimerUiEvent.Refresh -> refresh()
+		TimerUiEvent.Submit -> submit()
+		is TimerUiEvent.TimerInputChange -> onTimerInputChange(duration = event.duration)
+	}
+
+	private fun refresh() = watch.scope.launch {
+		_uiState.update { it.copy(waitingUpdates = true) }
+		watch.requestTimer()
+	}
+
+	private fun submit() = watch.scope.launch {
+		_uiState.update { it.copy(waitingUpdates = true) }
+		watch.writeTimer(timer = _uiState.value.pendingTimer)
+		watch.requestTimer()
+	}
+
+	private fun onTimerInputChange(duration: Duration) = runCatching {
+		_uiState.value.pendingTimer.copy(duration = duration)
+	}.onSuccess { newTimer ->
+		_uiState.update {
+			it.copy(
+				pendingTimer = newTimer,
+				pendingTimerError = null
+			)
+		}
+	}.onFailure { e -> _uiState.update { it.copy(pendingTimerError = e) } }
 }
+
+private val defaultTimer = Timer(duration = 0.seconds, status = TimerStatus.NOT_STARTED)
