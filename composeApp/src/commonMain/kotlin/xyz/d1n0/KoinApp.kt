@@ -6,6 +6,7 @@ import co.touchlab.kermit.koin.KermitKoinLogger
 import dev.icerock.moko.permissions.PermissionsController
 import org.koin.core.KoinApplication
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
@@ -33,8 +34,8 @@ fun KoinApp(
 			single<PermissionsController> { permissionsController }
 
 			singleOf(::Watch)
-
-			viewModelOf(::ScanScreenViewModel)
+			
+			viewModel { ScanScreenViewModel(get()) }
 			viewModelOf(::WatchScreenViewModel) // TODO: should remove
 
 			viewModelOf(::NavBarViewModel)

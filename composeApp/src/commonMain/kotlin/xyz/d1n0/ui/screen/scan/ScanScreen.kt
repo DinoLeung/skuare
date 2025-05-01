@@ -12,21 +12,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
+import dev.icerock.moko.permissions.PermissionState
 import dev.icerock.moko.permissions.compose.BindEffect
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
 @Preview
 fun ScanScreen(
 	onConnect: () -> Unit,
 ) {
-	val viewModel = koinViewModel<ScanScreenViewModel>()
+	val viewModel = koinViewModel<ScanScreenViewModel>(parameters = { parametersOf(onConnect) })
 	val state by viewModel.state.collectAsState()
 
 	BindEffect(viewModel.permissionsController)
 	LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
-		viewModel.checkScanPermissions()
+		viewModel.onEvent(ScanUiEvent.RequestPermissions)
 	}
 
 	Column(
@@ -34,13 +36,13 @@ fun ScanScreen(
 		horizontalAlignment = Alignment.CenterHorizontally,
 		verticalArrangement = Arrangement.Center,
 	) {
-		if (state.hasScanPermission) {
+		if (state.scanPermissionState == PermissionState.Granted && state.connectPermissionState == PermissionState.Granted) {
 			if (state.isScanning) Button(
-				onClick = viewModel::stopScanning,
+				onClick = { viewModel.onEvent(ScanUiEvent.StopScanning) },
 				enabled = state.isScanning,
 			) { Text("Stop!") }
 			else Button(
-				onClick = { viewModel.startScanning(onConnect = onConnect) },
+				onClick = { viewModel.onEvent(ScanUiEvent.Scan) },
 				enabled = !state.isScanning,
 			) { Text("Scan!") }
 		} else {

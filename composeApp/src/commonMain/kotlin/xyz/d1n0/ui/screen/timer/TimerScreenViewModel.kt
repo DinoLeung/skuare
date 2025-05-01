@@ -40,32 +40,30 @@ class TimerScreenViewModel : ViewModel(), KoinComponent {
 	private val _uiState = MutableStateFlow(TimerUiState())
 	val uiState: StateFlow<TimerUiState> = _uiState.asStateFlow()
 
-	fun onEvent(event: TimerUiEvent) {
-		when (event) {
-			TimerUiEvent.Refresh -> watch.scope.launch {
-				_uiState.update { it.copy(waitingUpdates = true) }
-				watch.requestTimer()
-			}
-
-			TimerUiEvent.Submit -> watch.scope.launch {
-				_uiState.update { it.copy(waitingUpdates = true) }
-				watch.writeTimer(timer = _uiState.value.pendingTimer)
-				watch.requestTimer()
-			}
-
-			is TimerUiEvent.TimerInputChange -> runCatching {
-				_uiState.value.pendingTimer.copy(
-					duration = event.duration
-				)
-			}.onSuccess { newTimer ->
-				_uiState.update {
-					it.copy(
-						pendingTimer = newTimer,
-						pendingTimerError = null
-					)
-				}
-			}.onFailure { e -> _uiState.update { it.copy(pendingTimerError = e) } }
+	fun onEvent(event: TimerUiEvent) = when (event) {
+		TimerUiEvent.Refresh -> watch.scope.launch {
+			_uiState.update { it.copy(waitingUpdates = true) }
+			watch.requestTimer()
 		}
+
+		TimerUiEvent.Submit -> watch.scope.launch {
+			_uiState.update { it.copy(waitingUpdates = true) }
+			watch.writeTimer(timer = _uiState.value.pendingTimer)
+			watch.requestTimer()
+		}
+
+		is TimerUiEvent.TimerInputChange -> runCatching {
+			_uiState.value.pendingTimer.copy(
+				duration = event.duration
+			)
+		}.onSuccess { newTimer ->
+			_uiState.update {
+				it.copy(
+					pendingTimer = newTimer,
+					pendingTimerError = null
+				)
+			}
+		}.onFailure { e -> _uiState.update { it.copy(pendingTimerError = e) } }
 	}
 
 	init {
