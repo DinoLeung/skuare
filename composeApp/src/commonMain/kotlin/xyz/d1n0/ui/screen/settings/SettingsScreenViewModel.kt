@@ -51,6 +51,7 @@ sealed interface SettingsUiEvent {
 	object SaveWatchSettings : SettingsUiEvent
 	object RequestConnectionSettings : SettingsUiEvent
 	object SaveConnectionSettings : SettingsUiEvent
+	data class NameInputChange(val name: String) : SettingsUiEvent
 }
 
 class SettingsScreenViewModel : ViewModel(), KoinComponent {
@@ -89,6 +90,7 @@ class SettingsScreenViewModel : ViewModel(), KoinComponent {
 		SettingsUiEvent.SaveWatchSettings -> writeWatchSettings()
 		SettingsUiEvent.RequestConnectionSettings -> requestConnectionSettings()
 		SettingsUiEvent.SaveConnectionSettings -> writeConnectionSettings()
+		is SettingsUiEvent.NameInputChange -> onNameInputChange(name = event.name)
 	}
 
 	private fun requestName() = watch.scope.launch {
@@ -122,6 +124,52 @@ class SettingsScreenViewModel : ViewModel(), KoinComponent {
 		_uiState.update { it.copy(waitingUpdates = true) }
 		watch.writeConnectionSettings(_uiState.value.pendingConnectionSettings)
 		watch.requestConnectionSettings()
+	}
+
+	private fun onNameInputChange(name: String) = _uiState.update { state ->
+		runCatching { state.pendingName.copy(_value = name) }
+			.fold(
+				onSuccess = { newName ->
+					state.copy(pendingName = newName, pendingNameError = null)
+				},
+				onFailure = { e -> state.copy(pendingNameError = e) }
+			)
+	}
+
+	private fun onIs24HourChange(is24Hour: Boolean) = _uiState.update { state ->
+		runCatching {
+			state.pendingWatchSettings.copy(
+				preferences = state.pendingWatchSettings.preferences.copy(
+					is24HourTime = is24Hour
+				)
+			)
+		}.fold(
+			onSuccess = { newSettings ->
+				state.copy(
+					pendingWatchSettings = newSettings,
+					pendingWatchSettingsError = null,
+				)
+			},
+			onFailure = { e -> state.copy(pendingWatchSettingsError = e) },
+		)
+	}
+
+	private fun onIsMutedChange(isMuted: Boolean) = _uiState.update { state ->
+		runCatching {
+			state.pendingWatchSettings.copy(
+				preferences = state.pendingWatchSettings.preferences.copy(
+					isToneMuted = isMuted
+				)
+			)
+		}.fold(
+			onSuccess = { newSettings ->
+				state.copy(
+					pendingWatchSettings = newSettings,
+					pendingWatchSettingsError = null,
+				)
+			},
+			onFailure = { e -> state.copy(pendingWatchSettingsError = e) },
+		)
 	}
 }
 

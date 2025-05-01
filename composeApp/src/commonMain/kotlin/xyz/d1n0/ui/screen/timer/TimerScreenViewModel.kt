@@ -72,16 +72,15 @@ class TimerScreenViewModel : ViewModel(), KoinComponent {
 		watch.requestTimer()
 	}
 
-	private fun onTimerInputChange(duration: Duration) = runCatching {
-		_uiState.value.pendingTimer.copy(duration = duration)
-	}.onSuccess { newTimer ->
-		_uiState.update {
-			it.copy(
-				pendingTimer = newTimer,
-				pendingTimerError = null
+	private fun onTimerInputChange(duration: Duration) = _uiState.update { state ->
+		runCatching { state.pendingTimer.copy(duration = duration) }
+			.fold(
+				onSuccess = { newTimer ->
+					state.copy(pendingTimer = newTimer, pendingTimerError = null)
+				},
+				onFailure = { e -> state.copy(pendingTimerError = e) },
 			)
-		}
-	}.onFailure { e -> _uiState.update { it.copy(pendingTimerError = e) } }
+	}
 }
 
 private val defaultTimer = Timer(duration = 0.seconds, status = TimerStatus.NOT_STARTED)
