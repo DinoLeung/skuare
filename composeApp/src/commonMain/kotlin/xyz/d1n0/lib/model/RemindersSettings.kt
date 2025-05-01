@@ -4,14 +4,14 @@ import xyz.d1n0.lib.constant.OpCode
 import xyz.d1n0.lib.helper.requireIn
 
 data class RemindersSettings(
-	var reminders: List<Reminder> = List(5) { Reminder() },
+	val reminders: List<Reminder> = List(5) { Reminder() },
 ) {
 	val isTitlesInitialized: Boolean get() = reminders.all { it.title != null }
 	val isConfigsInitialized: Boolean get() = reminders.all { it.config != null }
 
 
 	@OptIn(ExperimentalStdlibApi::class)
-	fun parseReminderTitlePacket(packet: ByteArray) {
+	fun parseReminderTitlePacket(packet: ByteArray): RemindersSettings {
 		require(packet.first() == OpCode.REMINDER_TITLE.byte) {
 			"Reminder title packet must starts with command code ${
 				OpCode.REMINDER_TITLE.byte.toHexString(
@@ -25,11 +25,13 @@ data class RemindersSettings(
 		val index =
 			packet[1].toInt().requireIn(1..5) { "Reminder position must be in 1..5" }.minus(1)
 		val title = ReminderTitle.fromBytes(packet.sliceArray(2..packet.lastIndex))
-		reminders = reminders.toMutableList().also { it[index] = it[index].copy(title = title) }
+		return this.copy(
+			reminders = reminders.toMutableList()
+				.also { it[index] = it[index].copy(title = title) })
 	}
 
 	@OptIn(ExperimentalStdlibApi::class)
-	fun parseReminderConfigPacket(packet: ByteArray) {
+	fun parseReminderConfigPacket(packet: ByteArray): RemindersSettings {
 		require(packet.first() == OpCode.REMINDER_CONFIG.byte) {
 			"Reminder config packet must starts with command code ${
 				OpCode.REMINDER_CONFIG.byte.toHexString(
@@ -43,8 +45,9 @@ data class RemindersSettings(
 		val index =
 			packet[1].toInt().requireIn(1..5) { "Reminder position must be in 1..5" }.minus(1)
 		val config = ReminderConfig.fromBytes(packet.sliceArray(2..packet.lastIndex))
-		reminders = reminders.toMutableList().also { it[index] = it[index].copy(config = config) }
-
+		return this.copy(
+			reminders = reminders.toMutableList()
+				.also { it[index] = it[index].copy(config = config) })
 	}
 
 	val reminderTitlePackets: List<ByteArray>

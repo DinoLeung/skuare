@@ -6,10 +6,10 @@ import xyz.d1n0.lib.constant.OpCode
 import xyz.d1n0.lib.constant.WeekdayLanguage
 
 data class WatchSettings(
-	var preferences: WatchPreferences,
-	var backlightDuration: BacklightDuration,
-	var dateFormat: DateFormat,
-	var weekdayLanguage: WeekdayLanguage,
+	val preferences: WatchPreferences,
+	val backlightDuration: BacklightDuration,
+	val dateFormat: DateFormat,
+	val weekdayLanguage: WeekdayLanguage,
 ) {
 	companion object {
 		@OptIn(ExperimentalStdlibApi::class)

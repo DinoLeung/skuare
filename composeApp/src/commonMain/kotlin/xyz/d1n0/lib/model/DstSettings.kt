@@ -3,7 +3,7 @@ package xyz.d1n0.lib.model
 import xyz.d1n0.lib.constant.DstBitMask
 
 data class DstSettings(
-	var enable: Boolean,
+	val enable: Boolean,
 	val auto: Boolean,
 ) {
 	companion object {

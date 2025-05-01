@@ -3,7 +3,7 @@ package xyz.d1n0.lib.model
 import xyz.d1n0.lib.constant.AlarmBitMask
 
 data class HourlySignal(
-	var enable: Boolean,
+	val enable: Boolean,
 ) {
 	companion object {
 		fun fromByte(byte: Byte): HourlySignal {

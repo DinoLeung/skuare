@@ -1,12 +1,8 @@
 package xyz.d1n0.lib.model
 
 data class TimerSettings(
-	var timer: Timer? = null,
+	val timer: Timer? = null,
 ) {
-	val isInitialized: Boolean get() = timer != null
-
 	@OptIn(ExperimentalStdlibApi::class)
-	fun parseTimerPacket(packet: ByteArray) {
-		timer = Timer.fromPacket(packet)
-	}
+	fun parseTimerPacket(packet: ByteArray) = this.copy(timer = Timer.fromPacket(packet))
 }

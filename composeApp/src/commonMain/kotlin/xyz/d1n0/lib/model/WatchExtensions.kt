@@ -151,7 +151,7 @@ suspend fun Watch.adjustTime(delay: Duration = 0.seconds, writeTimezoneMetadata:
 @OptIn(ExperimentalStdlibApi::class)
 suspend fun Watch.handlePacket(packet: ByteArray) = when (OpCode.fromByte(packet.first())) {
 	OpCode.CONNECT_REASON -> {
-		_info.update { it.copy().apply { parseConnectReasonPacket(packet) } }
+		_info.update { it.parseConnectReasonPacket(packet) }
 		val reason = ConnectReason.fromByte(packet[8])
 		when (reason) {
 			ConnectReason.SETUP, ConnectReason.DEFAULT -> {
@@ -173,19 +173,19 @@ suspend fun Watch.handlePacket(packet: ByteArray) = when (OpCode.fromByte(packet
 
 	OpCode.CONNECTION_SETTINGS -> {
 		runCatching {
-			_info.update { it.copy().apply { parseConnectionSettingsPacket(packet) } }
+			_info.update { it.parseConnectionSettingsPacket(packet) }
 		}.onFailure { log.e { "Failed to parse auto sync settings packet: ${it.message}" } }
 	}
 
 	OpCode.WATCH_SETTINGS -> {
 		runCatching {
-			_info.update { it.copy().apply { parseWatchSettingsPacket(packet) } }
+			_info.update { it.parseWatchSettingsPacket(packet) }
 		}.onFailure { log.e { "Failed to parse settings packet: ${it.message}" } }
 	}
 
 	OpCode.WATCH_NAME -> {
 		runCatching {
-			_info.update { it.copy().apply { parseNamePacket(packet) } }
+			_info.update { it.parseNamePacket(packet) }
 		}.onFailure { log.e { "Failed to parse name packet: ${it.message}" } }
 	}
 
@@ -211,9 +211,7 @@ suspend fun Watch.handlePacket(packet: ByteArray) = when (OpCode.fromByte(packet
 	OpCode.CLOCK -> {
 		runCatching {
 			log.d { packet.toHexString(HexFormat.UpperCase) }
-			_clocks.update {
-				it.copy().apply { parseClocksPacket(packet) }
-			}
+			_clocks.update { it.parseClocksPacket(packet) }
 		}.onFailure { log.e { "Failed to parse clocks packet: ${it.message}" } }
 	}
 
@@ -228,36 +226,32 @@ suspend fun Watch.handlePacket(packet: ByteArray) = when (OpCode.fromByte(packet
 
 	OpCode.ALARM_A -> {
 		runCatching {
-			_alarms.update {
-				it.copy().apply { parseAlarmAPacket(packet) }
-			}
+			_alarms.update { it.parseAlarmAPacket(packet) }
 		}.onFailure { log.e { "Failed to parse alarm A packet: ${it.message}" } }
 	}
 
 	OpCode.ALARM_B -> {
 		runCatching {
-			_alarms.update {
-				it.copy().apply { parseAlarmBPacket(packet) }
-			}
+			_alarms.update { it.parseAlarmBPacket(packet) }
 		}.onFailure { log.e { "Failed to parse alarm B packet: ${it.message}" } }
 	}
 
 	OpCode.TIMER -> {
 		runCatching {
-			_timer.update { it.copy().apply { parseTimerPacket(packet) } }
+			_timer.update { it.parseTimerPacket(packet) }
 		}.onFailure { log.e { "Failed to parse timer packet: ${it.message}" } }
 	}
 
 	OpCode.REMINDER_TITLE -> {
 		runCatching {
-			_reminders.update { it.copy().apply { parseReminderTitlePacket(packet) } }
+			_reminders.update { it.parseReminderTitlePacket(packet) }
 		}.onFailure { log.e { "Failed to parse reminder title packet: ${it.message}" } }
 	}
 
 	OpCode.REMINDER_CONFIG -> {
 		runCatching {
 			// it returns 3101000000000000000000 on new watches
-			_reminders.update { it.copy().apply { parseReminderConfigPacket(packet) } }
+			_reminders.update { it.parseReminderConfigPacket(packet) }
 		}.onFailure { log.e { "Failed to parse reminder config packet: ${it.message}" } }
 	}
 

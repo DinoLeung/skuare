@@ -6,9 +6,9 @@ import xyz.d1n0.lib.constant.ConnectionTimeout
 import xyz.d1n0.lib.constant.OpCode
 
 data class ConnectionSettings(
-	var autoSyncEnable: Boolean,
-	var autoSyncDelay: AutoSyncDelay,
-	var connectionTimeout: ConnectionTimeout,
+	val autoSyncEnable: Boolean,
+	val autoSyncDelay: AutoSyncDelay,
+	val connectionTimeout: ConnectionTimeout,
 ) {
 	companion object {
 		// TODO: don't know what do these bytes mean yet

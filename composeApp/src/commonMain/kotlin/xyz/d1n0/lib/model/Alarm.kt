@@ -6,8 +6,8 @@ import xyz.d1n0.lib.helper.fromByteArray
 import xyz.d1n0.lib.helper.toByteArray
 
 data class Alarm(
-	var enable: Boolean,
-	var time: LocalTime,
+	val enable: Boolean,
+	val time: LocalTime,
 ) {
 	companion object {
 		fun fromBytes(bytes: ByteArray): Alarm {

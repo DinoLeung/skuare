@@ -3,10 +3,10 @@ package xyz.d1n0.lib.model
 import xyz.d1n0.lib.constant.PreferencesBitmask
 
 data class WatchPreferences(
-	var is24HourTime: Boolean,
-	var isToneMuted: Boolean,
-	var autoBacklight: Boolean,
-	var powerSaving: Boolean,
+	val is24HourTime: Boolean,
+	val isToneMuted: Boolean,
+	val autoBacklight: Boolean,
+	val powerSaving: Boolean,
 ) {
 	companion object {
 		fun fromByte(byte: Byte) = WatchPreferences(

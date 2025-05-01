@@ -1,6 +1,6 @@
 package xyz.d1n0.lib.model
 
 data class Reminder(
-	var title: ReminderTitle? = null,
-	var config: ReminderConfig? = null,
+	val title: ReminderTitle? = null,
+	val config: ReminderConfig? = null,
 )

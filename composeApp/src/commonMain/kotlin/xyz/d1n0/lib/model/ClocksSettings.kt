@@ -5,8 +5,8 @@ import xyz.d1n0.lib.helper.fromLittleEndianByteArray
 import xyz.d1n0.lib.helper.requireIn
 
 data class ClocksSettings(
-	var homeClock: HomeClock? = null,
-	var worldClocks: List<WorldClock?> = List(5) { null },
+	val homeClock: HomeClock? = null,
+	val worldClocks: List<WorldClock?> = List(5) { null },
 ) {
 	private val allClocks: List<Clock?>
 		get() = listOf(
@@ -27,16 +27,13 @@ data class ClocksSettings(
 	 */
 	private fun setClock(position: Byte, timeZoneId: Short, dstSettings: DstSettings) =
 		when (position.toInt()) {
-			0 -> {
-				homeClock = HomeClock.fromTimeZoneId(timeZoneId, dstSettings)
-			}
-
+			0 -> this.copy(homeClock = HomeClock.fromTimeZoneId(timeZoneId, dstSettings))
 			else -> {
 				val index =
 					position.toInt().requireIn(1..5) { "TimeZones position must be in 0..5" }
 						.minus(1)
 				val clock = WorldClock.fromTimeZoneId(timeZoneId, dstSettings)
-				worldClocks = worldClocks.toMutableList().also { it[index] = clock }
+				this.copy(worldClocks = worldClocks.toMutableList().also { it[index] = clock })
 			}
 		}
 
@@ -82,26 +79,21 @@ data class ClocksSettings(
 	 * or if its length is not exactly 15 bytes as required by the protocol.
 	 */
 	@OptIn(ExperimentalStdlibApi::class)
-	fun parseClocksPacket(clocksPacket: ByteArray) {
+	fun parseClocksPacket(clocksPacket: ByteArray): ClocksSettings {
 		require(clocksPacket.first() == OpCode.CLOCK.byte) {
 			"Clocks packet must starts with command code ${OpCode.CLOCK.byte.toHexString(HexFormat.UpperCase)}"
 		}
 		require(clocksPacket.size == 15) {
 			"Clocks packet must be exactly 15 bytes long, e.g. 1D 00 01 03 02 7F 76 00 00 FF FF FF FF FF FF"
 		}
-		runCatching {
-			val positionA = clocksPacket[1]
-			val positionB = clocksPacket[2]
-			val dstStatusA = DstSettings.fromByte(clocksPacket[3])
-			val dstStatusB = DstSettings.fromByte(clocksPacket[4])
-			val timeZoneIdA = Short.fromLittleEndianByteArray(clocksPacket.sliceArray(5..6))
-			val timeZoneIdB = Short.fromLittleEndianByteArray(clocksPacket.sliceArray(7..8))
-
-			setClock(positionA, timeZoneIdA, dstStatusA)
-			setClock(positionB, timeZoneIdB, dstStatusB)
-		}.onFailure {
-			throw IllegalArgumentException("Invalid clocks packet", it)
-		}
+		val positionA = clocksPacket[1]
+		val positionB = clocksPacket[2]
+		val dstStatusA = DstSettings.fromByte(clocksPacket[3])
+		val dstStatusB = DstSettings.fromByte(clocksPacket[4])
+		val timeZoneIdA = Short.fromLittleEndianByteArray(clocksPacket.sliceArray(5..6))
+		val timeZoneIdB = Short.fromLittleEndianByteArray(clocksPacket.sliceArray(7..8))
+		return setClock(positionA, timeZoneIdA, dstStatusA)
+			.setClock(positionB, timeZoneIdB, dstStatusB)
 	}
 
 	/**
