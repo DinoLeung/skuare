@@ -29,8 +29,8 @@ data class TimerUiState(
 
 sealed interface TimerUiEvent {
 	data class TimerInputChange(val duration: Duration) : TimerUiEvent
-	object Submit : TimerUiEvent
-	object Refresh : TimerUiEvent
+	object SaveTimer : TimerUiEvent
+	object RequestTimer : TimerUiEvent
 }
 
 class TimerScreenViewModel : ViewModel(), KoinComponent {
@@ -56,17 +56,17 @@ class TimerScreenViewModel : ViewModel(), KoinComponent {
 	}
 
 	fun onEvent(event: TimerUiEvent) = when (event) {
-		TimerUiEvent.Refresh -> refresh()
-		TimerUiEvent.Submit -> submit()
+		TimerUiEvent.RequestTimer -> requestTimer()
+		TimerUiEvent.SaveTimer -> saveTimer()
 		is TimerUiEvent.TimerInputChange -> onTimerInputChange(duration = event.duration)
 	}
 
-	private fun refresh() = watch.scope.launch {
+	private fun requestTimer() = watch.scope.launch {
 		_uiState.update { it.copy(waitingUpdates = true) }
 		watch.requestTimer()
 	}
 
-	private fun submit() = watch.scope.launch {
+	private fun saveTimer() = watch.scope.launch {
 		_uiState.update { it.copy(waitingUpdates = true) }
 		watch.writeTimer(timer = _uiState.value.pendingTimer)
 		watch.requestTimer()

@@ -30,7 +30,7 @@ fun TimerScreen(
 
 	LaunchedEffect(Unit) {
 		if (state.isInitialized == false)
-			viewModel.onEvent(TimerUiEvent.Refresh)
+			viewModel.onEvent(TimerUiEvent.RequestTimer)
 	}
 
 	Column(
@@ -48,7 +48,7 @@ fun TimerScreen(
 			timer = state.savedTimer,
 			onValueChange = { viewModel.onEvent(TimerUiEvent.TimerInputChange(it)) },
 			saveButtonEnabled = state.hasUpdates && state.pendingTimerError == null,
-			saveButtonOnClick = { viewModel.onEvent(TimerUiEvent.Submit) },
+			saveButtonOnClick = { viewModel.onEvent(TimerUiEvent.SaveTimer) },
 			isError = state.pendingTimerError != null,
 			supportingText = {
 				state.pendingTimerError?.let { Text(it.message ?: "Unknown errors") }
