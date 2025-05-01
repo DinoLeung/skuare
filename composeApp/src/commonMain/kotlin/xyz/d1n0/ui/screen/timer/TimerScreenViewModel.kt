@@ -45,7 +45,7 @@ class TimerScreenViewModel : ViewModel(), KoinComponent {
 			timerSettings.collect { settings ->
 				_uiState.update {
 					it.copy(
-						isInitialized = settings.isInitialized,
+						isInitialized = settings.timer != null,
 						waitingUpdates = false,
 						hasUpdates = settings.timer?.duration != it.pendingTimer.duration,
 						savedTimer = settings.timer ?: defaultTimer,
