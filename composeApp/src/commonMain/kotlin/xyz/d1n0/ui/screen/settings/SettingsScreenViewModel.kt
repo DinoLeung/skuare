@@ -26,6 +26,7 @@ import xyz.d1n0.lib.model.requestWatchSettings
 import xyz.d1n0.lib.model.writeConnectionSettings
 import xyz.d1n0.lib.model.writeName
 import xyz.d1n0.lib.model.writeWatchSettings
+import xyz.d1n0.ui.boilerplate.updateCatching
 
 data class SettingsUiState(
 	val waitingUpdates: Boolean = true,
@@ -52,6 +53,16 @@ sealed interface SettingsUiEvent {
 	object RequestConnectionSettings : SettingsUiEvent
 	object SaveConnectionSettings : SettingsUiEvent
 	data class NameInputChange(val name: String) : SettingsUiEvent
+	data class Is24HourChange(val is24Hour: Boolean) : SettingsUiEvent
+	data class IsMutedChange(val isMuted: Boolean) : SettingsUiEvent
+	data class AutoBacklightChange(val enable: Boolean) : SettingsUiEvent
+	data class PowerSavingChange(val enable: Boolean) : SettingsUiEvent
+	data class BacklightDurationChange(val backlightDuration: BacklightDuration) : SettingsUiEvent
+	data class DateFormatChange(val dateFormat: DateFormat) : SettingsUiEvent
+	data class WeekdayLanguageChange(val weekdayLanguage: WeekdayLanguage) : SettingsUiEvent
+	data class AutoSyncChange(val enable: Boolean) : SettingsUiEvent
+	data class AutoSyncDelayChange(val autoSyncDelay: AutoSyncDelay) : SettingsUiEvent
+	data class ConnectionTimeoutChange(val connectionTimeout: ConnectionTimeout) : SettingsUiEvent
 }
 
 class SettingsScreenViewModel : ViewModel(), KoinComponent {
@@ -91,6 +102,16 @@ class SettingsScreenViewModel : ViewModel(), KoinComponent {
 		SettingsUiEvent.RequestConnectionSettings -> requestConnectionSettings()
 		SettingsUiEvent.SaveConnectionSettings -> writeConnectionSettings()
 		is SettingsUiEvent.NameInputChange -> onNameInputChange(name = event.name)
+		is SettingsUiEvent.Is24HourChange -> onIs24HourChange(is24Hour = event.is24Hour)
+		is SettingsUiEvent.IsMutedChange -> onIsMutedChange(isMuted = event.isMuted)
+		is SettingsUiEvent.AutoBacklightChange -> onAutoBacklightChange(enable = event.enable)
+		is SettingsUiEvent.PowerSavingChange -> onAutoBacklightChange(enable = event.enable)
+		is SettingsUiEvent.BacklightDurationChange -> onBacklightDurationChange(backlightDuration = event.backlightDuration)
+		is SettingsUiEvent.DateFormatChange -> onDateFormatChange(dateFormat = event.dateFormat)
+		is SettingsUiEvent.WeekdayLanguageChange -> onWeekdayLanguageChange(weekdayLanguage = event.weekdayLanguage)
+		is SettingsUiEvent.AutoSyncChange -> onAutoSyncChange(enable = event.enable)
+		is SettingsUiEvent.AutoSyncDelayChange -> onAutoSyncDelayChange(autoSyncDelay = event.autoSyncDelay)
+		is SettingsUiEvent.ConnectionTimeoutChange -> onConnectionTimeoutChange(connectionTimeout = event.connectionTimeout)
 	}
 
 	private fun requestName() = watch.scope.launch {
@@ -126,51 +147,102 @@ class SettingsScreenViewModel : ViewModel(), KoinComponent {
 		watch.requestConnectionSettings()
 	}
 
-	private fun onNameInputChange(name: String) = _uiState.update { state ->
-		runCatching { state.pendingName.copy(_value = name) }
-			.fold(
-				onSuccess = { newName ->
-					state.copy(pendingName = newName, pendingNameError = null)
-				},
-				onFailure = { e -> state.copy(pendingNameError = e) }
-			)
-	}
+	private fun onNameInputChange(name: String) = _uiState.updateCatching(
+		transform = { it.pendingName.copy(_value = name) },
+		onSuccess = { copy(pendingName = it, pendingNameError = null) },
+		onFailure = { copy(pendingNameError = it) },
+	)
 
-	private fun onIs24HourChange(is24Hour: Boolean) = _uiState.update { state ->
-		runCatching {
-			state.pendingWatchSettings.copy(
-				preferences = state.pendingWatchSettings.preferences.copy(
+	private fun onIs24HourChange(is24Hour: Boolean) = _uiState.updateCatching(
+		transform = {
+			it.pendingWatchSettings.copy(
+				preferences = it.pendingWatchSettings.preferences.copy(
 					is24HourTime = is24Hour
 				)
 			)
-		}.fold(
-			onSuccess = { newSettings ->
-				state.copy(
-					pendingWatchSettings = newSettings,
-					pendingWatchSettingsError = null,
-				)
-			},
-			onFailure = { e -> state.copy(pendingWatchSettingsError = e) },
-		)
-	}
+		},
+		onSuccess = { copy(pendingWatchSettings = it, pendingWatchSettingsError = null) },
+		onFailure = { copy(pendingWatchSettingsError = it) },
+	)
 
-	private fun onIsMutedChange(isMuted: Boolean) = _uiState.update { state ->
-		runCatching {
-			state.pendingWatchSettings.copy(
-				preferences = state.pendingWatchSettings.preferences.copy(
+	private fun onIsMutedChange(isMuted: Boolean) = _uiState.updateCatching(
+		transform = {
+			it.pendingWatchSettings.copy(
+				preferences = it.pendingWatchSettings.preferences.copy(
 					isToneMuted = isMuted
 				)
 			)
-		}.fold(
-			onSuccess = { newSettings ->
-				state.copy(
-					pendingWatchSettings = newSettings,
-					pendingWatchSettingsError = null,
+		},
+		onSuccess = { copy(pendingWatchSettings = it, pendingWatchSettingsError = null) },
+		onFailure = { copy(pendingWatchSettingsError = it) },
+	)
+
+	private fun onAutoBacklightChange(enable: Boolean) = _uiState.updateCatching(
+		transform = {
+			it.pendingWatchSettings.copy(
+				preferences = it.pendingWatchSettings.preferences.copy(
+					autoBacklight = enable
+				)
+			)
+		},
+		onSuccess = { copy(pendingWatchSettings = it, pendingWatchSettingsError = null) },
+		onFailure = { copy(pendingWatchSettingsError = it) },
+	)
+
+	private fun onPowerSavingChange(enable: Boolean) = _uiState.updateCatching(
+		transform = {
+			it.pendingWatchSettings.copy(
+				preferences = it.pendingWatchSettings.preferences.copy(
+					powerSaving = enable
+				)
+			)
+		},
+		onSuccess = { copy(pendingWatchSettings = it, pendingWatchSettingsError = null) },
+		onFailure = { copy(pendingWatchSettingsError = it) },
+	)
+
+	private fun onBacklightDurationChange(backlightDuration: BacklightDuration) =
+		_uiState.updateCatching(
+			transform = { it.pendingWatchSettings.copy(backlightDuration = backlightDuration) },
+			onSuccess = { copy(pendingWatchSettings = it, pendingWatchSettingsError = null) },
+			onFailure = { copy(pendingWatchSettingsError = it) },
+		)
+
+	private fun onDateFormatChange(dateFormat: DateFormat) = _uiState.updateCatching(
+		transform = { it.pendingWatchSettings.copy(dateFormat = dateFormat) },
+		onSuccess = { copy(pendingWatchSettings = it, pendingWatchSettingsError = null) },
+		onFailure = { copy(pendingWatchSettingsError = it) },
+	)
+
+	private fun onWeekdayLanguageChange(weekdayLanguage: WeekdayLanguage) = _uiState.updateCatching(
+		transform = { it.pendingWatchSettings.copy(weekdayLanguage = weekdayLanguage) },
+		onSuccess = { copy(pendingWatchSettings = it, pendingWatchSettingsError = null) },
+		onFailure = { copy(pendingWatchSettingsError = it) },
+	)
+
+	private fun onAutoSyncChange(enable: Boolean) = _uiState.updateCatching(
+		transform = { it.pendingConnectionSettings.copy(autoSyncEnable = enable) },
+		onSuccess = { copy(pendingConnectionSettings = it, pendingConnectionSettingsError = null) },
+		onFailure = { copy(pendingConnectionSettingsError = it) },
+	)
+
+	private fun onAutoSyncDelayChange(autoSyncDelay: AutoSyncDelay) = _uiState.updateCatching(
+		transform = { it.pendingConnectionSettings.copy(autoSyncDelay = autoSyncDelay) },
+		onSuccess = { copy(pendingConnectionSettings = it, pendingConnectionSettingsError = null) },
+		onFailure = { copy(pendingConnectionSettingsError = it) },
+	)
+
+	private fun onConnectionTimeoutChange(connectionTimeout: ConnectionTimeout) =
+		_uiState.updateCatching(
+			transform = { it.pendingConnectionSettings.copy(connectionTimeout = connectionTimeout) },
+			onSuccess = {
+				copy(
+					pendingConnectionSettings = it,
+					pendingConnectionSettingsError = null
 				)
 			},
-			onFailure = { e -> state.copy(pendingWatchSettingsError = e) },
+			onFailure = { copy(pendingConnectionSettingsError = it) },
 		)
-	}
 }
 
 private val defaultWatchName = WatchName("")
