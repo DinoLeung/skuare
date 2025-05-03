@@ -49,6 +49,7 @@ fun TimerScreen(
 			onValueChange = { viewModel.onEvent(TimerUiEvent.TimerInputChange(it)) },
 			saveButtonEnabled = state.hasUpdates && state.pendingTimerError == null,
 			saveButtonOnClick = { viewModel.onEvent(TimerUiEvent.SaveTimer) },
+			inputEnabled = state.waitingUpdates != true,
 			isError = state.pendingTimerError != null,
 			supportingText = {
 				state.pendingTimerError?.let { Text(it.message ?: "Unknown errors") }

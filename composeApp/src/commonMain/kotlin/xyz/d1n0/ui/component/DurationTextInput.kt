@@ -32,6 +32,7 @@ fun DurationTextInput(
 	label: @Composable (() -> Unit) = { Text("Duration") },
 	placeholder: @Composable (() -> Unit) = { Text("00h 00m 00s") },
 	supportingText: @Composable (() -> Unit)? = null,
+	enabled: Boolean = true,
 	isError: Boolean = false,
 	modifier: Modifier = Modifier,
 ) {
@@ -68,6 +69,7 @@ fun DurationTextInput(
 		placeholder = placeholder,
 		visualTransformation = MaskVisualTransformation(),
 		keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+		enabled = enabled,
 		isError = isError,
 		supportingText = supportingText,
 		singleLine = true,

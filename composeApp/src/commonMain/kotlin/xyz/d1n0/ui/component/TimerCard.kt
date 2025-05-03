@@ -21,6 +21,7 @@ fun TimerCard(
 	onValueChange: (Duration) -> Unit,
 	saveButtonEnabled: Boolean = true,
 	saveButtonOnClick: () -> Unit,
+	inputEnabled: Boolean = true,
 	isError: Boolean = false,
 	supportingText: @Composable() (() -> Unit)? = null,
 	modifier: Modifier = Modifier,
@@ -37,6 +38,7 @@ fun TimerCard(
 			DurationTextInput(
 				duration = timer.duration,
 				onDurationChange = { onValueChange(it) },
+				enabled = inputEnabled,
 				isError = isError,
 				supportingText = supportingText,
 				modifier = Modifier.weight(3f)
