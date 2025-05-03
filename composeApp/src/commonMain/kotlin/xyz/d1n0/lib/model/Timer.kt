@@ -17,7 +17,7 @@ data class Timer(
 		@OptIn(ExperimentalStdlibApi::class)
 		fun fromPacket(packet: ByteArray): Timer {
 			require(packet.first() == OpCode.TIMER.byte) {
-				"Timer packet must starts with command code ${
+				"Timer packet must start with command code ${
 					OpCode.TIMER.byte.toHexString(
 						HexFormat.UpperCase
 					)

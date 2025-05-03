@@ -22,7 +22,7 @@ data class ReminderConfig(
 ) {
 	companion object {
 		fun fromBytes(bytes: ByteArray): ReminderConfig {
-			require(bytes.size == 9) { "Reminder Config bytes must be 9 bytes long, e.g. 11 25 03 25 25 03 25 12 00" }
+			require(bytes.size == 9) { "Reminder Config bytes must be exactly 9 bytes long, e.g. 11 25 03 25 25 03 25 12 00" }
 
 			val startDate = runCatching {
 				LocalDate.fromBcdByteArray(bytes.sliceArray(1..3))

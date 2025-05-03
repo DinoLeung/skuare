@@ -4,7 +4,7 @@ import xyz.d1n0.lib.constant.OpCode
 
 data class WatchName(private val _value: String) {
 	init {
-		require(_value.length <= 19) { "Watch name length must be <= 19 characters" }
+		require(_value.length <= 19) { "Watch name must not exceed 19 characters" }
 	}
 
 	val value: String
@@ -14,7 +14,7 @@ data class WatchName(private val _value: String) {
 		@OptIn(ExperimentalStdlibApi::class)
 		fun fromPacket(packet: ByteArray): WatchName {
 			require(packet.first() == OpCode.WATCH_NAME.byte) {
-				"Watch name packet must starts with command code ${
+				"Watch name packet must start with command code ${
 					OpCode.WATCH_NAME.byte.toHexString(
 						HexFormat.UpperCase
 					)

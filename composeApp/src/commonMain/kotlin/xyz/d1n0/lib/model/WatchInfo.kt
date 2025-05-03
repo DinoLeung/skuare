@@ -15,7 +15,7 @@ data class WatchInfo(
 	fun parseConnectReasonPacket(packet: ByteArray): WatchInfo {
 		// TODO: figure out meanings of rest of the bytes
 		require(packet.first() == OpCode.CONNECT_REASON.byte) {
-			"Settings packet must starts with command code ${
+			"Settings packet must start with command code ${
 				OpCode.WATCH_SETTINGS.byte.toHexString(
 					HexFormat.UpperCase
 				)

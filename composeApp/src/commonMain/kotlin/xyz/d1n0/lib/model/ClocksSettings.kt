@@ -81,7 +81,7 @@ data class ClocksSettings(
 	@OptIn(ExperimentalStdlibApi::class)
 	fun parseClocksPacket(clocksPacket: ByteArray): ClocksSettings {
 		require(clocksPacket.first() == OpCode.CLOCK.byte) {
-			"Clocks packet must starts with command code ${OpCode.CLOCK.byte.toHexString(HexFormat.UpperCase)}"
+			"Clocks packet must start with command code ${OpCode.CLOCK.byte.toHexString(HexFormat.UpperCase)}"
 		}
 		require(clocksPacket.size == 15) {
 			"Clocks packet must be exactly 15 bytes long, e.g. 1D 00 01 03 02 7F 76 00 00 FF FF FF FF FF FF"

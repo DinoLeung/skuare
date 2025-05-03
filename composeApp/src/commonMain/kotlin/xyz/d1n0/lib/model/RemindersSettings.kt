@@ -13,7 +13,7 @@ data class RemindersSettings(
 	@OptIn(ExperimentalStdlibApi::class)
 	fun parseReminderTitlePacket(packet: ByteArray): RemindersSettings {
 		require(packet.first() == OpCode.REMINDER_TITLE.byte) {
-			"Reminder title packet must starts with command code ${
+			"Reminder title packet must start with command code ${
 				OpCode.REMINDER_TITLE.byte.toHexString(
 					HexFormat.UpperCase
 				)
@@ -33,7 +33,7 @@ data class RemindersSettings(
 	@OptIn(ExperimentalStdlibApi::class)
 	fun parseReminderConfigPacket(packet: ByteArray): RemindersSettings {
 		require(packet.first() == OpCode.REMINDER_CONFIG.byte) {
-			"Reminder config packet must starts with command code ${
+			"Reminder config packet must start with command code ${
 				OpCode.REMINDER_CONFIG.byte.toHexString(
 					HexFormat.UpperCase
 				)

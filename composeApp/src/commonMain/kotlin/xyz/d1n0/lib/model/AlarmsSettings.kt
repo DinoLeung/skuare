@@ -19,7 +19,7 @@ data class AlarmsSettings(
 	@OptIn(ExperimentalStdlibApi::class)
 	fun parseAlarmAPacket(packet: ByteArray): AlarmsSettings {
 		require(packet.first() == OpCode.ALARM_A.byte) {
-			"Alarm A packet must starts with command code ${
+			"Alarm A packet must start with command code ${
 				OpCode.ALARM_A.byte.toHexString(
 					HexFormat.UpperCase
 				)
@@ -37,7 +37,7 @@ data class AlarmsSettings(
 	@OptIn(ExperimentalStdlibApi::class)
 	fun parseAlarmBPacket(packet: ByteArray): AlarmsSettings {
 		require(packet.first() == OpCode.ALARM_B.byte) {
-			"Alarm B packet must starts with command code ${
+			"Alarm B packet must start with command code ${
 				OpCode.ALARM_B.byte.toHexString(
 					HexFormat.UpperCase
 				)

@@ -15,7 +15,7 @@ data class WatchSettings(
 		@OptIn(ExperimentalStdlibApi::class)
 		fun fromPacket(packet: ByteArray): WatchSettings {
 			require(packet.first() == OpCode.WATCH_SETTINGS.byte) {
-				"Settings packet must starts with command code ${
+				"Settings packet must start with command code ${
 					OpCode.WATCH_SETTINGS.byte.toHexString(
 						HexFormat.UpperCase
 					)

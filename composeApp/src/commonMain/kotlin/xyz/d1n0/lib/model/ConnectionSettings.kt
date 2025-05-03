@@ -18,7 +18,7 @@ data class ConnectionSettings(
 		@OptIn(ExperimentalStdlibApi::class)
 		fun fromPacket(packet: ByteArray): ConnectionSettings {
 			require(packet.first() == OpCode.CONNECTION_SETTINGS.byte) {
-				"Auto Sync Settings packet must starts with command code ${
+				"Auto Sync Settings packet must start with command code ${
 					OpCode.CONNECTION_SETTINGS.byte.toHexString(
 						HexFormat.UpperCase
 					)
