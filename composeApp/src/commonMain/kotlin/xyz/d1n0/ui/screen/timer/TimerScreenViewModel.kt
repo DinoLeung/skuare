@@ -22,11 +22,14 @@ import kotlin.time.Duration.Companion.seconds
 data class TimerUiState(
 	val isInitialized: Boolean = false,
 	val waitingUpdates: Boolean = true,
-	val hasUpdates: Boolean = false,
+//	val hasUpdates: Boolean = false,
 	val savedTimer: Timer = defaultTimer,
 	val pendingTimer: Timer = defaultTimer,
 	val pendingTimerError: Throwable? = null,
-)
+) {
+	val hasUpdates: Boolean
+		get() = pendingTimer != savedTimer
+}
 
 sealed interface TimerUiEvent {
 	data class TimerInputChange(val duration: Duration) : TimerUiEvent
@@ -48,7 +51,6 @@ class TimerScreenViewModel : ViewModel(), KoinComponent {
 					it.copy(
 						isInitialized = settings.timer != null,
 						waitingUpdates = false,
-						hasUpdates = settings.timer?.duration != it.pendingTimer.duration,
 						savedTimer = settings.timer ?: defaultTimer,
 					)
 				}

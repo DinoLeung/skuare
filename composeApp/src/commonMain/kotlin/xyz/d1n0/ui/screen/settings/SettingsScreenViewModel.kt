@@ -30,7 +30,6 @@ import xyz.d1n0.ui.boilerplate.updateCatching
 
 data class SettingsUiState(
 	val waitingUpdates: Boolean = true,
-	val hasUpdates: Boolean = false,
 	val isNameInitialized: Boolean = false,
 	val savedName: WatchName = defaultWatchName,
 	val pendingName: WatchName = defaultWatchName,
@@ -43,7 +42,12 @@ data class SettingsUiState(
 	val savedConnectionSettings: ConnectionSettings = defaultConnectionSettings,
 	val pendingConnectionSettings: ConnectionSettings = defaultConnectionSettings,
 	val pendingConnectionSettingsError: Throwable? = null,
-)
+) {
+	val hasUpdates: Boolean
+		get() = savedName != pendingName ||
+				savedWatchSettings != pendingWatchSettings ||
+				savedConnectionSettings != pendingConnectionSettings
+}
 
 sealed interface SettingsUiEvent {
 	object RequestName : SettingsUiEvent
@@ -78,16 +82,17 @@ class SettingsScreenViewModel : ViewModel(), KoinComponent {
 				_uiState.update {
 					it.copy(
 						waitingUpdates = false,
-						hasUpdates = info.name != it.pendingName ||
-								info.watchSettings != it.pendingWatchSettings ||
-								info.connectionSettings != it.pendingConnectionSettings,
 						isNameInitialized = info.name != null,
 						savedName = info.name ?: defaultWatchName,
+						pendingName = info.name ?: it.pendingName,
 						isWatchSettingsInitialized = info.watchSettings != null,
 						savedWatchSettings = info.watchSettings ?: defaultWatchSettings,
+						pendingWatchSettings = info.watchSettings ?: it.pendingWatchSettings,
 						isConnectionSettingsInitialized = info.connectionSettings != null,
 						savedConnectionSettings = info.connectionSettings
-							?: defaultConnectionSettings
+							?: defaultConnectionSettings,
+						pendingConnectionSettings = info.connectionSettings
+							?: it.pendingConnectionSettings
 					)
 				}
 			}
@@ -236,10 +241,7 @@ class SettingsScreenViewModel : ViewModel(), KoinComponent {
 		_uiState.updateCatching(
 			transform = { it.pendingConnectionSettings.copy(connectionTimeout = connectionTimeout) },
 			onSuccess = {
-				copy(
-					pendingConnectionSettings = it,
-					pendingConnectionSettingsError = null
-				)
+				copy(pendingConnectionSettings = it, pendingConnectionSettingsError = null)
 			},
 			onFailure = { copy(pendingConnectionSettingsError = it) },
 		)
