@@ -27,7 +27,7 @@ fun ReminderPreview() {
 		)
 		ReminderCard(
 			reminder = xyz.d1n0.lib.model.Reminder(
-				ReminderTitle("Reminder multi-days"),
+				ReminderTitle("Multi-days"),
 				ReminderConfig(
 					enable = true,
 					recurrence = ReminderRecurrence.REPEAT_DAYS,

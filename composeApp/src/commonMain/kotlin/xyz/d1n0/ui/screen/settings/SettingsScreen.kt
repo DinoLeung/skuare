@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -19,9 +18,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.TextAlign
 import org.koin.compose.viewmodel.koinViewModel
-import xyz.d1n0.ui.component.CardView
+import xyz.d1n0.ui.component.SwitchCard
 
 @Composable
 fun SettingsScreen(
@@ -48,7 +46,7 @@ fun SettingsScreen(
 		verticalArrangement = Arrangement.Center,
 	) {
 		OutlinedTextField(
-			label = { Text("Name") },
+			label = { Text("Watch Name") },
 			value = nameFieldValue,
 			enabled = state.waitingUpdates != true,
 			isError = state.pendingNameError != null,
@@ -63,24 +61,48 @@ fun SettingsScreen(
 			}
 		)
 
-		CardView(
-			leadingIcon = {},
-			title = {
-				Text(
-					text = "24 Hour format",
-					textAlign = TextAlign.Start,
-					style = MaterialTheme.typography.bodyMedium
-				)
-			},
-			indicator = {
-				Switch(
-					checked = state.pendingWatchSettings.preferences.is24HourTime,
-					onCheckedChange = { viewModel.onEvent(SettingsUiEvent.Is24HourChange(it)) },
-					enabled = true,
-				)
-			},
-			content = {},
+		SwitchCard(
+			title = "24 Hour format",
+			check = state.pendingWatchSettings.preferences.is24HourTime,
+			onCheckedChange = { viewModel.onEvent(SettingsUiEvent.Is24HourChange(it)) },
+			enabled = state.isWatchSettingsInitialized && state.waitingUpdates == false
 		)
+
+		// TODO: DateFormatChange
+		// TODO: WeekdayLanguageChange
+
+		SwitchCard(
+			title = "Mute Button Tone",
+			check = state.pendingWatchSettings.preferences.isToneMuted,
+			onCheckedChange = { viewModel.onEvent(SettingsUiEvent.IsMutedChange(it)) },
+			enabled = state.isWatchSettingsInitialized && state.waitingUpdates == false
+		)
+
+		SwitchCard(
+			title = "Auto Backlight",
+			check = state.pendingWatchSettings.preferences.autoBacklight,
+			onCheckedChange = { viewModel.onEvent(SettingsUiEvent.AutoBacklightChange(it)) },
+			enabled = state.isWatchSettingsInitialized && state.waitingUpdates == false
+		)
+
+		// TODO: BacklightDurationChange
+
+		SwitchCard(
+			title = "Power Saving Mode",
+			check = state.pendingWatchSettings.preferences.powerSaving,
+			onCheckedChange = { viewModel.onEvent(SettingsUiEvent.PowerSavingChange(it)) },
+			enabled = state.isWatchSettingsInitialized && state.waitingUpdates == false
+		)
+
+		SwitchCard(
+			title = "Auto Time Adjustment",
+			check = state.pendingConnectionSettings.autoSyncEnable,
+			onCheckedChange = { viewModel.onEvent(SettingsUiEvent.AutoSyncChange(it)) },
+			enabled = state.isConnectionSettingsInitialized && state.waitingUpdates == false
+		)
+
+		// TODO: AutoSyncDelayChange
+		// TODO: ConnectionTimeoutChange
 
 		Text(state.savedWatchSettings.toString(), color = MaterialTheme.colorScheme.onBackground)
 		Text(

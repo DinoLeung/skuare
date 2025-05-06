@@ -22,7 +22,6 @@ import kotlin.time.Duration.Companion.seconds
 data class TimerUiState(
 	val isInitialized: Boolean = false,
 	val waitingUpdates: Boolean = true,
-//	val hasUpdates: Boolean = false,
 	val savedTimer: Timer = defaultTimer,
 	val pendingTimer: Timer = defaultTimer,
 	val pendingTimerError: Throwable? = null,

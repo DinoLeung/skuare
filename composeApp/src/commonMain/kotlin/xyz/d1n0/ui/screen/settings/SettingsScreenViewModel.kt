@@ -110,7 +110,7 @@ class SettingsScreenViewModel : ViewModel(), KoinComponent {
 		is SettingsUiEvent.Is24HourChange -> onIs24HourChange(is24Hour = event.is24Hour)
 		is SettingsUiEvent.IsMutedChange -> onIsMutedChange(isMuted = event.isMuted)
 		is SettingsUiEvent.AutoBacklightChange -> onAutoBacklightChange(enable = event.enable)
-		is SettingsUiEvent.PowerSavingChange -> onAutoBacklightChange(enable = event.enable)
+		is SettingsUiEvent.PowerSavingChange -> onPowerSavingChange(enable = event.enable)
 		is SettingsUiEvent.BacklightDurationChange -> onBacklightDurationChange(backlightDuration = event.backlightDuration)
 		is SettingsUiEvent.DateFormatChange -> onDateFormatChange(dateFormat = event.dateFormat)
 		is SettingsUiEvent.WeekdayLanguageChange -> onWeekdayLanguageChange(weekdayLanguage = event.weekdayLanguage)

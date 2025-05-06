@@ -1,0 +1,45 @@
+package xyz.d1n0.ui.component
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+
+@Preview
+@Composable
+fun SwitchCardPreview() {
+	Column {
+		SwitchCard(
+			title = "Test 123",
+			check = true,
+			onCheckedChange = {},
+			enabled = true,
+			modifier = Modifier.fillMaxWidth()
+		)
+
+		SwitchCard(
+			title = "Test 123",
+			check = true,
+			onCheckedChange = {},
+			enabled = false,
+			modifier = Modifier.fillMaxWidth()
+		)
+
+		SwitchCard(
+			title = "Test 456",
+			check = false,
+			onCheckedChange = {},
+			enabled = true,
+			modifier = Modifier.fillMaxWidth()
+		)
+
+		SwitchCard(
+			title = "Test 456",
+			check = false,
+			onCheckedChange = {},
+			enabled = false,
+			modifier = Modifier.fillMaxWidth()
+		)
+	}
+}

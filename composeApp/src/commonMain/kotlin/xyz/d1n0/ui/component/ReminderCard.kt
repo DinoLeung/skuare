@@ -19,7 +19,7 @@ fun ReminderCard(
 	reminder: Reminder,
 	modifier: Modifier = Modifier,
 ) {
-	CardView(modifier = modifier, leadingIcon = { }, title = {
+	CardView(modifier = modifier, title = {
 		Text(
 			text = reminder.title?.let { it.value } ?: "<Empty>",
 			textAlign = TextAlign.Center,
