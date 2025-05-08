@@ -42,6 +42,8 @@ kotlin {
 			implementation(libs.kotlinx.coroutines)
 			implementation(libs.kotlinx.datetime)
 
+			implementation(libs.material.icons)
+
 			implementation(libs.kermit)
 			implementation(libs.kermit.koin)
 
