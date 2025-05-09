@@ -2,9 +2,11 @@ package xyz.d1n0.ui.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,22 +24,30 @@ fun EnumDropdownPreview() {
 	var selectedDelay by remember { mutableStateOf(AutoSyncDelay.MINUTE_30) }
 	var selectedLanguage by remember { mutableStateOf(WeekdayLanguage.EN) }
 
-	Column {
+	Column(modifier = Modifier
+		.fillMaxSize()
+		.safeContentPadding()) {
 		EnumDropdown(
 			selectedOption = selectedDelay,
 			onOptionSelected = { selectedDelay = it },
 			label = "Select delay",
-			modifier = Modifier.padding(16.dp)
+			modifier = Modifier
+				.fillMaxWidth()
+				.padding(16.dp)
 		)
-		Spacer(modifier = Modifier
-			.fillMaxWidth()
-			.height(8.dp))
+		Spacer(
+			modifier = Modifier
+				.fillMaxWidth()
+				.height(8.dp)
+		)
 
 		EnumDropdown(
 			selectedOption = selectedLanguage,
 			onOptionSelected = { selectedLanguage = it },
 			label = "Select language",
-			modifier = Modifier.padding(16.dp)
+			modifier = Modifier
+				.fillMaxWidth()
+				.padding(16.dp)
 		)
 	}
 }
