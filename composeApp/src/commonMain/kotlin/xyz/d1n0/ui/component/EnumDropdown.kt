@@ -35,14 +35,14 @@ import androidx.compose.ui.window.Dialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-inline fun <reified T : Enum<T>> EnumDropdown(
+fun <T : Enum<T>> EnumDropdown(
 	selectedOption: T,
-	crossinline onOptionSelected: (T) -> Unit,
+	options: Array<T>,
+	onOptionSelected: (T) -> Unit,
 	label: String,
 	enabled: Boolean = true,
 	modifier: Modifier = Modifier,
 ) {
-	val options = enumValues<T>()
 	var expanded by remember { mutableStateOf(false) }
 	var selectedIndex by remember { mutableStateOf(0) }
 	val listState = rememberLazyListState()

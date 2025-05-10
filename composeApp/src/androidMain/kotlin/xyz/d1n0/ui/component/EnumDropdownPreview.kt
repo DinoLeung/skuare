@@ -24,13 +24,16 @@ fun EnumDropdownPreview() {
 	var selectedDelay by remember { mutableStateOf(AutoSyncDelay.MINUTE_30) }
 	var selectedLanguage by remember { mutableStateOf(WeekdayLanguage.EN) }
 
-	Column(modifier = Modifier
-		.fillMaxSize()
-		.safeContentPadding()) {
+	Column(
+		modifier = Modifier
+			.fillMaxSize()
+			.safeContentPadding()
+	) {
 		EnumDropdown(
 			selectedOption = selectedDelay,
 			onOptionSelected = { selectedDelay = it },
 			label = "Select delay",
+			options = AutoSyncDelay.values(),
 			modifier = Modifier
 				.fillMaxWidth()
 				.padding(16.dp)
@@ -45,6 +48,7 @@ fun EnumDropdownPreview() {
 			selectedOption = selectedLanguage,
 			onOptionSelected = { selectedLanguage = it },
 			label = "Select language",
+			options = WeekdayLanguage.values(),
 			modifier = Modifier
 				.fillMaxWidth()
 				.padding(16.dp)

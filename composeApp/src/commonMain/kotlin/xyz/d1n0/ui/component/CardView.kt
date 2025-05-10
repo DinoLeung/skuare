@@ -24,8 +24,8 @@ fun CardView(
 	modifier: Modifier = Modifier,
 ) {
 	Card(
-		modifier = modifier.padding(8.dp),
-		shape = MaterialTheme.shapes.large,
+		modifier = modifier,
+		shape = MaterialTheme.shapes.medium,
 	) {
 		Column(modifier = Modifier.padding(16.dp)) {
 			Row(
