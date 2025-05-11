@@ -45,7 +45,7 @@ data class SettingsUiState(
 	val pendingConnectionSettings: ConnectionSettings = defaultConnectionSettings,
 	val pendingConnectionSettingsError: Throwable? = null,
 ) {
-	val loading: Boolean
+	val isLoading: Boolean
 		get() = isNameLoading || isWatchSettingsLoading || isConnectionSettingsLoading
 
 	val hasUpdates: Boolean

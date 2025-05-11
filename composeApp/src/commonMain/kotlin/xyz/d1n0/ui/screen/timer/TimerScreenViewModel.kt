@@ -21,13 +21,16 @@ import kotlin.time.Duration.Companion.seconds
 
 data class TimerUiState(
 	val isInitialized: Boolean = false,
-	val waitingUpdates: Boolean = true,
+	val isLoading: Boolean = true,
 	val savedTimer: Timer = defaultTimer,
 	val pendingTimer: Timer = defaultTimer,
 	val pendingTimerError: Throwable? = null,
 ) {
 	val hasUpdates: Boolean
 		get() = pendingTimer != savedTimer
+
+	val hasErrors: Boolean
+		get() = pendingTimerError != null
 }
 
 sealed interface TimerUiEvent {
@@ -49,7 +52,7 @@ class TimerScreenViewModel : ViewModel(), KoinComponent {
 				_uiState.update {
 					it.copy(
 						isInitialized = settings.timer != null,
-						waitingUpdates = false,
+						isLoading = false,
 						savedTimer = settings.timer ?: defaultTimer,
 					)
 				}
@@ -64,12 +67,12 @@ class TimerScreenViewModel : ViewModel(), KoinComponent {
 	}
 
 	private fun requestTimer() = watch.scope.launch {
-		_uiState.update { it.copy(waitingUpdates = true) }
+		_uiState.update { it.copy(isLoading = true) }
 		watch.requestTimer()
 	}
 
 	private fun saveTimer() = watch.scope.launch {
-		_uiState.update { it.copy(waitingUpdates = true) }
+		_uiState.update { it.copy(isLoading = true) }
 		watch.writeTimer(timer = _uiState.value.pendingTimer)
 		watch.requestTimer()
 	}

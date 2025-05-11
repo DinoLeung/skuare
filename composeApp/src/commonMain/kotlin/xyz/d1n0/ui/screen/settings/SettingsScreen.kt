@@ -55,7 +55,7 @@ fun SettingsScreen(
 			.fillMaxSize()
 			.padding(innerPadding),
 		saveVisible = state.hasUpdates &&
-				state.loading == false &&
+				state.isLoading == false &&
 				state.hasErrors == false,
 		saveOnClick = { viewModel.onEvent(SettingsUiEvent.SaveSettings) },
 	) {
@@ -78,7 +78,7 @@ fun SettingsScreen(
 							title = "24 Hour format",
 							check = state.pendingWatchSettings.preferences.is24HourTime,
 							onCheckedChange = { viewModel.onEvent(SettingsUiEvent.Is24HourChange(it)) },
-							enabled = state.isWatchSettingsInitialized && state.loading == false,
+							enabled = state.isWatchSettingsInitialized && state.isLoading == false,
 							modifier = Modifier.fillMaxWidth()
 						)
 						Row(
@@ -91,7 +91,7 @@ fun SettingsScreen(
 								onOptionSelected = {
 									viewModel.onEvent(SettingsUiEvent.DateFormatChange(it))
 								},
-								enabled = state.isWatchSettingsInitialized && state.loading == false,
+								enabled = state.isWatchSettingsInitialized && state.isLoading == false,
 								options = DateFormat.values(),
 								modifier = Modifier.weight(1f)
 							)
@@ -101,7 +101,7 @@ fun SettingsScreen(
 								onOptionSelected = {
 									viewModel.onEvent(SettingsUiEvent.WeekdayLanguageChange(it))
 								},
-								enabled = state.isWatchSettingsInitialized && state.loading == false,
+								enabled = state.isWatchSettingsInitialized && state.isLoading == false,
 								options = WeekdayLanguage.values(),
 								modifier = Modifier.weight(1f)
 							)
@@ -129,7 +129,7 @@ fun SettingsScreen(
 									)
 								)
 							},
-							enabled = state.isWatchSettingsInitialized && state.loading == false,
+							enabled = state.isWatchSettingsInitialized && state.isLoading == false,
 							modifier = Modifier.fillMaxWidth(),
 						)
 						EnumDropdown(
@@ -142,7 +142,7 @@ fun SettingsScreen(
 									)
 								)
 							},
-							enabled = state.isWatchSettingsInitialized && state.loading == false,
+							enabled = state.isWatchSettingsInitialized && state.isLoading == false,
 							options = BacklightDuration.values(),
 							modifier = Modifier.fillMaxWidth()
 						)
@@ -160,13 +160,13 @@ fun SettingsScreen(
 							title = "Auto Time Adjustment",
 							check = state.pendingConnectionSettings.autoSyncEnable,
 							onCheckedChange = { viewModel.onEvent(SettingsUiEvent.AutoSyncChange(it)) },
-							enabled = state.isConnectionSettingsInitialized && state.loading == false,
+							enabled = state.isConnectionSettingsInitialized && state.isLoading == false,
 							modifier = Modifier.fillMaxWidth()
 						)
 						SliderField(
 							label = "Auto time Adjustment Delay",
 							value = state.pendingConnectionSettings.autoSyncDelay.minutes,
-							enabled = state.isConnectionSettingsInitialized && state.loading == false,
+							enabled = state.isConnectionSettingsInitialized && state.isLoading == false,
 							range = 0..59,
 							onValueChange = {
 								viewModel.onEvent(
@@ -194,7 +194,7 @@ fun SettingsScreen(
 						OutlinedTextField(
 							label = { Text("Watch Name") },
 							value = nameFieldValue,
-							enabled = state.loading != true,
+							enabled = state.isLoading != true,
 							isError = state.pendingNameError != null,
 							supportingText = {
 								state.pendingNameError?.let {
@@ -217,14 +217,14 @@ fun SettingsScreen(
 									)
 								)
 							},
-							enabled = state.isWatchSettingsInitialized && state.loading == false,
+							enabled = state.isWatchSettingsInitialized && state.isLoading == false,
 							modifier = Modifier.fillMaxWidth()
 						)
 						SwitchField(
 							title = "Mute Button Tone",
 							check = state.pendingWatchSettings.preferences.isToneMuted,
 							onCheckedChange = { viewModel.onEvent(SettingsUiEvent.IsMutedChange(it)) },
-							enabled = state.isWatchSettingsInitialized && state.loading == false,
+							enabled = state.isWatchSettingsInitialized && state.isLoading == false,
 							modifier = Modifier.fillMaxWidth()
 						)
 						EnumDropdown(
@@ -237,7 +237,7 @@ fun SettingsScreen(
 									)
 								)
 							},
-							enabled = state.isConnectionSettingsInitialized && state.loading == false,
+							enabled = state.isConnectionSettingsInitialized && state.isLoading == false,
 							options = ConnectionTimeout.values(),
 							modifier = Modifier.fillMaxWidth()
 						)

@@ -29,7 +29,7 @@ import kotlin.time.Duration
 fun DurationTextInput(
 	duration: Duration,
 	onDurationChange: (Duration) -> Unit,
-	label: @Composable (() -> Unit) = { Text("Duration") },
+	label: @Composable (() -> Unit)? = null,
 	placeholder: @Composable (() -> Unit) = { Text("00h 00m 00s") },
 	supportingText: @Composable (() -> Unit)? = null,
 	enabled: Boolean = true,
