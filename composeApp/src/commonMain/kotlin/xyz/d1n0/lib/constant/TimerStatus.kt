@@ -9,10 +9,9 @@ enum class TimerStatus(val byte: Byte) {
 			?: error("Unknown timer status value: ${byte.toHexString(HexFormat.UpperCase)}")
 	}
 
-	val displayName: String
-		get() = when (this) {
-			NOT_STARTED -> "Not Started"
-			ACTIVE -> "Active"
-			SUSPENDED -> "Suspended"
-		}
+	override fun toString(): String = when (this) {
+		NOT_STARTED -> "Not Started"
+		ACTIVE -> "Active"
+		SUSPENDED -> "Suspended"
+	}
 }

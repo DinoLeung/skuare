@@ -13,4 +13,12 @@ enum class ConnectReason(val byte: Byte) {
 			ConnectReason.entries.firstOrNull { it.byte == byte }
 				?: error("Unknown connect reason value: ${byte.toHexString(HexFormat.UpperCase)}")
 	}
+
+	override fun toString(): String = when(this) {
+		SETUP -> "Setup"
+		DEFAULT -> "Default"
+		FIND -> "Find"
+		AUTO_SYNC -> "Auto Time Adjustment"
+		MANUAL_SYNC -> "Manual Time Adjustment"
+	}
 }

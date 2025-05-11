@@ -11,4 +11,10 @@ enum class ConnectionTimeout(val byte: Byte) {
 			ConnectionTimeout.entries.firstOrNull { it.byte == byte }
 				?: error("Unknown connection timeout value: ${byte.toHexString(HexFormat.UpperCase)}")
 	}
+
+	override fun toString(): String = when (this) {
+		MINUTES_3 -> "3 minutes"
+		MINUTES_5 -> "5 minutes"
+		MINUTES_10 -> "10 minutes"
+	}
 }

@@ -29,12 +29,11 @@ enum class ReminderRecurrence {
 			REPEAT_YEARLY -> YEARLY.toByte()
 		}
 
-	val displayName: String
-		get() = when (this) {
-			ONCE_SAME_DAY -> "Once"
-			REPEAT_DAYS -> "Repeat"
-			REPEAT_WEEKLY -> "Weekly"
-			REPEAT_MONTHLY -> "Monthly"
-			REPEAT_YEARLY -> "Yearly"
-		}
+	override fun toString(): String = when (this) {
+		ONCE_SAME_DAY -> "Once"
+		REPEAT_DAYS -> "Repeat"
+		REPEAT_WEEKLY -> "Weekly"
+		REPEAT_MONTHLY -> "Monthly"
+		REPEAT_YEARLY -> "Yearly"
+	}
 }

@@ -28,7 +28,7 @@ fun TimerCard(
 ) {
 	CardView(modifier = modifier, leadingIcon = { }, title = { }, indicator = {
 		AssistChip(
-			label = { Text(timer.status.displayName) },
+			label = { Text(timer.status.toString()) },
 			onClick = { },
 		)
 	}, content = {

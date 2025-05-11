@@ -10,4 +10,9 @@ enum class BacklightDuration(val byte: Byte) {
 			BacklightDuration.entries.firstOrNull { it.byte == byte }
 				?: error("Unknown backlight duration value: ${byte.toHexString(HexFormat.UpperCase)}")
 	}
+
+	override fun toString(): String = when (this) {
+		SHORT -> "Short"
+		LONG -> "Long"
+	}
 }

@@ -60,7 +60,6 @@ fun Month.abbreviatedName(): String = when (this) {
 	Month.OCTOBER -> "Oct"
 	Month.NOVEMBER -> "Nov"
 	Month.DECEMBER -> "Dec"
-	else -> error("Unknown month: $this")
 }
 
 fun LocalDate.toDayMonth() = "${this.dayOfMonth} ${this.month.abbreviatedName()}"

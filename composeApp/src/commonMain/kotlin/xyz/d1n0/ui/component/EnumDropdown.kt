@@ -19,9 +19,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -54,8 +54,8 @@ fun <T : Enum<T>> EnumDropdown(
 	}
 
 	Box(modifier = modifier.width(IntrinsicSize.Min).height(IntrinsicSize.Min)) {
-		TextField(
-			value = selectedOption.name,
+		OutlinedTextField(
+			value = selectedOption.toString(),
 			label = { Text(label) },
 			trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
 			colors = ExposedDropdownMenuDefaults.textFieldColors(),
@@ -81,7 +81,7 @@ fun <T : Enum<T>> EnumDropdown(
 						itemsIndexed(options) { index, option ->
 							val isSelected = option == selectedOption
 							DropdownMenuItem(
-								text = { Text(option.name) },
+								text = { Text(option.toString()) },
 								leadingIcon = {
 									if (isSelected) {
 										Icon(

@@ -38,7 +38,7 @@ fun ReminderCard(
 		) {
 			reminder.config?.let {
 				Text(
-					text = it.recurrence.displayName,
+					text = it.recurrence.toString(),
 					style = MaterialTheme.typography.titleMedium,
 				)
 				Text(
