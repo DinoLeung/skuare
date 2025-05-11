@@ -17,11 +17,11 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Preview
 @Composable
 fun CardView(
+	modifier: Modifier = Modifier,
 	leadingIcon: @Composable (() -> Unit)? = null,
 	title: @Composable (() -> Unit)? = null,
 	indicator: @Composable (() -> Unit)? = null,
 	content: @Composable (() -> Unit)? = null,
-	modifier: Modifier = Modifier,
 ) {
 	Card(
 		modifier = modifier,

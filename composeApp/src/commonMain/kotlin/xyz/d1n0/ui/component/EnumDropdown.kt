@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -52,7 +53,7 @@ fun <T : Enum<T>> EnumDropdown(
 		listState.scrollToItem(selectedIndex)
 	}
 
-	Box(modifier = modifier.height(IntrinsicSize.Min)) {
+	Box(modifier = modifier.width(IntrinsicSize.Min).height(IntrinsicSize.Min)) {
 		TextField(
 			value = selectedOption.name,
 			label = { Text(label) },

@@ -1,11 +1,10 @@
 package xyz.d1n0.ui.component
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -27,7 +26,8 @@ fun EnumDropdownPreview() {
 	Column(
 		modifier = Modifier
 			.fillMaxSize()
-			.safeContentPadding()
+			.safeContentPadding(),
+		verticalArrangement = Arrangement.spacedBy(8.dp)
 	) {
 		EnumDropdown(
 			selectedOption = selectedDelay,
@@ -36,12 +36,6 @@ fun EnumDropdownPreview() {
 			options = AutoSyncDelay.values(),
 			modifier = Modifier
 				.fillMaxWidth()
-				.padding(16.dp)
-		)
-		Spacer(
-			modifier = Modifier
-				.fillMaxWidth()
-				.height(8.dp)
 		)
 
 		EnumDropdown(
@@ -51,7 +45,26 @@ fun EnumDropdownPreview() {
 			options = WeekdayLanguage.values(),
 			modifier = Modifier
 				.fillMaxWidth()
-				.padding(16.dp)
 		)
+
+		Row(
+			modifier = Modifier.fillMaxWidth(),
+			horizontalArrangement = Arrangement.spacedBy(8.dp)
+		) {
+			EnumDropdown(
+				selectedOption = selectedDelay,
+				onOptionSelected = { selectedDelay = it },
+				label = "Select delay",
+				options = AutoSyncDelay.values(),
+				modifier = Modifier.weight(1f)
+			)
+			EnumDropdown(
+				selectedOption = selectedLanguage,
+				onOptionSelected = { selectedLanguage = it },
+				label = "Select language",
+				options = WeekdayLanguage.values(),
+				modifier = Modifier.weight(1f)
+			)
+		}
 	}
 }
