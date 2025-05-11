@@ -55,7 +55,7 @@ fun NavScaffold(
 
 	Scaffold(topBar = {
 		TopAppBar(
-			title = { Text("Square") })
+			title = { Text("Skuare") })
 	}, bottomBar = {
 		AnimatedVisibility(
 			visible = currentBottomNavBarRoute != null,

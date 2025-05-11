@@ -28,6 +28,7 @@ import xyz.d1n0.lib.constant.DateFormat
 import xyz.d1n0.lib.constant.WeekdayLanguage
 import xyz.d1n0.ui.component.CardView
 import xyz.d1n0.ui.component.EnumDropdown
+import xyz.d1n0.ui.component.ScreenContainer
 import xyz.d1n0.ui.component.SliderField
 import xyz.d1n0.ui.component.SwitchField
 
@@ -49,172 +50,198 @@ fun SettingsScreen(
 		nameFieldValue = nameFieldValue.copy(state.savedName.value)
 	}
 
-	LazyColumn(
-		state = rememberLazyListState(),
+	ScreenContainer(
 		modifier = Modifier
 			.fillMaxSize()
 			.padding(innerPadding),
-		contentPadding = PaddingValues(8.dp),
-		verticalArrangement = Arrangement.spacedBy(8.dp),
+		saveVisible = state.hasUpdates &&
+				state.loading == false &&
+				state.hasErrors == false,
+		saveOnClick = { viewModel.onEvent(SettingsUiEvent.SaveSettings) },
 	) {
-		item {
-			CardView(
-				modifier = Modifier.fillMaxWidth(),
-				title = { Text("Display") }
-			) {
-				Column(
+		LazyColumn(
+			state = rememberLazyListState(),
+			modifier = Modifier.fillMaxSize(),
+			contentPadding = PaddingValues(8.dp),
+			verticalArrangement = Arrangement.spacedBy(8.dp),
+		) {
+			item {
+				CardView(
 					modifier = Modifier.fillMaxWidth(),
-					verticalArrangement = Arrangement.spacedBy(8.dp)
+					title = { Text("Display") }
 				) {
-					SwitchField(
-						title = "24 Hour format",
-						check = state.pendingWatchSettings.preferences.is24HourTime,
-						onCheckedChange = { viewModel.onEvent(SettingsUiEvent.Is24HourChange(it)) },
-						enabled = state.isWatchSettingsInitialized && state.waitingUpdates == false,
-						modifier = Modifier.fillMaxWidth()
-					)
-					Row(
+					Column(
 						modifier = Modifier.fillMaxWidth(),
-						horizontalArrangement = Arrangement.spacedBy(8.dp)
+						verticalArrangement = Arrangement.spacedBy(8.dp)
 					) {
-						EnumDropdown(
-							label = "Date Format",
-							selectedOption = state.pendingWatchSettings.dateFormat,
-							onOptionSelected = {
-								viewModel.onEvent(SettingsUiEvent.DateFormatChange(it))
+						SwitchField(
+							title = "24 Hour format",
+							check = state.pendingWatchSettings.preferences.is24HourTime,
+							onCheckedChange = { viewModel.onEvent(SettingsUiEvent.Is24HourChange(it)) },
+							enabled = state.isWatchSettingsInitialized && state.loading == false,
+							modifier = Modifier.fillMaxWidth()
+						)
+						Row(
+							modifier = Modifier.fillMaxWidth(),
+							horizontalArrangement = Arrangement.spacedBy(8.dp)
+						) {
+							EnumDropdown(
+								label = "Date Format",
+								selectedOption = state.pendingWatchSettings.dateFormat,
+								onOptionSelected = {
+									viewModel.onEvent(SettingsUiEvent.DateFormatChange(it))
+								},
+								enabled = state.isWatchSettingsInitialized && state.loading == false,
+								options = DateFormat.values(),
+								modifier = Modifier.weight(1f)
+							)
+							EnumDropdown(
+								label = "Weekday Language",
+								selectedOption = state.pendingWatchSettings.weekdayLanguage,
+								onOptionSelected = {
+									viewModel.onEvent(SettingsUiEvent.WeekdayLanguageChange(it))
+								},
+								enabled = state.isWatchSettingsInitialized && state.loading == false,
+								options = WeekdayLanguage.values(),
+								modifier = Modifier.weight(1f)
+							)
+						}
+					}
+				}
+			}
+
+			item {
+				CardView(
+					modifier = Modifier.fillMaxWidth(),
+					title = { Text("Backlight") }
+				) {
+					Column(
+						modifier = Modifier.fillMaxWidth(),
+						verticalArrangement = Arrangement.spacedBy(8.dp)
+					) {
+						SwitchField(
+							title = "Auto Backlight",
+							check = state.pendingWatchSettings.preferences.autoBacklight,
+							onCheckedChange = {
+								viewModel.onEvent(
+									SettingsUiEvent.AutoBacklightChange(
+										it
+									)
+								)
 							},
-							enabled = state.isWatchSettingsInitialized && state.waitingUpdates == false,
-							options = DateFormat.values(),
-							modifier = Modifier.weight(1f)
+							enabled = state.isWatchSettingsInitialized && state.loading == false,
+							modifier = Modifier.fillMaxWidth(),
 						)
 						EnumDropdown(
-							label = "Weekday Language",
-							selectedOption = state.pendingWatchSettings.weekdayLanguage,
+							label = "Backlight Duration",
+							selectedOption = state.pendingWatchSettings.backlightDuration,
 							onOptionSelected = {
-								viewModel.onEvent(SettingsUiEvent.WeekdayLanguageChange(it))
+								viewModel.onEvent(
+									SettingsUiEvent.BacklightDurationChange(
+										it
+									)
+								)
 							},
-							enabled = state.isWatchSettingsInitialized && state.waitingUpdates == false,
-							options = WeekdayLanguage.values(),
-							modifier = Modifier.weight(1f)
+							enabled = state.isWatchSettingsInitialized && state.loading == false,
+							options = BacklightDuration.values(),
+							modifier = Modifier.fillMaxWidth()
 						)
 					}
 				}
 			}
-		}
 
-		item {
-			CardView(
-				modifier = Modifier.fillMaxWidth(),
-				title = { Text("Backlight") }
-			) {
-				Column(
+			item {
+				CardView(
 					modifier = Modifier.fillMaxWidth(),
-					verticalArrangement = Arrangement.spacedBy(8.dp)
+					title = { Text(("Timer Adjustment")) }
 				) {
-					SwitchField(
-						title = "Auto Backlight",
-						check = state.pendingWatchSettings.preferences.autoBacklight,
-						onCheckedChange = { viewModel.onEvent(SettingsUiEvent.AutoBacklightChange(it)) },
-						enabled = state.isWatchSettingsInitialized && state.waitingUpdates == false,
-						modifier = Modifier.fillMaxWidth(),
-					)
-					EnumDropdown(
-						label = "Backlight Duration",
-						selectedOption = state.pendingWatchSettings.backlightDuration,
-						onOptionSelected = {
-							viewModel.onEvent(
-								SettingsUiEvent.BacklightDurationChange(
-									it
+					Column {
+						SwitchField(
+							title = "Auto Time Adjustment",
+							check = state.pendingConnectionSettings.autoSyncEnable,
+							onCheckedChange = { viewModel.onEvent(SettingsUiEvent.AutoSyncChange(it)) },
+							enabled = state.isConnectionSettingsInitialized && state.loading == false,
+							modifier = Modifier.fillMaxWidth()
+						)
+						SliderField(
+							label = "Auto time Adjustment Delay",
+							value = state.pendingConnectionSettings.autoSyncDelay.minutes,
+							enabled = state.isConnectionSettingsInitialized && state.loading == false,
+							range = 0..59,
+							onValueChange = {
+								viewModel.onEvent(
+									SettingsUiEvent.AutoSyncDelayChange(
+										it
+									)
 								)
-							)
-						},
-						enabled = state.isWatchSettingsInitialized && state.waitingUpdates == false,
-						options = BacklightDuration.values(),
-						modifier = Modifier.fillMaxWidth()
-					)
+							},
+							error = state.pendingConnectionSettingsError,
+							modifier = Modifier.fillMaxWidth(),
+						)
+					}
 				}
 			}
-		}
 
-		item {
-			CardView(
-				modifier = Modifier.fillMaxWidth(),
-				title = { Text(("Timer Adjustment")) }
-			) {
-				Column {
-					SwitchField(
-						title = "Auto Time Adjustment",
-						check = state.pendingConnectionSettings.autoSyncEnable,
-						onCheckedChange = { viewModel.onEvent(SettingsUiEvent.AutoSyncChange(it)) },
-						enabled = state.isConnectionSettingsInitialized && state.waitingUpdates == false,
-						modifier = Modifier.fillMaxWidth()
-					)
-					SliderField(
-						label = "Auto time Adjustment Delay",
-						value = state.pendingConnectionSettings.autoSyncDelay.minutes,
-						enabled = state.isConnectionSettingsInitialized && state.waitingUpdates == false,
-						range = 0..59,
-						onValueChange = { viewModel.onEvent(SettingsUiEvent.AutoSyncDelayChange(it)) },
-						error = state.pendingConnectionSettingsError,
-						modifier = Modifier.fillMaxWidth(),
-					)
-				}
-			}
-		}
-
-		item {
-			CardView(
-				modifier = Modifier.fillMaxWidth(),
-				title = { Text("Others") }
-			) {
-				Column(
+			item {
+				CardView(
 					modifier = Modifier.fillMaxWidth(),
-					verticalArrangement = Arrangement.spacedBy(8.dp)
+					title = { Text("Others") }
 				) {
-					OutlinedTextField(
-						label = { Text("Watch Name") },
-						value = nameFieldValue,
-						enabled = state.waitingUpdates != true,
-						isError = state.pendingNameError != null,
-						supportingText = {
-							state.pendingNameError?.let {
-								Text(it.message ?: "Unknown errors")
-							}
-						},
-						onValueChange = {
-							nameFieldValue = it
-							viewModel.onEvent(SettingsUiEvent.NameInputChange(it.text))
-						},
-						modifier = Modifier.fillMaxWidth()
-					)
-					SwitchField(
-						title = "Power Saving Mode",
-						check = state.pendingWatchSettings.preferences.powerSaving,
-						onCheckedChange = { viewModel.onEvent(SettingsUiEvent.PowerSavingChange(it)) },
-						enabled = state.isWatchSettingsInitialized && state.waitingUpdates == false,
-						modifier = Modifier.fillMaxWidth()
-					)
-					SwitchField(
-						title = "Mute Button Tone",
-						check = state.pendingWatchSettings.preferences.isToneMuted,
-						onCheckedChange = { viewModel.onEvent(SettingsUiEvent.IsMutedChange(it)) },
-						enabled = state.isWatchSettingsInitialized && state.waitingUpdates == false,
-						modifier = Modifier.fillMaxWidth()
-					)
-					EnumDropdown(
-						label = "Connection Timeout",
-						selectedOption = state.pendingConnectionSettings.connectionTimeout,
-						onOptionSelected = {
-							viewModel.onEvent(
-								SettingsUiEvent.ConnectionTimeoutChange(
-									it
+					Column(
+						modifier = Modifier.fillMaxWidth(),
+						verticalArrangement = Arrangement.spacedBy(8.dp)
+					) {
+						OutlinedTextField(
+							label = { Text("Watch Name") },
+							value = nameFieldValue,
+							enabled = state.loading != true,
+							isError = state.pendingNameError != null,
+							supportingText = {
+								state.pendingNameError?.let {
+									Text(it.message ?: "Unknown errors")
+								}
+							},
+							onValueChange = {
+								nameFieldValue = it
+								viewModel.onEvent(SettingsUiEvent.NameInputChange(it.text))
+							},
+							modifier = Modifier.fillMaxWidth()
+						)
+						SwitchField(
+							title = "Power Saving Mode",
+							check = state.pendingWatchSettings.preferences.powerSaving,
+							onCheckedChange = {
+								viewModel.onEvent(
+									SettingsUiEvent.PowerSavingChange(
+										it
+									)
 								)
-							)
-						},
-						enabled = state.isConnectionSettingsInitialized && state.waitingUpdates == false,
-						options = ConnectionTimeout.values(),
-						modifier = Modifier.fillMaxWidth()
-					)
+							},
+							enabled = state.isWatchSettingsInitialized && state.loading == false,
+							modifier = Modifier.fillMaxWidth()
+						)
+						SwitchField(
+							title = "Mute Button Tone",
+							check = state.pendingWatchSettings.preferences.isToneMuted,
+							onCheckedChange = { viewModel.onEvent(SettingsUiEvent.IsMutedChange(it)) },
+							enabled = state.isWatchSettingsInitialized && state.loading == false,
+							modifier = Modifier.fillMaxWidth()
+						)
+						EnumDropdown(
+							label = "Connection Timeout",
+							selectedOption = state.pendingConnectionSettings.connectionTimeout,
+							onOptionSelected = {
+								viewModel.onEvent(
+									SettingsUiEvent.ConnectionTimeoutChange(
+										it
+									)
+								)
+							},
+							enabled = state.isConnectionSettingsInitialized && state.loading == false,
+							options = ConnectionTimeout.values(),
+							modifier = Modifier.fillMaxWidth()
+						)
+					}
 				}
 			}
 		}
