@@ -22,13 +22,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import org.koin.compose.viewmodel.koinViewModel
-import xyz.d1n0.lib.constant.AutoSyncDelay
 import xyz.d1n0.lib.constant.BacklightDuration
 import xyz.d1n0.lib.constant.ConnectionTimeout
 import xyz.d1n0.lib.constant.DateFormat
 import xyz.d1n0.lib.constant.WeekdayLanguage
 import xyz.d1n0.ui.component.CardView
 import xyz.d1n0.ui.component.EnumDropdown
+import xyz.d1n0.ui.component.SliderField
 import xyz.d1n0.ui.component.SwitchField
 
 @Composable
@@ -58,28 +58,10 @@ fun SettingsScreen(
 		verticalArrangement = Arrangement.spacedBy(8.dp),
 	) {
 		item {
-			CardView(modifier = Modifier.fillMaxWidth()) {
-				OutlinedTextField(
-					label = { Text("Watch Name") },
-					value = nameFieldValue,
-					enabled = state.waitingUpdates != true,
-					isError = state.pendingNameError != null,
-					supportingText = {
-						state.pendingNameError?.let {
-							Text(it.message ?: "Unknown errors")
-						}
-					},
-					onValueChange = {
-						nameFieldValue = it
-						viewModel.onEvent(SettingsUiEvent.NameInputChange(it.text))
-					},
-					modifier = Modifier.fillMaxWidth()
-				)
-			}
-		}
-
-		item {
-			CardView(modifier = Modifier.fillMaxWidth()) {
+			CardView(
+				modifier = Modifier.fillMaxWidth(),
+				title = { Text("Display") }
+			) {
 				Column(
 					modifier = Modifier.fillMaxWidth(),
 					verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -116,20 +98,19 @@ fun SettingsScreen(
 							modifier = Modifier.weight(1f)
 						)
 					}
-					SwitchField(
-						title = "Mute Button Tone",
-						check = state.pendingWatchSettings.preferences.isToneMuted,
-						onCheckedChange = { viewModel.onEvent(SettingsUiEvent.IsMutedChange(it)) },
-						enabled = state.isWatchSettingsInitialized && state.waitingUpdates == false,
-						modifier = Modifier.fillMaxWidth()
-					)
 				}
 			}
 		}
 
 		item {
-			CardView(modifier = Modifier.fillMaxWidth()) {
-				Column {
+			CardView(
+				modifier = Modifier.fillMaxWidth(),
+				title = { Text("Backlight") }
+			) {
+				Column(
+					modifier = Modifier.fillMaxWidth(),
+					verticalArrangement = Arrangement.spacedBy(8.dp)
+				) {
 					SwitchField(
 						title = "Auto Backlight",
 						check = state.pendingWatchSettings.preferences.autoBacklight,
@@ -156,19 +137,10 @@ fun SettingsScreen(
 		}
 
 		item {
-			CardView(modifier = Modifier.fillMaxWidth()) {
-				SwitchField(
-					title = "Power Saving Mode",
-					check = state.pendingWatchSettings.preferences.powerSaving,
-					onCheckedChange = { viewModel.onEvent(SettingsUiEvent.PowerSavingChange(it)) },
-					enabled = state.isWatchSettingsInitialized && state.waitingUpdates == false,
-					modifier = Modifier.fillMaxWidth()
-				)
-			}
-		}
-
-		item {
-			CardView(modifier = Modifier.fillMaxWidth()) {
+			CardView(
+				modifier = Modifier.fillMaxWidth(),
+				title = { Text(("Timer Adjustment")) }
+			) {
 				Column {
 					SwitchField(
 						title = "Auto Time Adjustment",
@@ -177,40 +149,73 @@ fun SettingsScreen(
 						enabled = state.isConnectionSettingsInitialized && state.waitingUpdates == false,
 						modifier = Modifier.fillMaxWidth()
 					)
-					EnumDropdown(
+					SliderField(
 						label = "Auto time Adjustment Delay",
-						selectedOption = state.pendingConnectionSettings.autoSyncDelay,
-						onOptionSelected = {
-							viewModel.onEvent(
-								SettingsUiEvent.AutoSyncDelayChange(
-									it
-								)
-							)
-						},
+						value = state.pendingConnectionSettings.autoSyncDelay.minutes,
 						enabled = state.isConnectionSettingsInitialized && state.waitingUpdates == false,
-						options = AutoSyncDelay.values(),
-						modifier = Modifier.fillMaxWidth()
+						range = 0..59,
+						onValueChange = { viewModel.onEvent(SettingsUiEvent.AutoSyncDelayChange(it)) },
+						error = state.pendingConnectionSettingsError,
+						modifier = Modifier.fillMaxWidth(),
 					)
 				}
 			}
 		}
 
 		item {
-			CardView(modifier = Modifier.fillMaxWidth()) {
-				EnumDropdown(
-					label = "Connection Timeout",
-					selectedOption = state.pendingConnectionSettings.connectionTimeout,
-					onOptionSelected = {
-						viewModel.onEvent(
-							SettingsUiEvent.ConnectionTimeoutChange(
-								it
+			CardView(
+				modifier = Modifier.fillMaxWidth(),
+				title = { Text("Others") }
+			) {
+				Column(
+					modifier = Modifier.fillMaxWidth(),
+					verticalArrangement = Arrangement.spacedBy(8.dp)
+				) {
+					OutlinedTextField(
+						label = { Text("Watch Name") },
+						value = nameFieldValue,
+						enabled = state.waitingUpdates != true,
+						isError = state.pendingNameError != null,
+						supportingText = {
+							state.pendingNameError?.let {
+								Text(it.message ?: "Unknown errors")
+							}
+						},
+						onValueChange = {
+							nameFieldValue = it
+							viewModel.onEvent(SettingsUiEvent.NameInputChange(it.text))
+						},
+						modifier = Modifier.fillMaxWidth()
+					)
+					SwitchField(
+						title = "Power Saving Mode",
+						check = state.pendingWatchSettings.preferences.powerSaving,
+						onCheckedChange = { viewModel.onEvent(SettingsUiEvent.PowerSavingChange(it)) },
+						enabled = state.isWatchSettingsInitialized && state.waitingUpdates == false,
+						modifier = Modifier.fillMaxWidth()
+					)
+					SwitchField(
+						title = "Mute Button Tone",
+						check = state.pendingWatchSettings.preferences.isToneMuted,
+						onCheckedChange = { viewModel.onEvent(SettingsUiEvent.IsMutedChange(it)) },
+						enabled = state.isWatchSettingsInitialized && state.waitingUpdates == false,
+						modifier = Modifier.fillMaxWidth()
+					)
+					EnumDropdown(
+						label = "Connection Timeout",
+						selectedOption = state.pendingConnectionSettings.connectionTimeout,
+						onOptionSelected = {
+							viewModel.onEvent(
+								SettingsUiEvent.ConnectionTimeoutChange(
+									it
+								)
 							)
-						)
-					},
-					enabled = state.isConnectionSettingsInitialized && state.waitingUpdates == false,
-					options = ConnectionTimeout.values(),
-					modifier = Modifier.fillMaxWidth()
-				)
+						},
+						enabled = state.isConnectionSettingsInitialized && state.waitingUpdates == false,
+						options = ConnectionTimeout.values(),
+						modifier = Modifier.fillMaxWidth()
+					)
+				}
 			}
 		}
 	}

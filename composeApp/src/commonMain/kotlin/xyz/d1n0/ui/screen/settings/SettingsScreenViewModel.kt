@@ -29,33 +29,43 @@ import xyz.d1n0.lib.model.writeWatchSettings
 import xyz.d1n0.ui.boilerplate.updateCatching
 
 data class SettingsUiState(
-	val waitingUpdates: Boolean = true,
 	val isNameInitialized: Boolean = false,
+	val isNameLoading: Boolean = true,
 	val savedName: WatchName = defaultWatchName,
 	val pendingName: WatchName = defaultWatchName,
 	val pendingNameError: Throwable? = null,
 	val isWatchSettingsInitialized: Boolean = false,
+	val isWatchSettingsLoading: Boolean = true,
 	val savedWatchSettings: WatchSettings = defaultWatchSettings,
 	val pendingWatchSettings: WatchSettings = defaultWatchSettings,
 	val pendingWatchSettingsError: Throwable? = null,
 	val isConnectionSettingsInitialized: Boolean = false,
+	val isConnectionSettingsLoading: Boolean = true,
 	val savedConnectionSettings: ConnectionSettings = defaultConnectionSettings,
 	val pendingConnectionSettings: ConnectionSettings = defaultConnectionSettings,
 	val pendingConnectionSettingsError: Throwable? = null,
 ) {
+	val waitingUpdates: Boolean
+		get() = isNameLoading || isWatchSettingsLoading || isConnectionSettingsLoading
+
 	val hasUpdates: Boolean
-		get() = savedName != pendingName ||
-				savedWatchSettings != pendingWatchSettings ||
-				savedConnectionSettings != pendingConnectionSettings
+		get() = isNameUpdated || isWatchSettingsUpdated || isConnectionSettingsUpdated
+
+	val isNameUpdated: Boolean
+		get() = savedName != pendingName
+
+	val isWatchSettingsUpdated: Boolean
+		get() = savedWatchSettings != pendingWatchSettings
+
+	val isConnectionSettingsUpdated: Boolean
+		get() = savedConnectionSettings != pendingConnectionSettings
 }
 
 sealed interface SettingsUiEvent {
 	object RequestName : SettingsUiEvent
-	object SaveName : SettingsUiEvent
 	object RequestWatchSettings : SettingsUiEvent
-	object SaveWatchSettings : SettingsUiEvent
 	object RequestConnectionSettings : SettingsUiEvent
-	object SaveConnectionSettings : SettingsUiEvent
+	object SaveSettings : SettingsUiEvent
 	data class NameInputChange(val name: String) : SettingsUiEvent
 	data class Is24HourChange(val is24Hour: Boolean) : SettingsUiEvent
 	data class IsMutedChange(val isMuted: Boolean) : SettingsUiEvent
@@ -65,7 +75,7 @@ sealed interface SettingsUiEvent {
 	data class DateFormatChange(val dateFormat: DateFormat) : SettingsUiEvent
 	data class WeekdayLanguageChange(val weekdayLanguage: WeekdayLanguage) : SettingsUiEvent
 	data class AutoSyncChange(val enable: Boolean) : SettingsUiEvent
-	data class AutoSyncDelayChange(val autoSyncDelay: AutoSyncDelay) : SettingsUiEvent
+	data class AutoSyncDelayChange(val minutes: Int) : SettingsUiEvent
 	data class ConnectionTimeoutChange(val connectionTimeout: ConnectionTimeout) : SettingsUiEvent
 }
 
@@ -79,33 +89,43 @@ class SettingsScreenViewModel : ViewModel(), KoinComponent {
 	init {
 		viewModelScope.launch {
 			watchInfo.collect { info ->
-				_uiState.update {
-					it.copy(
-						waitingUpdates = false,
-						isNameInitialized = info.name != null,
-						savedName = info.name ?: defaultWatchName,
-						pendingName = info.name ?: it.pendingName,
-						isWatchSettingsInitialized = info.watchSettings != null,
-						savedWatchSettings = info.watchSettings ?: defaultWatchSettings,
-						pendingWatchSettings = info.watchSettings ?: it.pendingWatchSettings,
-						isConnectionSettingsInitialized = info.connectionSettings != null,
-						savedConnectionSettings = info.connectionSettings
-							?: defaultConnectionSettings,
-						pendingConnectionSettings = info.connectionSettings
-							?: it.pendingConnectionSettings
-					)
-				}
+				_uiState.updateCatching(
+					transform = {
+						it.copy(
+							savedName = info.name ?: defaultWatchName,
+							savedWatchSettings = info.watchSettings ?: defaultWatchSettings,
+							savedConnectionSettings = info.connectionSettings
+								?: defaultConnectionSettings,
+
+							pendingName = info.name ?: it.pendingName,
+							pendingWatchSettings = info.watchSettings ?: it.pendingWatchSettings,
+							pendingConnectionSettings = info.connectionSettings
+								?: it.pendingConnectionSettings
+						)
+					},
+					onSuccess = {
+						it.copy(
+							isNameInitialized = info.name != null,
+							isWatchSettingsInitialized = info.watchSettings != null,
+							isConnectionSettingsInitialized = info.connectionSettings != null,
+							// Assume updates only comes in on page first load and when fetching updates after writing
+							isNameLoading = info.name != it.pendingName,
+							isWatchSettingsLoading = info.watchSettings != it.pendingWatchSettings,
+							isConnectionSettingsLoading = info.connectionSettings != it.pendingConnectionSettings,
+						)
+					},
+					// It should not be any errors, data is coming from the watch
+					onFailure = { copy() },
+				)
 			}
 		}
 	}
 
 	fun onEvent(event: SettingsUiEvent) = when (event) {
 		SettingsUiEvent.RequestName -> requestName()
-		SettingsUiEvent.SaveName -> writeName()
 		SettingsUiEvent.RequestWatchSettings -> requestWatchSettings()
-		SettingsUiEvent.SaveWatchSettings -> writeWatchSettings()
 		SettingsUiEvent.RequestConnectionSettings -> requestConnectionSettings()
-		SettingsUiEvent.SaveConnectionSettings -> writeConnectionSettings()
+		SettingsUiEvent.SaveSettings -> writeSettings()
 		is SettingsUiEvent.NameInputChange -> onNameInputChange(name = event.name)
 		is SettingsUiEvent.Is24HourChange -> onIs24HourChange(is24Hour = event.is24Hour)
 		is SettingsUiEvent.IsMutedChange -> onIsMutedChange(isMuted = event.isMuted)
@@ -115,41 +135,42 @@ class SettingsScreenViewModel : ViewModel(), KoinComponent {
 		is SettingsUiEvent.DateFormatChange -> onDateFormatChange(dateFormat = event.dateFormat)
 		is SettingsUiEvent.WeekdayLanguageChange -> onWeekdayLanguageChange(weekdayLanguage = event.weekdayLanguage)
 		is SettingsUiEvent.AutoSyncChange -> onAutoSyncChange(enable = event.enable)
-		is SettingsUiEvent.AutoSyncDelayChange -> onAutoSyncDelayChange(autoSyncDelay = event.autoSyncDelay)
+		is SettingsUiEvent.AutoSyncDelayChange -> onAutoSyncDelayChange(minutes = event.minutes)
 		is SettingsUiEvent.ConnectionTimeoutChange -> onConnectionTimeoutChange(connectionTimeout = event.connectionTimeout)
 	}
 
 	private fun requestName() = watch.scope.launch {
-		_uiState.update { it.copy(waitingUpdates = true) }
-		watch.requestName()
-	}
-
-	private fun writeName() = watch.scope.launch {
-		_uiState.update { it.copy(waitingUpdates = true) }
-		watch.writeName(_uiState.value.pendingName)
+		_uiState.update { it.copy(isNameLoading = true) }
 		watch.requestName()
 	}
 
 	private fun requestWatchSettings() = watch.scope.launch {
-		_uiState.update { it.copy(waitingUpdates = true) }
+		_uiState.update { it.copy(isWatchSettingsLoading = true) }
 		watch.requestWatchSettings()
 	}
 
-	private fun writeWatchSettings() = watch.scope.launch {
-		_uiState.update { it.copy(waitingUpdates = true) }
-		watch.writeWatchSettings(_uiState.value.pendingWatchSettings)
-		watch.requestWatchSettings()
-	}
 
 	private fun requestConnectionSettings() = watch.scope.launch {
-		_uiState.update { it.copy(waitingUpdates = true) }
+		_uiState.update { it.copy(isConnectionSettingsLoading = true) }
 		watch.requestConnectionSettings()
 	}
 
-	private fun writeConnectionSettings() = watch.scope.launch {
-		_uiState.update { it.copy(waitingUpdates = true) }
-		watch.writeConnectionSettings(_uiState.value.pendingConnectionSettings)
-		watch.requestConnectionSettings()
+	private fun writeSettings() = watch.scope.launch {
+		val isNameUpdated = _uiState.value.isNameUpdated
+		val isWatchSettingsUpdated = _uiState.value.isWatchSettingsUpdated
+		val isConnectionSettingsUpdated = _uiState.value.isConnectionSettingsUpdated
+
+		_uiState.update {
+			it.copy(
+				isNameLoading = isNameUpdated,
+				isWatchSettingsLoading = isWatchSettingsUpdated,
+				isConnectionSettingsLoading = isConnectionSettingsUpdated,
+			)
+		}
+
+		if (isNameUpdated) watch.writeName(_uiState.value.pendingName)
+		if (isWatchSettingsUpdated) watch.writeWatchSettings(_uiState.value.pendingWatchSettings)
+		if (isConnectionSettingsUpdated) watch.writeConnectionSettings(_uiState.value.pendingConnectionSettings)
 	}
 
 	private fun onNameInputChange(name: String) = _uiState.updateCatching(
@@ -231,8 +252,8 @@ class SettingsScreenViewModel : ViewModel(), KoinComponent {
 		onFailure = { copy(pendingConnectionSettingsError = it) },
 	)
 
-	private fun onAutoSyncDelayChange(autoSyncDelay: AutoSyncDelay) = _uiState.updateCatching(
-		transform = { it.pendingConnectionSettings.copy(autoSyncDelay = autoSyncDelay) },
+	private fun onAutoSyncDelayChange(minutes: Int) = _uiState.updateCatching(
+		transform = { it.pendingConnectionSettings.copy(autoSyncDelay = AutoSyncDelay(minutes)) },
 		onSuccess = { copy(pendingConnectionSettings = it, pendingConnectionSettingsError = null) },
 		onFailure = { copy(pendingConnectionSettingsError = it) },
 	)
@@ -256,11 +277,11 @@ private val defaultWatchSettings = WatchSettings(
 		powerSaving = false
 	),
 	backlightDuration = BacklightDuration.SHORT,
-	dateFormat = DateFormat.MDD,
+	dateFormat = DateFormat.MMDD,
 	weekdayLanguage = WeekdayLanguage.EN
 )
 private val defaultConnectionSettings = ConnectionSettings(
 	autoSyncEnable = false,
-	autoSyncDelay = AutoSyncDelay.MINUTE_30,
+	autoSyncDelay = AutoSyncDelay(minutes = 30),
 	connectionTimeout = ConnectionTimeout.MINUTES_5
 )
