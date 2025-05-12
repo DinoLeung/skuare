@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.OutlinedTextField
@@ -34,7 +33,7 @@ import xyz.d1n0.ui.component.SwitchField
 
 @Composable
 fun SettingsScreen(
-	innerPadding: PaddingValues,
+	scaffoldPadding: PaddingValues,
 ) {
 	val viewModel = koinViewModel<SettingsScreenViewModel>()
 	val state by viewModel.uiState.collectAsState()
@@ -51,9 +50,7 @@ fun SettingsScreen(
 	}
 
 	ScreenContainer(
-		modifier = Modifier
-			.fillMaxSize()
-			.padding(innerPadding),
+		scaffoldPadding = scaffoldPadding,
 		saveVisible = state.hasUpdates &&
 				state.isLoading == false &&
 				state.hasErrors == false,

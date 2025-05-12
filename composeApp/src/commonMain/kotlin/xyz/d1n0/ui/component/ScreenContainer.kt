@@ -4,6 +4,8 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Save
@@ -16,12 +18,17 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun ScreenContainer(
-	modifier: Modifier,
+	modifier: Modifier = Modifier,
+	scaffoldPadding: PaddingValues,
 	saveVisible: Boolean,
 	saveOnClick: () -> Unit,
 	content: @Composable () -> Unit,
 ) {
-	Box(modifier = modifier) {
+	Box(
+		modifier = modifier
+			.fillMaxSize()
+			.padding(scaffoldPadding)
+	) {
 
 		content()
 

@@ -14,26 +14,26 @@ import xyz.d1n0.ui.screen.timer.TimerScreen
 @Composable
 fun NavGraph(
 	navHostController: NavHostController,
-	innerPadding: PaddingValues,
+	scaffoldPadding: PaddingValues,
 ) {
 	NavHost(
 		navController = navHostController,
 		startDestination = NavBarRoute.Clocks.route,
 	) {
 		composable(route = NavBarRoute.Clocks.route) {
-			ClocksScreen(innerPadding = innerPadding)
+			ClocksScreen(scaffoldPadding = scaffoldPadding)
 		}
 		composable(route = NavBarRoute.Alarms.route) {
-			AlarmsScreen(innerPadding = innerPadding)
+			AlarmsScreen(scaffoldPadding = scaffoldPadding)
 		}
 		composable(route = NavBarRoute.Timer.route) {
-			TimerScreen(innerPadding = innerPadding)
+			TimerScreen(scaffoldPadding = scaffoldPadding)
 		}
 		composable(route = NavBarRoute.Reminders.route) {
-			RemindersScreen(innerPadding = innerPadding)
+			RemindersScreen(scaffoldPadding = scaffoldPadding)
 		}
 		composable(route = NavBarRoute.Settings.route) {
-			SettingsScreen(innerPadding = innerPadding)
+			SettingsScreen(scaffoldPadding = scaffoldPadding)
 		}
 	}
 }

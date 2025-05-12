@@ -20,7 +20,7 @@ import xyz.d1n0.ui.component.HourlySignalCard
 
 @Composable
 fun AlarmsScreen(
-	innerPadding: PaddingValues,
+	scaffoldPadding: PaddingValues,
 ) {
 	val viewModel = koinViewModel<AlarmsScreenViewModel>()
 	val log = koinInject<Log>()
@@ -37,7 +37,7 @@ fun AlarmsScreen(
 	Column(
 		horizontalAlignment = Alignment.CenterHorizontally,
 		verticalArrangement = Arrangement.Center,
-		modifier = Modifier.fillMaxSize().padding(innerPadding)
+		modifier = Modifier.fillMaxSize().padding(scaffoldPadding)
 			.verticalScroll(rememberScrollState()),
 	) {
 		alarms.value.forEach { alarm ->

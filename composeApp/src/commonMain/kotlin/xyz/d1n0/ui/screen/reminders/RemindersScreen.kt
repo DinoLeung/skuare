@@ -20,7 +20,7 @@ import xyz.d1n0.ui.component.ReminderCard
 
 @Composable
 fun RemindersScreen(
-	innerPadding: PaddingValues,
+	scaffoldPadding: PaddingValues,
 ) {
 	val viewModel = koinViewModel<RemindersScreenViewModel>()
 	val log = koinInject<Log>()
@@ -38,7 +38,7 @@ fun RemindersScreen(
 	Column(
 		horizontalAlignment = Alignment.CenterHorizontally,
 		verticalArrangement = Arrangement.Center,
-		modifier = Modifier.fillMaxSize().padding(innerPadding)
+		modifier = Modifier.fillMaxSize().padding(scaffoldPadding)
 			.verticalScroll(rememberScrollState()),
 	) {
 		if (isTitlesInitialized.value == true && isConfigsInitialized.value == true) {

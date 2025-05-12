@@ -20,7 +20,7 @@ import xyz.d1n0.ui.component.ClockCard
 @Preview
 @Composable
 fun ClocksScreen(
-	innerPadding: PaddingValues,
+	scaffoldPadding: PaddingValues,
 ) {
 	val viewModel = koinViewModel<ClocksScreenViewModel>()
 	val isInitialized = viewModel.isInitialized.collectAsState(initial = false)
@@ -34,7 +34,7 @@ fun ClocksScreen(
 	Column(
 		horizontalAlignment = Alignment.CenterHorizontally,
 		verticalArrangement = Arrangement.Center,
-		modifier = Modifier.fillMaxSize().padding(innerPadding)
+		modifier = Modifier.fillMaxSize().padding(scaffoldPadding)
 			.verticalScroll(rememberScrollState()),
 	) {
 		homeClock.value?.let {

@@ -18,7 +18,7 @@ import xyz.d1n0.ui.component.ScreenContainer
 
 @Composable
 fun TimerScreen(
-	innerPadding: PaddingValues,
+	scaffoldPadding: PaddingValues,
 ) {
 	val viewModel = koinViewModel<TimerScreenViewModel>()
 	val state by viewModel.uiState.collectAsState()
@@ -29,7 +29,7 @@ fun TimerScreen(
 	}
 
 	ScreenContainer(
-		modifier = Modifier.fillMaxSize().padding(innerPadding),
+		scaffoldPadding = scaffoldPadding,
 		saveVisible = state.hasUpdates && state.isLoading == false && state.hasErrors == false,
 		saveOnClick = { viewModel.onEvent(TimerUiEvent.SaveTimer) },
 	) {

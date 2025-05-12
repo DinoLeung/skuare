@@ -14,15 +14,12 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.qualifier.named
 import xyz.d1n0.ui.navigation.NavGraph
 import xyz.d1n0.ui.navigation.navBarItems
 import com.juul.kable.State as PeripheralState
@@ -33,7 +30,7 @@ fun NavScaffold(
 	onDisconnect: () -> Unit,
 ) {
 	val viewModel = koinViewModel<NavBarViewModel>()
-	val rootNavHostController = koinInject<NavHostController>(named("rootNavHostController"))
+
 	val navHostController = rememberNavController()
 	val navBackStackEntry by navHostController.currentBackStackEntryAsState()
 	val currentBottomNavBarRoute by remember(navBackStackEntry) {
@@ -52,33 +49,36 @@ fun NavScaffold(
 			.onEach { onDisconnect() }.launchIn(viewModel.viewModelScope)
 	}
 
-	Scaffold(topBar = {
-		TopAppBar(
-			title = { Text("Skuare") })
-	}, bottomBar = {
-		AnimatedVisibility(
-			visible = currentBottomNavBarRoute != null,
-			enter = slideInVertically(initialOffsetY = { fullHeight -> fullHeight }),
-			exit = slideOutVertically(targetOffsetY = { fullHeight -> fullHeight })
-		) {
-			NavBar(
-				items = navBarItems,
-				currentRoute = currentBottomNavBarRoute,
-				onItemClick = { item ->
-					navHostController.navigate(item.route.route) {
-						navHostController.graph.startDestinationRoute?.let {
-							popUpTo(it) { saveState = false }
+	Scaffold(
+		topBar = {
+			TopAppBar(
+				title = { Text(currentBottomNavBarRoute?.route ?: "Skuare") })
+		},
+		bottomBar = {
+			AnimatedVisibility(
+				visible = currentBottomNavBarRoute != null,
+				enter = slideInVertically(initialOffsetY = { fullHeight -> fullHeight }),
+				exit = slideOutVertically(targetOffsetY = { fullHeight -> fullHeight })
+			) {
+				NavBar(
+					items = navBarItems,
+					currentRoute = currentBottomNavBarRoute,
+					onItemClick = { item ->
+						navHostController.navigate(item.route.route) {
+							navHostController.graph.startDestinationRoute?.let {
+								popUpTo(it) { saveState = false }
+							}
+							launchSingleTop = true
+							restoreState = true
 						}
-						launchSingleTop = true
-						restoreState = true
-					}
-				},
-			)
-		}
-	}) { innerPadding ->
+					},
+				)
+			}
+		},
+	) { scaffoldPadding ->
 		if (watchConnectionState.value is PeripheralState.Connected) NavGraph(
 			navHostController = navHostController,
-			innerPadding = innerPadding,
+			scaffoldPadding = scaffoldPadding,
 		)
 	}
 }
