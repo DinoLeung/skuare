@@ -19,7 +19,7 @@ fun ScreenContainer(
 	modifier: Modifier,
 	saveVisible: Boolean,
 	saveOnClick: () -> Unit,
-	content: @Composable() (() -> Unit),
+	content: @Composable () -> Unit,
 ) {
 	Box(modifier = modifier) {
 

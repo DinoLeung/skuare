@@ -52,7 +52,6 @@ fun NavScaffold(
 			.onEach { onDisconnect() }.launchIn(viewModel.viewModelScope)
 	}
 
-
 	Scaffold(topBar = {
 		TopAppBar(
 			title = { Text("Skuare") })
