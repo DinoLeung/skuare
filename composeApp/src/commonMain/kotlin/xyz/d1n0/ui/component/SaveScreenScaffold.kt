@@ -4,8 +4,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Save
@@ -17,23 +15,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ScreenContainer(
+fun SaveScreenScaffold(
 	modifier: Modifier = Modifier,
-	scaffoldPadding: PaddingValues,
-	saveVisible: Boolean,
-	saveOnClick: () -> Unit,
+	saveFabVisible: Boolean,
+	saveFabOnClick: () -> Unit,
 	content: @Composable () -> Unit,
 ) {
-	Box(
-		modifier = modifier
-			.fillMaxSize()
-			.padding(scaffoldPadding)
-	) {
-
+	Box(modifier = modifier) {
 		content()
-
 		AnimatedVisibility(
-			visible = saveVisible,
+			visible = saveFabVisible,
 			enter = slideInVertically { it },
 			exit = slideOutVertically { it },
 			modifier = Modifier
@@ -41,7 +32,7 @@ fun ScreenContainer(
 				.padding(16.dp)
 		) {
 			FloatingActionButton(
-				onClick = saveOnClick,
+				onClick = saveFabOnClick,
 			) {
 				Icon(
 					imageVector = Icons.Outlined.Save,

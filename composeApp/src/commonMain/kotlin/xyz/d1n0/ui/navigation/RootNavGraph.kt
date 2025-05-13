@@ -6,7 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import org.koin.compose.koinInject
 import org.koin.core.qualifier.named
-import xyz.d1n0.ui.component.NavScaffold
+import xyz.d1n0.ui.component.NavBarScaffold
 import xyz.d1n0.ui.screen.scan.ScanScreen
 
 @Composable
@@ -33,7 +33,7 @@ fun RootNavGraph() {
 			ScanScreen(onConnect = onConnect)
 		}
 		composable(RootNavRoute.Watch.route) {
-			NavScaffold(onDisconnect = onDisconnect)
+			NavBarScaffold(onDisconnect = onDisconnect)
 		}
 	}
 }

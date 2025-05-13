@@ -1,6 +1,5 @@
 package xyz.d1n0.ui.navigation
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -12,28 +11,25 @@ import xyz.d1n0.ui.screen.settings.SettingsScreen
 import xyz.d1n0.ui.screen.timer.TimerScreen
 
 @Composable
-fun NavGraph(
-	navHostController: NavHostController,
-	scaffoldPadding: PaddingValues,
-) {
+fun NavGraph(navHostController: NavHostController) {
 	NavHost(
 		navController = navHostController,
 		startDestination = NavBarRoute.Clocks.route,
 	) {
 		composable(route = NavBarRoute.Clocks.route) {
-			ClocksScreen(scaffoldPadding = scaffoldPadding)
+			ClocksScreen()
 		}
 		composable(route = NavBarRoute.Alarms.route) {
-			AlarmsScreen(scaffoldPadding = scaffoldPadding)
+			AlarmsScreen()
 		}
 		composable(route = NavBarRoute.Timer.route) {
-			TimerScreen(scaffoldPadding = scaffoldPadding)
+			TimerScreen()
 		}
 		composable(route = NavBarRoute.Reminders.route) {
-			RemindersScreen(scaffoldPadding = scaffoldPadding)
+			RemindersScreen()
 		}
 		composable(route = NavBarRoute.Settings.route) {
-			SettingsScreen(scaffoldPadding = scaffoldPadding)
+			SettingsScreen()
 		}
 	}
 }

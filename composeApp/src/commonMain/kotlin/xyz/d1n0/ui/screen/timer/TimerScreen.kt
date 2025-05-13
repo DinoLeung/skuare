@@ -1,9 +1,6 @@
 package xyz.d1n0.ui.screen.timer
 
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -14,12 +11,10 @@ import androidx.compose.ui.Modifier
 import org.koin.compose.viewmodel.koinViewModel
 import xyz.d1n0.ui.component.CardView
 import xyz.d1n0.ui.component.DurationTextInput
-import xyz.d1n0.ui.component.ScreenContainer
+import xyz.d1n0.ui.component.SaveScreenScaffold
 
 @Composable
-fun TimerScreen(
-	scaffoldPadding: PaddingValues,
-) {
+fun TimerScreen() {
 	val viewModel = koinViewModel<TimerScreenViewModel>()
 	val state by viewModel.uiState.collectAsState()
 
@@ -28,10 +23,9 @@ fun TimerScreen(
 			viewModel.onEvent(TimerUiEvent.RequestTimer)
 	}
 
-	ScreenContainer(
-		scaffoldPadding = scaffoldPadding,
-		saveVisible = state.hasUpdates && state.isLoading == false && state.hasErrors == false,
-		saveOnClick = { viewModel.onEvent(TimerUiEvent.SaveTimer) },
+	SaveScreenScaffold(
+		saveFabVisible = state.hasUpdates && state.isLoading == false && state.hasErrors == false,
+		saveFabOnClick = { viewModel.onEvent(TimerUiEvent.SaveTimer) },
 	) {
 		CardView(
 			modifier = Modifier.fillMaxWidth(),

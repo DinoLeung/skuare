@@ -2,9 +2,7 @@ package xyz.d1n0.ui.screen.alarms
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
@@ -19,9 +17,7 @@ import xyz.d1n0.ui.component.AlarmCard
 import xyz.d1n0.ui.component.HourlySignalCard
 
 @Composable
-fun AlarmsScreen(
-	scaffoldPadding: PaddingValues,
-) {
+fun AlarmsScreen() {
 	val viewModel = koinViewModel<AlarmsScreenViewModel>()
 	val log = koinInject<Log>()
 
@@ -37,7 +33,7 @@ fun AlarmsScreen(
 	Column(
 		horizontalAlignment = Alignment.CenterHorizontally,
 		verticalArrangement = Arrangement.Center,
-		modifier = Modifier.fillMaxSize().padding(scaffoldPadding)
+		modifier = Modifier.fillMaxSize()
 			.verticalScroll(rememberScrollState()),
 	) {
 		alarms.value.forEach { alarm ->

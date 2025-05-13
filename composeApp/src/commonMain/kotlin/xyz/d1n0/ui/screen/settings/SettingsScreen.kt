@@ -27,14 +27,12 @@ import xyz.d1n0.lib.constant.DateFormat
 import xyz.d1n0.lib.constant.WeekdayLanguage
 import xyz.d1n0.ui.component.CardView
 import xyz.d1n0.ui.component.EnumDropdown
-import xyz.d1n0.ui.component.ScreenContainer
+import xyz.d1n0.ui.component.SaveScreenScaffold
 import xyz.d1n0.ui.component.SliderField
 import xyz.d1n0.ui.component.SwitchField
 
 @Composable
-fun SettingsScreen(
-	scaffoldPadding: PaddingValues,
-) {
+fun SettingsScreen() {
 	val viewModel = koinViewModel<SettingsScreenViewModel>()
 	val state by viewModel.uiState.collectAsState()
 
@@ -49,12 +47,11 @@ fun SettingsScreen(
 		nameFieldValue = nameFieldValue.copy(state.savedName.value)
 	}
 
-	ScreenContainer(
-		scaffoldPadding = scaffoldPadding,
-		saveVisible = state.hasUpdates &&
+	SaveScreenScaffold(
+		saveFabVisible = state.hasUpdates &&
 				state.isLoading == false &&
 				state.hasErrors == false,
-		saveOnClick = { viewModel.onEvent(SettingsUiEvent.SaveSettings) },
+		saveFabOnClick = { viewModel.onEvent(SettingsUiEvent.SaveSettings) },
 	) {
 		LazyColumn(
 			state = rememberLazyListState(),

@@ -3,6 +3,11 @@ package xyz.d1n0.ui.component
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -13,12 +18,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.lifecycle.viewModelScope
+import androidx.compose.ui.Modifier
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.flow.filterIsInstance
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import org.koin.compose.viewmodel.koinViewModel
 import xyz.d1n0.ui.navigation.NavGraph
 import xyz.d1n0.ui.navigation.navBarItems
@@ -26,7 +28,7 @@ import com.juul.kable.State as PeripheralState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NavScaffold(
+fun NavBarScaffold(
 	onDisconnect: () -> Unit,
 ) {
 	val viewModel = koinViewModel<NavBarViewModel>()
@@ -44,9 +46,8 @@ fun NavScaffold(
 	val watchConnectionState =
 		viewModel.watchState.collectAsState(initial = PeripheralState.Disconnected())
 
-	LaunchedEffect(Unit) {
-		viewModel.watchState.filterIsInstance<PeripheralState.Disconnected>()
-			.onEach { onDisconnect() }.launchIn(viewModel.viewModelScope)
+	LaunchedEffect(viewModel.disconnectEvents) {
+		viewModel.disconnectEvents.collect { onDisconnect() }
 	}
 
 	Scaffold(
@@ -76,9 +77,15 @@ fun NavScaffold(
 			}
 		},
 	) { scaffoldPadding ->
-		if (watchConnectionState.value is PeripheralState.Connected) NavGraph(
-			navHostController = navHostController,
-			scaffoldPadding = scaffoldPadding,
-		)
+		Box(
+			modifier = Modifier
+				.fillMaxSize()
+				.padding(scaffoldPadding)
+				.consumeWindowInsets(scaffoldPadding)
+				.imePadding()
+		) {
+			if (watchConnectionState.value is PeripheralState.Connected)
+				NavGraph(navHostController = navHostController)
+		}
 	}
 }
