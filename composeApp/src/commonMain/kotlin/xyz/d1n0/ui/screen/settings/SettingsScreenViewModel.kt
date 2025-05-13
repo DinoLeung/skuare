@@ -34,11 +34,13 @@ data class SettingsUiState(
 	val savedName: WatchName = defaultWatchName,
 	val pendingName: WatchName = defaultWatchName,
 	val pendingNameError: Throwable? = null,
+
 	val isWatchSettingsInitialized: Boolean = false,
 	val isWatchSettingsLoading: Boolean = true,
 	val savedWatchSettings: WatchSettings = defaultWatchSettings,
 	val pendingWatchSettings: WatchSettings = defaultWatchSettings,
 	val pendingWatchSettingsError: Throwable? = null,
+
 	val isConnectionSettingsInitialized: Boolean = false,
 	val isConnectionSettingsLoading: Boolean = true,
 	val savedConnectionSettings: ConnectionSettings = defaultConnectionSettings,
