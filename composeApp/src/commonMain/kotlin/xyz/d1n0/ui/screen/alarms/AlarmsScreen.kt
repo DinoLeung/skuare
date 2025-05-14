@@ -1,11 +1,16 @@
 package xyz.d1n0.ui.screen.alarms
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Alarm
+import androidx.compose.material.icons.outlined.Snooze
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -14,10 +19,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.koin.compose.viewmodel.koinViewModel
-import xyz.d1n0.lib.helper.toHHMMString
 import xyz.d1n0.ui.component.CardView
 import xyz.d1n0.ui.component.SaveScreenScaffold
 import xyz.d1n0.ui.component.SwitchField
+import xyz.d1n0.ui.component.TimePickerField
 
 @Composable
 fun AlarmsScreen() {
@@ -48,23 +53,48 @@ fun AlarmsScreen() {
 					modifier = Modifier.fillMaxWidth(),
 					title = { Text("Alarms") }
 				) {
-					state.pendingAlarms.zip(state.pendingAlarmsErrors)
-						.forEachIndexed { index, (alarm, err) ->
-							SwitchField(
-								title = alarm.time.toHHMMString(),
-								check = alarm.enable,
-								onCheckedChange = {
-									viewModel.onEvent(
-										AlarmsUiEvent.AlarmToggle(
-											index = index,
-											enable = it
+					Column(
+						modifier = Modifier.fillMaxWidth(),
+						verticalArrangement = Arrangement.spacedBy(8.dp)
+					) {
+						state.pendingAlarms.zip(state.pendingAlarmsErrors)
+							.forEachIndexed { index, (alarm, err) ->
+								SwitchField(
+									title = {
+										TimePickerField(
+											value = alarm.time,
+											onValueChange = {
+												viewModel.onEvent(
+													AlarmsUiEvent.AlarmTimeChange(
+														index = index,
+														time = it
+													)
+												)
+											},
+											trailingIcon = {
+												Icon(
+													imageVector = Icons.Outlined.Alarm,
+													contentDescription = "Alarm"
+												)
+											},
+											enabled = state.isAlarmsInitialized && state.isLoading == false,
+											modifier = Modifier.fillMaxWidth()
 										)
-									)
-								},
-								enabled = state.isAlarmsInitialized && state.isLoading == false,
-								modifier = Modifier.fillMaxWidth()
-							)
-						}
+									},
+									check = alarm.enable,
+									onCheckedChange = {
+										viewModel.onEvent(
+											AlarmsUiEvent.AlarmToggle(
+												index = index,
+												enable = it
+											)
+										)
+									},
+									enabled = state.isAlarmsInitialized && state.isLoading == false,
+									modifier = Modifier.fillMaxWidth()
+								)
+							}
+					}
 				}
 			}
 			item {
@@ -73,7 +103,21 @@ fun AlarmsScreen() {
 					title = { Text("Snooze Alarm") }
 				) {
 					SwitchField(
-						title = state.pendingSnoozeAlarm.time.toHHMMString(),
+						title = {
+							TimePickerField(
+								value = state.pendingSnoozeAlarm.time,
+								onValueChange = {
+									viewModel.onEvent(AlarmsUiEvent.SnoozeAlarmTimeChange(time = it))
+								}, trailingIcon = {
+									Icon(
+										imageVector = Icons.Outlined.Snooze,
+										contentDescription = "Snooze Alarm"
+									)
+								},
+								enabled = state.isSnoozeAlarmInitialized && state.isLoading == false,
+								modifier = Modifier.fillMaxWidth()
+							)
+						},
 						check = state.pendingSnoozeAlarm.enable,
 						onCheckedChange = {
 							viewModel.onEvent(AlarmsUiEvent.SnoozeAlarmToggle(enable = it))

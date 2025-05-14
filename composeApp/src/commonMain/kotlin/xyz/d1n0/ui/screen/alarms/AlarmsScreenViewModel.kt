@@ -66,7 +66,7 @@ sealed interface AlarmsUiEvent {
 	data class AlarmToggle(val index: Int, val enable: Boolean) : AlarmsUiEvent
 	data class AlarmTimeChange(val index: Int, val time: LocalTime) : AlarmsUiEvent
 	data class SnoozeAlarmToggle(val enable: Boolean) : AlarmsUiEvent
-	data class SnoozeAlarmChange(val time: LocalTime) : AlarmsUiEvent
+	data class SnoozeAlarmTimeChange(val time: LocalTime) : AlarmsUiEvent
 }
 
 class AlarmsScreenViewModel : ViewModel(), KoinComponent {
@@ -121,7 +121,7 @@ class AlarmsScreenViewModel : ViewModel(), KoinComponent {
 		)
 
 		is AlarmsUiEvent.SnoozeAlarmToggle -> onSnoozeAlarmToggle(enable = event.enable)
-		is AlarmsUiEvent.SnoozeAlarmChange -> onSnoozeAlarmChange(time = event.time)
+		is AlarmsUiEvent.SnoozeAlarmTimeChange -> onSnoozeAlarmChange(time = event.time)
 	}
 
 	private fun requestAlarms() = watch.scope.launch {
