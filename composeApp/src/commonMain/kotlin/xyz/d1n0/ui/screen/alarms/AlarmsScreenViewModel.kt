@@ -3,11 +3,8 @@ package xyz.d1n0.ui.screen.alarms
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalTime
@@ -32,7 +29,7 @@ data class AlarmsUiState(
 	val isAlarmsLoading: Boolean = true,
 	val savedAlarms: List<Alarm> = defaultAlarms,
 	val pendingAlarms: List<Alarm> = defaultAlarms,
-	val pendingAlarmsError: List<Throwable?> = List(4) { null },
+	val pendingAlarmsErrors: List<Throwable?> = List(4) { null },
 
 	val isSnoozeAlarmInitialized: Boolean = false,
 	val savedSnoozeAlarm: Alarm = defaultSnoozeAlarm,
@@ -47,7 +44,9 @@ data class AlarmsUiState(
 		get() = isHourlySignalUpdated || isAlarmsUpdated || isSnoozeAlarmUpdated
 
 	val hasErrors: Boolean
-		get() = pendingHourlySignalError != null || pendingAlarmsError != null || pendingSnoozeAlarmError != null
+		get() = pendingHourlySignalError != null ||
+				pendingSnoozeAlarmError != null ||
+				pendingAlarmsErrors.count { it != null } > 0
 
 	val isHourlySignalUpdated: Boolean
 		get() = savedHourlySignal != pendingHourlySignal
@@ -63,10 +62,11 @@ sealed interface AlarmsUiEvent {
 	object RequestAlarms : AlarmsUiEvent
 	object SaveAlarms : AlarmsUiEvent
 
-	data class HourlySignalChange(val enable: Boolean) : AlarmsUiEvent
+	data class HourlySignalToggle(val enable: Boolean) : AlarmsUiEvent
 	data class AlarmToggle(val index: Int, val enable: Boolean) : AlarmsUiEvent
 	data class AlarmTimeChange(val index: Int, val time: LocalTime) : AlarmsUiEvent
-	data class SnoozeAlarmChange(val alarm: Alarm) : AlarmsUiEvent
+	data class SnoozeAlarmToggle(val enable: Boolean) : AlarmsUiEvent
+	data class SnoozeAlarmChange(val time: LocalTime) : AlarmsUiEvent
 }
 
 class AlarmsScreenViewModel : ViewModel(), KoinComponent {
@@ -113,17 +113,18 @@ class AlarmsScreenViewModel : ViewModel(), KoinComponent {
 	fun onEvent(event: AlarmsUiEvent) = when (event) {
 		AlarmsUiEvent.RequestAlarms -> requestAlarms()
 		AlarmsUiEvent.SaveAlarms -> writeAlarms()
+		is AlarmsUiEvent.HourlySignalToggle -> onHourlySignalToggle(enable = event.enable)
 		is AlarmsUiEvent.AlarmToggle -> onAlarmToggle(index = event.index, enable = event.enable)
 		is AlarmsUiEvent.AlarmTimeChange -> onAlarmTimeChange(
 			index = event.index,
 			time = event.time
 		)
 
-		is AlarmsUiEvent.HourlySignalChange -> TODO()
-		is AlarmsUiEvent.SnoozeAlarmChange -> TODO()
+		is AlarmsUiEvent.SnoozeAlarmToggle -> onSnoozeAlarmToggle(enable = event.enable)
+		is AlarmsUiEvent.SnoozeAlarmChange -> onSnoozeAlarmChange(time = event.time)
 	}
 
-	fun requestAlarms() = watch.scope.launch {
+	private fun requestAlarms() = watch.scope.launch {
 		_uiState.update {
 			it.copy(
 				isHourlySignalLoading = true,
@@ -134,7 +135,7 @@ class AlarmsScreenViewModel : ViewModel(), KoinComponent {
 		watch.requestAlarms()
 	}
 
-	fun writeAlarms() = watch.scope.launch {
+	private fun writeAlarms() = watch.scope.launch {
 		_uiState.update {
 			it.copy(
 				isHourlySignalLoading = true,
@@ -145,7 +146,13 @@ class AlarmsScreenViewModel : ViewModel(), KoinComponent {
 		watch.writeAlarms()
 	}
 
-	fun onAlarmToggle(index: Int, enable: Boolean) = _uiState.updateCatching(
+	private fun onHourlySignalToggle(enable: Boolean) = _uiState.updateCatching(
+		transform = { it.pendingHourlySignal.copy(enable = enable) },
+		onSuccess = { copy(pendingHourlySignal = it, pendingHourlySignalError = null) },
+		onFailure = { copy(pendingHourlySignalError = it) },
+	)
+
+	private fun onAlarmToggle(index: Int, enable: Boolean) = _uiState.updateCatching(
 		transform = { it.pendingAlarms[index].copy(enable = enable) },
 		onSuccess = {
 			val newAlarms = this.pendingAlarms.mapIndexed { i, alarm ->
@@ -155,21 +162,21 @@ class AlarmsScreenViewModel : ViewModel(), KoinComponent {
 				pendingAlarms = this.pendingAlarms.mapIndexed { i, alarm ->
 					if (i == index) it else alarm
 				},
-				pendingAlarmsError = this.pendingAlarmsError.mapIndexed { i, err ->
+				pendingAlarmsErrors = this.pendingAlarmsErrors.mapIndexed { i, err ->
 					if (i == index) null else err
 				},
 			)
 		},
 		onFailure = {
 			copy(
-				pendingAlarmsError = this.pendingAlarmsError.mapIndexed { i, err ->
+				pendingAlarmsErrors = this.pendingAlarmsErrors.mapIndexed { i, err ->
 					if (i == index) it else err
 				}
 			)
 		}
 	)
 
-	fun onAlarmTimeChange(index: Int, time: LocalTime) = _uiState.updateCatching(
+	private fun onAlarmTimeChange(index: Int, time: LocalTime) = _uiState.updateCatching(
 		transform = { it.pendingAlarms[index].copy(time = time) },
 		onSuccess = {
 			val newAlarms = this.pendingAlarms.mapIndexed { i, alarm ->
@@ -179,35 +186,30 @@ class AlarmsScreenViewModel : ViewModel(), KoinComponent {
 				pendingAlarms = this.pendingAlarms.mapIndexed { i, alarm ->
 					if (i == index) it else alarm
 				},
-				pendingAlarmsError = this.pendingAlarmsError.mapIndexed { i, err ->
+				pendingAlarmsErrors = this.pendingAlarmsErrors.mapIndexed { i, err ->
 					if (i == index) null else err
 				},
 			)
 		},
 		onFailure = {
 			copy(
-				pendingAlarmsError = this.pendingAlarmsError.mapIndexed { i, err ->
+				pendingAlarmsErrors = this.pendingAlarmsErrors.mapIndexed { i, err ->
 					if (i == index) it else err
 				}
 			)
 		}
 	)
 
-	val hourlySignal: StateFlow<HourlySignal?> = alarmsSettings.map { it.hourlySignal }.stateIn(
-		scope = viewModelScope, started = SharingStarted.Lazily, initialValue = null
+	private fun onSnoozeAlarmToggle(enable: Boolean) = _uiState.updateCatching(
+		transform = { it.pendingSnoozeAlarm.copy(enable = enable) },
+		onSuccess = { copy(pendingSnoozeAlarm = it, pendingSnoozeAlarmError = null) },
+		onFailure = { copy(pendingSnoozeAlarmError = it) },
 	)
 
-	val alarms: StateFlow<List<Alarm?>> = alarmsSettings.map { it.alarms }.stateIn(
-		scope = viewModelScope,
-		started = SharingStarted.Lazily,
-		initialValue = List(4) { null })
-
-	val snoozeAlarm: StateFlow<Alarm?> = alarmsSettings.map { it.snoozeAlarm }.stateIn(
-		scope = viewModelScope, started = SharingStarted.Lazily, initialValue = null
-	)
-
-	val isInitialized: StateFlow<Boolean> = alarmsSettings.map { it.isInitialized }.stateIn(
-		scope = viewModelScope, started = SharingStarted.Lazily, initialValue = false
+	private fun onSnoozeAlarmChange(time: LocalTime) = _uiState.updateCatching(
+		transform = { it.pendingSnoozeAlarm.copy(time = time) },
+		onSuccess = { copy(pendingSnoozeAlarm = it, pendingSnoozeAlarmError = null) },
+		onFailure = { copy(pendingSnoozeAlarmError = it) },
 	)
 }
 

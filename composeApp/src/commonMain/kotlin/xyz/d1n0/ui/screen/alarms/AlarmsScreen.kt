@@ -1,51 +1,104 @@
 package xyz.d1n0.ui.screen.alarms
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import org.koin.compose.koinInject
+import androidx.compose.ui.unit.dp
 import org.koin.compose.viewmodel.koinViewModel
-import xyz.d1n0.Log
-import xyz.d1n0.ui.component.AlarmCard
-import xyz.d1n0.ui.component.HourlySignalCard
+import xyz.d1n0.lib.helper.toHHMMString
+import xyz.d1n0.ui.component.CardView
+import xyz.d1n0.ui.component.SaveScreenScaffold
+import xyz.d1n0.ui.component.SwitchField
 
 @Composable
 fun AlarmsScreen() {
 	val viewModel = koinViewModel<AlarmsScreenViewModel>()
-	val log = koinInject<Log>()
-
-	val isInitialized = viewModel.isInitialized.collectAsState(initial = false)
-	val hourlySignal = viewModel.hourlySignal.collectAsState(initial = null)
-	val alarms = viewModel.alarms.collectAsState(initial = List(4) { null })
-	val alarmSnooze = viewModel.snoozeAlarm.collectAsState(initial = null)
+	val state by viewModel.uiState.collectAsState()
 
 	LaunchedEffect(Unit) {
-		if (isInitialized.value == false) viewModel.requestAlarms()
+		if (state.isHourlySignalInitialized == false ||
+			state.isAlarmsInitialized == false ||
+			state.isSnoozeAlarmInitialized == false
+		) viewModel.onEvent(AlarmsUiEvent.RequestAlarms)
 	}
 
-	Column(
-		horizontalAlignment = Alignment.CenterHorizontally,
-		verticalArrangement = Arrangement.Center,
-		modifier = Modifier.fillMaxSize()
-			.verticalScroll(rememberScrollState()),
+	SaveScreenScaffold(
+		saveFabVisible = state.hasUpdates &&
+				state.isLoading == false &&
+				state.hasErrors == false,
+		saveFabOnClick = { viewModel.onEvent(AlarmsUiEvent.SaveAlarms) }
 	) {
-		alarms.value.forEach { alarm ->
-			alarm?.let {
-				AlarmCard(alarm = it)
+		LazyColumn(
+			state = rememberLazyListState(),
+			modifier = Modifier.fillMaxSize(),
+			contentPadding = PaddingValues(8.dp),
+			verticalArrangement = Arrangement.spacedBy(8.dp),
+		) {
+			item {
+				CardView(
+					modifier = Modifier.fillMaxWidth(),
+					title = { Text("Alarms") }
+				) {
+					state.pendingAlarms.zip(state.pendingAlarmsErrors)
+						.forEachIndexed { index, (alarm, err) ->
+							SwitchField(
+								title = alarm.time.toHHMMString(),
+								check = alarm.enable,
+								onCheckedChange = {
+									viewModel.onEvent(
+										AlarmsUiEvent.AlarmToggle(
+											index = index,
+											enable = it
+										)
+									)
+								},
+								enabled = state.isAlarmsInitialized && state.isLoading == false,
+								modifier = Modifier.fillMaxWidth()
+							)
+						}
+				}
 			}
-		}
-		alarmSnooze.value?.let {
-			AlarmCard(alarm = it, isSnooze = true)
-		}
-		hourlySignal.value?.let {
-			HourlySignalCard(hourlySignal = it)
+			item {
+				CardView(
+					modifier = Modifier.fillMaxWidth(),
+					title = { Text("Snooze Alarm") }
+				) {
+					SwitchField(
+						title = state.pendingSnoozeAlarm.time.toHHMMString(),
+						check = state.pendingSnoozeAlarm.enable,
+						onCheckedChange = {
+							viewModel.onEvent(AlarmsUiEvent.SnoozeAlarmToggle(enable = it))
+						},
+						enabled = state.isSnoozeAlarmInitialized && state.isLoading == false,
+						modifier = Modifier.fillMaxWidth()
+					)
+				}
+			}
+			item {
+				CardView(
+					modifier = Modifier.fillMaxWidth(),
+					title = { Text("Others") }
+				) {
+					SwitchField(
+						title = "Hourly Signal",
+						check = state.pendingHourlySignal.enable,
+						onCheckedChange = {
+							viewModel.onEvent(AlarmsUiEvent.HourlySignalToggle(enable = it))
+						},
+						enabled = state.isHourlySignalInitialized && state.isLoading == false,
+						modifier = Modifier.fillMaxWidth()
+					)
+				}
+			}
 		}
 	}
 }

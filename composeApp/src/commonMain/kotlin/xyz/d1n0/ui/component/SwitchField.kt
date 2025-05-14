@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun SwitchField(
 	modifier: Modifier = Modifier,
-	title: String,
+	title: @Composable() (() -> Unit),
 	check: Boolean,
 	onCheckedChange: ((Boolean) -> Unit)? = null,
 	enabled: Boolean = true,
@@ -26,11 +26,7 @@ fun SwitchField(
 		horizontalArrangement = Arrangement.spacedBy(8.dp),
 	) {
 		Box(modifier = Modifier.weight(1f)) {
-			Text(
-				text = title,
-				textAlign = TextAlign.Start,
-				style = MaterialTheme.typography.bodyMedium
-			)
+			title()
 		}
 		Box {
 			Switch(
@@ -41,3 +37,24 @@ fun SwitchField(
 		}
 	}
 }
+
+@Composable
+fun SwitchField(
+	modifier: Modifier = Modifier,
+	title: String,
+	check: Boolean,
+	onCheckedChange: ((Boolean) -> Unit)? = null,
+	enabled: Boolean = true,
+) = SwitchField(
+	modifier = modifier,
+	title = {
+		Text(
+			text = title,
+			textAlign = TextAlign.Start,
+			style = MaterialTheme.typography.bodyMedium
+		)
+	},
+	check = check,
+	onCheckedChange = onCheckedChange,
+	enabled = enabled
+)
