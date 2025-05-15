@@ -18,7 +18,6 @@ import xyz.d1n0.ui.screen.reminders.RemindersScreenViewModel
 import xyz.d1n0.ui.screen.scan.ScanScreenViewModel
 import xyz.d1n0.ui.screen.settings.SettingsScreenViewModel
 import xyz.d1n0.ui.screen.timer.TimerScreenViewModel
-import xyz.d1n0.ui.screen.watch.WatchScreenViewModel
 
 fun KoinApp(
 	rootNavHostController: NavHostController,
@@ -34,9 +33,8 @@ fun KoinApp(
 			single<PermissionsController> { permissionsController }
 
 			singleOf(::Watch)
-			
+
 			viewModel { ScanScreenViewModel(get()) }
-			viewModelOf(::WatchScreenViewModel) // TODO: should remove
 
 			viewModelOf(::NavBarViewModel)
 			viewModelOf(::ClocksScreenViewModel)
