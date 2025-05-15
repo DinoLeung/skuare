@@ -34,7 +34,6 @@ suspend fun Watch.requestClocks() = repeat(3) {
 	request(OpCode.CLOCK)
 }
 
-// TODO:
 suspend fun Watch.writeClocks(clocksSettings: ClocksSettings) =
 	clocksSettings.clocksPackets.forEach { write(it) }.also { requestClocks() }
 
@@ -46,9 +45,9 @@ suspend fun Watch.requestAlarms() {
 	request(OpCode.ALARM_B)
 }
 
-suspend fun Watch.writeAlarms() {
-	write(alarms.value.alarmAPacket)
-	write(alarms.value.alarmBPacket)
+suspend fun Watch.writeAlarms(alarmSettings: AlarmsSettings) {
+	write(alarmSettings.alarmAPacket)
+	write(alarmSettings.alarmBPacket)
 	requestAlarms()
 }
 

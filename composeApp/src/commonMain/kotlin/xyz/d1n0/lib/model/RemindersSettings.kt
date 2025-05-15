@@ -4,12 +4,9 @@ import xyz.d1n0.lib.constant.OpCode
 import xyz.d1n0.lib.helper.requireIn
 
 data class RemindersSettings(
-	val reminders: List<Reminder> = List(5) { Reminder() },
+	val reminderTitles: List<ReminderTitle?> = List(5) { null },
+	val reminderConfigs: List<ReminderConfig?> = List(5) { null },
 ) {
-	val isTitlesInitialized: Boolean get() = reminders.all { it.title != null }
-	val isConfigsInitialized: Boolean get() = reminders.all { it.config != null }
-
-
 	@OptIn(ExperimentalStdlibApi::class)
 	fun parseReminderTitlePacket(packet: ByteArray): RemindersSettings {
 		require(packet.first() == OpCode.REMINDER_TITLE.byte) {
@@ -24,10 +21,11 @@ data class RemindersSettings(
 		}
 		val index =
 			packet[1].toInt().requireIn(1..5) { "Reminder position must be in 1..5" }.minus(1)
-		val title = ReminderTitle.fromBytes(packet.sliceArray(2..packet.lastIndex))
 		return this.copy(
-			reminders = reminders.toMutableList()
-				.also { it[index] = it[index].copy(title = title) })
+			reminderTitles = reminderTitles.toMutableList()
+				.also {
+					it[index] = ReminderTitle.fromBytes(packet.sliceArray(2..packet.lastIndex))
+				})
 	}
 
 	@OptIn(ExperimentalStdlibApi::class)
@@ -46,21 +44,21 @@ data class RemindersSettings(
 			packet[1].toInt().requireIn(1..5) { "Reminder position must be in 1..5" }.minus(1)
 		val config = ReminderConfig.fromBytes(packet.sliceArray(2..packet.lastIndex))
 		return this.copy(
-			reminders = reminders.toMutableList()
-				.also { it[index] = it[index].copy(config = config) })
+			reminderConfigs = reminderConfigs.toMutableList()
+				.also {
+					it[index] = ReminderConfig.fromBytes(packet.sliceArray(2..packet.lastIndex))
+				})
 	}
 
 	val reminderTitlePackets: List<ByteArray>
-		get() = reminders.mapIndexed { index, reminder ->
-			val title =
-				requireNotNull(reminder.title) { "Reminder title at position $index must be initialized" }
+		get() = reminderTitles.mapIndexed { index, title ->
+			requireNotNull(title) { "Reminder title at position $index must be initialized" }
 			byteArrayOf(OpCode.REMINDER_TITLE.byte, index.plus(1).toByte()) + title.bytes
 		}
 
 	val reminderConfigPackets: List<ByteArray>
-		get() = reminders.mapIndexed { index, reminder ->
-			val config =
-				requireNotNull(reminder.config) { "Reminder config at position $index must be initialized" }
+		get() = reminderConfigs.mapIndexed { index, config ->
+			requireNotNull(config) { "Reminder config at position $index must be initialized" }
 			byteArrayOf(OpCode.REMINDER_TITLE.byte, index.plus(1).toByte()) + config.bytes
 		}
 }

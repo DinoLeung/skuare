@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalTime
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import xyz.d1n0.lib.helper.replaceAt
 import xyz.d1n0.lib.model.Alarm
 import xyz.d1n0.lib.model.AlarmsSettings
 import xyz.d1n0.lib.model.HourlySignal
@@ -46,7 +47,7 @@ data class AlarmsUiState(
 	val hasErrors: Boolean
 		get() = pendingHourlySignalError != null ||
 				pendingSnoozeAlarmError != null ||
-				pendingAlarmsErrors.count { it != null } > 0
+				pendingAlarmsErrors.all { it != null }
 
 	val isHourlySignalUpdated: Boolean
 		get() = savedHourlySignal != pendingHourlySignal
@@ -97,7 +98,7 @@ class AlarmsScreenViewModel : ViewModel(), KoinComponent {
 					onSuccess = {
 						it.copy(
 							isHourlySignalInitialized = settings.hourlySignal != null,
-							isAlarmsInitialized = settings.alarms.count { it == null } == 0,
+							isAlarmsInitialized = settings.alarms.all { it != null },
 							isSnoozeAlarmInitialized = settings.snoozeAlarm != null,
 							isHourlySignalLoading = settings.hourlySignal != it.pendingHourlySignal,
 							isAlarmsLoading = settings.alarms != it.pendingAlarms,
@@ -138,12 +139,18 @@ class AlarmsScreenViewModel : ViewModel(), KoinComponent {
 	private fun writeAlarms() = watch.scope.launch {
 		_uiState.update {
 			it.copy(
-				isHourlySignalLoading = true,
-				isAlarmsLoading = true,
-				isSnoozeAlarmLoading = true,
+				isHourlySignalLoading = _uiState.value.isHourlySignalUpdated,
+				isAlarmsLoading = _uiState.value.isAlarmsUpdated,
+				isSnoozeAlarmLoading = _uiState.value.isSnoozeAlarmUpdated
 			)
 		}
-		watch.writeAlarms()
+		watch.writeAlarms(
+			alarmSettings = AlarmsSettings(
+				hourlySignal = _uiState.value.pendingHourlySignal,
+				alarms = _uiState.value.pendingAlarms,
+				snoozeAlarm = _uiState.value.pendingSnoozeAlarm
+			)
+		)
 	}
 
 	private fun onHourlySignalToggle(enable: Boolean) = _uiState.updateCatching(
@@ -155,48 +162,26 @@ class AlarmsScreenViewModel : ViewModel(), KoinComponent {
 	private fun onAlarmToggle(index: Int, enable: Boolean) = _uiState.updateCatching(
 		transform = { it.pendingAlarms[index].copy(enable = enable) },
 		onSuccess = {
-			val newAlarms = this.pendingAlarms.mapIndexed { i, alarm ->
-				if (i == index) it else alarm
-			}
 			copy(
-				pendingAlarms = this.pendingAlarms.mapIndexed { i, alarm ->
-					if (i == index) it else alarm
-				},
-				pendingAlarmsErrors = this.pendingAlarmsErrors.mapIndexed { i, err ->
-					if (i == index) null else err
-				},
+				pendingAlarms = pendingAlarms.replaceAt(index, it),
+				pendingAlarmsErrors = pendingAlarmsErrors.replaceAt(index, null),
 			)
 		},
 		onFailure = {
-			copy(
-				pendingAlarmsErrors = this.pendingAlarmsErrors.mapIndexed { i, err ->
-					if (i == index) it else err
-				}
-			)
+			copy(pendingAlarmsErrors = pendingAlarmsErrors.replaceAt(index, it))
 		}
 	)
 
 	private fun onAlarmTimeChange(index: Int, time: LocalTime) = _uiState.updateCatching(
 		transform = { it.pendingAlarms[index].copy(time = time) },
 		onSuccess = {
-			val newAlarms = this.pendingAlarms.mapIndexed { i, alarm ->
-				if (i == index) it else alarm
-			}
 			copy(
-				pendingAlarms = this.pendingAlarms.mapIndexed { i, alarm ->
-					if (i == index) it else alarm
-				},
-				pendingAlarmsErrors = this.pendingAlarmsErrors.mapIndexed { i, err ->
-					if (i == index) null else err
-				},
+				pendingAlarms = pendingAlarms.replaceAt(index, it),
+				pendingAlarmsErrors = pendingAlarmsErrors.replaceAt(index, null),
 			)
 		},
 		onFailure = {
-			copy(
-				pendingAlarmsErrors = this.pendingAlarmsErrors.mapIndexed { i, err ->
-					if (i == index) it else err
-				}
-			)
+			copy(pendingAlarmsErrors = pendingAlarmsErrors.replaceAt(index, it))
 		}
 	)
 
