@@ -21,6 +21,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.LocalTime
 import xyz.d1n0.lib.helper.toHHMMString
@@ -31,7 +34,7 @@ fun TimePickerField(
 	value: LocalTime,
 	onValueChange: (LocalTime) -> Unit,
 //	label: String,
-	trailingIcon: @Composable() (() -> Unit)? = null,
+	leadingIcon: @Composable() (() -> Unit)? = null,
 	enabled: Boolean = true,
 	modifier: Modifier = Modifier,
 ) {
@@ -43,10 +46,11 @@ fun TimePickerField(
 		OutlinedTextField(
 			value = value.toHHMMString(),
 			onValueChange = { /* no-op */ },
+//			textStyle = TextStyle(fontSize = TextUnit(value = 3.5f, type = TextUnitType.Em)),
 //			label = { Text(label) },
 			readOnly = true,
 			enabled = enabled,
-			trailingIcon = trailingIcon,
+			leadingIcon = leadingIcon,
 			colors = ExposedDropdownMenuDefaults.textFieldColors(),
 			modifier = Modifier.fillMaxWidth()
 		)

@@ -4,6 +4,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Alarm
+import androidx.compose.material.icons.outlined.Snooze
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,6 +33,12 @@ fun TimePickerFieldPreview() {
 			value = time,
 			onValueChange = { time = it },
 //			label = "",
+			leadingIcon = {
+				Icon(
+					imageVector = Icons.Outlined.Alarm,
+					contentDescription = "Alarm"
+				)
+			},
 			enabled = false,
 			modifier = Modifier.fillMaxWidth()
 		)
@@ -36,6 +46,12 @@ fun TimePickerFieldPreview() {
 			value = time,
 			onValueChange = { time = it },
 //			label = "",
+			leadingIcon = {
+				Icon(
+					imageVector = Icons.Outlined.Snooze,
+					contentDescription = "Snooze Alarm"
+				)
+			},
 			enabled = true,
 			modifier = Modifier.fillMaxWidth()
 		)

@@ -71,7 +71,7 @@ fun AlarmsScreen() {
 													)
 												)
 											},
-											trailingIcon = {
+											leadingIcon = {
 												Icon(
 													imageVector = Icons.Outlined.Alarm,
 													contentDescription = "Alarm"
@@ -108,7 +108,8 @@ fun AlarmsScreen() {
 								value = state.pendingSnoozeAlarm.time,
 								onValueChange = {
 									viewModel.onEvent(AlarmsUiEvent.SnoozeAlarmTimeChange(time = it))
-								}, trailingIcon = {
+								},
+								leadingIcon = {
 									Icon(
 										imageVector = Icons.Outlined.Snooze,
 										contentDescription = "Snooze Alarm"
