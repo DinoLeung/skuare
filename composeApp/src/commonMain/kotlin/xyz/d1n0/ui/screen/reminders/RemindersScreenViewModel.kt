@@ -13,6 +13,7 @@ import org.koin.core.component.inject
 import xyz.d1n0.lib.constant.ReminderDayOfWeek
 import xyz.d1n0.lib.constant.ReminderRecurrence
 import xyz.d1n0.lib.helper.replaceAt
+import xyz.d1n0.lib.model.Reminder
 import xyz.d1n0.lib.model.ReminderConfig
 import xyz.d1n0.lib.model.ReminderTitle
 import xyz.d1n0.lib.model.RemindersSettings
@@ -35,6 +36,11 @@ data class ReminderUiState(
 	val pendingConfigs: List<ReminderConfig> = defaultReminderConfigs,
 	val pendingConfigErrors: List<Throwable?> = List(5) { null },
 ) {
+	val reminders: List<Reminder>
+		get() = pendingTitles.zip(pendingConfigs).map { (title, config) ->
+			Reminder(title = title, config = config)
+		}
+
 	val hasUpdates: Boolean
 		get() = isReminderTitlesUpdated || isReminderConfigsUpdated
 
@@ -156,6 +162,7 @@ class RemindersScreenViewModel : ViewModel(), KoinComponent {
 		watch.requestReminderConfigs()
 	}
 
+	//	TODO: try writing only updated items
 	private fun writeReminders() = watch.scope.launch {
 		_uiState.update {
 			it.copy(
