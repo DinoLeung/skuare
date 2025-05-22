@@ -65,15 +65,11 @@ sealed interface RemindersUiEvent {
 	data class ReminderTitleChange(val index: Int, val title: String) : RemindersUiEvent
 	data class ReminderStartDateChange(val index: Int, val date: LocalDate) : RemindersUiEvent
 	data class ReminderEndDateChange(val index: Int, val date: LocalDate) : RemindersUiEvent
-	data class ReminderRecurrenceChange(
-		val index: Int,
-		val recurrence: ReminderRecurrence,
-	) : RemindersUiEvent
+	data class ReminderRecurrenceChange(val index: Int, val recurrence: ReminderRecurrence) :
+		RemindersUiEvent
 
-	data class ReminderDaysChange(
-		val index: Int,
-		val days: Set<ReminderDayOfWeek>,
-	) : RemindersUiEvent
+	data class ReminderDaysChange(val index: Int, val days: Set<ReminderDayOfWeek>) :
+		RemindersUiEvent
 }
 
 class RemindersScreenViewModel : ViewModel(), KoinComponent {
@@ -263,7 +259,7 @@ private val defaultReminderTitles = List(5) { ReminderTitle("") }
 private val defaultReminderConfigs = List(5) {
 	ReminderConfig(
 		enable = false,
-		recurrence = ReminderRecurrence.ONCE_SAME_DAY,
+		recurrence = ReminderRecurrence.ONCE,
 		startDate = LocalDate(year = 2000, monthNumber = 1, dayOfMonth = 1),
 		endDate = LocalDate(year = 2000, monthNumber = 1, dayOfMonth = 1),
 		daysOfWeek = setOf()

@@ -34,10 +34,18 @@ fun SliderField(
 	onValueChange: (Int) -> Unit,
 	error: Throwable?,
 ) {
-	var textFieldValue by remember { mutableStateOf(TextFieldValue(text = value.toString(), selection = TextRange(value.toString().length))) }
+	var textFieldValue by remember {
+		mutableStateOf(
+			TextFieldValue(
+				text = value.toString(),
+				selection = TextRange(value.toString().length)
+			)
+		)
+	}
 
 	LaunchedEffect(value) {
-		textFieldValue = TextFieldValue(text = value.toString(), selection = TextRange(value.toString().length))
+		textFieldValue =
+			TextFieldValue(text = value.toString(), selection = TextRange(value.toString().length))
 	}
 
 	Column(
@@ -74,14 +82,7 @@ fun SliderField(
 			onValueChange = { onValueChange(it.toInt()) },
 			modifier = modifier,
 		)
-		error?.message?.let {
-			Text(
-				modifier = Modifier.fillMaxWidth(),
-				style = MaterialTheme.typography.bodySmall,
-				color = MaterialTheme.colorScheme.error,
-				text = it
-			)
-		}
+		error?.message?.let { ErrorText(text = it) }
 	}
 
 }
