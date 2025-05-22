@@ -53,7 +53,7 @@ fun TimePickerField(
 
 	}
 
-	TimePicketDialog(
+	TimePickerDialog(
 		time = value,
 		visible = expanded,
 		onConfirm = {
