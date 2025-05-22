@@ -1,4 +1,4 @@
-package xyz.d1n0.ui.component
+package xyz.d1n0.ui.navigation
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Icon
@@ -9,9 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import xyz.d1n0.ui.navigation.NavBarItem
-import xyz.d1n0.ui.navigation.NavBarRoute
-import xyz.d1n0.ui.navigation.navBarItems
 
 @Composable
 fun NavBar(

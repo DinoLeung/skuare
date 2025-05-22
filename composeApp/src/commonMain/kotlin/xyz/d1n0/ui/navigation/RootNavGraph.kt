@@ -6,7 +6,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import org.koin.compose.koinInject
 import org.koin.core.qualifier.named
-import xyz.d1n0.ui.component.NavBarScaffold
 import xyz.d1n0.ui.screen.scan.ScanScreen
 
 @Composable

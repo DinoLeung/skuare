@@ -1,7 +1,6 @@
 package xyz.d1n0.ui.screen.timer
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -9,9 +8,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import org.koin.compose.viewmodel.koinViewModel
-import xyz.d1n0.ui.component.CardView
-import xyz.d1n0.ui.component.DurationTextInput
 import xyz.d1n0.ui.component.SaveScreenScaffold
+import xyz.d1n0.ui.component.TimerCard
 
 @Composable
 fun TimerScreen() {
@@ -27,26 +25,15 @@ fun TimerScreen() {
 		saveFabVisible = state.hasUpdates && state.isLoading == false && state.hasErrors == false,
 		saveFabOnClick = { viewModel.onEvent(TimerUiEvent.SaveTimer) },
 	) {
-		CardView(
+		TimerCard(
 			modifier = Modifier.fillMaxWidth(),
-			title = { Text("Timer") },
-			indicator = {
-				AssistChip(
-					label = { Text(state.savedTimer.status.toString()) },
-					onClick = { },
-				)
-			},
-		) {
-			DurationTextInput(
-				duration = state.savedTimer.duration,
-				onDurationChange = { viewModel.onEvent(TimerUiEvent.TimerInputChange(it)) },
-				enabled = state.isLoading == false,
-				isError = state.hasErrors,
-				supportingText = {
-					state.pendingTimerError?.let { Text(it.message ?: "Unknown errors") }
-				},
-				modifier = Modifier.fillMaxWidth()
-			)
-		}
+			timer = state.savedTimer,
+			onDurationChange = { viewModel.onEvent(TimerUiEvent.TimerInputChange(it)) },
+			enabled = state.isLoading == false,
+			isError = state.hasErrors,
+			supportingText = {
+				state.pendingTimerError?.let { Text(it.message ?: "Unknown errors") }
+			}
+		)
 	}
 }
