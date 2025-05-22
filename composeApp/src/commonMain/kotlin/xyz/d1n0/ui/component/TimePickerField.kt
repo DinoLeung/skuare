@@ -1,31 +1,19 @@
 package xyz.d1n0.ui.component
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Alarm
+import androidx.compose.material.icons.outlined.Snooze
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.LocalTime
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import xyz.d1n0.lib.helper.toHHMMString
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -74,4 +62,43 @@ fun TimePickerField(
 		},
 		onDismiss = { expanded = false },
 	)
+}
+
+@Preview
+@Composable
+private fun TimePickerFieldPreview() {
+	var time by remember { mutableStateOf(LocalTime(hour = 10, minute = 10)) }
+
+	Column(
+		modifier = Modifier.fillMaxSize(),
+		horizontalAlignment = Alignment.Start,
+		verticalArrangement = Arrangement.spacedBy(8.dp)
+	) {
+		TimePickerField(
+			value = time,
+			onValueChange = { time = it },
+//			label = "",
+			leadingIcon = {
+				Icon(
+					imageVector = Icons.Outlined.Alarm,
+					contentDescription = "Alarm"
+				)
+			},
+			enabled = false,
+			modifier = Modifier.fillMaxWidth()
+		)
+		TimePickerField(
+			value = time,
+			onValueChange = { time = it },
+//			label = "",
+			leadingIcon = {
+				Icon(
+					imageVector = Icons.Outlined.Snooze,
+					contentDescription = "Snooze Alarm"
+				)
+			},
+			enabled = true,
+			modifier = Modifier.fillMaxWidth()
+		)
+	}
 }

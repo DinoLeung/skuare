@@ -1,5 +1,6 @@
 package xyz.d1n0.ui.component
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.Home
@@ -13,9 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import xyz.d1n0.lib.model.Clock
+import xyz.d1n0.lib.model.DstSettings
 import xyz.d1n0.lib.model.HomeClock
 
-@Preview
 @Composable
 fun ClockCard(
 	clock: Clock,
@@ -52,4 +53,17 @@ fun ClockCard(
 			style = MaterialTheme.typography.titleMedium,
 		)
 	})
+}
+
+@Preview
+@Composable
+private fun ClockCardPreview() {
+	Column {
+		ClockCard(
+			clock = xyz.d1n0.lib.model.HomeClock.fromTimeZoneId(30335, DstSettings(false, true))
+		)
+		ClockCard(
+			clock = xyz.d1n0.lib.model.WorldClock.fromTimeZoneId(95, DstSettings(true, false))
+		)
+	}
 }

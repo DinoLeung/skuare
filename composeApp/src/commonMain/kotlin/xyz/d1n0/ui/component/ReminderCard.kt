@@ -104,7 +104,7 @@ fun ReminderCard(
 
 @Preview
 @Composable
-private fun Preview() {
+private fun ReminderCardPreview() {
 	Column {
 		ReminderCard(
 			reminder = xyz.d1n0.lib.model.Reminder(

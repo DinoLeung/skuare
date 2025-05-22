@@ -8,8 +8,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import xyz.d1n0.ui.navigation.NavBarItem
 import xyz.d1n0.ui.navigation.NavBarRoute
+import xyz.d1n0.ui.navigation.navBarItems
 
 @Composable
 fun NavBar(
@@ -38,4 +40,14 @@ fun NavBar(
 			)
 		}
 	}
+}
+
+@Preview
+@Composable
+private fun NavBarPreview() {
+	NavBar(
+		items = navBarItems,
+		currentRoute = navBarItems[2].route,
+		onItemClick = {}
+	)
 }
