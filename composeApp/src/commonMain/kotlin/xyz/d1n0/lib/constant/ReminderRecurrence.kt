@@ -31,7 +31,7 @@ enum class ReminderRecurrence {
 
 	override fun toString(): String = when (this) {
 		ONCE -> "Once"
-		REPEAT_DAILY -> "Repeat"
+		REPEAT_DAILY -> "Daily"
 		REPEAT_WEEKLY -> "Weekly"
 		REPEAT_MONTHLY -> "Monthly"
 		REPEAT_YEARLY -> "Yearly"

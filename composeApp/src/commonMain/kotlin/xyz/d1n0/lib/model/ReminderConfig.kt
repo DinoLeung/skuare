@@ -5,7 +5,8 @@ import kotlinx.datetime.toLocalDateTime
 import xyz.d1n0.lib.constant.ReminderBitmask
 import xyz.d1n0.lib.constant.ReminderDayOfWeek
 import xyz.d1n0.lib.constant.ReminderRecurrence
-import xyz.d1n0.lib.helper.*
+import xyz.d1n0.lib.helper.fromBcdByteArray
+import xyz.d1n0.lib.helper.toBcdByteArray
 import kotlinx.datetime.Clock as KotlinClock
 import kotlinx.datetime.TimeZone as KotlinTimeZone
 
@@ -60,14 +61,9 @@ data class ReminderConfig(
 		).copyOf(9)
 
 	val daysOfWeekDisplayString: String
-		get() = daysOfWeek.map { it.abbreviatedName }.joinToString(separator = ", ")
-
-	val recurrenceDisplayString: String
-		get() = when (recurrence) {
-			ReminderRecurrence.ONCE -> startDate.toDayMonthYear()
-			ReminderRecurrence.REPEAT_DAILY -> "${startDate.toDayMonthYear()} - ${startDate.toDayMonthYear()}"
-			ReminderRecurrence.REPEAT_WEEKLY -> daysOfWeekDisplayString
-			ReminderRecurrence.REPEAT_MONTHLY -> startDate.dayOfMonth.toOrdinalString()
-			ReminderRecurrence.REPEAT_YEARLY -> startDate.toDayMonth()
-		}
+		get() = daysOfWeek
+			.takeIf { it.isNotEmpty() }
+			?.map { it.abbreviatedName }
+			?.joinToString(separator = ", ")
+			?: "Never"
 }

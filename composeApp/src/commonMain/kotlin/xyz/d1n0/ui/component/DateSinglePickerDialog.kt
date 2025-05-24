@@ -8,7 +8,7 @@ import kotlinx.datetime.LocalDate
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import xyz.d1n0.lib.helper.fromMillis
 import xyz.d1n0.lib.helper.toMillis
-import xyz.d1n0.ui.boilerplate.DatePickerFormat
+import xyz.d1n0.ui.boilerplate.DatePickerCustomerFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,7 +40,13 @@ fun DateSinglePickerDialog(
 				}) { Text("Confirm") }
 			},
 			dismissButton = { TextButton(onClick = { onDismiss() }) { Text("Dismiss") } },
-			content = { DatePicker(state = state, dateFormatter = DatePickerFormat()) }
+			content = {
+				DatePicker(
+					state = state,
+					showModeToggle = false,
+					dateFormatter = DatePickerCustomerFormatter(),
+				)
+			}
 		)
 	}
 }

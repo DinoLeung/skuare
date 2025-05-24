@@ -26,6 +26,8 @@ fun ReminderCard(
 
 	toggleChange: (Boolean) -> Unit = {},
 	recurrenceChange: (ReminderRecurrence) -> Unit = {},
+	startDateChange: (LocalDate) -> Unit = {},
+	endDateChange: (LocalDate) -> Unit = {},
 
 	configEnabled: Boolean = true,
 	configError: Throwable? = null,
@@ -71,28 +73,55 @@ fun ReminderCard(
 				Box(modifier = Modifier.weight(2f)) {
 					when (reminder.config.recurrence) {
 						ReminderRecurrence.ONCE -> {
-							// TODO: single date picket
-							Text(text = reminder.config.recurrenceDisplayString)
+							DateSinglePickerField(
+								value = reminder.config.startDate,
+								onValueChange = {
+									startDateChange(it)
+									endDateChange(it)
+								},
+								modifier = Modifier.fillMaxWidth(),
+								label = "On",
+								enabled = true
+							)
 						}
 
 						ReminderRecurrence.REPEAT_DAILY -> {
-							// TODO: date range picket
-							Text(text = reminder.config.recurrenceDisplayString)
+							Row(
+								horizontalArrangement = Arrangement.spacedBy(8.dp),
+							) {
+								DateSinglePickerField(
+									value = reminder.config.startDate,
+									onValueChange = { startDateChange(it) },
+									modifier = Modifier.weight(1f),
+									label = "From",
+									enabled = true
+								)
+								DateSinglePickerField(
+									value = reminder.config.endDate,
+									onValueChange = { endDateChange(it) },
+									modifier = Modifier.weight(1f),
+									label = "To",
+									enabled = true
+								)
+							}
 						}
 
 						ReminderRecurrence.REPEAT_WEEKLY -> {
 							// TODO: weekdays multi-select
-							Text(text = reminder.config.recurrenceDisplayString)
+							Text(text = reminder.config.daysOfWeekDisplayString)
 						}
 
-						ReminderRecurrence.REPEAT_MONTHLY -> {
-							// TODO: single date picket, only date
-							Text(text = reminder.config.recurrenceDisplayString)
-						}
-
-						ReminderRecurrence.REPEAT_YEARLY -> {
-							// TODO: single date picket, date month
-							Text(text = reminder.config.recurrenceDisplayString)
+						ReminderRecurrence.REPEAT_MONTHLY, ReminderRecurrence.REPEAT_YEARLY -> {
+							DateSinglePickerField(
+								value = reminder.config.startDate,
+								onValueChange = {
+									startDateChange(it)
+									endDateChange(it)
+								},
+								modifier = Modifier.fillMaxWidth(),
+								label = "Starts On",
+								enabled = true
+							)
 						}
 					}
 				}
@@ -107,7 +136,7 @@ fun ReminderCard(
 private fun ReminderCardPreview() {
 	Column {
 		ReminderCard(
-			reminder = xyz.d1n0.lib.model.Reminder(
+			reminder = Reminder(
 				ReminderTitle("Reminder once"),
 				ReminderConfig(
 					enable = true,
@@ -119,7 +148,7 @@ private fun ReminderCardPreview() {
 			)
 		)
 		ReminderCard(
-			reminder = xyz.d1n0.lib.model.Reminder(
+			reminder = Reminder(
 				ReminderTitle("Reminder Daily"),
 				ReminderConfig(
 					enable = true,
@@ -131,7 +160,7 @@ private fun ReminderCardPreview() {
 			)
 		)
 		ReminderCard(
-			reminder = xyz.d1n0.lib.model.Reminder(
+			reminder = Reminder(
 				ReminderTitle("Reminder weekly"),
 				ReminderConfig(
 					enable = true,
@@ -147,7 +176,7 @@ private fun ReminderCardPreview() {
 			)
 		)
 		ReminderCard(
-			reminder = xyz.d1n0.lib.model.Reminder(
+			reminder = Reminder(
 				ReminderTitle("Reminder monthly"),
 				ReminderConfig(
 					enable = true,
@@ -159,7 +188,7 @@ private fun ReminderCardPreview() {
 			)
 		)
 		ReminderCard(
-			reminder = xyz.d1n0.lib.model.Reminder(
+			reminder = Reminder(
 				ReminderTitle("Reminder yearly"),
 				ReminderConfig(
 					enable = true,

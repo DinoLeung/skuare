@@ -62,5 +62,21 @@ fun Month.abbreviatedName(): String = when (this) {
 	Month.DECEMBER -> "Dec"
 }
 
-fun LocalDate.toDayMonth() = "${this.dayOfMonth} ${this.month.abbreviatedName()}"
+fun Month.fullName(): String = when (this) {
+	Month.JANUARY -> "January"
+	Month.FEBRUARY -> "February"
+	Month.MARCH -> "March"
+	Month.APRIL -> "April"
+	Month.MAY -> "May"
+	Month.JUNE -> "June"
+	Month.JULY -> "July"
+	Month.AUGUST -> "August"
+	Month.SEPTEMBER -> "September"
+	Month.OCTOBER -> "October"
+	Month.NOVEMBER -> "November"
+	Month.DECEMBER -> "December"
+}
+
+fun LocalDate.toMonthYear() = "${this.month.fullName()} ${this.year}"
+fun LocalDate.toDayMonth() = "${this.dayOfMonth} ${this.month.fullName()}"
 fun LocalDate.toDayMonthYear() = "${this.dayOfMonth} ${this.month.abbreviatedName()} ${this.year}"
