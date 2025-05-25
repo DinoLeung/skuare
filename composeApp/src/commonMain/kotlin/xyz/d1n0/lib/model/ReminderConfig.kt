@@ -50,6 +50,8 @@ data class ReminderConfig(
 			KotlinClock.System.now().toLocalDateTime(KotlinTimeZone.currentSystemDefault()).date
 		if (startDate < today) startDate = today
 		if (endDate < startDate) endDate = startDate
+//		if (recurrence == ReminderRecurrence.REPEAT_WEEKLY)
+//			require(daysOfWeek.isNotEmpty()) { "Days of week cannot be empty" }
 	}
 
 	val bytes: ByteArray

@@ -18,7 +18,7 @@ import xyz.d1n0.lib.helper.toDayMonthYear
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DateSinglePickerField(
+fun SingleDatePickerField(
 	value: LocalDate,
 	onValueChange: (LocalDate) -> Unit,
 	label: String,
@@ -53,7 +53,7 @@ fun DateSinglePickerField(
 
 	}
 
-	DateSinglePickerDialog(
+	SingleDatePickerDialog(
 		date = value,
 		visible = expanded,
 		onConfirm = {
@@ -66,7 +66,7 @@ fun DateSinglePickerField(
 
 @Preview
 @Composable
-private fun DateSinglePickerFieldPreview() {
+private fun SingleDatePickerFieldPreview() {
 	var date by remember { mutableStateOf(LocalDate(2025, 6, 9)) }
 
 	Column(
@@ -74,7 +74,7 @@ private fun DateSinglePickerFieldPreview() {
 		horizontalAlignment = Alignment.Start,
 		verticalArrangement = Arrangement.spacedBy(8.dp)
 	) {
-		DateSinglePickerField(
+		SingleDatePickerField(
 			value = date,
 			onValueChange = { date = it },
 			label = "on",
@@ -87,7 +87,7 @@ private fun DateSinglePickerFieldPreview() {
 			enabled = false,
 			modifier = Modifier.fillMaxWidth()
 		)
-		DateSinglePickerField(
+		SingleDatePickerField(
 			value = date,
 			onValueChange = { date = it },
 			label = "on",

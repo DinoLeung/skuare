@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -20,6 +21,12 @@ import xyz.d1n0.ui.component.SaveScreenScaffold
 fun RemindersScreen() {
 	val viewModel = koinViewModel<RemindersScreenViewModel>()
 	val state by viewModel.uiState.collectAsState()
+
+	LaunchedEffect(Unit) {
+		if (state.isTitlesInitialized == false || state.isConfigsInitialized == false) viewModel.onEvent(
+			RemindersUiEvent.RequestReminders
+		)
+	}
 
 	SaveScreenScaffold(
 		saveFabVisible = state.hasUpdates &&
@@ -39,33 +46,28 @@ fun RemindersScreen() {
 						modifier = Modifier.fillMaxWidth(),
 						reminder = reminder,
 						titleEnabled = state.isTitlesInitialized && state.isLoading == false,
-						onTitleChange = {
-							viewModel.onEvent(
-								RemindersUiEvent.ReminderTitleChange(
-									index = index,
-									title = it
-								)
-							)
-						},
 						titleIsError = state.pendingTitleErrors[index] != null,
-						titleSupportingText = {
-							state.pendingTitleErrors[index]?.message?.let { Text(it) }
+						titleSupportingText = { state.pendingTitleErrors[index]?.message?.let { Text(it) } },
+						configEnabled = state.isConfigsInitialized && state.isLoading == false,
+						configError = state.pendingConfigErrors[index],
+						onTitleChange = {
+							viewModel.onEvent(RemindersUiEvent.ReminderTitleChange(index = index, title = it))
 						},
-
 						toggleChange = {
-							viewModel.onEvent(
-								RemindersUiEvent.ReminderToggle(
-									index = index,
-									enable = it
-								)
-							)
+							viewModel.onEvent(RemindersUiEvent.ReminderToggle(index = index, enable = it))
 						},
 						recurrenceChange = {
 							viewModel.onEvent(RemindersUiEvent.ReminderRecurrenceChange(index = index, recurrence = it))
 						},
-
-						configEnabled = state.isConfigsInitialized && state.isLoading == false,
-						configError = state.pendingConfigErrors[index]
+						startDateChange = {
+							viewModel.onEvent(RemindersUiEvent.ReminderStartDateChange(index = index, date = it))
+						},
+						endDateChange = {
+							viewModel.onEvent(RemindersUiEvent.ReminderEndDateChange(index = index, date = it))
+						},
+						daysOfWeekChange = {
+							viewModel.onEvent(RemindersUiEvent.ReminderDaysChange(index = index, days = it))
+						},
 					)
 				}
 			}

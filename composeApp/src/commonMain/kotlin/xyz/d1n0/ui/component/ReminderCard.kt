@@ -19,15 +19,17 @@ import xyz.d1n0.lib.model.ReminderTitle
 fun ReminderCard(
 	modifier: Modifier = Modifier,
 	reminder: Reminder,
-	onTitleChange: (String) -> Unit = {},
+
+	onTitleChange: (String) -> Unit,
 	titleEnabled: Boolean = true,
 	titleIsError: Boolean = false,
 	titleSupportingText: @Composable (() -> Unit)? = null,
 
-	toggleChange: (Boolean) -> Unit = {},
-	recurrenceChange: (ReminderRecurrence) -> Unit = {},
-	startDateChange: (LocalDate) -> Unit = {},
-	endDateChange: (LocalDate) -> Unit = {},
+	toggleChange: (Boolean) -> Unit,
+	recurrenceChange: (ReminderRecurrence) -> Unit,
+	startDateChange: (LocalDate) -> Unit,
+	endDateChange: (LocalDate) -> Unit,
+	daysOfWeekChange: (Set<ReminderDayOfWeek>) -> Unit,
 
 	configEnabled: Boolean = true,
 	configError: Throwable? = null,
@@ -64,7 +66,7 @@ fun ReminderCard(
 				Box(modifier = Modifier.weight(1f)) {
 					EnumDropdown(
 						selectedOption = reminder.config.recurrence,
-						options = ReminderRecurrence.values(),
+						options = ReminderRecurrence.values().toSet(),
 						label = "Recurrence",
 						onOptionSelected = recurrenceChange,
 						enabled = configEnabled,
@@ -73,7 +75,7 @@ fun ReminderCard(
 				Box(modifier = Modifier.weight(2f)) {
 					when (reminder.config.recurrence) {
 						ReminderRecurrence.ONCE -> {
-							DateSinglePickerField(
+							SingleDatePickerField(
 								value = reminder.config.startDate,
 								onValueChange = {
 									startDateChange(it)
@@ -81,7 +83,7 @@ fun ReminderCard(
 								},
 								modifier = Modifier.fillMaxWidth(),
 								label = "On",
-								enabled = true
+								enabled = configEnabled
 							)
 						}
 
@@ -89,30 +91,35 @@ fun ReminderCard(
 							Row(
 								horizontalArrangement = Arrangement.spacedBy(8.dp),
 							) {
-								DateSinglePickerField(
+								SingleDatePickerField(
 									value = reminder.config.startDate,
 									onValueChange = { startDateChange(it) },
 									modifier = Modifier.weight(1f),
 									label = "From",
-									enabled = true
+									enabled = configEnabled
 								)
-								DateSinglePickerField(
+								SingleDatePickerField(
 									value = reminder.config.endDate,
 									onValueChange = { endDateChange(it) },
 									modifier = Modifier.weight(1f),
 									label = "To",
-									enabled = true
+									enabled = configEnabled
 								)
 							}
 						}
 
 						ReminderRecurrence.REPEAT_WEEKLY -> {
-							// TODO: weekdays multi-select
-							Text(text = reminder.config.daysOfWeekDisplayString)
+							EnumDropdown(
+								selectedOptions = reminder.config.daysOfWeek,
+								options = ReminderDayOfWeek.values().toSet(),
+								onOptionSelected = { daysOfWeekChange(it) },
+								label = "On",
+								enabled = configEnabled
+							)
 						}
 
 						ReminderRecurrence.REPEAT_MONTHLY, ReminderRecurrence.REPEAT_YEARLY -> {
-							DateSinglePickerField(
+							SingleDatePickerField(
 								value = reminder.config.startDate,
 								onValueChange = {
 									startDateChange(it)
@@ -120,7 +127,7 @@ fun ReminderCard(
 								},
 								modifier = Modifier.fillMaxWidth(),
 								label = "Starts On",
-								enabled = true
+								enabled = configEnabled
 							)
 						}
 					}
@@ -145,7 +152,13 @@ private fun ReminderCardPreview() {
 					endDate = LocalDate(year = 2025, monthNumber = 1, dayOfMonth = 1),
 					daysOfWeek = setOf<ReminderDayOfWeek>(),
 				)
-			)
+			),
+			onTitleChange = {},
+			toggleChange = {},
+			recurrenceChange = {},
+			startDateChange = {},
+			endDateChange = {},
+			daysOfWeekChange = {},
 		)
 		ReminderCard(
 			reminder = Reminder(
@@ -157,7 +170,13 @@ private fun ReminderCardPreview() {
 					endDate = LocalDate(year = 2025, monthNumber = 12, dayOfMonth = 31),
 					daysOfWeek = setOf<ReminderDayOfWeek>(),
 				)
-			)
+			),
+			onTitleChange = {},
+			toggleChange = {},
+			recurrenceChange = {},
+			startDateChange = {},
+			endDateChange = {},
+			daysOfWeekChange = {},
 		)
 		ReminderCard(
 			reminder = Reminder(
@@ -173,7 +192,13 @@ private fun ReminderCardPreview() {
 						ReminderDayOfWeek.FRIDAY
 					)
 				)
-			)
+			),
+			onTitleChange = {},
+			toggleChange = {},
+			recurrenceChange = {},
+			startDateChange = {},
+			endDateChange = {},
+			daysOfWeekChange = {},
 		)
 		ReminderCard(
 			reminder = Reminder(
@@ -185,7 +210,13 @@ private fun ReminderCardPreview() {
 					endDate = LocalDate(year = 2025, monthNumber = 6, dayOfMonth = 13),
 					daysOfWeek = setOf<ReminderDayOfWeek>(),
 				)
-			)
+			),
+			onTitleChange = {},
+			toggleChange = {},
+			recurrenceChange = {},
+			startDateChange = {},
+			endDateChange = {},
+			daysOfWeekChange = {},
 		)
 		ReminderCard(
 			reminder = Reminder(
@@ -197,7 +228,13 @@ private fun ReminderCardPreview() {
 					endDate = LocalDate(year = 2025, monthNumber = 6, dayOfMonth = 9),
 					daysOfWeek = setOf<ReminderDayOfWeek>(),
 				)
-			)
+			),
+			onTitleChange = {},
+			toggleChange = {},
+			recurrenceChange = {},
+			startDateChange = {},
+			endDateChange = {},
+			daysOfWeekChange = {},
 		)
 	}
 }

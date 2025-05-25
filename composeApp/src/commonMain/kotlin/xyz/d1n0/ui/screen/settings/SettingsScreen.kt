@@ -1,22 +1,11 @@
 package xyz.d1n0.ui.screen.settings
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -25,11 +14,7 @@ import xyz.d1n0.lib.constant.BacklightDuration
 import xyz.d1n0.lib.constant.ConnectionTimeout
 import xyz.d1n0.lib.constant.DateFormat
 import xyz.d1n0.lib.constant.WeekdayLanguage
-import xyz.d1n0.ui.component.CardView
-import xyz.d1n0.ui.component.EnumDropdown
-import xyz.d1n0.ui.component.SaveScreenScaffold
-import xyz.d1n0.ui.component.SliderField
-import xyz.d1n0.ui.component.SwitchField
+import xyz.d1n0.ui.component.*
 
 @Composable
 fun SettingsScreen() {
@@ -86,7 +71,7 @@ fun SettingsScreen() {
 									viewModel.onEvent(SettingsUiEvent.DateFormatChange(it))
 								},
 								enabled = state.isWatchSettingsInitialized && state.isLoading == false,
-								options = DateFormat.values(),
+								options = DateFormat.values().toSet(),
 								modifier = Modifier.weight(1f)
 							)
 							EnumDropdown(
@@ -96,7 +81,7 @@ fun SettingsScreen() {
 									viewModel.onEvent(SettingsUiEvent.WeekdayLanguageChange(it))
 								},
 								enabled = state.isWatchSettingsInitialized && state.isLoading == false,
-								options = WeekdayLanguage.values(),
+								options = WeekdayLanguage.values().toSet(),
 								modifier = Modifier.weight(1f)
 							)
 						}
@@ -137,7 +122,7 @@ fun SettingsScreen() {
 								)
 							},
 							enabled = state.isWatchSettingsInitialized && state.isLoading == false,
-							options = BacklightDuration.values(),
+							options = BacklightDuration.values().toSet(),
 							modifier = Modifier.fillMaxWidth()
 						)
 					}
@@ -232,7 +217,7 @@ fun SettingsScreen() {
 								)
 							},
 							enabled = state.isConnectionSettingsInitialized && state.isLoading == false,
-							options = ConnectionTimeout.values(),
+							options = ConnectionTimeout.values().toSet(),
 							modifier = Modifier.fillMaxWidth()
 						)
 					}
