@@ -52,13 +52,13 @@ data class RemindersSettings(
 
 	val reminderTitlePackets: List<ByteArray>
 		get() = reminderTitles.mapIndexed { index, title ->
-			requireNotNull(title) { "Reminder title at position $index must be initialized" }
-			byteArrayOf(OpCode.REMINDER_TITLE.byte, index.plus(1).toByte()) + title.bytes
+			val value = requireNotNull(title) { "Reminder title at position $index must be initialized" }
+			byteArrayOf(OpCode.REMINDER_TITLE.byte, index.plus(1).toByte()) + value.bytes
 		}
 
 	val reminderConfigPackets: List<ByteArray>
 		get() = reminderConfigs.mapIndexed { index, config ->
-			requireNotNull(config) { "Reminder config at position $index must be initialized" }
-			byteArrayOf(OpCode.REMINDER_TITLE.byte, index.plus(1).toByte()) + config.bytes
+			val value = requireNotNull(config) { "Reminder config at position $index must be initialized" }
+			byteArrayOf(OpCode.REMINDER_CONFIG.byte, index.plus(1).toByte()) + value.bytes
 		}
 }

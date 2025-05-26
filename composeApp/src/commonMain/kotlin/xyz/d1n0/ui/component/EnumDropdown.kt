@@ -39,14 +39,18 @@ fun <T : Enum<T>> EnumDropdown(
 	selectedOptions: Set<T>,
 	options: Set<T>,
 	onOptionSelected: (Set<T>) -> Unit,
+	allSelectedText: String = "",
+	noneSelectedText: String = "",
 	label: String,
 	enabled: Boolean = true,
 	modifier: Modifier = Modifier,
 ) {
 	BaseEnumDropdown(
-		value =
-			if (selectedOptions.size == options.size) "Every Day"
-			else selectedOptions.sorted().joinToString(),
+		value = when (selectedOptions.size) {
+			0 -> noneSelectedText
+			options.size -> allSelectedText
+			else -> selectedOptions.sorted().joinToString()
+		},
 		options = options,
 		selectedChecker = { it in selectedOptions },
 		onItemClick = { option ->
@@ -84,10 +88,10 @@ private fun <T : Enum<T>> BaseEnumDropdown(
 		OutlinedTextField(
 			value = value,
 			singleLine = true,
+			readOnly = true,
 			enabled = enabled,
 			onValueChange = { /* no-op */ },
 			label = { Text(label) },
-			readOnly = true,
 			trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
 			colors = ExposedDropdownMenuDefaults.textFieldColors(),
 			modifier = Modifier

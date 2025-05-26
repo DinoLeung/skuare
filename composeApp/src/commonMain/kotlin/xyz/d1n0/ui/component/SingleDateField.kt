@@ -33,11 +33,12 @@ fun SingleDatePickerField(
 	) {
 		OutlinedTextField(
 			value = value.toDayMonthYear(),
+			singleLine = true,
+			readOnly = true,
+			enabled = enabled,
 			onValueChange = { /* no-op */ },
 //			textStyle = TextStyle(fontSize = TextUnit(value = 3.5f, type = TextUnitType.Em)),
 			label = { Text(label) },
-			readOnly = true,
-			enabled = enabled,
 			leadingIcon = leadingIcon,
 			colors = ExposedDropdownMenuDefaults.textFieldColors(),
 			modifier = Modifier.fillMaxWidth()

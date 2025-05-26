@@ -13,14 +13,7 @@ import org.koin.core.component.inject
 import xyz.d1n0.lib.constant.ReminderDayOfWeek
 import xyz.d1n0.lib.constant.ReminderRecurrence
 import xyz.d1n0.lib.helper.replaceAt
-import xyz.d1n0.lib.model.Reminder
-import xyz.d1n0.lib.model.ReminderConfig
-import xyz.d1n0.lib.model.ReminderTitle
-import xyz.d1n0.lib.model.RemindersSettings
-import xyz.d1n0.lib.model.Watch
-import xyz.d1n0.lib.model.requestReminderConfigs
-import xyz.d1n0.lib.model.requestReminderTitles
-import xyz.d1n0.lib.model.writeReminderConfigs
+import xyz.d1n0.lib.model.*
 import xyz.d1n0.ui.boilerplate.updateCatching
 
 data class ReminderUiState(
@@ -166,12 +159,15 @@ class RemindersScreenViewModel : ViewModel(), KoinComponent {
 				isConfigsLoading = _uiState.value.isReminderConfigsUpdated,
 			)
 		}
-		watch.writeReminderConfigs(
-			RemindersSettings(
-				reminderTitles = _uiState.value.pendingTitles,
-				reminderConfigs = _uiState.value.pendingConfigs,
-			)
-		)
+		RemindersSettings(
+			reminderTitles = _uiState.value.pendingTitles,
+			reminderConfigs = _uiState.value.pendingConfigs,
+		).let {
+			if (_uiState.value.isReminderTitlesUpdated)
+				watch.writeReminderTitles(it)
+			if (_uiState.value.isReminderConfigsUpdated)
+				watch.writeReminderConfigs(it)
+		}
 	}
 
 	private fun onReminderToggle(index: Int, enable: Boolean) = _uiState.updateCatching(

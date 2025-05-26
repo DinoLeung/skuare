@@ -18,6 +18,8 @@ data class ReminderTitle(val value: String) {
 	}
 
 	val bytes: ByteArray
-		get() = value.toCasioByteArray()
+		get() = value.toCasioByteArray().let {
+			it + ByteArray(18 - it.size) { 0x00.toByte() }
+		}
 
 }

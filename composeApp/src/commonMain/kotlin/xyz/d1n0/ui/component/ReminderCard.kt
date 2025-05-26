@@ -113,6 +113,8 @@ fun ReminderCard(
 								selectedOptions = reminder.config.daysOfWeek,
 								options = ReminderDayOfWeek.values().toSet(),
 								onOptionSelected = { daysOfWeekChange(it) },
+								allSelectedText = "Every day",
+								noneSelectedText = "Never",
 								label = "On",
 								enabled = configEnabled
 							)
