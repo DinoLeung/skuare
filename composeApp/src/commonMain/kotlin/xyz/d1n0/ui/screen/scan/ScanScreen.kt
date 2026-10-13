@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -19,7 +20,6 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Composable
-@Preview
 fun ScanScreen(
 	onConnect: () -> Unit,
 ) {
@@ -31,6 +31,19 @@ fun ScanScreen(
 		viewModel.onEvent(ScanUiEvent.RequestPermissions)
 	}
 
+	ScanScreenContent(
+		state = state,
+		onEvent = { viewModel.onEvent(it) },
+		onOpenSettings = viewModel.permissionsController::openAppSettings,
+	)
+}
+
+@Composable
+private fun ScanScreenContent(
+	state: ScanUiState,
+	onEvent: (ScanUiEvent) -> Unit,
+	onOpenSettings: () -> Unit,
+) {
 	Column(
 		modifier = Modifier.fillMaxSize(),
 		horizontalAlignment = Alignment.CenterHorizontally,
@@ -38,19 +51,35 @@ fun ScanScreen(
 	) {
 		if (state.scanPermissionState == PermissionState.Granted && state.connectPermissionState == PermissionState.Granted) {
 			if (state.isScanning) Button(
-				onClick = { viewModel.onEvent(ScanUiEvent.StopScanning) },
+				onClick = { onEvent(ScanUiEvent.StopScanning) },
 				enabled = state.isScanning,
 			) { Text("Stop!") }
 			else Button(
-				onClick = { viewModel.onEvent(ScanUiEvent.Scan) },
+				onClick = { onEvent(ScanUiEvent.Scan) },
 				enabled = !state.isScanning,
 			) { Text("Scan!") }
 		} else {
 			Button(
-				onClick = viewModel.permissionsController::openAppSettings,
+				onClick = onOpenSettings,
 			) {
 				Text("Grant permissions from app settings")
 			}
 		}
+	}
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ScanScreenPreview() {
+	MaterialTheme {
+		ScanScreenContent(
+			state = ScanUiState(
+				isScanning = false,
+				scanPermissionState = PermissionState.Granted,
+				connectPermissionState = PermissionState.Granted,
+			),
+			onEvent = {},
+			onOpenSettings = {},
+		)
 	}
 }

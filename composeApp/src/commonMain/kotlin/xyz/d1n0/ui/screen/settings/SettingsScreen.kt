@@ -3,11 +3,13 @@ package xyz.d1n0.ui.screen.settings
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.koin.compose.viewmodel.koinViewModel
 import xyz.d1n0.lib.constant.BacklightDuration
@@ -27,6 +29,17 @@ fun SettingsScreen() {
 		if (state.isConnectionSettingsInitialized == false) viewModel.onEvent(SettingsUiEvent.RequestConnectionSettings)
 	}
 
+	SettingsScreenContent(
+		state = state,
+		onEvent = { viewModel.onEvent(it) },
+	)
+}
+
+@Composable
+private fun SettingsScreenContent(
+	state: SettingsUiState,
+	onEvent: (SettingsUiEvent) -> Unit,
+) {
 	var nameFieldValue by remember { mutableStateOf(TextFieldValue(text = state.savedName.value)) }
 	LaunchedEffect(state.savedName) {
 		nameFieldValue = nameFieldValue.copy(state.savedName.value)
@@ -36,7 +49,7 @@ fun SettingsScreen() {
 		saveFabVisible = state.hasUpdates &&
 				state.isLoading == false &&
 				state.hasErrors == false,
-		saveFabOnClick = { viewModel.onEvent(SettingsUiEvent.SaveSettings) },
+		saveFabOnClick = { onEvent(SettingsUiEvent.SaveSettings) },
 	) {
 		LazyColumn(
 			state = rememberLazyListState(),
@@ -56,7 +69,7 @@ fun SettingsScreen() {
 						SwitchField(
 							title = "24 Hour format",
 							check = state.pendingWatchSettings.preferences.is24HourTime,
-							onCheckedChange = { viewModel.onEvent(SettingsUiEvent.Is24HourChange(it)) },
+							onCheckedChange = { onEvent(SettingsUiEvent.Is24HourChange(it)) },
 							enabled = state.isWatchSettingsInitialized && state.isLoading == false,
 							modifier = Modifier.fillMaxWidth()
 						)
@@ -68,7 +81,7 @@ fun SettingsScreen() {
 								label = "Date Format",
 								selectedOption = state.pendingWatchSettings.dateFormat,
 								onOptionSelected = {
-									viewModel.onEvent(SettingsUiEvent.DateFormatChange(it))
+									onEvent(SettingsUiEvent.DateFormatChange(it))
 								},
 								enabled = state.isWatchSettingsInitialized && state.isLoading == false,
 								options = DateFormat.values().toSet(),
@@ -78,7 +91,7 @@ fun SettingsScreen() {
 								label = "Weekday Language",
 								selectedOption = state.pendingWatchSettings.weekdayLanguage,
 								onOptionSelected = {
-									viewModel.onEvent(SettingsUiEvent.WeekdayLanguageChange(it))
+									onEvent(SettingsUiEvent.WeekdayLanguageChange(it))
 								},
 								enabled = state.isWatchSettingsInitialized && state.isLoading == false,
 								options = WeekdayLanguage.values().toSet(),
@@ -102,7 +115,7 @@ fun SettingsScreen() {
 							title = "Auto Backlight",
 							check = state.pendingWatchSettings.preferences.autoBacklight,
 							onCheckedChange = {
-								viewModel.onEvent(
+								onEvent(
 									SettingsUiEvent.AutoBacklightChange(
 										it
 									)
@@ -115,7 +128,7 @@ fun SettingsScreen() {
 							label = "Backlight Duration",
 							selectedOption = state.pendingWatchSettings.backlightDuration,
 							onOptionSelected = {
-								viewModel.onEvent(
+								onEvent(
 									SettingsUiEvent.BacklightDurationChange(
 										it
 									)
@@ -138,7 +151,7 @@ fun SettingsScreen() {
 						SwitchField(
 							title = "Auto Time Adjustment",
 							check = state.pendingConnectionSettings.autoSyncEnable,
-							onCheckedChange = { viewModel.onEvent(SettingsUiEvent.AutoSyncChange(it)) },
+							onCheckedChange = { onEvent(SettingsUiEvent.AutoSyncChange(it)) },
 							enabled = state.isConnectionSettingsInitialized && state.isLoading == false,
 							modifier = Modifier.fillMaxWidth()
 						)
@@ -148,7 +161,7 @@ fun SettingsScreen() {
 							enabled = state.isConnectionSettingsInitialized && state.isLoading == false,
 							range = 0..59,
 							onValueChange = {
-								viewModel.onEvent(
+								onEvent(
 									SettingsUiEvent.AutoSyncDelayChange(
 										it
 									)
@@ -182,7 +195,7 @@ fun SettingsScreen() {
 							},
 							onValueChange = {
 								nameFieldValue = it
-								viewModel.onEvent(SettingsUiEvent.NameInputChange(it.text))
+								onEvent(SettingsUiEvent.NameInputChange(it.text))
 							},
 							modifier = Modifier.fillMaxWidth()
 						)
@@ -190,7 +203,7 @@ fun SettingsScreen() {
 							title = "Power Saving Mode",
 							check = state.pendingWatchSettings.preferences.powerSaving,
 							onCheckedChange = {
-								viewModel.onEvent(
+								onEvent(
 									SettingsUiEvent.PowerSavingChange(
 										it
 									)
@@ -202,7 +215,7 @@ fun SettingsScreen() {
 						SwitchField(
 							title = "Mute Button Tone",
 							check = state.pendingWatchSettings.preferences.isToneMuted,
-							onCheckedChange = { viewModel.onEvent(SettingsUiEvent.IsMutedChange(it)) },
+							onCheckedChange = { onEvent(SettingsUiEvent.IsMutedChange(it)) },
 							enabled = state.isWatchSettingsInitialized && state.isLoading == false,
 							modifier = Modifier.fillMaxWidth()
 						)
@@ -210,7 +223,7 @@ fun SettingsScreen() {
 							label = "Connection Timeout",
 							selectedOption = state.pendingConnectionSettings.connectionTimeout,
 							onOptionSelected = {
-								viewModel.onEvent(
+								onEvent(
 									SettingsUiEvent.ConnectionTimeoutChange(
 										it
 									)
@@ -224,5 +237,23 @@ fun SettingsScreen() {
 				}
 			}
 		}
+	}
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SettingsScreenPreview() {
+	MaterialTheme {
+		SettingsScreenContent(
+			state = SettingsUiState(
+				isNameInitialized = true,
+				isNameLoading = false,
+				isWatchSettingsInitialized = true,
+				isWatchSettingsLoading = false,
+				isConnectionSettingsInitialized = true,
+				isConnectionSettingsLoading = false,
+			),
+			onEvent = {},
+		)
 	}
 }
