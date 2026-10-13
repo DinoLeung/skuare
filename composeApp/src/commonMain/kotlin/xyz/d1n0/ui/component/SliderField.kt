@@ -10,7 +10,7 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.Preview
 import xyz.d1n0.lib.constant.AutoSyncDelay
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,7 +55,7 @@ fun SliderField(
 			OutlinedTextField(
 				value = textFieldValue,
 				onValueChange = {
-					textFieldValue = it.copy(selection = TextRange(it.text.toString().length))
+					textFieldValue = it.copy(selection = TextRange(it.text.length))
 					if (it.text.isNotEmpty())
 						onValueChange(it.text.toInt())
 				},

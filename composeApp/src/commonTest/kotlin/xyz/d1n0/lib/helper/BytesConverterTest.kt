@@ -3,6 +3,7 @@ package xyz.d1n0.helper
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
+import kotlinx.datetime.number
 import xyz.d1n0.lib.helper.fromBcdByte
 import xyz.d1n0.lib.helper.fromBcdByteArray
 import xyz.d1n0.lib.helper.fromByteArray
@@ -88,7 +89,7 @@ class BytesConverterTest {
 		assertEquals(9, bytes.size)
 		val expectedYearBytes = localDateTime.year.toShort().toLittleEndianByteArray()
 		assertContentEquals(expectedYearBytes, bytes.sliceArray(0..1))
-		assertEquals(localDateTime.monthNumber.toByte(), bytes[2])
+		assertEquals(localDateTime.month.number.toByte(), bytes[2])
 	}
 
 	@Test

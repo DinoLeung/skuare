@@ -3,9 +3,9 @@ package xyz.d1n0
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import dev.icerock.moko.permissions.compose.rememberPermissionsControllerFactory
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinApplication
 import xyz.d1n0.ui.navigation.RootNavGraph
 
@@ -19,7 +19,7 @@ fun App() {
 			remember { permissionsControllerFactory.createPermissionsController() }
 
 		KoinApplication(
-			application = KoinApp(
+			configuration = KoinApp(
 				rootNavHostController = rememberNavController(),
 				permissionsController = permissionsController,
 			)
@@ -28,4 +28,3 @@ fun App() {
 		}
 	}
 }
-

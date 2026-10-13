@@ -78,6 +78,6 @@ fun Month.fullName(): String = when (this) {
 }
 
 fun LocalDate.toMonthYear() = "${this.month.fullName()} ${this.year}"
-fun LocalDate.toDayMonth() = "${this.dayOfMonth} ${this.month.fullName()}"
+fun LocalDate.toDayMonth() = "${this.day} ${this.month.fullName()}"
 fun LocalDate.toDayMonthYear() =
-	"${this.dayOfMonth} ${this.month.abbreviatedName()} ${(this.year - 2000).toString().padStart(2, '0')}"
+	"${this.day} ${this.month.abbreviatedName()} ${(this.year - 2000).toString().padStart(2, '0')}"

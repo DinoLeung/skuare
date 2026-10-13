@@ -7,7 +7,7 @@ import xyz.d1n0.lib.constant.ReminderDayOfWeek
 import xyz.d1n0.lib.constant.ReminderRecurrence
 import xyz.d1n0.lib.helper.fromBcdByteArray
 import xyz.d1n0.lib.helper.toBcdByteArray
-import kotlinx.datetime.Clock as KotlinClock
+import kotlin.time.Clock as KotlinClock
 import kotlinx.datetime.TimeZone as KotlinTimeZone
 
 data class ReminderConfig(

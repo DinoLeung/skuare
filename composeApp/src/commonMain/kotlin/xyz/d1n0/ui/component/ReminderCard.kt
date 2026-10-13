@@ -8,7 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.LocalDate
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.Preview
 import xyz.d1n0.lib.constant.ReminderDayOfWeek
 import xyz.d1n0.lib.constant.ReminderRecurrence
 import xyz.d1n0.lib.model.Reminder
@@ -150,8 +150,8 @@ private fun ReminderCardPreview() {
 				ReminderConfig(
 					enable = true,
 					recurrence = ReminderRecurrence.ONCE,
-					startDate = LocalDate(year = 2025, monthNumber = 1, dayOfMonth = 1),
-					endDate = LocalDate(year = 2025, monthNumber = 1, dayOfMonth = 1),
+					startDate = LocalDate(year = 2025, month = 1, day = 1),
+					endDate = LocalDate(year = 2025, month = 1, day = 1),
 					daysOfWeek = setOf<ReminderDayOfWeek>(),
 				)
 			),
@@ -168,8 +168,8 @@ private fun ReminderCardPreview() {
 				ReminderConfig(
 					enable = true,
 					recurrence = ReminderRecurrence.REPEAT_DAILY,
-					startDate = LocalDate(year = 2025, monthNumber = 1, dayOfMonth = 1),
-					endDate = LocalDate(year = 2025, monthNumber = 12, dayOfMonth = 31),
+					startDate = LocalDate(year = 2025, month = 1, day = 1),
+					endDate = LocalDate(year = 2025, month = 12, day = 31),
 					daysOfWeek = setOf<ReminderDayOfWeek>(),
 				)
 			),
@@ -186,8 +186,8 @@ private fun ReminderCardPreview() {
 				ReminderConfig(
 					enable = true,
 					recurrence = ReminderRecurrence.REPEAT_WEEKLY,
-					startDate = LocalDate(year = 2025, monthNumber = 1, dayOfMonth = 1),
-					endDate = LocalDate(year = 2025, monthNumber = 1, dayOfMonth = 1),
+					startDate = LocalDate(year = 2025, month = 1, day = 1),
+					endDate = LocalDate(year = 2025, month = 1, day = 1),
 					daysOfWeek = setOf(
 						ReminderDayOfWeek.MONDAY,
 						ReminderDayOfWeek.WEDNESDAY,
@@ -208,8 +208,8 @@ private fun ReminderCardPreview() {
 				ReminderConfig(
 					enable = true,
 					recurrence = ReminderRecurrence.REPEAT_MONTHLY,
-					startDate = LocalDate(year = 2025, monthNumber = 6, dayOfMonth = 13),
-					endDate = LocalDate(year = 2025, monthNumber = 6, dayOfMonth = 13),
+					startDate = LocalDate(year = 2025, month = 6, day = 13),
+					endDate = LocalDate(year = 2025, month = 6, day = 13),
 					daysOfWeek = setOf<ReminderDayOfWeek>(),
 				)
 			),
@@ -226,8 +226,8 @@ private fun ReminderCardPreview() {
 				ReminderConfig(
 					enable = true,
 					recurrence = ReminderRecurrence.REPEAT_YEARLY,
-					startDate = LocalDate(year = 2025, monthNumber = 6, dayOfMonth = 9),
-					endDate = LocalDate(year = 2025, monthNumber = 6, dayOfMonth = 9),
+					startDate = LocalDate(year = 2025, month = 6, day = 9),
+					endDate = LocalDate(year = 2025, month = 6, day = 9),
 					daysOfWeek = setOf<ReminderDayOfWeek>(),
 				)
 			),

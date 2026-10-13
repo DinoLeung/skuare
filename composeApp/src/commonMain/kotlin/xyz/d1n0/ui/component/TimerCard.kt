@@ -6,7 +6,7 @@ import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.Preview
 import xyz.d1n0.lib.constant.TimerStatus
 import xyz.d1n0.lib.model.Timer
 import kotlin.time.Duration

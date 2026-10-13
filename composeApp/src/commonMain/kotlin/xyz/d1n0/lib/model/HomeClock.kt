@@ -6,7 +6,7 @@ import xyz.d1n0.lib.constant.OpCode
 import xyz.d1n0.lib.helper.toByteArray
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
-import kotlinx.datetime.Clock as KotlinClock
+import kotlin.time.Clock as KotlinClock
 import kotlinx.datetime.LocalDateTime as KotlinLocalDateTime
 import kotlinx.datetime.TimeZone as KotlinTimeZone
 

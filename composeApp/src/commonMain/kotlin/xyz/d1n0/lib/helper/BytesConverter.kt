@@ -4,6 +4,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.isoDayNumber
+import kotlinx.datetime.number
 import xyz.d1n0.lib.constant.customCharset
 import xyz.d1n0.lib.constant.customCharsetByte
 import xyz.d1n0.lib.constant.fallbackByte
@@ -134,7 +135,7 @@ fun LocalDateTime.toByteArray() = byteArrayOf(
 	// Year represented in two bytes
 	*this.year.toShort().toLittleEndianByteArray(),
 	// Month and Day as single bytes
-	this.monthNumber.toByte(), this.dayOfMonth.toByte(),
+	this.month.number.toByte(), this.day.toByte(),
 	// Hour, Minute, and Second as single bytes
 	this.hour.toByte(), this.minute.toByte(), this.second.toByte(),
 	// Weekday (Monday = 1, ..., Sunday = 7)
@@ -160,7 +161,7 @@ fun LocalDateTime.toByteArray() = byteArrayOf(
  * @throws IllegalArgumentException if any date component is out of the valid range for BCD encoding.
  */
 fun LocalDate.toBcdByteArray() = byteArrayOf(
-	(this.year - 2000).toBcdByte(), this.monthNumber.toBcdByte(), this.dayOfMonth.toBcdByte()
+	(this.year - 2000).toBcdByte(), this.month.number.toBcdByte(), this.day.toBcdByte()
 )
 
 /**
@@ -184,7 +185,7 @@ fun LocalDate.Companion.fromBcdByteArray(bytes: ByteArray): LocalDate {
 	val month = Int.fromBcdByte(bytes[1])
 	val day = Int.fromBcdByte(bytes[2])
 
-	return LocalDate(year = year, monthNumber = month, dayOfMonth = day)
+	return LocalDate(year = year, month = month, day = day)
 }
 
 /**
