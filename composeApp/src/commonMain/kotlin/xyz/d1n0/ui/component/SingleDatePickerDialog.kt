@@ -1,11 +1,12 @@
 package xyz.d1n0.ui.component
 
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import kotlinx.datetime.LocalDate
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import kotlinx.datetime.LocalDate
 import xyz.d1n0.lib.helper.fromMillis
 import xyz.d1n0.lib.helper.toMillis
 import xyz.d1n0.ui.boilerplate.DatePickerCustomerFormatter
@@ -51,13 +52,40 @@ fun SingleDatePickerDialog(
 	}
 }
 
-@Preview
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview(showBackground = true, widthDp = 360)
 @Composable
 private fun SingleDatePickerDialogPreview() {
-	SingleDatePickerDialog(
-		date = LocalDate(year = 2025, month = 6, day = 9),
-		visible = true,
-		onConfirm = {},
-		onDismiss = {}
+	val state = rememberDatePickerState(
+		initialSelectedDateMillis = LocalDate(
+			year = 2025,
+			month = 6,
+			day = 9,
+		).toMillis(),
+		yearRange = IntRange(2000, 2099),
 	)
+
+	MaterialTheme {
+		Surface(
+			shape = MaterialTheme.shapes.extraLarge,
+			tonalElevation = AlertDialogDefaults.TonalElevation,
+		) {
+			Column {
+				DatePicker(
+					state = state,
+					showModeToggle = false,
+					dateFormatter = DatePickerCustomerFormatter(),
+				)
+				Row(
+					modifier = Modifier
+						.fillMaxWidth()
+						.padding(horizontal = 8.dp, vertical = 8.dp),
+					horizontalArrangement = Arrangement.End,
+				) {
+					TextButton(onClick = {}) { Text("Dismiss") }
+					TextButton(onClick = {}) { Text("Confirm") }
+				}
+			}
+		}
+	}
 }
