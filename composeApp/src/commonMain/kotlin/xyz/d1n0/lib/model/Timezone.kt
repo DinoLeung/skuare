@@ -85,7 +85,7 @@ abstract class Timezone {
 	 * Returns this timezone's effective UTC offset at [instant], including daylight saving time,
 	 * in signed hours and minutes such as `+8:00` or `-12:45`.
 	 */
-	fun offsetString(instant: Instant = KotlinClock.System.now()): String {
+	fun ianaOffsetString(instant: Instant = KotlinClock.System.now()): String {
 		val totalMinutes = KotlinTimeZone.of(timeZone).offsetAt(instant).totalSeconds / 60
 		val sign = if (totalMinutes < 0) "-" else "+"
 		val absoluteMinutes = abs(totalMinutes)
@@ -99,7 +99,7 @@ abstract class Timezone {
 	 * Returns whether the effective IANA offset at [instant] differs from this lookup entry's
 	 * default [offset].
 	 */
-	fun isDst(instant: Instant = KotlinClock.System.now()): Boolean {
+	fun isExpectedDst(instant: Instant = KotlinClock.System.now()): Boolean {
 		val currentOffsetSeconds = KotlinTimeZone.of(timeZone).offsetAt(instant).totalSeconds
 		val defaultOffsetSeconds = (offset * 60 * 60).roundToInt()
 

@@ -53,7 +53,7 @@ internal fun TimeZoneResultRow(
 			}
 		}
 		Text(
-			text = timeZone.offsetString(),
+			text = timeZone.ianaOffsetString(),
 			style = MaterialTheme.typography.labelLarge,
 			color = MaterialTheme.colorScheme.onSurfaceVariant,
 		)

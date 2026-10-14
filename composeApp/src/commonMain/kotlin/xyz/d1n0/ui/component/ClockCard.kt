@@ -42,13 +42,13 @@ fun ClockCard(
 	}, indicator = {
 		AssistChip(
 //			enabled = clock.dstSettings.enable,
-			enabled = clock.timeZone.isDst(),
+			enabled = clock.timeZone.isExpectedDst(),
 			label = { Text("DST") },
 			onClick = { },
 		)
 	}, content = {
 		Text(
-			text = clock.offsetString(),
+			text = clock.ianaOffsetString(),
 			textAlign = TextAlign.End,
 			modifier = Modifier.fillMaxWidth(),
 			style = MaterialTheme.typography.titleMedium,
