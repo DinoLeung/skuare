@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -57,7 +58,6 @@ fun <T : Timezone> TimeZonePickerDialog(
 	visible: Boolean,
 	onConfirm: (T) -> Unit,
 	onDismiss: () -> Unit,
-	modifier: Modifier = Modifier,
 	title: String = "Select time zone",
 ) {
 	if (!visible) return
@@ -77,15 +77,11 @@ fun <T : Timezone> TimeZonePickerDialog(
 
 	BasicAlertDialog(
 		onDismissRequest = onDismiss,
-		modifier = modifier
-			.padding(24.dp)
-			.widthIn(max = 560.dp),
+		modifier = Modifier.wrapContentSize(),
 		properties = DialogProperties(usePlatformDefaultWidth = false),
 	) {
 		Surface(
-			modifier = Modifier
-				.fillMaxWidth()
-				.heightIn(min = 360.dp, max = 640.dp),
+			modifier = Modifier.wrapContentSize(),
 			shape = MaterialTheme.shapes.extraLarge,
 			tonalElevation = AlertDialogDefaults.TonalElevation,
 		) {
@@ -102,7 +98,7 @@ fun <T : Timezone> TimeZonePickerDialog(
 						.fillMaxWidth()
 						.padding(horizontal = 24.dp, vertical = 16.dp),
 					singleLine = true,
-					label = { Text("Search city, country, or time zone") },
+					label = { Text("Time zone") },
 					leadingIcon = {
 						Icon(
 							imageVector = Icons.Outlined.Search,

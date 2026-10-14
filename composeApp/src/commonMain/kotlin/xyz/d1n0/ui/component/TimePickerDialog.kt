@@ -26,7 +26,7 @@ fun TimePickerDialog(
 
 	if (visible) {
 		BasicAlertDialog(
-			onDismissRequest = { onDismiss() },
+			onDismissRequest = onDismiss,
 			modifier = Modifier.wrapContentSize(),
 			properties = DialogProperties()
 		) {
@@ -50,30 +50,16 @@ fun TimePickerDialog(
 	}
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview(showBackground = true, widthDp = 360)
+
+@Preview(showBackground = true, widthDp = 420, heightDp = 720)
 @Composable
 private fun TimePicketDialogPreview() {
-	val state = rememberTimePickerState(
-		initialHour = 10,
-		initialMinute = 10,
-		is24Hour = true,
-	)
-
 	MaterialTheme {
-		Surface(
-			modifier = Modifier.wrapContentSize(),
-			shape = MaterialTheme.shapes.large,
-			tonalElevation = AlertDialogDefaults.TonalElevation,
-		) {
-			Column(modifier = Modifier.padding(16.dp)) {
-				TimePicker(state = state)
-				Spacer(modifier = Modifier.height(24.dp))
-				TextButton(
-					onClick = {},
-					modifier = Modifier.align(Alignment.End),
-				) { Text("Confirm") }
-			}
-		}
+		TimePickerDialog(
+			time = LocalTime(hour = 10, minute = 10),
+			visible = true,
+			onConfirm = { },
+			onDismiss = { }
+		)
 	}
 }
