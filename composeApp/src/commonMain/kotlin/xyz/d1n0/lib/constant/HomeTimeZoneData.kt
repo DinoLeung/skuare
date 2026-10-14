@@ -2183,7 +2183,7 @@ val HomeTimezoneData: Map<Int, HomeTimezone> = mapOf(
 		timeZone = "Asia/Kathmandu",
 		cityName = "KATHMANDU",
 		identifier = 30272,
-		offset = 5.8,
+		offset = 5.75,
 		dstDiff = 1.0,
 		dstRules = 0
 	),
@@ -2191,7 +2191,7 @@ val HomeTimezoneData: Map<Int, HomeTimezone> = mapOf(
 		timeZone = "Asia/Katmandu",
 		cityName = "KATMANDU",
 		identifier = 30273,
-		offset = 5.8,
+		offset = 5.75,
 		dstDiff = 1.0,
 		dstRules = 0
 	),
@@ -2735,7 +2735,7 @@ val HomeTimezoneData: Map<Int, HomeTimezone> = mapOf(
 		timeZone = "Australia/Eucla",
 		cityName = "EUCLA",
 		identifier = 30341,
-		offset = 8.8,
+		offset = 8.75,
 		dstDiff = 1.0,
 		dstRules = 0
 	),
@@ -4071,7 +4071,7 @@ val HomeTimezoneData: Map<Int, HomeTimezone> = mapOf(
 		timeZone = "NZ-CHAT",
 		cityName = "NZ-CHAT",
 		identifier = 30508,
-		offset = 12.8,
+		offset = 12.75,
 		dstDiff = 1.0,
 		dstRules = 23
 	),
@@ -4119,7 +4119,7 @@ val HomeTimezoneData: Map<Int, HomeTimezone> = mapOf(
 		timeZone = "Pacific/Chatham",
 		cityName = "CHATHAM",
 		identifier = 30514,
-		offset = 12.8,
+		offset = 12.75,
 		dstDiff = 1.0,
 		dstRules = 23
 	),

@@ -4,7 +4,7 @@ import xyz.d1n0.lib.constant.HomeTimezoneData
 import xyz.d1n0.lib.constant.WorldTimezoneData
 
 data class HomeTimezone(
-	val timeZone: String,
+	override val timeZone: String,
 	override val cityName: String,
 	override val identifier: Short,
 	override val offset: Double,

@@ -1,9 +1,16 @@
 package xyz.d1n0.lib.model
 
+import kotlinx.datetime.TimeZone as KotlinTimeZone
+import kotlinx.datetime.offsetAt
 import xyz.d1n0.lib.constant.timezoneRadioIdData
 import xyz.d1n0.lib.helper.toLittleEndianByteArray
+import kotlin.math.abs
+import kotlin.math.roundToInt
+import kotlin.time.Clock as KotlinClock
+import kotlin.time.Instant
 
 abstract class Timezone {
+	abstract val timeZone: String
 	abstract val cityName: String
 	abstract val identifier: Short
 	abstract val offset: Double
@@ -62,7 +69,6 @@ abstract class Timezone {
 	/**
 	 * Retrieves the multiband 6 radio ID associated with the specified timezone offset.
 	 *
-	 * @param timezoneId The timezone identifier (e.g., "Australia/Adelaide") to find the radio ID for.
 	 * @return The corresponding integer radio ID if found; otherwise, returns 0 if no matching timezone ID exists.
 	 */
 	val radioId: Int
@@ -75,4 +81,28 @@ abstract class Timezone {
 
 	abstract val coordinatesBytes: ByteArray
 
+	/**
+	 * Returns this timezone's effective UTC offset at [instant], including daylight saving time,
+	 * in signed hours and minutes such as `+8:00` or `-12:45`.
+	 */
+	fun offsetString(instant: Instant = KotlinClock.System.now()): String {
+		val totalMinutes = KotlinTimeZone.of(timeZone).offsetAt(instant).totalSeconds / 60
+		val sign = if (totalMinutes < 0) "-" else "+"
+		val absoluteMinutes = abs(totalMinutes)
+		val hours = absoluteMinutes / 60
+		val minutes = absoluteMinutes % 60
+
+		return "$sign$hours:${minutes.toString().padStart(2, '0')}"
+	}
+
+	/**
+	 * Returns whether the effective IANA offset at [instant] differs from this lookup entry's
+	 * default [offset].
+	 */
+	fun isDst(instant: Instant = KotlinClock.System.now()): Boolean {
+		val currentOffsetSeconds = KotlinTimeZone.of(timeZone).offsetAt(instant).totalSeconds
+		val defaultOffsetSeconds = (offset * 60 * 60).roundToInt()
+
+		return currentOffsetSeconds != defaultOffsetSeconds
+	}
 }

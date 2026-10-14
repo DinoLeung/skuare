@@ -40,7 +40,7 @@ func main() {
 		timeZone := record[5]                           // Timezone
 
 		kotlinMap.WriteString(fmt.Sprintf(
-			"    %d to HomeTimezone(\n        timeZone = \"%s\",\n        cityName = \"%s\",\n        identifier = %d,\n        offset = %.1f,\n        dstDiff = %.1f,\n        dstRules = %d\n    ),\n",
+			"    %d to HomeTimezone(\n        timeZone = \"%s\",\n        cityName = \"%s\",\n        identifier = %d,\n        offset = %.2f,\n        dstDiff = %.2f,\n        dstRules = %d\n    ),\n",
 			id, timeZone, cityName, id, offset, dstDiff, dstRule,
 		))
 	}

@@ -4,6 +4,7 @@ import xyz.d1n0.lib.constant.WorldTimezoneData
 import xyz.d1n0.lib.helper.toByteArray
 
 data class WorldTimezone(
+	override val timeZone: String,
 	val country: String,
 	val city: String,
 	val longitude: Double,
