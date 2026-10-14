@@ -6,6 +6,19 @@ import xyz.d1n0.lib.model.WorldTimezone
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
+/**
+ * Searches [timeZones] for entries matching [query].
+ *
+ * A query containing a UTC offset is matched against timezone offsets. Other queries are
+ * normalized and matched against timezone names, cities, and countries using exact, prefix,
+ * substring, and typo-tolerant comparisons. Text matches are ordered by relevance while ties
+ * preserve the source collection's iteration order. A blank query returns all entries in their
+ * original order.
+ *
+ * @param timeZones the timezone entries to search.
+ * @param query the timezone name, location, or UTC offset to find.
+ * @return the matching timezone entries in relevance order.
+ */
 fun <T : Timezone> searchTimeZones(
 	timeZones: Collection<T>,
 	query: String,
@@ -42,6 +55,15 @@ private data class UtcOffsetQuery(
 	val hours: Int,
 	val minutes: Int?,
 ) {
+	/**
+	 * Determines whether [offset] satisfies this UTC offset query.
+	 *
+	 * An explicitly signed query only matches offsets with the same sign. An unsigned query
+	 * matches either sign, and an omitted minute component matches every offset within [hours].
+	 *
+	 * @param offset the UTC offset expressed as fractional hours.
+	 * @return `true` when the offset has the requested sign, hour, and optional minute component.
+	 */
 	fun matches(offset: Double): Boolean {
 		val totalMinutes = (offset * 60).roundToInt()
 		when (sign) {
@@ -61,6 +83,14 @@ private data class UtcOffsetQuery(
 private val utcOffsetPattern =
 	Regex("""^([+-])?\s*(\d{1,2})(?:[.:]([0-5]\d))?$""")
 
+/**
+ * Parses this string as a UTC offset search query.
+ *
+ * Accepted forms contain an optional sign, an hour from 0 through 23, and optional minutes
+ * separated by `:` or `.`, such as `8`, `-08`, `+8:30`, or `8.30`.
+ *
+ * @return the parsed query, or `null` when this string is not a valid UTC offset query.
+ */
 private fun String.toUtcOffsetQuery(): UtcOffsetQuery? {
 	val match = utcOffsetPattern.matchEntire(trim()) ?: return null
 	val sign = when (match.groupValues[1]) {
@@ -87,10 +117,20 @@ private val Timezone.searchTerms: List<String>
 			is WorldTimezone -> {
 				add(city.normalizeForSearch())
 				add(country.normalizeForSearch())
+				add(timeZone.normalizeForSearch())
 			}
 		}
 	}.filter { it.isNotEmpty() }.distinct()
 
+/**
+ * Scores how closely [token] matches the available timezone [terms] and their individual [words].
+ *
+ * Exact word matches receive the best score, followed by word prefixes, term substrings, and
+ * typo-tolerant matches. The accepted edit distance grows with the token length.
+ *
+ * @return a non-negative score where lower is more relevant, or `null` when no match is close
+ * enough.
+ */
 private fun bestTokenScore(
 	token: String,
 	terms: List<String>,
@@ -109,6 +149,14 @@ private fun bestTokenScore(
 	return if (editDistance <= maximumDistance) 16 + editDistance else null
 }
 
+/**
+ * Normalizes this string for case-insensitive timezone searching.
+ *
+ * Letters and digits are converted to lowercase, non-alphanumeric characters become spaces,
+ * and consecutive or surrounding whitespace is removed.
+ *
+ * @return the normalized search text.
+ */
 private fun String.normalizeForSearch(): String = lowercase()
 	.map { character ->
 		when {
@@ -119,7 +167,14 @@ private fun String.normalizeForSearch(): String = lowercase()
 	.trim()
 	.replace(Regex("\\s+"), " ")
 
-/** Optimal-string-alignment distance, including adjacent character transpositions. */
+/**
+ * Calculates the restricted Damerau-Levenshtein distance between [first] and [second].
+ *
+ * The distance counts insertions, deletions, substitutions, and adjacent transpositions. This is
+ * the optimal-string-alignment variant, so no substring can be edited more than once.
+ *
+ * @return the minimum number of supported edits needed to transform [first] into [second].
+ */
 private fun restrictedDamerauLevenshtein(first: String, second: String): Int {
 	if (first == second) return 0
 	if (first.isEmpty()) return second.length
