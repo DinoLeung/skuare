@@ -41,7 +41,8 @@ fun ClockCard(
 		)
 	}, indicator = {
 		AssistChip(
-			enabled = clock.dstSettings.enable,
+//			enabled = clock.dstSettings.enable,
+			enabled = clock.timeZone.isDst(),
 			label = { Text("DST") },
 			onClick = { },
 		)

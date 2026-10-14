@@ -77,6 +77,10 @@ private fun ClocksScreenPreview() {
 					timeZoneId = 95,
 					dstSettings = DstSettings(enable = true, auto = false),
 				),
+				WorldClock.fromTimeZoneId(
+					timeZoneId = 310,
+					dstSettings = DstSettings(enable = true, auto = false),
+				),
 			),
 		)
 	}
