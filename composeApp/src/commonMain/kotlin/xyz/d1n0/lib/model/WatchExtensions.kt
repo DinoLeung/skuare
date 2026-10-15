@@ -35,7 +35,7 @@ suspend fun Watch.requestClocks() = repeat(3) {
 }
 
 suspend fun Watch.writeClocks(clocksSettings: ClocksSettings) =
-	clocksSettings.clocksPackets.forEach { write(it) }.also { requestClocks() }
+	clocksSettings.clocksPackets.forEach { write(it) }
 
 suspend fun Watch.writeTime(delay: Duration = 0.seconds) =
 	clocks.value.homeClock?.let { write(it.getCurrentDateTimePacket(delay = delay)) }

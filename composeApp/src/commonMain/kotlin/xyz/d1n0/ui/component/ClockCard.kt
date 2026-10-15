@@ -1,5 +1,6 @@
 package xyz.d1n0.ui.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
@@ -20,9 +21,10 @@ import xyz.d1n0.lib.model.HomeClock
 @Composable
 fun ClockCard(
 	clock: Clock,
+	onClick: () -> Unit,
 	modifier: Modifier = Modifier,
 ) {
-	CardView(modifier = modifier, leadingIcon = {
+	CardView(modifier = modifier.clickable(onClick = onClick), leadingIcon = {
 		if (clock is HomeClock) {
 			Icon(
 				imageVector = Icons.Sharp.Home,
@@ -44,7 +46,7 @@ fun ClockCard(
 //			enabled = clock.dstSettings.enable,
 			enabled = clock.timeZone.isExpectedDst(),
 			label = { Text("DST") },
-			onClick = { },
+			onClick = onClick,
 		)
 	}, content = {
 		Text(
@@ -61,10 +63,12 @@ fun ClockCard(
 private fun ClockCardPreview() {
 	Column {
 		ClockCard(
-			clock = xyz.d1n0.lib.model.HomeClock.fromTimeZoneId(30335, DstSettings(false, true))
+			clock = xyz.d1n0.lib.model.HomeClock.fromTimeZoneId(30335, DstSettings(false, true)),
+			onClick = {},
 		)
 		ClockCard(
-			clock = xyz.d1n0.lib.model.WorldClock.fromTimeZoneId(95, DstSettings(true, false))
+			clock = xyz.d1n0.lib.model.WorldClock.fromTimeZoneId(95, DstSettings(true, false)),
+			onClick = {},
 		)
 	}
 }
