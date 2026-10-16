@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import xyz.d1n0.lib.model.Clock
 import xyz.d1n0.lib.model.DstSettings
 import xyz.d1n0.lib.model.HomeClock
+import xyz.d1n0.lib.model.WorldClock
 
 @Composable
 fun ClockCard(
@@ -63,11 +64,11 @@ fun ClockCard(
 private fun ClockCardPreview() {
 	Column {
 		ClockCard(
-			clock = xyz.d1n0.lib.model.HomeClock.fromTimeZoneId(30335, DstSettings(false, true)),
+			clock = HomeClock.fromTimeZoneId(30335, DstSettings(false, true)),
 			onClick = {},
 		)
 		ClockCard(
-			clock = xyz.d1n0.lib.model.WorldClock.fromTimeZoneId(95, DstSettings(true, false)),
+			clock = WorldClock.fromTimeZoneId(95, DstSettings(true, false)),
 			onClick = {},
 		)
 	}
