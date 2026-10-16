@@ -17,7 +17,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import org.koin.compose.viewmodel.koinViewModel
 import xyz.d1n0.lib.constant.HomeTimezoneData
 import xyz.d1n0.lib.constant.WorldTimezoneData
 import xyz.d1n0.lib.model.ClocksSettings
@@ -25,12 +24,10 @@ import xyz.d1n0.lib.model.DstSettings
 import xyz.d1n0.lib.model.HomeClock
 import xyz.d1n0.lib.model.WorldClock
 import xyz.d1n0.ui.component.ClockCard
-import xyz.d1n0.ui.component.SaveScreenScaffold
 import xyz.d1n0.ui.component.TimeZonePickerDialog
 
 @Composable
-fun ClocksScreen() {
-	val viewModel = koinViewModel<ClocksScreenViewModel>()
+fun ClocksScreen(viewModel: ClocksScreenViewModel) {
 	val state by viewModel.uiState.collectAsState()
 
 	LaunchedEffect(Unit) {
@@ -52,35 +49,28 @@ private fun ClocksScreenContent(
 	val homeClock = state.pendingClocks.homeClock
 	val worldClocks = state.pendingClocks.worldClocks
 
-	SaveScreenScaffold(
-		saveFabVisible = state.hasUpdates &&
-			state.isLoading == false &&
-			state.hasErrors == false,
-		saveFabOnClick = { onEvent(ClocksUiEvent.SaveClocks) },
+	Column(
+		horizontalAlignment = Alignment.CenterHorizontally,
+		verticalArrangement = Arrangement.Center,
+		modifier = Modifier.fillMaxSize()
+			.verticalScroll(rememberScrollState()),
 	) {
-		Column(
-			horizontalAlignment = Alignment.CenterHorizontally,
-			verticalArrangement = Arrangement.Center,
-			modifier = Modifier.fillMaxSize()
-				.verticalScroll(rememberScrollState()),
-		) {
-			homeClock?.let {
+		homeClock?.let {
+			ClockCard(
+				modifier = Modifier.fillMaxWidth(),
+				clock = it,
+				onClick = { selectedClockPosition = 0 },
+				enabled = state.isInitialized && state.isLoading == false,
+			)
+		}
+		worldClocks.forEachIndexed { index, clock ->
+			clock?.let {
 				ClockCard(
 					modifier = Modifier.fillMaxWidth(),
 					clock = it,
-					onClick = { selectedClockPosition = 0 },
+					onClick = { selectedClockPosition = index + 1 },
 					enabled = state.isInitialized && state.isLoading == false,
 				)
-			}
-			worldClocks.forEachIndexed { index, clock ->
-				clock?.let {
-					ClockCard(
-						modifier = Modifier.fillMaxWidth(),
-						clock = it,
-						onClick = { selectedClockPosition = index + 1 },
-						enabled = state.isInitialized && state.isLoading == false,
-					)
-				}
 			}
 		}
 	}

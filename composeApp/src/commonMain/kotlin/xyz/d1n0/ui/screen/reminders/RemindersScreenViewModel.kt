@@ -3,8 +3,11 @@ package xyz.d1n0.ui.screen.reminders
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
@@ -15,6 +18,8 @@ import xyz.d1n0.lib.constant.ReminderRecurrence
 import xyz.d1n0.lib.helper.replaceAt
 import xyz.d1n0.lib.model.*
 import xyz.d1n0.ui.boilerplate.updateCatching
+import xyz.d1n0.ui.navigation.SaveState
+import xyz.d1n0.ui.navigation.SaveableScreen
 
 data class ReminderUiState(
 	val isTitlesInitialized: Boolean = false,
@@ -52,7 +57,6 @@ data class ReminderUiState(
 
 sealed interface RemindersUiEvent {
 	object RequestReminders : RemindersUiEvent
-	object SaveReminders : RemindersUiEvent
 
 	data class ReminderToggle(val index: Int, val enable: Boolean) : RemindersUiEvent
 	data class ReminderTitleChange(val index: Int, val title: String) : RemindersUiEvent
@@ -65,12 +69,16 @@ sealed interface RemindersUiEvent {
 		RemindersUiEvent
 }
 
-class RemindersScreenViewModel : ViewModel(), KoinComponent {
+class RemindersScreenViewModel : ViewModel(), KoinComponent, SaveableScreen {
 	private val watch: Watch by inject()
 	private val remindersSettings: StateFlow<RemindersSettings> = watch.reminders
 
 	private val _uiState = MutableStateFlow(ReminderUiState())
 	val uiState: StateFlow<ReminderUiState> = _uiState.asStateFlow()
+
+	override val saveState: StateFlow<SaveState> = _uiState
+		.map { SaveState(hasUpdates = it.hasUpdates, isLoading = it.isLoading, hasErrors = it.hasErrors) }
+		.stateIn(viewModelScope, SharingStarted.Eagerly, SaveState())
 
 	init {
 		viewModelScope.launch {
@@ -108,7 +116,6 @@ class RemindersScreenViewModel : ViewModel(), KoinComponent {
 
 	fun onEvent(event: RemindersUiEvent) = when (event) {
 		RemindersUiEvent.RequestReminders -> requestReminders()
-		RemindersUiEvent.SaveReminders -> writeReminders()
 		is RemindersUiEvent.ReminderToggle -> onReminderToggle(
 			index = event.index,
 			enable = event.enable
@@ -152,7 +159,7 @@ class RemindersScreenViewModel : ViewModel(), KoinComponent {
 	}
 
 	//	TODO: try writing only updated items
-	private fun writeReminders() = watch.scope.launch {
+	override suspend fun save() {
 		_uiState.update {
 			it.copy(
 				isTitlesLoading = _uiState.value.isReminderTitlesUpdated,

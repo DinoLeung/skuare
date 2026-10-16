@@ -13,6 +13,12 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import org.koin.compose.viewmodel.koinViewModel
+import xyz.d1n0.ui.component.SaveFab
+import xyz.d1n0.ui.screen.alarms.AlarmsScreenViewModel
+import xyz.d1n0.ui.screen.clocks.ClocksScreenViewModel
+import xyz.d1n0.ui.screen.reminders.RemindersScreenViewModel
+import xyz.d1n0.ui.screen.settings.SettingsScreenViewModel
+import xyz.d1n0.ui.screen.timer.TimerScreenViewModel
 import com.juul.kable.State as PeripheralState
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -21,6 +27,26 @@ fun NavBarScaffold(
 	onDisconnect: () -> Unit,
 ) {
 	val viewModel = koinViewModel<NavBarViewModel>()
+
+	// Screen view models are scoped here rather than to each tab's back stack entry,
+	// so pending changes survive switching tabs and can be saved from the shared FAB
+	val clocksViewModel = koinViewModel<ClocksScreenViewModel>()
+	val alarmsViewModel = koinViewModel<AlarmsScreenViewModel>()
+	val timerViewModel = koinViewModel<TimerScreenViewModel>()
+	val remindersViewModel = koinViewModel<RemindersScreenViewModel>()
+	val settingsViewModel = koinViewModel<SettingsScreenViewModel>()
+
+	val saveableScreens: Map<NavBarRoute, SaveableScreen> = mapOf(
+		NavBarRoute.Clocks to clocksViewModel,
+		NavBarRoute.Alarms to alarmsViewModel,
+		NavBarRoute.Timer to timerViewModel,
+		NavBarRoute.Reminders to remindersViewModel,
+		NavBarRoute.Settings to settingsViewModel,
+	)
+	val saveStates = saveableScreens.mapValues { (_, screen) ->
+		screen.saveState.collectAsState().value
+	}
+	val isSaving by viewModel.isSaving.collectAsState()
 
 	val navHostController = rememberNavController()
 	val navBackStackEntry by navHostController.currentBackStackEntryAsState()
@@ -53,6 +79,7 @@ fun NavBarScaffold(
 				NavBar(
 					items = navBarItems,
 					currentRoute = currentBottomNavBarRoute,
+					unsavedRoutes = saveStates.filterValues { it.hasUpdates }.keys,
 					onItemClick = { item ->
 						navHostController.navigate(item.route.route) {
 							navHostController.graph.startDestinationRoute?.let {
@@ -65,6 +92,14 @@ fun NavBarScaffold(
 				)
 			}
 		},
+		floatingActionButton = {
+			SaveFab(
+				visible = isSaving == false &&
+					watchConnectionState.value is PeripheralState.Connected &&
+					saveStates.values.any { it.canSave },
+				onClick = { viewModel.saveAll(saveableScreens.values) },
+			)
+		},
 	) { scaffoldPadding ->
 		Box(
 			modifier = Modifier
@@ -74,7 +109,14 @@ fun NavBarScaffold(
 				.imePadding()
 		) {
 			if (watchConnectionState.value is PeripheralState.Connected)
-				NavGraph(navHostController = navHostController)
+				NavGraph(
+					navHostController = navHostController,
+					clocksViewModel = clocksViewModel,
+					alarmsViewModel = alarmsViewModel,
+					timerViewModel = timerViewModel,
+					remindersViewModel = remindersViewModel,
+					settingsViewModel = settingsViewModel,
+				)
 		}
 	}
 }

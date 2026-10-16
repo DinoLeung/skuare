@@ -3,8 +3,11 @@ package xyz.d1n0.ui.screen.alarms
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalTime
@@ -18,6 +21,8 @@ import xyz.d1n0.lib.model.Watch
 import xyz.d1n0.lib.model.requestAlarms
 import xyz.d1n0.lib.model.writeAlarms
 import xyz.d1n0.ui.boilerplate.updateCatching
+import xyz.d1n0.ui.navigation.SaveState
+import xyz.d1n0.ui.navigation.SaveableScreen
 
 data class AlarmsUiState(
 	val isHourlySignalInitialized: Boolean = false,
@@ -61,7 +66,6 @@ data class AlarmsUiState(
 
 sealed interface AlarmsUiEvent {
 	object RequestAlarms : AlarmsUiEvent
-	object SaveAlarms : AlarmsUiEvent
 
 	data class HourlySignalToggle(val enable: Boolean) : AlarmsUiEvent
 	data class AlarmToggle(val index: Int, val enable: Boolean) : AlarmsUiEvent
@@ -70,12 +74,16 @@ sealed interface AlarmsUiEvent {
 	data class SnoozeAlarmTimeChange(val time: LocalTime) : AlarmsUiEvent
 }
 
-class AlarmsScreenViewModel : ViewModel(), KoinComponent {
+class AlarmsScreenViewModel : ViewModel(), KoinComponent, SaveableScreen {
 	private val watch: Watch by inject()
 	private val alarmsSettings: StateFlow<AlarmsSettings> = watch.alarms
 
 	private val _uiState = MutableStateFlow(AlarmsUiState())
 	val uiState: StateFlow<AlarmsUiState> = _uiState.asStateFlow()
+
+	override val saveState: StateFlow<SaveState> = _uiState
+		.map { SaveState(hasUpdates = it.hasUpdates, isLoading = it.isLoading, hasErrors = it.hasErrors) }
+		.stateIn(viewModelScope, SharingStarted.Eagerly, SaveState())
 
 	init {
 		viewModelScope.launch {
@@ -113,7 +121,6 @@ class AlarmsScreenViewModel : ViewModel(), KoinComponent {
 
 	fun onEvent(event: AlarmsUiEvent) = when (event) {
 		AlarmsUiEvent.RequestAlarms -> requestAlarms()
-		AlarmsUiEvent.SaveAlarms -> writeAlarms()
 		is AlarmsUiEvent.HourlySignalToggle -> onHourlySignalToggle(enable = event.enable)
 		is AlarmsUiEvent.AlarmToggle -> onAlarmToggle(index = event.index, enable = event.enable)
 		is AlarmsUiEvent.AlarmTimeChange -> onAlarmTimeChange(
@@ -136,7 +143,7 @@ class AlarmsScreenViewModel : ViewModel(), KoinComponent {
 		watch.requestAlarms()
 	}
 
-	private fun writeAlarms() = watch.scope.launch {
+	override suspend fun save() {
 		_uiState.update {
 			it.copy(
 				isHourlySignalLoading = _uiState.value.isHourlySignalUpdated,

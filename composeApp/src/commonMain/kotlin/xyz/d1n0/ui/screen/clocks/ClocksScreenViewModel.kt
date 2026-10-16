@@ -3,8 +3,11 @@ package xyz.d1n0.ui.screen.clocks
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -22,6 +25,8 @@ import xyz.d1n0.lib.model.writeTimeZoneConfigs
 import xyz.d1n0.lib.model.writeTimeZoneCoordinatesAndRadioId
 import xyz.d1n0.lib.model.writeTimeZoneNames
 import xyz.d1n0.ui.boilerplate.updateCatching
+import xyz.d1n0.ui.navigation.SaveState
+import xyz.d1n0.ui.navigation.SaveableScreen
 
 data class ClocksUiState(
 	val isLoading: Boolean = true,
@@ -42,17 +47,20 @@ data class ClocksUiState(
 
 sealed interface ClocksUiEvent {
 	object RequestClocks : ClocksUiEvent
-	object SaveClocks : ClocksUiEvent
 	data class HomeTimeZoneChange(val timeZone: HomeTimezone) : ClocksUiEvent
 	data class WorldTimeZoneChange(val index: Int, val timeZone: WorldTimezone) : ClocksUiEvent
 }
 
-class ClocksScreenViewModel : ViewModel(), KoinComponent {
+class ClocksScreenViewModel : ViewModel(), KoinComponent, SaveableScreen {
 	private val watch: Watch by inject()
 	private val clocks: StateFlow<ClocksSettings> = watch.clocks
 
 	private val _uiState = MutableStateFlow(ClocksUiState())
 	val uiState: StateFlow<ClocksUiState> = _uiState.asStateFlow()
+
+	override val saveState: StateFlow<SaveState> = _uiState
+		.map { SaveState(hasUpdates = it.hasUpdates, isLoading = it.isLoading, hasErrors = it.hasErrors) }
+		.stateIn(viewModelScope, SharingStarted.Eagerly, SaveState())
 
 	init {
 		viewModelScope.launch {
@@ -80,7 +88,6 @@ class ClocksScreenViewModel : ViewModel(), KoinComponent {
 
 	fun onEvent(event: ClocksUiEvent) = when (event) {
 		ClocksUiEvent.RequestClocks -> requestClocks()
-		ClocksUiEvent.SaveClocks -> writeClocks()
 		is ClocksUiEvent.HomeTimeZoneChange -> onHomeTimeZoneChange(event.timeZone)
 		is ClocksUiEvent.WorldTimeZoneChange -> onWorldTimeZoneChange(
 			index = event.index,
@@ -93,7 +100,7 @@ class ClocksScreenViewModel : ViewModel(), KoinComponent {
 		watch.requestClocks()
 	}
 
-	private fun writeClocks() = watch.scope.launch {
+	override suspend fun save() {
 		_uiState.update { it.copy(isLoading = true) }
 		val pendingClocks = _uiState.value.pendingClocks
 
@@ -105,7 +112,6 @@ class ClocksScreenViewModel : ViewModel(), KoinComponent {
 		watch.endClockUpdateSession()
 
 		watch.requestClocks()
-
 	}
 
 	private fun onHomeTimeZoneChange(timeZone: HomeTimezone) = _uiState.updateCatching(

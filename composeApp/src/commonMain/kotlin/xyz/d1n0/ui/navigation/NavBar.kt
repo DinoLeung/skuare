@@ -1,6 +1,8 @@
 package xyz.d1n0.ui.navigation
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -14,6 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 fun NavBar(
 	items: List<NavBarItem>,
 	currentRoute: NavBarRoute?,
+	unsavedRoutes: Set<NavBarRoute> = emptySet(),
 	onItemClick: (NavBarItem) -> Unit,
 ) {
 	NavigationBar(
@@ -24,10 +27,14 @@ fun NavBar(
 				selected = currentRoute == it.route,
 				onClick = { onItemClick(it) },
 				icon = {
-					Icon(
-						imageVector = it.icon,
-						contentDescription = it.title,
-					)
+					BadgedBox(
+						badge = { if (it.route in unsavedRoutes) Badge() },
+					) {
+						Icon(
+							imageVector = it.icon,
+							contentDescription = it.title,
+						)
+					}
 				},
 				label = {
 					Text(
@@ -45,6 +52,7 @@ private fun NavBarPreview() {
 	NavBar(
 		items = navBarItems,
 		currentRoute = navBarItems[2].route,
+		unsavedRoutes = setOf(navBarItems[0].route, navBarItems[4].route),
 		onItemClick = {}
 	)
 }

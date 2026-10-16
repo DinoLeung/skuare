@@ -3,8 +3,11 @@ package xyz.d1n0.ui.screen.timer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -16,6 +19,8 @@ import xyz.d1n0.lib.model.Watch
 import xyz.d1n0.lib.model.requestTimer
 import xyz.d1n0.lib.model.writeTimer
 import xyz.d1n0.ui.boilerplate.updateCatching
+import xyz.d1n0.ui.navigation.SaveState
+import xyz.d1n0.ui.navigation.SaveableScreen
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -35,16 +40,19 @@ data class TimerUiState(
 
 sealed interface TimerUiEvent {
 	data class TimerInputChange(val duration: Duration) : TimerUiEvent
-	object SaveTimer : TimerUiEvent
 	object RequestTimer : TimerUiEvent
 }
 
-class TimerScreenViewModel : ViewModel(), KoinComponent {
+class TimerScreenViewModel : ViewModel(), KoinComponent, SaveableScreen {
 	private val watch: Watch by inject()
 	private val timerSettings: StateFlow<TimerSettings> = watch.timer
 
 	private val _uiState = MutableStateFlow(TimerUiState())
 	val uiState: StateFlow<TimerUiState> = _uiState.asStateFlow()
+
+	override val saveState: StateFlow<SaveState> = _uiState
+		.map { SaveState(hasUpdates = it.hasUpdates, isLoading = it.isLoading, hasErrors = it.hasErrors) }
+		.stateIn(viewModelScope, SharingStarted.Eagerly, SaveState())
 
 	init {
 		viewModelScope.launch {
@@ -54,6 +62,8 @@ class TimerScreenViewModel : ViewModel(), KoinComponent {
 						isInitialized = settings.timer != null,
 						isLoading = false,
 						savedTimer = settings.timer ?: defaultTimer,
+						pendingTimer = if (it.hasUpdates) it.pendingTimer
+							else settings.timer ?: defaultTimer,
 					)
 				}
 			}
@@ -62,7 +72,6 @@ class TimerScreenViewModel : ViewModel(), KoinComponent {
 
 	fun onEvent(event: TimerUiEvent) = when (event) {
 		TimerUiEvent.RequestTimer -> requestTimer()
-		TimerUiEvent.SaveTimer -> saveTimer()
 		is TimerUiEvent.TimerInputChange -> onTimerInputChange(duration = event.duration)
 	}
 
@@ -71,7 +80,7 @@ class TimerScreenViewModel : ViewModel(), KoinComponent {
 		watch.requestTimer()
 	}
 
-	private fun saveTimer() = watch.scope.launch {
+	override suspend fun save() {
 		_uiState.update { it.copy(isLoading = true) }
 		watch.writeTimer(timer = _uiState.value.pendingTimer)
 		watch.requestTimer()

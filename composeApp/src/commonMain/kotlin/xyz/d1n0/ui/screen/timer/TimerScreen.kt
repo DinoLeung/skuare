@@ -9,16 +9,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import org.koin.compose.viewmodel.koinViewModel
 import xyz.d1n0.lib.constant.TimerStatus
 import xyz.d1n0.lib.model.Timer
-import xyz.d1n0.ui.component.SaveScreenScaffold
 import xyz.d1n0.ui.component.TimerCard
 import kotlin.time.Duration.Companion.minutes
 
 @Composable
-fun TimerScreen() {
-	val viewModel = koinViewModel<TimerScreenViewModel>()
+fun TimerScreen(viewModel: TimerScreenViewModel) {
 	val state by viewModel.uiState.collectAsState()
 
 	LaunchedEffect(Unit) {
@@ -37,21 +34,16 @@ private fun TimerScreenContent(
 	state: TimerUiState,
 	onEvent: (TimerUiEvent) -> Unit,
 ) {
-	SaveScreenScaffold(
-		saveFabVisible = state.hasUpdates && state.isLoading == false && state.hasErrors == false,
-		saveFabOnClick = { onEvent(TimerUiEvent.SaveTimer) },
-	) {
-		TimerCard(
-			modifier = Modifier.fillMaxWidth(),
-			timer = state.savedTimer,
-			onDurationChange = { onEvent(TimerUiEvent.TimerInputChange(it)) },
-			enabled = state.isLoading == false,
-			isError = state.hasErrors,
-			supportingText = {
-				state.pendingTimerError?.let { Text(it.message ?: "Unknown errors") }
-			}
-		)
-	}
+	TimerCard(
+		modifier = Modifier.fillMaxWidth(),
+		timer = state.pendingTimer,
+		onDurationChange = { onEvent(TimerUiEvent.TimerInputChange(it)) },
+		enabled = state.isLoading == false,
+		isError = state.hasErrors,
+		supportingText = {
+			state.pendingTimerError?.let { Text(it.message ?: "Unknown errors") }
+		}
+	)
 }
 
 @Preview(showBackground = true)

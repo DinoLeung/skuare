@@ -21,17 +21,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.LocalTime
-import org.koin.compose.viewmodel.koinViewModel
 import xyz.d1n0.lib.model.Alarm
 import xyz.d1n0.lib.model.HourlySignal
 import xyz.d1n0.ui.component.CardView
-import xyz.d1n0.ui.component.SaveScreenScaffold
 import xyz.d1n0.ui.component.SwitchField
 import xyz.d1n0.ui.component.TimePickerField
 
 @Composable
-fun AlarmsScreen() {
-	val viewModel = koinViewModel<AlarmsScreenViewModel>()
+fun AlarmsScreen(viewModel: AlarmsScreenViewModel) {
 	val state by viewModel.uiState.collectAsState()
 
 	LaunchedEffect(Unit) {
@@ -52,113 +49,106 @@ private fun AlarmsScreenContent(
 	state: AlarmsUiState,
 	onEvent: (AlarmsUiEvent) -> Unit,
 ) {
-	SaveScreenScaffold(
-		saveFabVisible = state.hasUpdates &&
-				state.isLoading == false &&
-				state.hasErrors == false,
-		saveFabOnClick = { onEvent(AlarmsUiEvent.SaveAlarms) }
+	LazyColumn(
+		state = rememberLazyListState(),
+		modifier = Modifier.fillMaxSize(),
+		contentPadding = PaddingValues(8.dp),
+		verticalArrangement = Arrangement.spacedBy(8.dp),
 	) {
-		LazyColumn(
-			state = rememberLazyListState(),
-			modifier = Modifier.fillMaxSize(),
-			contentPadding = PaddingValues(8.dp),
-			verticalArrangement = Arrangement.spacedBy(8.dp),
-		) {
-			item {
-				CardView(
+		item {
+			CardView(
+				modifier = Modifier.fillMaxWidth(),
+				title = { Text("Alarms") }
+			) {
+				Column(
 					modifier = Modifier.fillMaxWidth(),
-					title = { Text("Alarms") }
+					verticalArrangement = Arrangement.spacedBy(8.dp)
 				) {
-					Column(
-						modifier = Modifier.fillMaxWidth(),
-						verticalArrangement = Arrangement.spacedBy(8.dp)
-					) {
-						state.pendingAlarms.zip(state.pendingAlarmsErrors)
-							.forEachIndexed { index, (alarm, _) ->
-								SwitchField(
-									title = {
-										TimePickerField(
-											value = alarm.time,
-											onValueChange = {
-												onEvent(
-													AlarmsUiEvent.AlarmTimeChange(
-														index = index,
-														time = it
-													)
+					state.pendingAlarms.zip(state.pendingAlarmsErrors)
+						.forEachIndexed { index, (alarm, _) ->
+							SwitchField(
+								title = {
+									TimePickerField(
+										value = alarm.time,
+										onValueChange = {
+											onEvent(
+												AlarmsUiEvent.AlarmTimeChange(
+													index = index,
+													time = it
 												)
-											},
-											leadingIcon = {
-												Icon(
-													imageVector = Icons.Outlined.Alarm,
-													contentDescription = "Alarm"
-												)
-											},
-											enabled = state.isAlarmsInitialized && state.isLoading == false,
-											modifier = Modifier.fillMaxWidth()
-										)
-									},
-									check = alarm.enable,
-									onCheckedChange = {
-										onEvent(
-											AlarmsUiEvent.AlarmToggle(
-												index = index,
-												enable = it
 											)
-										)
-									},
-									enabled = state.isAlarmsInitialized && state.isLoading == false,
-									modifier = Modifier.fillMaxWidth()
-								)
-							}
-					}
-				}
-			}
-			item {
-				CardView(
-					modifier = Modifier.fillMaxWidth(),
-					title = { Text("Snooze Alarm") }
-				) {
-					SwitchField(
-						title = {
-							TimePickerField(
-								value = state.pendingSnoozeAlarm.time,
-								onValueChange = {
-									onEvent(AlarmsUiEvent.SnoozeAlarmTimeChange(time = it))
-								},
-								leadingIcon = {
-									Icon(
-										imageVector = Icons.Outlined.Snooze,
-										contentDescription = "Snooze Alarm"
+										},
+										leadingIcon = {
+											Icon(
+												imageVector = Icons.Outlined.Alarm,
+												contentDescription = "Alarm"
+											)
+										},
+										enabled = state.isAlarmsInitialized && state.isLoading == false,
+										modifier = Modifier.fillMaxWidth()
 									)
 								},
-								enabled = state.isSnoozeAlarmInitialized && state.isLoading == false,
+								check = alarm.enable,
+								onCheckedChange = {
+									onEvent(
+										AlarmsUiEvent.AlarmToggle(
+											index = index,
+											enable = it
+										)
+									)
+								},
+								enabled = state.isAlarmsInitialized && state.isLoading == false,
 								modifier = Modifier.fillMaxWidth()
 							)
-						},
-						check = state.pendingSnoozeAlarm.enable,
-						onCheckedChange = {
-							onEvent(AlarmsUiEvent.SnoozeAlarmToggle(enable = it))
-						},
-						enabled = state.isSnoozeAlarmInitialized && state.isLoading == false,
-						modifier = Modifier.fillMaxWidth()
-					)
+						}
 				}
 			}
-			item {
-				CardView(
-					modifier = Modifier.fillMaxWidth(),
-					title = { Text("Others") }
-				) {
-					SwitchField(
-						title = "Hourly Signal",
-						check = state.pendingHourlySignal.enable,
-						onCheckedChange = {
-							onEvent(AlarmsUiEvent.HourlySignalToggle(enable = it))
-						},
-						enabled = state.isHourlySignalInitialized && state.isLoading == false,
-						modifier = Modifier.fillMaxWidth()
-					)
-				}
+		}
+		item {
+			CardView(
+				modifier = Modifier.fillMaxWidth(),
+				title = { Text("Snooze Alarm") }
+			) {
+				SwitchField(
+					title = {
+						TimePickerField(
+							value = state.pendingSnoozeAlarm.time,
+							onValueChange = {
+								onEvent(AlarmsUiEvent.SnoozeAlarmTimeChange(time = it))
+							},
+							leadingIcon = {
+								Icon(
+									imageVector = Icons.Outlined.Snooze,
+									contentDescription = "Snooze Alarm"
+								)
+							},
+							enabled = state.isSnoozeAlarmInitialized && state.isLoading == false,
+							modifier = Modifier.fillMaxWidth()
+						)
+					},
+					check = state.pendingSnoozeAlarm.enable,
+					onCheckedChange = {
+						onEvent(AlarmsUiEvent.SnoozeAlarmToggle(enable = it))
+					},
+					enabled = state.isSnoozeAlarmInitialized && state.isLoading == false,
+					modifier = Modifier.fillMaxWidth()
+				)
+			}
+		}
+		item {
+			CardView(
+				modifier = Modifier.fillMaxWidth(),
+				title = { Text("Others") }
+			) {
+				SwitchField(
+					title = "Hourly Signal",
+					check = state.pendingHourlySignal.enable,
+					onCheckedChange = {
+						onEvent(AlarmsUiEvent.HourlySignalToggle(enable = it))
+					},
+					enabled = state.isHourlySignalInitialized && state.isLoading == false,
+					modifier = Modifier.fillMaxWidth()
+				)
 			}
 		}
 	}

@@ -3,8 +3,11 @@ package xyz.d1n0.ui.screen.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -27,6 +30,8 @@ import xyz.d1n0.lib.model.writeConnectionSettings
 import xyz.d1n0.lib.model.writeName
 import xyz.d1n0.lib.model.writeWatchSettings
 import xyz.d1n0.ui.boilerplate.updateCatching
+import xyz.d1n0.ui.navigation.SaveState
+import xyz.d1n0.ui.navigation.SaveableScreen
 
 data class SettingsUiState(
 	val isNameInitialized: Boolean = false,
@@ -70,7 +75,6 @@ sealed interface SettingsUiEvent {
 	object RequestName : SettingsUiEvent
 	object RequestWatchSettings : SettingsUiEvent
 	object RequestConnectionSettings : SettingsUiEvent
-	object SaveSettings : SettingsUiEvent
 	data class NameInputChange(val name: String) : SettingsUiEvent
 	data class Is24HourChange(val is24Hour: Boolean) : SettingsUiEvent
 	data class IsMutedChange(val isMuted: Boolean) : SettingsUiEvent
@@ -84,12 +88,16 @@ sealed interface SettingsUiEvent {
 	data class ConnectionTimeoutChange(val connectionTimeout: ConnectionTimeout) : SettingsUiEvent
 }
 
-class SettingsScreenViewModel : ViewModel(), KoinComponent {
+class SettingsScreenViewModel : ViewModel(), KoinComponent, SaveableScreen {
 	private val watch: Watch by inject()
 	private val watchInfo: StateFlow<WatchInfo> = watch.info
 
 	private val _uiState = MutableStateFlow(SettingsUiState())
 	val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
+
+	override val saveState: StateFlow<SaveState> = _uiState
+		.map { SaveState(hasUpdates = it.hasUpdates, isLoading = it.isLoading, hasErrors = it.hasErrors) }
+		.stateIn(viewModelScope, SharingStarted.Eagerly, SaveState())
 
 	init {
 		viewModelScope.launch {
@@ -130,7 +138,6 @@ class SettingsScreenViewModel : ViewModel(), KoinComponent {
 		SettingsUiEvent.RequestName -> requestName()
 		SettingsUiEvent.RequestWatchSettings -> requestWatchSettings()
 		SettingsUiEvent.RequestConnectionSettings -> requestConnectionSettings()
-		SettingsUiEvent.SaveSettings -> writeSettings()
 		is SettingsUiEvent.NameInputChange -> onNameInputChange(name = event.name)
 		is SettingsUiEvent.Is24HourChange -> onIs24HourChange(is24Hour = event.is24Hour)
 		is SettingsUiEvent.IsMutedChange -> onIsMutedChange(isMuted = event.isMuted)
@@ -160,7 +167,7 @@ class SettingsScreenViewModel : ViewModel(), KoinComponent {
 		watch.requestConnectionSettings()
 	}
 
-	private fun writeSettings() = watch.scope.launch {
+	override suspend fun save() {
 		val isNameUpdated = _uiState.value.isNameUpdated
 		val isWatchSettingsUpdated = _uiState.value.isWatchSettingsUpdated
 		val isConnectionSettingsUpdated = _uiState.value.isConnectionSettingsUpdated
