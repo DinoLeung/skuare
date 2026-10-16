@@ -17,19 +17,14 @@ import xyz.d1n0.lib.model.ClocksSettings
 import xyz.d1n0.lib.model.HomeTimezone
 import xyz.d1n0.lib.model.Watch
 import xyz.d1n0.lib.model.WorldTimezone
-import xyz.d1n0.lib.model.endClockUpdateSession
 import xyz.d1n0.lib.model.requestClocks
-import xyz.d1n0.lib.model.startClockUpdateSession
-import xyz.d1n0.lib.model.writeClocks
-import xyz.d1n0.lib.model.writeTimeZoneConfigs
-import xyz.d1n0.lib.model.writeTimeZoneCoordinatesAndRadioId
-import xyz.d1n0.lib.model.writeTimeZoneNames
+import xyz.d1n0.lib.model.writeClocksTimezones
 import xyz.d1n0.ui.boilerplate.updateCatching
 import xyz.d1n0.ui.navigation.SaveState
 import xyz.d1n0.ui.navigation.SaveableScreen
 
 data class ClocksUiState(
-	val isLoading: Boolean = true,
+	val isLoading: Boolean = false,
 	val savedClocks: ClocksSettings = ClocksSettings(),
 	val pendingClocks: ClocksSettings = ClocksSettings(),
 	val pendingHomeClockError: Throwable? = null,
@@ -69,15 +64,18 @@ class ClocksScreenViewModel : ViewModel(), KoinComponent, SaveableScreen {
 					transform = {
 						it.copy(
 							savedClocks = fetchedClocks,
-							pendingClocks = if (
-								it.isInitialized == false || it.hasUpdates == false
-							) fetchedClocks else it.pendingClocks,
+							pendingClocks =
+								if (it.isInitialized == false || it.hasUpdates == false)
+									fetchedClocks
+								else it.pendingClocks,
 						)
 					},
 					onSuccess = {
 						it.copy(
-							isLoading = fetchedClocks.isInitialized == false ||
-								fetchedClocks != it.pendingClocks,
+							isLoading = it.isLoading && (
+								fetchedClocks.isInitialized == false ||
+									fetchedClocks != it.pendingClocks
+							),
 						)
 					},
 					onFailure = { copy() },
@@ -102,16 +100,8 @@ class ClocksScreenViewModel : ViewModel(), KoinComponent, SaveableScreen {
 
 	override suspend fun save() {
 		_uiState.update { it.copy(isLoading = true) }
-		val pendingClocks = _uiState.value.pendingClocks
-
-		watch.startClockUpdateSession()
-		watch.writeClocks(pendingClocks)
-		watch.writeTimeZoneConfigs(pendingClocks)
-		watch.writeTimeZoneNames(pendingClocks)
-		watch.writeTimeZoneCoordinatesAndRadioId(pendingClocks)
-		watch.endClockUpdateSession()
-
-		watch.requestClocks()
+		watch.writeClocksTimezones(_uiState.value.pendingClocks)
+			.onFailure { _uiState.update { it.copy(isLoading = false) } }
 	}
 
 	private fun onHomeTimeZoneChange(timeZone: HomeTimezone) = _uiState.updateCatching(

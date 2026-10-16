@@ -32,10 +32,7 @@ fun AlarmsScreen(viewModel: AlarmsScreenViewModel) {
 	val state by viewModel.uiState.collectAsState()
 
 	LaunchedEffect(Unit) {
-		if (state.isHourlySignalInitialized == false ||
-			state.isAlarmsInitialized == false ||
-			state.isSnoozeAlarmInitialized == false
-		) viewModel.onEvent(AlarmsUiEvent.RequestAlarms)
+		if (state.isInitialized == false) viewModel.onEvent(AlarmsUiEvent.RequestAlarms)
 	}
 
 	AlarmsScreenContent(

@@ -23,9 +23,7 @@ fun RemindersScreen(viewModel: RemindersScreenViewModel) {
 	val state by viewModel.uiState.collectAsState()
 
 	LaunchedEffect(Unit) {
-		if (state.isTitlesInitialized == false || state.isConfigsInitialized == false) viewModel.onEvent(
-			RemindersUiEvent.RequestReminders
-		)
+		if (state.isInitialized == false) viewModel.onEvent(RemindersUiEvent.RequestReminders)
 	}
 
 	RemindersScreenContent(

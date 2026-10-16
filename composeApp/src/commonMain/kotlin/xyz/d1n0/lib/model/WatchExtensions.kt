@@ -101,6 +101,45 @@ suspend fun Watch.writeReminderConfigs(remindersSettings: RemindersSettings) =
 	remindersSettings.reminderConfigPackets.forEach { write(it) }.also { requestReminderConfigs() }
 
 /**
+ * Writes clocks and their time zone data to the watch, then reads the clocks back.
+ *
+ * Clock and time zone writes must be wrapped in a clocks update session (`21 00 01` … `21 01 01`),
+ * as the official app does, otherwise requesting clocks afterwards errors. The end packet also
+ * persists the changes on the watch, so no separate time write is needed.
+ *
+ * This function:
+ * 1. Starts the clocks update session.
+ * 2. Writes clocks, time zone configs, time zone names, then coordinates and radio IDs.
+ * 3. Ends the clocks update session.
+ * 4. Requests clocks so [Watch.clocks] reflects what the watch saved.
+ *
+ * Packets are built by each write as it runs, so if one cannot be built (e.g. an uninitialized
+ * clock) the update session has already started and is left open.
+ *
+ * @param clocksSettings The clocks to write, all six clocks must be initialized.
+ * @return A [Result] that fails if a packet could not be built or written, or if requesting
+ *         clocks afterwards fails.
+ */
+suspend fun Watch.writeClocksTimezones(clocksSettings: ClocksSettings) =
+	runCatching {
+		startClockUpdateSession()
+		writeClocks(clocksSettings)
+		writeTimeZoneConfigs(clocksSettings)
+		writeTimeZoneNames(clocksSettings)
+		writeTimeZoneCoordinatesAndRadioId(clocksSettings)
+		endClockUpdateSession()
+
+		requestClocks()
+//		requestTimeZoneConfigs()
+//		requestTimeZoneNames()
+//		requestTimeZoneCoordinatesAndRadioId()
+	}.onSuccess {
+		log.d { "Clocks and time zones written" }
+	}.onFailure { error ->
+		log.e { "Error writing clocks and time zones: ${error.message}" }
+	}
+
+/**
  * Synchronizes the watch's time, optionally including time zone data.
  *
  * This function:

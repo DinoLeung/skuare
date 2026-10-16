@@ -26,23 +26,26 @@ import xyz.d1n0.ui.navigation.SaveableScreen
 
 data class AlarmsUiState(
 	val isHourlySignalInitialized: Boolean = false,
-	val isHourlySignalLoading: Boolean = true,
+	val isHourlySignalLoading: Boolean = false,
 	val savedHourlySignal: HourlySignal = defaultHourlySignal,
 	val pendingHourlySignal: HourlySignal = defaultHourlySignal,
 	val pendingHourlySignalError: Throwable? = null,
 
 	val isAlarmsInitialized: Boolean = false,
-	val isAlarmsLoading: Boolean = true,
+	val isAlarmsLoading: Boolean = false,
 	val savedAlarms: List<Alarm> = defaultAlarms,
 	val pendingAlarms: List<Alarm> = defaultAlarms,
 	val pendingAlarmsErrors: List<Throwable?> = List(4) { null },
 
 	val isSnoozeAlarmInitialized: Boolean = false,
 	val savedSnoozeAlarm: Alarm = defaultSnoozeAlarm,
-	val isSnoozeAlarmLoading: Boolean = true,
+	val isSnoozeAlarmLoading: Boolean = false,
 	val pendingSnoozeAlarm: Alarm = defaultSnoozeAlarm,
 	val pendingSnoozeAlarmError: Throwable? = null,
 ) {
+	val isInitialized: Boolean
+		get() = isHourlySignalInitialized && isAlarmsInitialized && isSnoozeAlarmInitialized
+
 	val isLoading: Boolean
 		get() = isHourlySignalLoading || isAlarmsLoading || isSnoozeAlarmLoading
 
@@ -108,9 +111,9 @@ class AlarmsScreenViewModel : ViewModel(), KoinComponent, SaveableScreen {
 							isHourlySignalInitialized = settings.hourlySignal != null,
 							isAlarmsInitialized = settings.alarms.all { it != null },
 							isSnoozeAlarmInitialized = settings.snoozeAlarm != null,
-							isHourlySignalLoading = settings.hourlySignal != it.pendingHourlySignal,
-							isAlarmsLoading = settings.alarms != it.pendingAlarms,
-							isSnoozeAlarmLoading = settings.snoozeAlarm != it.pendingSnoozeAlarm,
+							isHourlySignalLoading = it.isHourlySignalLoading && settings.hourlySignal != it.pendingHourlySignal,
+							isAlarmsLoading = it.isAlarmsLoading && settings.alarms != it.pendingAlarms,
+							isSnoozeAlarmLoading = it.isSnoozeAlarmLoading && settings.snoozeAlarm != it.pendingSnoozeAlarm,
 						)
 					},
 					onFailure = { copy() },

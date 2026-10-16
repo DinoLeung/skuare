@@ -23,13 +23,13 @@ import xyz.d1n0.ui.navigation.SaveableScreen
 
 data class ReminderUiState(
 	val isTitlesInitialized: Boolean = false,
-	val isTitlesLoading: Boolean = true,
+	val isTitlesLoading: Boolean = false,
 	val savedTitles: List<ReminderTitle> = defaultReminderTitles,
 	val pendingTitles: List<ReminderTitle> = defaultReminderTitles,
 	val pendingTitleErrors: List<Throwable?> = List(5) { null },
 
 	val isConfigsInitialized: Boolean = false,
-	val isConfigsLoading: Boolean = true,
+	val isConfigsLoading: Boolean = false,
 	val savedConfigs: List<ReminderConfig> = defaultReminderConfigs,
 	val pendingConfigs: List<ReminderConfig> = defaultReminderConfigs,
 	val pendingConfigErrors: List<Throwable?> = List(5) { null },
@@ -41,6 +41,9 @@ data class ReminderUiState(
 
 	val hasUpdates: Boolean
 		get() = isReminderTitlesUpdated || isReminderConfigsUpdated
+
+	val isInitialized: Boolean
+		get() = isTitlesInitialized && isConfigsInitialized
 
 	val isLoading: Boolean
 		get() = isTitlesLoading || isConfigsLoading
@@ -104,8 +107,8 @@ class RemindersScreenViewModel : ViewModel(), KoinComponent, SaveableScreen {
 						it.copy(
 							isTitlesInitialized = settings.reminderTitles.all { it != null },
 							isConfigsInitialized = settings.reminderConfigs.all { it != null },
-							isTitlesLoading = settings.reminderTitles != it.pendingTitles,
-							isConfigsLoading = settings.reminderConfigs != it.pendingConfigs,
+							isTitlesLoading = it.isTitlesLoading && settings.reminderTitles != it.pendingTitles,
+							isConfigsLoading = it.isConfigsLoading && settings.reminderConfigs != it.pendingConfigs,
 						)
 					},
 					onFailure = { copy() },

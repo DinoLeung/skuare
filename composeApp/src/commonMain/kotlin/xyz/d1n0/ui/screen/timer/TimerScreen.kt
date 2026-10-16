@@ -38,7 +38,7 @@ private fun TimerScreenContent(
 		modifier = Modifier.fillMaxWidth(),
 		timer = state.pendingTimer,
 		onDurationChange = { onEvent(TimerUiEvent.TimerInputChange(it)) },
-		enabled = state.isLoading == false,
+		enabled = state.isInitialized && state.isLoading == false,
 		isError = state.hasErrors,
 		supportingText = {
 			state.pendingTimerError?.let { Text(it.message ?: "Unknown errors") }

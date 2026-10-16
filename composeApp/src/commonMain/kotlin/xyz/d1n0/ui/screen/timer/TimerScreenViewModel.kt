@@ -26,7 +26,7 @@ import kotlin.time.Duration.Companion.seconds
 
 data class TimerUiState(
 	val isInitialized: Boolean = false,
-	val isLoading: Boolean = true,
+	val isLoading: Boolean = false,
 	val savedTimer: Timer = defaultTimer,
 	val pendingTimer: Timer = defaultTimer,
 	val pendingTimerError: Throwable? = null,
@@ -57,15 +57,22 @@ class TimerScreenViewModel : ViewModel(), KoinComponent, SaveableScreen {
 	init {
 		viewModelScope.launch {
 			timerSettings.collect { settings ->
-				_uiState.update {
-					it.copy(
-						isInitialized = settings.timer != null,
-						isLoading = false,
-						savedTimer = settings.timer ?: defaultTimer,
-						pendingTimer = if (it.hasUpdates) it.pendingTimer
-							else settings.timer ?: defaultTimer,
-					)
-				}
+				_uiState.updateCatching(
+					transform = {
+						it.copy(
+							savedTimer = settings.timer ?: defaultTimer,
+							pendingTimer = if (it.hasUpdates) it.pendingTimer
+								else settings.timer ?: defaultTimer,
+						)
+					},
+					onSuccess = {
+						it.copy(
+							isInitialized = settings.timer != null,
+							isLoading = it.isLoading && settings.timer != it.pendingTimer,
+						)
+					},
+					onFailure = { copy() }
+				)
 			}
 		}
 	}
@@ -83,7 +90,6 @@ class TimerScreenViewModel : ViewModel(), KoinComponent, SaveableScreen {
 	override suspend fun save() {
 		_uiState.update { it.copy(isLoading = true) }
 		watch.writeTimer(timer = _uiState.value.pendingTimer)
-		watch.requestTimer()
 	}
 
 	private fun onTimerInputChange(duration: Duration) = _uiState.updateCatching(

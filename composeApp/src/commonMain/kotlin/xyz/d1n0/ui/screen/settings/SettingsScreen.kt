@@ -180,7 +180,7 @@ private fun SettingsScreenContent(
 					OutlinedTextField(
 						label = { Text("Watch Name") },
 						value = nameFieldValue,
-						enabled = state.isLoading != true,
+						enabled = state.isInitialized && state.isLoading == false,
 						isError = state.pendingNameError != null,
 						supportingText = {
 							state.pendingNameError?.let {

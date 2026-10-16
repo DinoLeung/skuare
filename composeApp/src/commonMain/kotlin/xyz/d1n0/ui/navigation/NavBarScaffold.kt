@@ -1,14 +1,18 @@
 package xyz.d1n0.ui.navigation
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -47,6 +51,7 @@ fun NavBarScaffold(
 		screen.saveState.collectAsState().value
 	}
 	val isSaving by viewModel.isSaving.collectAsState()
+	val isLoading = isSaving || saveStates.values.any { it.isLoading }
 
 	val navHostController = rememberNavController()
 	val navBackStackEntry by navHostController.currentBackStackEntryAsState()
@@ -117,6 +122,17 @@ fun NavBarScaffold(
 					remindersViewModel = remindersViewModel,
 					settingsViewModel = settingsViewModel,
 				)
+
+			AnimatedVisibility(
+				visible = isLoading,
+				enter = fadeIn(),
+				exit = fadeOut(),
+				modifier = Modifier
+					.align(Alignment.TopCenter)
+					.fillMaxWidth(),
+			) {
+				LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+			}
 		}
 	}
 }

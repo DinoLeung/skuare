@@ -35,23 +35,26 @@ import xyz.d1n0.ui.navigation.SaveableScreen
 
 data class SettingsUiState(
 	val isNameInitialized: Boolean = false,
-	val isNameLoading: Boolean = true,
+	val isNameLoading: Boolean = false,
 	val savedName: WatchName = defaultWatchName,
 	val pendingName: WatchName = defaultWatchName,
 	val pendingNameError: Throwable? = null,
 
 	val isWatchSettingsInitialized: Boolean = false,
-	val isWatchSettingsLoading: Boolean = true,
+	val isWatchSettingsLoading: Boolean = false,
 	val savedWatchSettings: WatchSettings = defaultWatchSettings,
 	val pendingWatchSettings: WatchSettings = defaultWatchSettings,
 	val pendingWatchSettingsError: Throwable? = null,
 
 	val isConnectionSettingsInitialized: Boolean = false,
-	val isConnectionSettingsLoading: Boolean = true,
+	val isConnectionSettingsLoading: Boolean = false,
 	val savedConnectionSettings: ConnectionSettings = defaultConnectionSettings,
 	val pendingConnectionSettings: ConnectionSettings = defaultConnectionSettings,
 	val pendingConnectionSettingsError: Throwable? = null,
 ) {
+	val isInitialized: Boolean
+		get() = isNameInitialized && isWatchSettingsInitialized && isConnectionSettingsInitialized
+
 	val isLoading: Boolean
 		get() = isNameLoading || isWatchSettingsLoading || isConnectionSettingsLoading
 
@@ -121,10 +124,9 @@ class SettingsScreenViewModel : ViewModel(), KoinComponent, SaveableScreen {
 							isNameInitialized = info.name != null,
 							isWatchSettingsInitialized = info.watchSettings != null,
 							isConnectionSettingsInitialized = info.connectionSettings != null,
-							// Assume updates only comes in on page first load and when fetching updates after writing
-							isNameLoading = info.name != it.pendingName,
-							isWatchSettingsLoading = info.watchSettings != it.pendingWatchSettings,
-							isConnectionSettingsLoading = info.connectionSettings != it.pendingConnectionSettings,
+							isNameLoading = it.isNameLoading && info.name != it.pendingName,
+							isWatchSettingsLoading = it.isWatchSettingsLoading && info.watchSettings != it.pendingWatchSettings,
+							isConnectionSettingsLoading = it.isConnectionSettingsLoading && info.connectionSettings != it.pendingConnectionSettings,
 						)
 					},
 					// It should not be any errors, data is coming from the watch
