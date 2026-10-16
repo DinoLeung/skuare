@@ -24,6 +24,7 @@ import xyz.d1n0.Log
 import xyz.d1n0.lib.model.Watch
 import xyz.d1n0.lib.model.adjustTime
 import xyz.d1n0.lib.model.requestConnectReason
+import xyz.d1n0.lib.model.requestWatchStatus
 import com.juul.kable.State as PeripheralState
 
 data class ScanUiState(
@@ -70,6 +71,7 @@ class ScanScreenViewModel(
 					if (it is PeripheralState.Connected) {
 						watch.scope.run {
 							watch.requestConnectReason()
+							watch.requestWatchStatus()
 							watch.adjustTime()
 						}.also {
 							onConnect()

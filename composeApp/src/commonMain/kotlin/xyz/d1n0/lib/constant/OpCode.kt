@@ -48,9 +48,10 @@ enum class OpCode(val byte: Byte) {
  * 2022070101000000000000000101000000000000
  *
  * CLASS_WATCH_FEATURE_SERVICE_WATCH_CONDITION
- * 28131E00
- * 28131900
- * [1] battery level, on gmwb5000 and gwb5600 full charged value is 0x13, bottom value is 0x09?
- * [2] temperature
- * [3] flash status(probably not useed on squares)
+ * 28131A01
+ * 280F1D00
+ * [1] maybe battery related, but does not match the bars in the official app (0x0F shown as 2/5 and
+ *     3/5), the official app reads the battery level from the watch status instead, see WatchStatus
+ * [2] temperature in °C
+ * [3] flash status(probably not used on squares)
  */
