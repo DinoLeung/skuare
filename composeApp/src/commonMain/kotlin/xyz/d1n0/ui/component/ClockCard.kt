@@ -1,6 +1,5 @@
 package xyz.d1n0.ui.component
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
@@ -24,8 +23,9 @@ fun ClockCard(
 	clock: Clock,
 	onClick: () -> Unit,
 	modifier: Modifier = Modifier,
+	enabled: Boolean = true,
 ) {
-	CardView(modifier = modifier.clickable(onClick = onClick), leadingIcon = {
+	CardView(modifier = modifier, enabled = enabled, onClick = onClick, leadingIcon = {
 		if (clock is HomeClock) {
 			Icon(
 				imageVector = Icons.Sharp.Home,

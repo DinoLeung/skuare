@@ -69,6 +69,7 @@ private fun ClocksScreenContent(
 					modifier = Modifier.fillMaxWidth(),
 					clock = it,
 					onClick = { selectedClockPosition = 0 },
+					enabled = state.isInitialized && state.isLoading == false,
 				)
 			}
 			worldClocks.forEachIndexed { index, clock ->
@@ -77,6 +78,7 @@ private fun ClocksScreenContent(
 						modifier = Modifier.fillMaxWidth(),
 						clock = it,
 						onClick = { selectedClockPosition = index + 1 },
+						enabled = state.isInitialized && state.isLoading == false,
 					)
 				}
 			}

@@ -11,15 +11,14 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun CardView(
 	modifier: Modifier = Modifier,
+	enabled: Boolean = true,
+	onClick: (() -> Unit)? = null,
 	leadingIcon: @Composable (() -> Unit)? = null,
 	title: @Composable (() -> Unit)? = null,
 	indicator: @Composable (() -> Unit)? = null,
 	content: @Composable (() -> Unit)? = null,
 ) {
-	Card(
-		modifier = modifier,
-		shape = MaterialTheme.shapes.medium,
-	) {
+	val cardContent: @Composable ColumnScope.() -> Unit = {
 		Column(modifier = Modifier.padding(16.dp)) {
 			Row(
 				verticalAlignment = Alignment.CenterVertically,
@@ -32,5 +31,21 @@ fun CardView(
 			}
 			content?.let { it() }
 		}
+	}
+
+	if (onClick == null) {
+		Card(
+			modifier = modifier,
+			shape = MaterialTheme.shapes.medium,
+			content = cardContent,
+		)
+	} else {
+		Card(
+			onClick = onClick,
+			modifier = modifier,
+			enabled = enabled,
+			shape = MaterialTheme.shapes.medium,
+			content = cardContent,
+		)
 	}
 }
