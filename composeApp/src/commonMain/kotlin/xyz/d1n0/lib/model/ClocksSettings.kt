@@ -1,5 +1,6 @@
 package xyz.d1n0.lib.model
 
+import xyz.d1n0.lib.constant.ClocksUpdateSessionMessage
 import xyz.d1n0.lib.constant.OpCode
 import xyz.d1n0.lib.helper.fromLittleEndianByteArray
 import xyz.d1n0.lib.helper.requireIn
@@ -202,13 +203,21 @@ data class ClocksSettings(
 		 * E.g. 21 00 01
 		 */
 		val clocksUpdateSessionStartPacket: ByteArray
-			get() = byteArrayOf(OpCode.CLOCKS_UPDATE_SESSION.byte, 0x00, 0x01)
+			get() = byteArrayOf(
+				OpCode.CLOCKS_UPDATE_SESSION.byte,
+				ClocksUpdateSessionMessage.START.byte,
+				0x01,
+			)
 
 		/**
 		 * Packet that ends a clocks update session, sent after writing clocks and timezone data.
 		 * E.g. 21 01 01
 		 */
 		val clocksUpdateSessionEndPacket: ByteArray
-			get() = byteArrayOf(OpCode.CLOCKS_UPDATE_SESSION.byte, 0x01, 0x01)
+			get() = byteArrayOf(
+				OpCode.CLOCKS_UPDATE_SESSION.byte,
+				ClocksUpdateSessionMessage.END.byte,
+				0x01,
+			)
 	}
 }
