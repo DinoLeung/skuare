@@ -133,6 +133,10 @@ suspend fun Watch.adjustTime(delay: Duration = 0.seconds, writeTimezoneMetadata:
 		log.e { "Error syncing time: ${error.message}" }
 	}
 
+suspend fun Watch.startClockUpdateSession() = write(ClocksSettings.clocksUpdateSessionStartPacket)
+
+suspend fun Watch.endClockUpdateSession() = write(ClocksSettings.clocksUpdateSessionEndPacket)
+
 /**
  * Processes an incoming BLE packet by dispatching it based on its opcode.
  *

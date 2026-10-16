@@ -195,4 +195,20 @@ data class ClocksSettings(
 				) + clock.timeZone.coordinatesBytes + clock.timeZone.radioIdByte
 			}
 		}
+
+	companion object {
+		/**
+		 * Packet that starts a clocks update session, sent before writing clocks and timezone data.
+		 * E.g. 21 00 01
+		 */
+		val clocksUpdateSessionStartPacket: ByteArray
+			get() = byteArrayOf(OpCode.CLOCKS_UPDATE_SESSION.byte, 0x00, 0x01)
+
+		/**
+		 * Packet that ends a clocks update session, sent after writing clocks and timezone data.
+		 * E.g. 21 01 01
+		 */
+		val clocksUpdateSessionEndPacket: ByteArray
+			get() = byteArrayOf(OpCode.CLOCKS_UPDATE_SESSION.byte, 0x01, 0x01)
+	}
 }

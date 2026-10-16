@@ -14,9 +14,10 @@ import xyz.d1n0.lib.model.ClocksSettings
 import xyz.d1n0.lib.model.HomeTimezone
 import xyz.d1n0.lib.model.Watch
 import xyz.d1n0.lib.model.WorldTimezone
+import xyz.d1n0.lib.model.endClockUpdateSession
 import xyz.d1n0.lib.model.requestClocks
+import xyz.d1n0.lib.model.startClockUpdateSession
 import xyz.d1n0.lib.model.writeClocks
-import xyz.d1n0.lib.model.writeTime
 import xyz.d1n0.lib.model.writeTimeZoneConfigs
 import xyz.d1n0.lib.model.writeTimeZoneCoordinatesAndRadioId
 import xyz.d1n0.lib.model.writeTimeZoneNames
@@ -94,13 +95,17 @@ class ClocksScreenViewModel : ViewModel(), KoinComponent {
 
 	private fun writeClocks() = watch.scope.launch {
 		_uiState.update { it.copy(isLoading = true) }
-		_uiState.value.pendingClocks.let { pendingClocks ->
-			watch.writeClocks(pendingClocks)
-			watch.writeTimeZoneConfigs(pendingClocks)
-			watch.writeTimeZoneNames(pendingClocks)
-			watch.writeTimeZoneCoordinatesAndRadioId(pendingClocks)
-			watch.writeTime() // Important, data does not persist on the watch otherwise
-		}
+		val pendingClocks = _uiState.value.pendingClocks
+
+		watch.startClockUpdateSession()
+		watch.writeClocks(pendingClocks)
+		watch.writeTimeZoneConfigs(pendingClocks)
+		watch.writeTimeZoneNames(pendingClocks)
+		watch.writeTimeZoneCoordinatesAndRadioId(pendingClocks)
+		watch.endClockUpdateSession()
+
+		watch.requestClocks()
+
 	}
 
 	private fun onHomeTimeZoneChange(timeZone: HomeTimezone) = _uiState.updateCatching(
