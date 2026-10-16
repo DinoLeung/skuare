@@ -1,6 +1,6 @@
 package xyz.d1n0.lib.model
 
-import xyz.d1n0.lib.constant.ClocksUpdateSessionMessage
+import xyz.d1n0.lib.constant.ClocksUpdateSession
 import xyz.d1n0.lib.constant.OpCode
 import xyz.d1n0.lib.helper.fromLittleEndianByteArray
 import xyz.d1n0.lib.helper.requireIn
@@ -205,7 +205,7 @@ data class ClocksSettings(
 		val clocksUpdateSessionStartPacket: ByteArray
 			get() = byteArrayOf(
 				OpCode.CLOCKS_UPDATE_SESSION.byte,
-				ClocksUpdateSessionMessage.START.byte,
+				ClocksUpdateSession.START.byte,
 				0x01,
 			)
 
@@ -216,7 +216,7 @@ data class ClocksSettings(
 		val clocksUpdateSessionEndPacket: ByteArray
 			get() = byteArrayOf(
 				OpCode.CLOCKS_UPDATE_SESSION.byte,
-				ClocksUpdateSessionMessage.END.byte,
+				ClocksUpdateSession.END.byte,
 				0x01,
 			)
 	}
