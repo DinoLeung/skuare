@@ -147,15 +147,12 @@ class WatchSessionHandler(
 	 * @param timeout How long the whole session may take.
 	 */
 	suspend fun runBackground(peripheral: Peripheral, timeout: Duration = 60.seconds): BackgroundSessionResult {
-		if (connectionManager.watch.value != null) {
-			return BackgroundSessionResult.Busy.also { log.i { "Background session: $it" } }
-		}
-
 		var watch: Watch? = null
 		var keepConnected = false
 		try {
 			val result = withTimeoutOrNull(timeout) {
-				val connected = connectionManager.connect(peripheral)
+				val connected = connectionManager.connectIfIdle(peripheral)
+					?: return@withTimeoutOrNull BackgroundSessionResult.Busy
 				watch = connected
 				backgroundSession(connected)
 			} ?: BackgroundSessionResult.Failed(IllegalStateException("Timed out after $timeout"))

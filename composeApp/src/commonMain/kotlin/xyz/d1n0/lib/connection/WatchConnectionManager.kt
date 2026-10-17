@@ -58,7 +58,26 @@ class WatchConnectionManager : KoinComponent {
 			runCatching { previous.disconnect() }
 			release(previous)
 		}
+		connectLocked(peripheral)
+	}
 
+	/**
+	 * Like [connect], but leaves the current watch alone. Used by background sync, so it never
+	 * takes over a watch the UI is connected to.
+	 *
+	 * @param peripheral The peripheral to connect to, closed if another watch is connected.
+	 * @return The connected watch, or null if another watch is already connected.
+	 */
+	suspend fun connectIfIdle(peripheral: Peripheral): Watch? = connectMutex.withLock {
+		if (_watch.value != null) {
+			peripheral.close()
+			null
+		} else {
+			connectLocked(peripheral)
+		}
+	}
+
+	private suspend fun connectLocked(peripheral: Peripheral): Watch {
 		val watch = Watch(peripheral)
 		runCatching { watch.connect() }
 			.onFailure { watch.close() }
@@ -73,7 +92,7 @@ class WatchConnectionManager : KoinComponent {
 			release(watch)
 		}
 
-		watch
+		return watch
 	}
 
 	/**

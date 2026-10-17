@@ -15,6 +15,12 @@
     <uses-feature android:name="android.software.companion_device_setup" />
     <uses-permission android:name="android.permission.REQUEST_OBSERVE_COMPANION_DEVICE_PRESENCE" />
 
+    <!-- Background sync runs in a foreground service started by the companion device service -->
+    <uses-permission android:name="android.permission.REQUEST_COMPANION_START_FOREGROUND_SERVICES_FROM_BACKGROUND" />
+    <uses-permission android:name="android.permission.REQUEST_COMPANION_RUN_IN_BACKGROUND" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
+
     <application
         android:name=".SkuareApplication"
         android:allowBackup="true"
@@ -33,6 +39,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".sync.WatchCompanionService"
+            android:exported="true"
+            android:permission="android.permission.BIND_COMPANION_DEVICE_SERVICE">
+            <intent-filter>
+                <action android:name="android.companion.CompanionDeviceService" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".sync.WatchSyncService"
+            android:exported="false"
+            android:foregroundServiceType="connectedDevice" />
 
     </application>
 
