@@ -29,7 +29,7 @@ data class AlarmsSettings(
 			"Alarm A packet must be exactly 5 bytes long, e.g. 15 C0 00 0C 1E"
 		}
 		return this.copy(
-			hourlySignal = HourlySignal.fromByte(packet[0]),
+			hourlySignal = HourlySignal.fromByte(packet[1]),
 			alarms = alarms.toMutableList()
 				.also { it[0] = Alarm.fromBytes(packet.sliceArray(1..packet.lastIndex)) })
 	}
