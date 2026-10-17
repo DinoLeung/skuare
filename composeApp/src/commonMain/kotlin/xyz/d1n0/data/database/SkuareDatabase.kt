@@ -12,6 +12,12 @@ import org.koin.core.module.Module
 
 const val DATABASE_NAME = "skuare.db"
 
+/**
+ * Never use destructive migrations (e.g. fallbackToDestructiveMigration). They wipe
+ * [AppConfig.installationId], and every paired watch would then see a different app info and
+ * count as unpaired. Bump [Database.version] and add a migration instead, the exported schemas in
+ * composeApp/schemas are what auto migrations compare against.
+ */
 @Database(entities = [PairedWatch::class, AppConfig::class], version = 1)
 @TypeConverters(Converters::class)
 @ConstructedBy(SkuareDatabaseConstructor::class)

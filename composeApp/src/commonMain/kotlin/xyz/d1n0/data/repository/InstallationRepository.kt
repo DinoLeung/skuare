@@ -18,8 +18,8 @@ class InstallationRepository(private val dao: AppConfigDao) {
 	 */
 	suspend fun appInfo(): AppInfo = mutex.withLock {
 		appInfo ?: run {
-			dao.insertIfMissing(AppConfig(installationId = generateInstallationId()))
-			val config = checkNotNull(dao.get()) { "App config missing after insert" }
+			val config = dao.get()
+				?: AppConfig(installationId = generateInstallationId()).also { dao.insertIfMissing(it) }
 			AppInfo(id = config.installationId)
 		}.also { appInfo = it }
 	}
