@@ -11,7 +11,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 import kotlinx.io.IOException
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -19,6 +22,8 @@ import xyz.d1n0.Log
 import xyz.d1n0.lib.constant.BleUuid
 import xyz.d1n0.lib.constant.OpCode
 import kotlin.coroutines.cancellation.CancellationException
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 import kotlin.uuid.ExperimentalUuidApi
 
 class Watch(private val peripheral: Peripheral) : KoinComponent {
@@ -32,6 +37,14 @@ class Watch(private val peripheral: Peripheral) : KoinComponent {
 		private val ioCharacteristic = characteristicOf(
 			service = BleUuid.ALL_FEATURES_CHARACTERISTIC_UUID,
 			characteristic = BleUuid.IO_CHARACTERISTIC_UUID
+		)
+		private val dataRequestCharacteristic = characteristicOf(
+			service = BleUuid.ALL_FEATURES_CHARACTERISTIC_UUID,
+			characteristic = BleUuid.DATA_REQUEST_CHARACTERISTIC_UUID
+		)
+		private val dataTransferCharacteristic = characteristicOf(
+			service = BleUuid.ALL_FEATURES_CHARACTERISTIC_UUID,
+			characteristic = BleUuid.DATA_TRANSFER_CHARACTERISTIC_UUID
 		)
 
 		val scanner by lazy {
@@ -159,6 +172,34 @@ class Watch(private val peripheral: Peripheral) : KoinComponent {
 			)
 		}.onFailure { log.e { "Failed to write ${data.toHexString(HexFormat.UpperCase)}: ${it.message}" } }
 
+	}
+
+	/**
+	 * Requests data from the data request characteristic and waits for the reply on the data
+	 * transfer characteristic, the same way the official app does:
+	 * 1. Enables notifications on the data transfer characteristic.
+	 * 2. Writes [request] to the data request characteristic.
+	 * 3. Waits for one notification on the data transfer characteristic.
+	 * 4. Writes [end] to the data request characteristic.
+	 * 5. Disables notifications on the data transfer characteristic.
+	 *
+	 * @param request The packet that starts the transfer, e.g. [WatchStatus.requestPacket].
+	 * @param end The packet that ends the transfer, e.g. [WatchStatus.endPacket].
+	 * @param timeout How long to wait for the reply.
+	 * @return The received data.
+	 */
+	@OptIn(ExperimentalStdlibApi::class)
+	@Throws(CancellationException::class, IOException::class, NotConnectedException::class)
+	suspend fun requestData(request: ByteArray, end: ByteArray, timeout: Duration = 5.seconds): ByteArray {
+		log.d { "Requesting data: ${request.toHexString(HexFormat.UpperCase)}" }
+		return withTimeout(timeout) {
+			peripheral.observe(dataTransferCharacteristic) {
+				peripheral.write(dataRequestCharacteristic, request, WriteType.WithResponse)
+			}
+				// write end packet before first() cancels the observation, which disables notifications
+				.onEach { peripheral.write(dataRequestCharacteristic, end, WriteType.WithResponse) }
+				.first()
+		}.also { log.d { "Received data: ${it.toHexString(HexFormat.UpperCase)}" } }
 	}
 }
 

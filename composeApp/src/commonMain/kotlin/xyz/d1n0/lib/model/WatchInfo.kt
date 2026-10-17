@@ -8,6 +8,7 @@ data class WatchInfo(
 	val connectReason: ConnectReason? = null,
 	val watchSettings: WatchSettings? = null,
 	val connectionSettings: ConnectionSettings? = null,
+	val watchStatus: WatchStatus? = null,
 ) {
 	fun parseNamePacket(packet: ByteArray) = this.copy(name = WatchName.fromPacket(packet))
 
@@ -29,6 +30,8 @@ data class WatchInfo(
 
 	fun parseWatchSettingsPacket(packet: ByteArray) =
 		this.copy(watchSettings = WatchSettings.fromPacket(packet))
+
+	fun parseWatchStatusPacket(packet: ByteArray) = this.copy(watchStatus = WatchStatus.fromPacket(packet))
 
 	fun parseConnectionSettingsPacket(packet: ByteArray) =
 		this.copy(connectionSettings = ConnectionSettings.fromPacket(packet))

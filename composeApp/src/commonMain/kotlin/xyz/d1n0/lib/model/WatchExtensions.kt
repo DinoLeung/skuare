@@ -15,6 +15,22 @@ suspend fun Watch.requestAppInfo() = request(OpCode.APP_INFO)
 
 suspend fun Watch.requestWatchCondition() = request(OpCode.WATCH_CONDITION)
 
+/**
+ * Requests the watch status, which holds the battery level shown in the official app, and stores it
+ * in [Watch.info].
+ *
+ * @return A [Result] that fails if the transfer times out or the watch status could not be parsed.
+ */
+suspend fun Watch.requestWatchStatus() =
+	runCatching {
+		val packet = requestData(WatchStatus.requestPacket, WatchStatus.endPacket)
+		_info.update { it.parseWatchStatusPacket(packet) }
+	}.onSuccess {
+		log.d { "Watch status: ${info.value.watchStatus}, battery level: ${info.value.watchStatus?.batteryLevel?.bars}/5" }
+	}.onFailure { error ->
+		log.e { "Error requesting watch status: ${error.message}" }
+	}
+
 suspend fun Watch.requestConnectionSettings() = request(OpCode.CONNECTION_SETTINGS)
 suspend fun Watch.writeConnectionSettings(connectionSettings: ConnectionSettings) =
 	write(connectionSettings.packet).also { requestConnectionSettings() }
@@ -241,12 +257,10 @@ suspend fun Watch.handlePacket(packet: ByteArray) = when (OpCode.fromByte(packet
 	}
 
 	OpCode.WATCH_CONDITION -> {
-		// 28 13 1F 00
-		// 28 13 1A 00 (4/5 battery)
-		val BATTERY_MAX = 0x13
-		val BATTERY_MIN = 0x09 // ???
-		val batteryLevel = (packet[1].toFloat() - BATTERY_MIN) / (BATTERY_MAX - BATTERY_MIN)
-		log.d { "Battery level: $batteryLevel" }
+		// 28 13 1A 01 (4/5 battery in official app)
+		// 28 0F 1D 00 (2/5 battery in official app)
+		// 28 0F 19 00 (3/5 battery in official app)
+		// battery byte does not match the official app, which uses the watch status instead, see WatchStatus
 		log.d { packet.toHexString(HexFormat.UpperCase) }
 	}
 
