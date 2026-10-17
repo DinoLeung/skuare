@@ -20,6 +20,8 @@ class WatchCompanionService : CompanionDeviceService(), KoinComponent {
 	// API 33-35
 	@Deprecated("Replaced by onDevicePresenceEvent on API 36")
 	override fun onDeviceAppeared(associationInfo: AssociationInfo) {
+		// API 36+ calls this too, next to onDevicePresenceEvent, also when the app itself connects
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) return
 		associationInfo.deviceMacAddress?.let { startSync(it.toString()) }
 	}
 

@@ -53,12 +53,13 @@ class ScanScreenViewModel(
 	private var scanJob: Job? = null
 
 	init {
-		// a watch connected in background after a lower-left long press, the app was opened for it
+		// a watch connected in background after a lower-left long press, the app was opened for it.
+		// The background session already checked pairing and adjusted the time, and the watch is in
+		// WatchConnectionManager, so the watch screens can use it straight away
 		viewModelScope.launch {
 			watchSessionHandler.pendingForegroundWatch.filterNotNull().collect {
-				watchSessionHandler.takePendingForegroundWatch()?.let { watch ->
+				watchSessionHandler.takePendingForegroundWatch()?.let {
 					stopScanning()
-					watchSessionHandler.runForeground(watch)
 					onConnect()
 				}
 			}

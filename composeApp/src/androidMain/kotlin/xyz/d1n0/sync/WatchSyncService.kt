@@ -81,9 +81,14 @@ class WatchSyncService : Service(), KoinComponent {
 	private suspend fun runSession(address: String) {
 		val result = watchSessionHandler.runBackground(Peripheral(watchBluetoothDevice(address)))
 		if (result is BackgroundSessionResult.OpenAppRequested) {
-			// stay in the foreground, holding the connection, until the app takes the watch or it
-			// disconnects
-			watchSessionHandler.pendingForegroundWatch.first { it == null }
+			WatchNotifications.showOpenAppPrompt(this, result.watch.advertisedName)
+			try {
+				// stay in the foreground, holding the connection, until the app takes the watch, it
+				// disconnects or the prompt is dismissed
+				watchSessionHandler.pendingForegroundWatch.first { it == null }
+			} finally {
+				WatchNotifications.cancelOpenAppPrompt(this)
+			}
 		}
 	}
 }

@@ -53,10 +53,10 @@ sealed interface BackgroundSessionResult {
 	data class Synced(val error: Throwable?) : BackgroundSessionResult
 
 	/**
-	 * Lower-left long press. Still connected, held in [WatchSessionHandler.pendingForegroundWatch]
-	 * until the app opens.
+	 * Lower-left long press. Time adjusted, or failed with [syncError], and still connected, held
+	 * in [WatchSessionHandler.pendingForegroundWatch] until the app opens.
 	 */
-	data class OpenAppRequested(val watch: Watch) : BackgroundSessionResult
+	data class OpenAppRequested(val watch: Watch, val syncError: Throwable?) : BackgroundSessionResult
 
 	/**
 	 * Find phone (lower-right long press), not supported yet, disconnected.
@@ -103,7 +103,7 @@ class WatchSessionHandler(
 	}
 
 	/**
-	 * Runs when the user connected from the app, or opened it for [pendingForegroundWatch].
+	 * Runs when the user connected from the app.
 	 *
 	 * This function:
 	 * 1. Reads the app info and the connect reason (for the watch address).
@@ -138,8 +138,9 @@ class WatchSessionHandler(
 	 *    is up to its auto sync setting, a button press is always handled.
 	 * 4. Acts on the connect reason:
 	 *    - auto or manual sync: adjusts the time and stores the result in [PairedWatch].
-	 *    - setup or default (lower-left long press): keeps the connection and holds the watch in
-	 *      [pendingForegroundWatch], the caller should ask the user to open the app.
+	 *    - setup or default (lower-left long press): adjusts the time like a sync, then keeps the
+	 *      connection and holds the watch in [pendingForegroundWatch], the caller should ask the
+	 *      user to open the app.
 	 *    - find: does nothing.
 	 * 5. Disconnects, unless the watch is waiting for the app.
 	 *
@@ -184,22 +185,32 @@ class WatchSessionHandler(
 		}
 
 		return when (connectReason) {
-			ConnectReason.AUTO_SYNC, ConnectReason.MANUAL_SYNC -> {
-				val error = watch.adjustTime().exceptionOrNull()
-				pairedWatchRepository.recordSync(
-					address = address,
-					error = error?.let { it.message ?: it::class.simpleName ?: "Unknown error" },
-				)
-				BackgroundSessionResult.Synced(error)
-			}
+			ConnectReason.AUTO_SYNC, ConnectReason.MANUAL_SYNC ->
+				BackgroundSessionResult.Synced(adjustTimeAndRecord(watch, address))
 
 			ConnectReason.SETUP, ConnectReason.DEFAULT -> {
+				// before holding the watch, so the app can't take it while the time is still being written
+				val syncError = adjustTimeAndRecord(watch, address)
 				holdForApp(watch)
-				BackgroundSessionResult.OpenAppRequested(watch)
+				BackgroundSessionResult.OpenAppRequested(watch, syncError)
 			}
 
 			ConnectReason.FIND -> BackgroundSessionResult.Ignored
 		}
+	}
+
+	/**
+	 * Adjusts the time and stores the result in [PairedWatch].
+	 *
+	 * @return Why the time adjustment failed, null if it succeeded.
+	 */
+	private suspend fun adjustTimeAndRecord(watch: Watch, address: String): Throwable? {
+		val error = watch.adjustTime().exceptionOrNull()
+		pairedWatchRepository.recordSync(
+			address = address,
+			error = error?.let { it.message ?: it::class.simpleName ?: "Unknown error" },
+		)
+		return error
 	}
 
 	/**
