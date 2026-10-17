@@ -21,11 +21,11 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import xyz.d1n0.Log
+import xyz.d1n0.lib.connection.WatchConnectionManager
 import xyz.d1n0.lib.model.Watch
 import xyz.d1n0.lib.model.adjustTime
 import xyz.d1n0.lib.model.requestConnectReason
 import xyz.d1n0.lib.model.requestWatchStatus
-import com.juul.kable.State as PeripheralState
 
 data class ScanUiState(
 	val isScanning: Boolean = false,
@@ -41,9 +41,10 @@ sealed interface ScanUiEvent {
 
 class ScanScreenViewModel(
 	val onConnect: () -> Unit,
+	val permissionsController: PermissionsController,
 ) : ViewModel(), KoinComponent {
 	val log: Log by inject()
-	val permissionsController: PermissionsController by inject()
+	private val watchConnectionManager: WatchConnectionManager by inject()
 
 	private val _state = MutableStateFlow(ScanUiState())
 	val state: StateFlow<ScanUiState> = _state.asStateFlow()
@@ -61,24 +62,12 @@ class ScanScreenViewModel(
 			_state.update { it.copy(isScanning = true) }
 			// TODO: what if there are more than 1 peripheral found
 			Watch.scanner.advertisements.firstOrNull()?.let {
-				val watch = Watch(Peripheral(it))
-				// declare watch in koin, so it knows how to inject it to other places
-				getKoin().declare(watch)
-
-				watch.connect()
-
-				watch.state.collect {
-					if (it is PeripheralState.Connected) {
-						watch.scope.run {
-							watch.requestConnectReason()
-							watch.requestWatchStatus()
-							watch.adjustTime()
-						}.also {
-							onConnect()
-							stopScanning()
-						}
-					}
-				}
+				val watch = watchConnectionManager.connect(Peripheral(it))
+				watch.requestConnectReason()
+				watch.requestWatchStatus()
+				watch.adjustTime()
+				onConnect()
+				stopScanning()
 			}
 		}
 	}

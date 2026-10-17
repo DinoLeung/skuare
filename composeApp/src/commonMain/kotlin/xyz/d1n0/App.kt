@@ -2,29 +2,24 @@ package xyz.d1n0
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.compose.rememberNavController
-import dev.icerock.moko.permissions.compose.rememberPermissionsControllerFactory
-import org.koin.compose.KoinApplication
+import org.koin.compose.KoinApplicationPreview
 import xyz.d1n0.ui.navigation.RootNavGraph
 
+/**
+ * Root of the UI, Koin must be started with [initKoin] before this is shown.
+ */
 @Composable
-@Preview
 fun App() {
 	MaterialTheme {
+		RootNavGraph()
+	}
+}
 
-		val permissionsControllerFactory = rememberPermissionsControllerFactory()
-		val permissionsController =
-			remember { permissionsControllerFactory.createPermissionsController() }
-
-		KoinApplication(
-			configuration = KoinApp(
-				rootNavHostController = rememberNavController(),
-				permissionsController = permissionsController,
-			)
-		) {
-			RootNavGraph()
-		}
+@Preview
+@Composable
+fun AppPreview() {
+	KoinApplicationPreview(application = { modules(coreModule, uiModule) }) {
+		App()
 	}
 }

@@ -1,16 +1,14 @@
 package xyz.d1n0.ui.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import org.koin.compose.koinInject
-import org.koin.core.qualifier.named
 import xyz.d1n0.ui.screen.scan.ScanScreen
 
 @Composable
 fun RootNavGraph() {
-	val rootNavHostController = koinInject<NavHostController>(named("rootNavHostController"))
+	val rootNavHostController = rememberNavController()
 
 	val onConnect = {
 		rootNavHostController.navigate(RootNavRoute.Watch.route) {

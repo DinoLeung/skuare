@@ -9,12 +9,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import dev.icerock.moko.permissions.PermissionState
 import dev.icerock.moko.permissions.compose.BindEffect
+import dev.icerock.moko.permissions.compose.rememberPermissionsControllerFactory
 import androidx.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -23,7 +25,12 @@ import org.koin.core.parameter.parametersOf
 fun ScanScreen(
 	onConnect: () -> Unit,
 ) {
-	val viewModel = koinViewModel<ScanScreenViewModel>(parameters = { parametersOf(onConnect) })
+	val permissionsControllerFactory = rememberPermissionsControllerFactory()
+	val permissionsController =
+		remember(permissionsControllerFactory) { permissionsControllerFactory.createPermissionsController() }
+	val viewModel = koinViewModel<ScanScreenViewModel>(
+		parameters = { parametersOf(onConnect, permissionsController) }
+	)
 	val state by viewModel.state.collectAsState()
 
 	BindEffect(viewModel.permissionsController)

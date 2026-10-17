@@ -112,6 +112,11 @@ class Watch(private val peripheral: Peripheral) : KoinComponent {
 	suspend fun disconnect() = peripheral.disconnect()
 
 	/**
+	 * Closes the peripheral and cancels [scope], the watch can't be connected again afterwards.
+	 */
+	fun close() = peripheral.close()
+
+	/**
 	 * Sends a request to the peripheral with a specified command and position.
 	 * Results will be returned through the IO characteristic.
 	 *

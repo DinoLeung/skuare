@@ -75,6 +75,7 @@ kotlin {
 
 		androidMain.dependencies {
 			implementation(libs.androidx.activity.compose)
+			implementation(libs.koin.android)
 		}
 
 		iosMain.dependencies {}

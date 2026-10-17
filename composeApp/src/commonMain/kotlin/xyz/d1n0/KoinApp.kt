@@ -1,17 +1,15 @@
 package xyz.d1n0
 
-import androidx.navigation.NavHostController
 import co.touchlab.kermit.Logger
 import co.touchlab.kermit.koin.KermitKoinLogger
-import dev.icerock.moko.permissions.PermissionsController
+import org.koin.core.context.startKoin
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
-import org.koin.core.qualifier.named
-import org.koin.dsl.KoinConfiguration
-import org.koin.dsl.koinConfiguration
+import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.module
-import xyz.d1n0.lib.model.Watch
+import org.koin.mp.KoinPlatform
+import xyz.d1n0.lib.connection.WatchConnectionManager
 import xyz.d1n0.ui.navigation.NavBarViewModel
 import xyz.d1n0.ui.screen.alarms.AlarmsScreenViewModel
 import xyz.d1n0.ui.screen.clocks.ClocksScreenViewModel
@@ -20,28 +18,37 @@ import xyz.d1n0.ui.screen.scan.ScanScreenViewModel
 import xyz.d1n0.ui.screen.settings.SettingsScreenViewModel
 import xyz.d1n0.ui.screen.timer.TimerScreenViewModel
 
-fun KoinApp(
-	rootNavHostController: NavHostController,
-	permissionsController: PermissionsController,
-): KoinConfiguration =
-	koinConfiguration {
-		logger(
-			KermitKoinLogger(Logger.withTag("koin"))
-		)
-		modules(module {
-			single { Log }
-			single<NavHostController>(named("rootNavHostController")) { rootNavHostController }
-			single<PermissionsController> { permissionsController }
+/**
+ * Dependencies that work without UI, so background sync can use them too.
+ */
+val coreModule = module {
+	single { Log }
+	singleOf(::WatchConnectionManager)
+	// Resolved on every injection, so screens get the currently connected watch
+	factory { get<WatchConnectionManager>().requireWatch() }
+}
 
-			singleOf(::Watch)
+val uiModule = module {
+	viewModel { params -> ScanScreenViewModel(onConnect = params[0], permissionsController = params[1]) }
 
-			viewModel { ScanScreenViewModel(get()) }
+	viewModelOf(::NavBarViewModel)
+	viewModelOf(::ClocksScreenViewModel)
+	viewModelOf(::AlarmsScreenViewModel)
+	viewModelOf(::TimerScreenViewModel)
+	viewModelOf(::RemindersScreenViewModel)
+	viewModelOf(::SettingsScreenViewModel)
+}
 
-			viewModelOf(::NavBarViewModel)
-			viewModelOf(::ClocksScreenViewModel)
-			viewModelOf(::AlarmsScreenViewModel)
-			viewModelOf(::TimerScreenViewModel)
-			viewModelOf(::RemindersScreenViewModel)
-			viewModelOf(::SettingsScreenViewModel)
-		})
+/**
+ * Starts Koin once per process, does nothing if it is already started.
+ *
+ * @param appDeclaration Platform specific setup, e.g. the Android context.
+ */
+fun initKoin(appDeclaration: KoinAppDeclaration = {}) {
+	if (KoinPlatform.getKoinOrNull() != null) return
+	startKoin {
+		logger(KermitKoinLogger(Logger.withTag("koin")))
+		appDeclaration()
+		modules(coreModule, uiModule)
 	}
+}
