@@ -6,9 +6,16 @@ plugins {
 	alias(libs.plugins.androidApplication)
 	alias(libs.plugins.composeMultiplatform)
 	alias(libs.plugins.composeCompiler)
+	alias(libs.plugins.ksp)
+	alias(libs.plugins.room)
 }
 
 kotlin {
+	compilerOptions {
+		// Room generates an actual object for the expect SkuareDatabaseConstructor
+		freeCompilerArgs.add("-Xexpect-actual-classes")
+	}
+
 	androidTarget {
 		@OptIn(ExperimentalKotlinGradlePluginApi::class) compilerOptions {
 			jvmTarget.set(JvmTarget.JVM_11)
@@ -57,10 +64,14 @@ kotlin {
 			api(libs.moko.permissions.compose)
 			implementation(libs.moko.permissions.bluetooth)
 			implementation(libs.moko.permissions.location)
+
+			implementation(libs.room.runtime)
+			implementation(libs.sqlite.bundled)
 		}
 
 		commonTest.dependencies {
 			implementation(libs.kotlin.test)
+			implementation(libs.kotlinx.coroutines.test)
 		}
 
 //        listOf(
@@ -111,4 +122,12 @@ android {
 
 dependencies {
 	debugImplementation(libs.compose.ui.tooling)
+
+	listOf("kspAndroid", "kspIosArm64", "kspIosSimulatorArm64").forEach {
+		add(it, libs.room.compiler)
+	}
+}
+
+room {
+	schemaDirectory("$projectDir/schemas")
 }
