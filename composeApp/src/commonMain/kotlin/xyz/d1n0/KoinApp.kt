@@ -19,8 +19,8 @@ import xyz.d1n0.sync.WatchSessionHandler
 import xyz.d1n0.ui.navigation.NavBarViewModel
 import xyz.d1n0.ui.screen.alarms.AlarmsScreenViewModel
 import xyz.d1n0.ui.screen.clocks.ClocksScreenViewModel
+import xyz.d1n0.ui.screen.pairing.PairingScreenViewModel
 import xyz.d1n0.ui.screen.reminders.RemindersScreenViewModel
-import xyz.d1n0.ui.screen.scan.ScanScreenViewModel
 import xyz.d1n0.ui.screen.settings.SettingsScreenViewModel
 import xyz.d1n0.ui.screen.timer.TimerScreenViewModel
 
@@ -44,7 +44,7 @@ val coreModule = module {
 }
 
 val uiModule = module {
-	viewModel { params -> ScanScreenViewModel(onConnect = params[0], permissionsController = params[1]) }
+	viewModel { params -> PairingScreenViewModel(onConnect = params[0], permissionsController = params[1]) }
 
 	viewModelOf(::NavBarViewModel)
 	viewModelOf(::ClocksScreenViewModel)

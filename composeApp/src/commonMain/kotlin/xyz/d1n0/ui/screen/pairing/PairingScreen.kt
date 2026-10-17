@@ -1,4 +1,4 @@
-package xyz.d1n0.ui.screen.scan
+package xyz.d1n0.ui.screen.pairing
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,28 +22,28 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Composable
-fun ScanScreen(
+fun PairingScreen(
 	onConnect: () -> Unit,
 ) {
 	val permissionsControllerFactory = rememberPermissionsControllerFactory()
 	val permissionsController =
 		remember(permissionsControllerFactory) { permissionsControllerFactory.createPermissionsController() }
-	val viewModel = koinViewModel<ScanScreenViewModel>(
+	val viewModel = koinViewModel<PairingScreenViewModel>(
 		parameters = { parametersOf(onConnect, permissionsController) }
 	)
 	val state by viewModel.state.collectAsState()
-	val watchPicker = rememberWatchPicker { viewModel.onEvent(ScanUiEvent.Connect(it)) }
+	val watchPicker = rememberWatchPicker { viewModel.onEvent(PairingUiEvent.Connect(it)) }
 
 	BindEffect(viewModel.permissionsController)
 	LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
-		viewModel.onEvent(ScanUiEvent.RequestPermissions)
+		viewModel.onEvent(PairingUiEvent.RequestPermissions)
 	}
 
-	ScanScreenContent(
+	PairingScreenContent(
 		state = state,
 		onEvent = { event ->
-			// platforms with a watch picker show it instead of scanning
-			if (event == ScanUiEvent.Scan && watchPicker != null) watchPicker()
+			// platforms with a watch picker show it instead of searching
+			if (event == PairingUiEvent.Search && watchPicker != null) watchPicker()
 			else viewModel.onEvent(event)
 		},
 		onOpenSettings = viewModel.permissionsController::openAppSettings,
@@ -51,9 +51,9 @@ fun ScanScreen(
 }
 
 @Composable
-private fun ScanScreenContent(
-	state: ScanUiState,
-	onEvent: (ScanUiEvent) -> Unit,
+private fun PairingScreenContent(
+	state: PairingUiState,
+	onEvent: (PairingUiEvent) -> Unit,
 	onOpenSettings: () -> Unit,
 ) {
 	Column(
@@ -62,14 +62,14 @@ private fun ScanScreenContent(
 		verticalArrangement = Arrangement.Center,
 	) {
 		if (state.scanPermissionState == PermissionState.Granted && state.connectPermissionState == PermissionState.Granted) {
-			if (state.isScanning) Button(
-				onClick = { onEvent(ScanUiEvent.StopScanning) },
-				enabled = state.isScanning,
+			if (state.isSearching) Button(
+				onClick = { onEvent(PairingUiEvent.StopSearching) },
+				enabled = state.isSearching,
 			) { Text("Stop!") }
 			else Button(
-				onClick = { onEvent(ScanUiEvent.Scan) },
-				enabled = !state.isScanning,
-			) { Text("Scan!") }
+				onClick = { onEvent(PairingUiEvent.Search) },
+				enabled = !state.isSearching,
+			) { Text("Pair!") }
 		} else {
 			Button(
 				onClick = onOpenSettings,
@@ -82,11 +82,11 @@ private fun ScanScreenContent(
 
 @Preview(showBackground = true)
 @Composable
-private fun ScanScreenPreview() {
+private fun PairingScreenPreview() {
 	MaterialTheme {
-		ScanScreenContent(
-			state = ScanUiState(
-				isScanning = false,
+		PairingScreenContent(
+			state = PairingUiState(
+				isSearching = false,
 				scanPermissionState = PermissionState.Granted,
 				connectPermissionState = PermissionState.Granted,
 			),

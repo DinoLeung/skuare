@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import xyz.d1n0.ui.screen.scan.ScanScreen
+import xyz.d1n0.ui.screen.pairing.PairingScreen
 
 @Composable
 fun RootNavGraph() {
@@ -12,22 +12,22 @@ fun RootNavGraph() {
 
 	val onConnect = {
 		rootNavHostController.navigate(RootNavRoute.Watch.route) {
-			popUpTo(RootNavRoute.Scan.route) { inclusive = true }
+			popUpTo(RootNavRoute.Pairing.route) { inclusive = true }
 		}
 	}
 
 	val onDisconnect = {
-		rootNavHostController.navigate(RootNavRoute.Scan.route) {
+		rootNavHostController.navigate(RootNavRoute.Pairing.route) {
 			popUpTo(RootNavRoute.Watch.route) { inclusive = true }
 		}
 	}
 
 	NavHost(
 		navController = rootNavHostController,
-		startDestination = RootNavRoute.Scan.route,
+		startDestination = RootNavRoute.Pairing.route,
 	) {
-		composable(RootNavRoute.Scan.route) {
-			ScanScreen(onConnect = onConnect)
+		composable(RootNavRoute.Pairing.route) {
+			PairingScreen(onConnect = onConnect)
 		}
 		composable(RootNavRoute.Watch.route) {
 			NavBarScaffold(onDisconnect = onDisconnect)

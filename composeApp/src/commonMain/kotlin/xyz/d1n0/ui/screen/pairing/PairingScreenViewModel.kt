@@ -1,4 +1,4 @@
-package xyz.d1n0.ui.screen.scan
+package xyz.d1n0.ui.screen.pairing
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -26,20 +26,20 @@ import xyz.d1n0.lib.connection.WatchConnectionManager
 import xyz.d1n0.lib.model.Watch
 import xyz.d1n0.sync.WatchSessionHandler
 
-data class ScanUiState(
-	val isScanning: Boolean = false,
+data class PairingUiState(
+	val isSearching: Boolean = false,
 	val scanPermissionState: PermissionState = PermissionState.NotDetermined,
 	val connectPermissionState: PermissionState = PermissionState.NotDetermined,
 )
 
-sealed interface ScanUiEvent {
-	object Scan : ScanUiEvent
-	object StopScanning : ScanUiEvent
-	object RequestPermissions : ScanUiEvent
-	data class Connect(val peripheral: Peripheral) : ScanUiEvent
+sealed interface PairingUiEvent {
+	object Search : PairingUiEvent
+	object StopSearching : PairingUiEvent
+	object RequestPermissions : PairingUiEvent
+	data class Connect(val peripheral: Peripheral) : PairingUiEvent
 }
 
-class ScanScreenViewModel(
+class PairingScreenViewModel(
 	val onConnect: () -> Unit,
 	val permissionsController: PermissionsController,
 ) : ViewModel(), KoinComponent {
@@ -47,10 +47,10 @@ class ScanScreenViewModel(
 	private val watchConnectionManager: WatchConnectionManager by inject()
 	private val watchSessionHandler: WatchSessionHandler by inject()
 
-	private val _state = MutableStateFlow(ScanUiState())
-	val state: StateFlow<ScanUiState> = _state.asStateFlow()
+	private val _state = MutableStateFlow(PairingUiState())
+	val state: StateFlow<PairingUiState> = _state.asStateFlow()
 
-	private var scanJob: Job? = null
+	private var searchJob: Job? = null
 
 	init {
 		// a watch connected in background after a lower-left long press, the app was opened for it.
@@ -59,27 +59,27 @@ class ScanScreenViewModel(
 		viewModelScope.launch {
 			watchSessionHandler.pendingForegroundWatch.filterNotNull().collect {
 				watchSessionHandler.takePendingForegroundWatch()?.let {
-					stopScanning()
+					stopSearching()
 					onConnect()
 				}
 			}
 		}
 	}
 
-	fun onEvent(event: ScanUiEvent) = when (event) {
-		ScanUiEvent.RequestPermissions -> checkScanPermissions()
-		ScanUiEvent.Scan -> startScanning()
-		ScanUiEvent.StopScanning -> stopScanning()
-		is ScanUiEvent.Connect -> viewModelScope.launch { connect(event.peripheral) }
+	fun onEvent(event: PairingUiEvent) = when (event) {
+		PairingUiEvent.RequestPermissions -> checkPermissions()
+		PairingUiEvent.Search -> startSearching()
+		PairingUiEvent.StopSearching -> stopSearching()
+		is PairingUiEvent.Connect -> viewModelScope.launch { connect(event.peripheral) }
 	}
 
-	private fun startScanning() {
-		scanJob = viewModelScope.launch {
-			_state.update { it.copy(isScanning = true) }
+	private fun startSearching() {
+		searchJob = viewModelScope.launch {
+			_state.update { it.copy(isSearching = true) }
 			// TODO: what if there are more than 1 peripheral found
 			Watch.scanner.advertisements.firstOrNull()?.let {
 				connect(Peripheral(it))
-				stopScanning()
+				stopSearching()
 			}
 		}
 	}
@@ -90,16 +90,16 @@ class ScanScreenViewModel(
 		onConnect()
 	}
 
-	private fun stopScanning() {
-		scanJob?.cancel().also {
-			_state.update { it.copy(isScanning = false) }
+	private fun stopSearching() {
+		searchJob?.cancel().also {
+			_state.update { it.copy(isSearching = false) }
 		}
 	}
 
 //    permissionsController.providePermission(Permission.BLUETOOTH_LE)
 //    permissionsController.providePermission(Permission.BACKGROUND_LOCATION)
 
-	private fun checkScanPermissions() = viewModelScope.launch {
+	private fun checkPermissions() = viewModelScope.launch {
 		_state.update {
 			it.copy(
 				scanPermissionState = permissionsController.getPermissionState(Permission.BLUETOOTH_SCAN),

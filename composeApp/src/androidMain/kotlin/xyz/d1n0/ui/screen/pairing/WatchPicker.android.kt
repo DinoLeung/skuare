@@ -1,4 +1,4 @@
-package xyz.d1n0.ui.screen.scan
+package xyz.d1n0.ui.screen.pairing
 
 import android.app.Activity
 import android.bluetooth.BluetoothDevice
