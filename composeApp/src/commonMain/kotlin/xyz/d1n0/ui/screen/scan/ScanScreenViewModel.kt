@@ -36,6 +36,7 @@ sealed interface ScanUiEvent {
 	object Scan : ScanUiEvent
 	object StopScanning : ScanUiEvent
 	object RequestPermissions : ScanUiEvent
+	data class Connect(val peripheral: Peripheral) : ScanUiEvent
 }
 
 class ScanScreenViewModel(
@@ -68,6 +69,7 @@ class ScanScreenViewModel(
 		ScanUiEvent.RequestPermissions -> checkScanPermissions()
 		ScanUiEvent.Scan -> startScanning()
 		ScanUiEvent.StopScanning -> stopScanning()
+		is ScanUiEvent.Connect -> viewModelScope.launch { connect(event.peripheral) }
 	}
 
 	private fun startScanning() {
@@ -75,12 +77,16 @@ class ScanScreenViewModel(
 			_state.update { it.copy(isScanning = true) }
 			// TODO: what if there are more than 1 peripheral found
 			Watch.scanner.advertisements.firstOrNull()?.let {
-				val watch = watchConnectionManager.connect(Peripheral(it))
-				watchSessionHandler.runForeground(watch)
-				onConnect()
+				connect(Peripheral(it))
 				stopScanning()
 			}
 		}
+	}
+
+	private suspend fun connect(peripheral: Peripheral) {
+		val watch = watchConnectionManager.connect(peripheral)
+		watchSessionHandler.runForeground(watch)
+		onConnect()
 	}
 
 	private fun stopScanning() {

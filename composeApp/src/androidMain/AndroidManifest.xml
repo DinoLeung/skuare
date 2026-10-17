@@ -11,6 +11,10 @@
         android:usesPermissionFlags="neverForLocation" />
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
 
+    <!-- Pairing goes through the Companion Device Manager, which observes the watch's presence -->
+    <uses-feature android:name="android.software.companion_device_setup" />
+    <uses-permission android:name="android.permission.REQUEST_OBSERVE_COMPANION_DEVICE_PRESENCE" />
+
     <application
         android:name=".SkuareApplication"
         android:allowBackup="true"

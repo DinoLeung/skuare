@@ -32,6 +32,7 @@ fun ScanScreen(
 		parameters = { parametersOf(onConnect, permissionsController) }
 	)
 	val state by viewModel.state.collectAsState()
+	val watchPicker = rememberWatchPicker { viewModel.onEvent(ScanUiEvent.Connect(it)) }
 
 	BindEffect(viewModel.permissionsController)
 	LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
@@ -40,7 +41,11 @@ fun ScanScreen(
 
 	ScanScreenContent(
 		state = state,
-		onEvent = { viewModel.onEvent(it) },
+		onEvent = { event ->
+			// platforms with a watch picker show it instead of scanning
+			if (event == ScanUiEvent.Scan && watchPicker != null) watchPicker()
+			else viewModel.onEvent(event)
+		},
 		onOpenSettings = viewModel.permissionsController::openAppSettings,
 	)
 }
