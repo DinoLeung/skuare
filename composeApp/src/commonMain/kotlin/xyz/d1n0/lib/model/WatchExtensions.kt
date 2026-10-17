@@ -3,7 +3,6 @@ package xyz.d1n0.lib.model
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withTimeoutOrNull
-import xyz.d1n0.lib.constant.ConnectReason
 import xyz.d1n0.lib.constant.OpCode
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
@@ -12,6 +11,7 @@ import kotlin.time.Duration.Companion.seconds
 suspend fun Watch.requestConnectReason() = request(OpCode.CONNECT_REASON)
 
 suspend fun Watch.requestAppInfo() = request(OpCode.APP_INFO)
+suspend fun Watch.writeAppInfo(appInfo: AppInfo) = write(appInfo.packet).also { requestAppInfo() }
 
 suspend fun Watch.requestWatchCondition() = request(OpCode.WATCH_CONDITION)
 
@@ -209,24 +209,9 @@ suspend fun Watch.endClockUpdateSession() = write(ClocksSettings.clocksUpdateSes
 @OptIn(ExperimentalStdlibApi::class)
 suspend fun Watch.handlePacket(packet: ByteArray) = when (OpCode.fromByte(packet.first())) {
 	OpCode.CONNECT_REASON -> {
-		_info.update { it.parseConnectReasonPacket(packet) }
-		val reason = ConnectReason.fromByte(packet[8])
-		when (reason) {
-			ConnectReason.SETUP, ConnectReason.DEFAULT -> {
-				// TODO: Check APP_INFO, up date if required
-			}
-
-			ConnectReason.AUTO_SYNC, ConnectReason.MANUAL_SYNC -> {
-				// TODO: sync time procedure, then disconnect
-				// TODO: figure out how long the watch will stay connected for
-			}
-
-			ConnectReason.FIND -> {
-				// TODO: figure out if sync time is required
-				// TODO: figure out how long the watch will stay connected for
-			}
-		}
-
+		runCatching {
+			_info.update { it.parseConnectReasonPacket(packet) }
+		}.onFailure { log.e { "Failed to parse connect reason packet: ${it.message}" } }
 	}
 
 	OpCode.CONNECTION_SETTINGS -> {
@@ -248,12 +233,9 @@ suspend fun Watch.handlePacket(packet: ByteArray) = when (OpCode.fromByte(packet
 	}
 
 	OpCode.APP_INFO -> {
-		// new/reset watch		22FFFFFFFFFFFFFFFFFFFF00
-		// b5600 old app ver.	222DA85E248C468C74834202
-		// b5600 newer app ver.	228C8973A1B416502E67DD02
-		// Looks like the app will compare this number to determine if the watch has been paired or not
-		// probably can set to anything except the last byte.
-		log.d { packet.toHexString(HexFormat.UpperCase) }
+		runCatching {
+			_info.update { it.parseAppInfoPacket(packet) }
+		}.onFailure { log.e { "Failed to parse app info packet: ${it.message}" } }
 	}
 
 	OpCode.WATCH_CONDITION -> {

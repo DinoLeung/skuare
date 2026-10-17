@@ -8,8 +8,14 @@ import com.juul.kable.WriteType
 import com.juul.kable.characteristicOf
 import com.juul.kable.logs.Logging
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onEach
@@ -90,15 +96,25 @@ class Watch(private val peripheral: Peripheral) : KoinComponent {
 	 */
 	val state: StateFlow<State> get() = peripheral.state
 
+	private val _packets = MutableSharedFlow<ByteArray>(extraBufferCapacity = 64)
+
+	/**
+	 * Packets received on the IO characteristic, emitted after [handlePacket] has processed them.
+	 */
+	val packets: SharedFlow<ByteArray> = _packets.asSharedFlow()
+
 	/**
 	 * A coroutine Job that continuously observes the peripheral’s IO characteristic.
 	 *
 	 * This job is launched in the [peripheral]'s coroutine scope and collects data packets emitted by the IO characteristic.
-	 * Each received packet is processed by the [handlePacket] function.
+	 * Each received packet is processed by the [handlePacket] function, then emitted to [packets].
 	 * The job will automatically be cancelled when the peripheral's scope is cancelled.
 	 */
 	val ioDataObserverJob = peripheral.scope.launch {
-		peripheral.observe(ioCharacteristic).collect { handlePacket(it) }
+		peripheral.observe(ioCharacteristic).collect {
+			handlePacket(it)
+			_packets.emit(it)
+		}
 	}
 
 	/**
@@ -154,6 +170,29 @@ class Watch(private val peripheral: Peripheral) : KoinComponent {
 			)
 		}.onFailure { log.e { "Failed to request ${opCode.name} on $position: ${it.message}" } }
 	}
+
+	/**
+	 * Sends a request and waits for the reply, for when the caller needs the reply before it can
+	 * continue. The reply is also processed by [handlePacket] as usual.
+	 *
+	 * @param opCode The command to be sent to the peripheral.
+	 * @param timeout How long to wait for the reply.
+	 * @return The first packet received with the same opcode.
+	 * @throws kotlinx.coroutines.TimeoutCancellationException if no reply arrives in time, e.g. the
+	 *         watch replied with an error instead.
+	 */
+	@Throws(CancellationException::class, IOException::class, NotConnectedException::class)
+	suspend fun query(opCode: OpCode, timeout: Duration = 5.seconds): ByteArray =
+		withTimeout(timeout) {
+			coroutineScope {
+				// subscribe before requesting, so the reply can't arrive before we listen
+				val reply = async(start = CoroutineStart.UNDISPATCHED) {
+					packets.first { it.firstOrNull() == opCode.byte }
+				}
+				request(opCode)
+				reply.await()
+			}
+		}
 
 	/**
 	 * Writes data to the peripheral using the IO characteristic.
