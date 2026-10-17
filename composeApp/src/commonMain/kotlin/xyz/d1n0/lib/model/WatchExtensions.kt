@@ -11,7 +11,7 @@ import kotlin.time.Duration.Companion.seconds
 suspend fun Watch.requestConnectReason() = request(OpCode.CONNECT_REASON)
 
 suspend fun Watch.requestAppInfo() = request(OpCode.APP_INFO)
-suspend fun Watch.writeAppInfo(appInfo: AppInfo) = write(appInfo.packet).also { requestAppInfo() }
+suspend fun Watch.writeAppInfo(appInfo: AppInfo) = write(appInfo.packet)
 
 suspend fun Watch.requestWatchCondition() = request(OpCode.WATCH_CONDITION)
 

@@ -12,10 +12,10 @@ import org.koin.dsl.module
 import org.koin.mp.KoinPlatform
 import xyz.d1n0.data.database.SkuareDatabase
 import xyz.d1n0.data.database.buildSkuareDatabase
-import xyz.d1n0.data.database.databaseModule
 import xyz.d1n0.data.repository.InstallationRepository
 import xyz.d1n0.data.repository.PairedWatchRepository
 import xyz.d1n0.lib.connection.WatchConnectionManager
+import xyz.d1n0.sync.WatchSessionHandler
 import xyz.d1n0.ui.navigation.NavBarViewModel
 import xyz.d1n0.ui.screen.alarms.AlarmsScreenViewModel
 import xyz.d1n0.ui.screen.clocks.ClocksScreenViewModel
@@ -26,7 +26,7 @@ import xyz.d1n0.ui.screen.timer.TimerScreenViewModel
 
 /**
  * Dependencies that work without UI, so background sync can use them too.
- * Needs [databaseModule] for the database builder.
+ * Needs [platformModule] for the database builder and presence monitor.
  */
 val coreModule = module {
 	single { Log }
@@ -38,6 +38,7 @@ val coreModule = module {
 	singleOf(::InstallationRepository)
 
 	singleOf(::WatchConnectionManager)
+	singleOf(::WatchSessionHandler)
 	// Resolved on every injection, so screens get the currently connected watch
 	factory { get<WatchConnectionManager>().requireWatch() }
 }
@@ -63,6 +64,6 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) {
 	startKoin {
 		logger(KermitKoinLogger(Logger.withTag("koin")))
 		appDeclaration()
-		modules(databaseModule, coreModule, uiModule)
+		modules(platformModule, coreModule, uiModule)
 	}
 }

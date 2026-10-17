@@ -22,6 +22,5 @@ data class PairedWatch(
 	val pairedAt: Instant,
 	val lastSyncAt: Instant? = null,
 	val lastSyncError: String? = null,
-	val backgroundSyncEnabled: Boolean = true,
 	val platformAssociationId: Int? = null,
 )

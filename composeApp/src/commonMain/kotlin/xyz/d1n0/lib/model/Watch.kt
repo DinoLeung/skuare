@@ -1,5 +1,6 @@
 package xyz.d1n0.lib.model
 
+import com.juul.kable.ExperimentalKableApi
 import com.juul.kable.NotConnectedException
 import com.juul.kable.Peripheral
 import com.juul.kable.Scanner
@@ -95,6 +96,12 @@ class Watch(private val peripheral: Peripheral) : KoinComponent {
 	 * This can be observed to react to connection state changes, such as connected, disconnected, or connecting.
 	 */
 	val state: StateFlow<State> get() = peripheral.state
+
+	/**
+	 * Name the watch advertises, e.g. CASIO GMW-B5000#, null if the platform doesn't know it yet.
+	 */
+	@OptIn(ExperimentalKableApi::class)
+	val advertisedName: String? get() = peripheral.name
 
 	private val _packets = MutableSharedFlow<ByteArray>(extraBufferCapacity = 64)
 

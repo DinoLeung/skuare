@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "a723a39dd56448f5417adec4a436a682",
+    "identityHash": "86f54256c749b57371affe5d77837d04",
     "entities": [
       {
         "tableName": "paired_watch",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`address` TEXT NOT NULL, `advertisedName` TEXT NOT NULL, `displayName` TEXT NOT NULL, `pairedAt` INTEGER NOT NULL, `lastSyncAt` INTEGER, `lastSyncError` TEXT, `backgroundSyncEnabled` INTEGER NOT NULL, `platformAssociationId` INTEGER, PRIMARY KEY(`address`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`address` TEXT NOT NULL, `advertisedName` TEXT NOT NULL, `displayName` TEXT NOT NULL, `pairedAt` INTEGER NOT NULL, `lastSyncAt` INTEGER, `lastSyncError` TEXT, `platformAssociationId` INTEGER, PRIMARY KEY(`address`))",
         "fields": [
           {
             "fieldPath": "address",
@@ -41,12 +41,6 @@
             "fieldPath": "lastSyncError",
             "columnName": "lastSyncError",
             "affinity": "TEXT"
-          },
-          {
-            "fieldPath": "backgroundSyncEnabled",
-            "columnName": "backgroundSyncEnabled",
-            "affinity": "INTEGER",
-            "notNull": true
           },
           {
             "fieldPath": "platformAssociationId",
@@ -88,7 +82,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a723a39dd56448f5417adec4a436a682')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '86f54256c749b57371affe5d77837d04')"
     ]
   }
 }

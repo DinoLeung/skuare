@@ -15,6 +15,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -23,9 +24,7 @@ import org.koin.core.component.inject
 import xyz.d1n0.Log
 import xyz.d1n0.lib.connection.WatchConnectionManager
 import xyz.d1n0.lib.model.Watch
-import xyz.d1n0.lib.model.adjustTime
-import xyz.d1n0.lib.model.requestConnectReason
-import xyz.d1n0.lib.model.requestWatchStatus
+import xyz.d1n0.sync.WatchSessionHandler
 
 data class ScanUiState(
 	val isScanning: Boolean = false,
@@ -45,9 +44,25 @@ class ScanScreenViewModel(
 ) : ViewModel(), KoinComponent {
 	val log: Log by inject()
 	private val watchConnectionManager: WatchConnectionManager by inject()
+	private val watchSessionHandler: WatchSessionHandler by inject()
 
 	private val _state = MutableStateFlow(ScanUiState())
 	val state: StateFlow<ScanUiState> = _state.asStateFlow()
+
+	private var scanJob: Job? = null
+
+	init {
+		// a watch connected in background after a lower-left long press, the app was opened for it
+		viewModelScope.launch {
+			watchSessionHandler.pendingForegroundWatch.filterNotNull().collect {
+				watchSessionHandler.takePendingForegroundWatch()?.let { watch ->
+					stopScanning()
+					watchSessionHandler.runForeground(watch)
+					onConnect()
+				}
+			}
+		}
+	}
 
 	fun onEvent(event: ScanUiEvent) = when (event) {
 		ScanUiEvent.RequestPermissions -> checkScanPermissions()
@@ -55,17 +70,13 @@ class ScanScreenViewModel(
 		ScanUiEvent.StopScanning -> stopScanning()
 	}
 
-	private var scanJob: Job? = null
-
 	private fun startScanning() {
 		scanJob = viewModelScope.launch {
 			_state.update { it.copy(isScanning = true) }
 			// TODO: what if there are more than 1 peripheral found
 			Watch.scanner.advertisements.firstOrNull()?.let {
 				val watch = watchConnectionManager.connect(Peripheral(it))
-				watch.requestConnectReason()
-				watch.requestWatchStatus()
-				watch.adjustTime()
+				watchSessionHandler.runForeground(watch)
 				onConnect()
 				stopScanning()
 			}
