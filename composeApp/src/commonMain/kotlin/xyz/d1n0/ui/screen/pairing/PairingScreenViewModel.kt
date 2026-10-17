@@ -11,6 +11,7 @@ import dev.icerock.moko.permissions.PermissionsController
 import dev.icerock.moko.permissions.RequestCanceledException
 import dev.icerock.moko.permissions.bluetooth.BLUETOOTH_CONNECT
 import dev.icerock.moko.permissions.bluetooth.BLUETOOTH_SCAN
+import dev.icerock.moko.permissions.notifications.REMOTE_NOTIFICATION
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,21 +23,29 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import xyz.d1n0.Log
+import xyz.d1n0.data.database.PairedWatch
+import xyz.d1n0.data.repository.PairedWatchRepository
 import xyz.d1n0.lib.connection.WatchConnectionManager
 import xyz.d1n0.lib.model.Watch
+import xyz.d1n0.sync.WatchPresenceMonitor
 import xyz.d1n0.sync.WatchSessionHandler
 
 data class PairingUiState(
 	val isSearching: Boolean = false,
+	val pairedWatches: List<PairedWatch> = emptyList(),
 	val scanPermissionState: PermissionState = PermissionState.NotDetermined,
 	val connectPermissionState: PermissionState = PermissionState.NotDetermined,
-)
+) {
+	val isPermissionGranted: Boolean
+		get() = scanPermissionState == PermissionState.Granted && connectPermissionState == PermissionState.Granted
+}
 
 sealed interface PairingUiEvent {
 	object Search : PairingUiEvent
 	object StopSearching : PairingUiEvent
 	object RequestPermissions : PairingUiEvent
 	data class Connect(val peripheral: Peripheral) : PairingUiEvent
+	data class Forget(val address: String) : PairingUiEvent
 }
 
 class PairingScreenViewModel(
@@ -46,13 +55,22 @@ class PairingScreenViewModel(
 	val log: Log by inject()
 	private val watchConnectionManager: WatchConnectionManager by inject()
 	private val watchSessionHandler: WatchSessionHandler by inject()
+	private val pairedWatchRepository: PairedWatchRepository by inject()
+	private val presenceMonitor: WatchPresenceMonitor by inject()
 
 	private val _state = MutableStateFlow(PairingUiState())
 	val state: StateFlow<PairingUiState> = _state.asStateFlow()
 
 	private var searchJob: Job? = null
+	private var hasRequestedNotificationPermission = false
 
 	init {
+		viewModelScope.launch {
+			pairedWatchRepository.observeAll().collect { watches ->
+				_state.update { it.copy(pairedWatches = watches) }
+			}
+		}
+
 		// a watch connected in background after a lower-left long press, the app was opened for it.
 		// The background session already checked pairing and adjusted the time, and the watch is in
 		// WatchConnectionManager, so the watch screens can use it straight away
@@ -71,6 +89,7 @@ class PairingScreenViewModel(
 		PairingUiEvent.Search -> startSearching()
 		PairingUiEvent.StopSearching -> stopSearching()
 		is PairingUiEvent.Connect -> viewModelScope.launch { connect(event.peripheral) }
+		is PairingUiEvent.Forget -> viewModelScope.launch { watchSessionHandler.forget(event.address) }
 	}
 
 	private fun startSearching() {
@@ -108,6 +127,8 @@ class PairingScreenViewModel(
 		}
 		if (_state.value.scanPermissionState != PermissionState.Granted) requestScanPermission()
 		if (_state.value.connectPermissionState != PermissionState.Granted) requestConnectionPermission()
+		// optional, only the "open skuare" prompt after a lower-left long press needs it
+		if (presenceMonitor.isSupported && !hasRequestedNotificationPermission) requestNotificationPermission()
 	}
 
 	private suspend fun requestScanPermission() = runCatching {
@@ -138,5 +159,16 @@ class PairingScreenViewModel(
 			else -> PermissionState.NotDetermined
 		}
 		_state.value = _state.value.copy(connectPermissionState = newPermissionState)
+	}
+
+	/**
+	 * Asks once per visit of this screen, so denying it doesn't bring the dialog back on every resume.
+	 */
+	private suspend fun requestNotificationPermission() {
+		hasRequestedNotificationPermission = true
+		val permissionState = permissionsController.getPermissionState(Permission.REMOTE_NOTIFICATION)
+		if (permissionState == PermissionState.Granted || permissionState == PermissionState.DeniedAlways) return
+		runCatching { permissionsController.providePermission(Permission.REMOTE_NOTIFICATION) }
+			.onFailure { log.i { "Notification permission not granted: ${it.message}" } }
 	}
 }

@@ -64,6 +64,7 @@ kotlin {
 			api(libs.moko.permissions.compose)
 			implementation(libs.moko.permissions.bluetooth)
 			implementation(libs.moko.permissions.location)
+			implementation(libs.moko.permissions.notifications)
 
 			implementation(libs.room.runtime)
 			implementation(libs.sqlite.bundled)

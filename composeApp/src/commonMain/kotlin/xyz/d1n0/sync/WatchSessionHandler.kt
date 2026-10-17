@@ -174,21 +174,22 @@ class WatchSessionHandler(
 	 * Forgets a paired watch.
 	 *
 	 * This function:
-	 * 1. Disconnects the watch if it is the connected one.
-	 * 2. Unregisters it from [WatchPresenceMonitor], so it no longer wakes the app.
-	 * 3. Deletes its [PairedWatch] row.
+	 * 1. Unregisters it from [WatchPresenceMonitor], so it no longer wakes the app.
+	 * 2. Deletes its [PairedWatch] row.
+	 * 3. Disconnects the watch if it is the connected one. This comes last, disconnecting sends
+	 *    the UI back to the pairing screen, which can cancel the caller's coroutine.
 	 *
 	 * The watch keeps our app info, connecting to it from the app pairs it again.
 	 *
 	 * @param address BLE address of the watch.
 	 */
 	suspend fun forget(address: String) {
-		connectionManager.watch.value
-			?.takeIf { it.info.value.address == address }
-			?.let { runCatching { it.disconnect() } }
 		pairedWatchRepository.find(address)?.let { presenceMonitor.unregister(it) }
 		pairedWatchRepository.remove(address)
 		log.i { "Forgot $address" }
+		connectionManager.watch.value
+			?.takeIf { it.info.value.address == address }
+			?.let { runCatching { it.disconnect() } }
 	}
 
 	private suspend fun backgroundSession(watch: Watch): BackgroundSessionResult {

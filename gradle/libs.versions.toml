@@ -86,6 +86,7 @@ moko-permissions-core = { group = "dev.icerock.moko", name = "permissions", vers
 moko-permissions-compose = { group = "dev.icerock.moko", name = "permissions-compose", version.ref = "moko-permissions" }
 moko-permissions-bluetooth = { group = "dev.icerock.moko", name = "permissions-bluetooth", version.ref = "moko-permissions" }
 moko-permissions-location = { group = "dev.icerock.moko", name = "permissions-location", version.ref = "moko-permissions" }
+moko-permissions-notifications = { group = "dev.icerock.moko", name = "permissions-notifications", version.ref = "moko-permissions" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
