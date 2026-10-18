@@ -17,8 +17,8 @@ data class NavBarItem(
 
 val navBarItems = listOf(
 	NavBarItem(
-		title = "Clocks",
-		route = NavBarRoute.Clocks,
+		title = "Timezones",
+		route = NavBarRoute.Timezones,
 		icon = Icons.Sharp.Schedule,
 	), NavBarItem(
 		title = "Alarms",

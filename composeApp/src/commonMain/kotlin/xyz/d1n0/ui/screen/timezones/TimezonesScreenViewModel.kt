@@ -1,4 +1,4 @@
-package xyz.d1n0.ui.screen.clocks
+package xyz.d1n0.ui.screen.timezones
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -22,7 +22,7 @@ import xyz.d1n0.ui.boilerplate.updateCatching
 import xyz.d1n0.ui.navigation.SaveState
 import xyz.d1n0.ui.navigation.SaveableScreen
 
-data class ClocksUiState(
+data class TimezonesUiState(
 	val isLoading: Boolean = false,
 	val savedClocks: ClocksSettings = ClocksSettings(),
 	val pendingClocks: ClocksSettings = ClocksSettings(),
@@ -39,25 +39,25 @@ data class ClocksUiState(
 		get() = pendingPinnedClockError != null || pendingClockErrors.any { it != null }
 }
 
-sealed interface ClocksUiEvent {
-	object RequestClocks : ClocksUiEvent
-	data class PinnedClockChange(val clock: Clock) : ClocksUiEvent
-	data class ClockChange(val index: Int, val clock: Clock) : ClocksUiEvent
-	data class PinClock(val index: Int) : ClocksUiEvent
+sealed interface TimezonesUiEvent {
+	object RequestClocks : TimezonesUiEvent
+	data class PinnedClockChange(val clock: Clock) : TimezonesUiEvent
+	data class ClockChange(val index: Int, val clock: Clock) : TimezonesUiEvent
+	data class PinClock(val index: Int) : TimezonesUiEvent
 }
 
-class ClocksScreenViewModel : ViewModel(), KoinComponent, SaveableScreen {
+class TimezonesScreenViewModel : ViewModel(), KoinComponent, SaveableScreen {
 	private val watch: Watch by inject()
 	private val clocks: StateFlow<ClocksSettings> = watch.clocks
 
 	private val _uiState = MutableStateFlow(
-		ClocksUiState(
+		TimezonesUiState(
 			savedClocks = clocks.value,
 			pendingClocks = clocks.value,
 			pendingClockErrors = List(watch.model.clockCount - 1) { null },
 		)
 	)
-	val uiState: StateFlow<ClocksUiState> = _uiState.asStateFlow()
+	val uiState: StateFlow<TimezonesUiState> = _uiState.asStateFlow()
 
 	override val saveState: StateFlow<SaveState> = _uiState
 		.map { SaveState(hasUpdates = it.hasUpdates, isLoading = it.isLoading, hasErrors = it.hasErrors) }
@@ -90,14 +90,14 @@ class ClocksScreenViewModel : ViewModel(), KoinComponent, SaveableScreen {
 		}
 	}
 
-	fun onEvent(event: ClocksUiEvent) = when (event) {
-		ClocksUiEvent.RequestClocks -> requestClocks()
-		is ClocksUiEvent.PinnedClockChange -> onPinnedClockChange(event.clock)
-		is ClocksUiEvent.ClockChange -> onClockChange(
+	fun onEvent(event: TimezonesUiEvent) = when (event) {
+		TimezonesUiEvent.RequestClocks -> requestClocks()
+		is TimezonesUiEvent.PinnedClockChange -> onPinnedClockChange(event.clock)
+		is TimezonesUiEvent.ClockChange -> onClockChange(
 			index = event.index,
 			clock = event.clock,
 		)
-		is ClocksUiEvent.PinClock -> onPinClock(event.index)
+		is TimezonesUiEvent.PinClock -> onPinClock(event.index)
 	}
 
 	private fun requestClocks() = watch.scope.launch {

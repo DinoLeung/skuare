@@ -1,4 +1,4 @@
-package xyz.d1n0.ui.screen.clocks
+package xyz.d1n0.ui.screen.timezones
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,23 +30,23 @@ import xyz.d1n0.ui.component.TimeZonePickerDialog
 import xyz.d1n0.ui.theme.SkuareTheme
 
 @Composable
-fun ClocksScreen(viewModel: ClocksScreenViewModel) {
+fun TimezonesScreen(viewModel: TimezonesScreenViewModel) {
 	val state by viewModel.uiState.collectAsState()
 
 	LaunchedEffect(Unit) {
-		if (state.isInitialized == false) viewModel.onEvent(ClocksUiEvent.RequestClocks)
+		if (state.isInitialized == false) viewModel.onEvent(TimezonesUiEvent.RequestClocks)
 	}
 
-	ClocksScreenContent(
+	TimezonesScreenContent(
 		state = state,
 		onEvent = { viewModel.onEvent(it) },
 	)
 }
 
 @Composable
-private fun ClocksScreenContent(
-	state: ClocksUiState,
-	onEvent: (ClocksUiEvent) -> Unit,
+private fun TimezonesScreenContent(
+	state: TimezonesUiState,
+	onEvent: (TimezonesUiEvent) -> Unit,
 ) {
 	var selectedClockPosition by remember { mutableStateOf<Int?>(null) }
 	val pinnedClock = state.pendingClocks.pinnedClock
@@ -75,7 +75,7 @@ private fun ClocksScreenContent(
 					clock = it,
 					onClick = { selectedClockPosition = index + 1 },
 					enabled = state.isInitialized && state.isLoading == false,
-					onPin = { onEvent(ClocksUiEvent.PinClock(index)) },
+					onPin = { onEvent(TimezonesUiEvent.PinClock(index)) },
 				)
 			}
 		}
@@ -88,8 +88,8 @@ private fun ClocksScreenContent(
 				clock = it,
 				onConfirm = { newClock ->
 					onEvent(
-						if (position == 0) ClocksUiEvent.PinnedClockChange(newClock)
-						else ClocksUiEvent.ClockChange(index = position - 1, clock = newClock)
+						if (position == 0) TimezonesUiEvent.PinnedClockChange(newClock)
+						else TimezonesUiEvent.ClockChange(index = position - 1, clock = newClock)
 					)
 					selectedClockPosition = null
 				},
@@ -131,7 +131,7 @@ private fun ClockTimeZonePickerDialog(
 
 @Preview(showBackground = true)
 @Composable
-private fun ClocksScreenPreview() {
+private fun TimezonesScreenPreview() {
 	val clocks = ClocksSettings(
 		pinnedClock = HomeClock.fromTimeZoneId(
 			timeZoneId = 30335,
@@ -161,8 +161,8 @@ private fun ClocksScreenPreview() {
 		),
 	)
 	SkuareTheme {
-		ClocksScreenContent(
-			state = ClocksUiState(
+		TimezonesScreenContent(
+			state = TimezonesUiState(
 				isLoading = false,
 				savedClocks = clocks,
 				pendingClocks = clocks,
@@ -174,7 +174,7 @@ private fun ClocksScreenPreview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun ClocksScreenSwappedPreview() {
+private fun TimezonesScreenSwappedPreview() {
 	val clocks = ClocksSettings(
 		pinnedClock = WorldClock.fromTimeZoneId(
 			timeZoneId = 122,
@@ -192,8 +192,8 @@ private fun ClocksScreenSwappedPreview() {
 		),
 	)
 	SkuareTheme {
-		ClocksScreenContent(
-			state = ClocksUiState(
+		TimezonesScreenContent(
+			state = TimezonesUiState(
 				isLoading = false,
 				savedClocks = clocks,
 				pendingClocks = clocks,

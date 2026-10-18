@@ -19,7 +19,7 @@ import androidx.navigation.compose.rememberNavController
 import org.koin.compose.viewmodel.koinViewModel
 import xyz.d1n0.ui.component.SaveFab
 import xyz.d1n0.ui.screen.alarms.AlarmsScreenViewModel
-import xyz.d1n0.ui.screen.clocks.ClocksScreenViewModel
+import xyz.d1n0.ui.screen.timezones.TimezonesScreenViewModel
 import xyz.d1n0.ui.screen.reminders.RemindersScreenViewModel
 import xyz.d1n0.ui.screen.settings.SettingsScreenViewModel
 import xyz.d1n0.ui.screen.timer.TimerScreenViewModel
@@ -34,7 +34,7 @@ fun NavBarScaffold(
 
 	// Screen view models are scoped here rather than to each tab's back stack entry,
 	// so pending changes survive switching tabs and can be saved from the shared FAB
-	val clocksViewModel = koinViewModel<ClocksScreenViewModel>()
+	val timezonesViewModel = koinViewModel<TimezonesScreenViewModel>()
 	val alarmsViewModel = koinViewModel<AlarmsScreenViewModel>()
 	val timerViewModel = koinViewModel<TimerScreenViewModel>()
 	val remindersViewModel = koinViewModel<RemindersScreenViewModel>()
@@ -43,7 +43,7 @@ fun NavBarScaffold(
 	val navBarItems = viewModel.navBarItems
 	// only screens with a tab, so a hidden screen is never saved
 	val saveableScreens: Map<NavBarRoute, SaveableScreen> = mapOf(
-		NavBarRoute.Clocks to clocksViewModel,
+		NavBarRoute.Timezones to timezonesViewModel,
 		NavBarRoute.Alarms to alarmsViewModel,
 		NavBarRoute.Timer to timerViewModel,
 		NavBarRoute.Reminders to remindersViewModel,
@@ -118,7 +118,7 @@ fun NavBarScaffold(
 			if (watchConnectionState.value is PeripheralState.Connected)
 				NavGraph(
 					navHostController = navHostController,
-					clocksViewModel = clocksViewModel,
+					timezonesViewModel = timezonesViewModel,
 					alarmsViewModel = alarmsViewModel,
 					timerViewModel = timerViewModel,
 					remindersViewModel = remindersViewModel,
