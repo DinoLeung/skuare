@@ -11,8 +11,8 @@ import kotlin.time.Instant
  * @property advertisedName Name the watch advertises, e.g. CASIO GMW-B5000#.
  * @property displayName Name the user set on the watch, see [xyz.d1n0.lib.model.WatchInfo.name]. Falls
  *           back to [advertisedName] until the watch has told us its name.
- * @property lastSyncAt When the last background sync finished, null if it never ran.
- * @property lastSyncError Why the last background sync failed, null if it succeeded.
+ * @property lastSyncAt When the last time sync finished, in the background or from the app, null if it never ran.
+ * @property lastSyncError Why the last time sync failed, null if it succeeded.
  * @property platformAssociationId Android Companion Device Manager association id, unused on iOS.
  */
 @Entity(tableName = "paired_watch")

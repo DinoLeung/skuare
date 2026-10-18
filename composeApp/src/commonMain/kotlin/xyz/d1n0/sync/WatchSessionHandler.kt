@@ -111,13 +111,13 @@ class WatchSessionHandler(
 	 * 3. Requests the watch status and adjusts the time.
 	 *
 	 * Only pairing errors fail the result, a failed watch name, watch status or time adjustment is
-	 * logged.
+	 * logged. Every time adjustment is stored in [PairedWatch], like a background sync.
 	 *
 	 * @param watch A connected watch.
 	 * @return A [Result] that fails if the watch could not be paired.
 	 */
-	suspend fun runForeground(watch: Watch): Result<Unit> =
-		runCatching {
+	suspend fun runForeground(watch: Watch): Result<Unit> {
+		val result = runCatching {
 			val appInfo = AppInfo.fromPacket(watch.query(OpCode.APP_INFO))
 			watch.query(OpCode.CONNECT_REASON)
 			watch.queryName()
@@ -125,10 +125,11 @@ class WatchSessionHandler(
 			pair(watch, address, appInfo)
 		}.onFailure { error ->
 			log.e { "Failed to pair watch: ${error.message}" }
-		}.also {
-			watch.requestWatchStatus()
-			watch.adjustTime()
 		}
+		watch.requestWatchStatus()
+		adjustTimeAndRecord(watch, watch.info.value.address)
+		return result
+	}
 
 	/**
 	 * Runs when the OS woke the app because a paired watch wants to connect.
@@ -237,14 +238,17 @@ class WatchSessionHandler(
 	/**
 	 * Adjusts the time and stores the result in [PairedWatch].
 	 *
+	 * @param address BLE address of the watch, nothing is stored if it is unknown.
 	 * @return Why the time adjustment failed, null if it succeeded.
 	 */
-	private suspend fun adjustTimeAndRecord(watch: Watch, address: String): Throwable? {
+	private suspend fun adjustTimeAndRecord(watch: Watch, address: String?): Throwable? {
 		val error = watch.adjustTime().exceptionOrNull()
-		pairedWatchRepository.recordSync(
-			address = address,
-			error = error?.let { it.message ?: it::class.simpleName ?: "Unknown error" },
-		)
+		address?.let {
+			pairedWatchRepository.recordSync(
+				address = it,
+				error = error?.let { e -> e.message ?: e::class.simpleName ?: "Unknown error" },
+			)
+		}
 		return error
 	}
 

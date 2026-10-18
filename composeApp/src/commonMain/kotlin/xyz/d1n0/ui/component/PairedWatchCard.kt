@@ -83,7 +83,7 @@ private val lastSyncFormat = LocalDateTime.Format {
 
 private val PairedWatch.lastSyncText: String
 	get() = when {
-		lastSyncAt == null -> "Never synced in the background"
+		lastSyncAt == null -> "Never synced"
 		lastSyncError == null -> "Last synced ${lastSyncAt.format()}"
 		else -> "Last sync failed ${lastSyncAt.format()}"
 	}
