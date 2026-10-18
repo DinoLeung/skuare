@@ -124,17 +124,67 @@ class ClocksSettingsTest {
 	}
 
 	@Test
-	fun writesTheUnusedSlotAsFiller() {
-		// the second packet matches the official app's write in world_clock_write_bx:
-		// Tokyo with DST 02, then the unused slot as DST 00 and ID FF FF.
-		// The first packet still drops the 0x04 flag bit (07 / 06 → 03 / 02), see the plan's phase 4
+	fun writesThreeClocksLikeTheOfficialApp() {
+		// the official app's write in world_clock_write_bx: the 0x04 flag bit kept on clocks 0
+		// and 1 (07 / 06), Tokyo with DST 02, then the unused slot as DST 00 and ID FF FF
 		assertEquals(
 			listOf(
-				"1D000103027F767A00FFFFFFFFFFFF",
+				"1D000107067F767A00FFFFFFFFFFFF",
 				"1D020302001901FFFFFFFFFFFFFFFF",
 			),
 			parseThreeClocks().clocksPackets.map { it.toHexString(HexFormat.UpperCase) },
 		)
+	}
+
+	@Test
+	fun writesTimeZoneConfigsLikeTheOfficialApp() {
+		assertEquals(
+			listOf("1E007F76260404", "1E017A00200400", "1E021901240400"),
+			parseThreeClocks().timeZoneConfigPackets.map { it.toHexString(HexFormat.UpperCase) },
+		)
+	}
+
+	@Test
+	fun writesCityNamesAndShortNamesLikeTheOfficialApp() {
+		val clocks = parseThreeClocks()
+		val padding = "00".repeat(18)
+		fun nameRecord(position: String, name: String) =
+			("1F$position" + name.encodeToByteArray().toHexString(HexFormat.UpperCase) + padding).take(40)
+
+		assertEquals(
+			listOf(nameRecord("00", "ADELAIDE"), nameRecord("01", "HONG KONG"), nameRecord("02", "TOKYO")),
+			clocks.timeZoneNamePackets.map { it.toHexString(HexFormat.UpperCase) },
+		)
+		assertEquals(
+			listOf(nameRecord("06", "ADL"), nameRecord("07", "HKG"), nameRecord("08", "TYO")),
+			clocks.timeZoneShortNamePackets.map { it.toHexString(HexFormat.UpperCase) },
+		)
+	}
+
+	@Test
+	fun writesCoordinatesAndRadioIdsLikeTheOfficialApp() {
+		val packets = parseThreeClocks().coordinatesRadioIdPackets.map { it.toHexString(HexFormat.UpperCase) }
+
+		// Tokyo, the city changed in world_clock_write_bx, is the same as the official app's write
+		assertEquals("2402014041D841355475A3406176227D028A1E02", packets[2])
+		// The other two differ from the official app, which wrote
+		// 240001C04170DDF6C0BC1D4061561BA908A26600 and 240101403647C84B5DCC64405C8AD71F36262D05:
+		// home cities get the coordinates of the world city with the same name (the app has other
+		// ones for home Adelaide), and the radio ID comes from the UTC offset (03 for Hong Kong,
+		// the app wrote 05). Same on the classic route.
+		assertEquals("240001C04176DD052934AD40615332DF505D1000", packets[0])
+		assertEquals("240101403647C84B5DCC64405C8AD71F36262D03", packets[1])
+	}
+
+	@Test
+	fun unknownDstBitsStayInTheirPosition() {
+		// Tokyo (02) pinned: it takes the 0x04 bit of position 0, Adelaide moves to position 2 without it
+		val clocks = parseThreeClocks().pin(1)
+
+		assertEquals(0x06, clocks.pinnedClock?.dstSettings?.byte?.toInt())
+		assertEquals("Asia/Tokyo", clocks.pinnedClock?.timeZone?.timeZone)
+		assertEquals(0x03, clocks.clocks[1]?.dstSettings?.byte?.toInt())
+		assertEquals("Australia/Adelaide", clocks.clocks[1]?.timeZone?.timeZone)
 	}
 
 	@Test

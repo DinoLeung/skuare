@@ -7,10 +7,12 @@ package xyz.d1n0.lib.model
  *
  * @property clockCount Clocks on the watch, the pinned clock included.
  * @property reminderCount Reminders on the watch, 0 if it has none.
+ * @property hasShortCityNames Whether the watch stores a 3-letter city code next to each city
+ *           name, see [ClocksSettings.timeZoneShortNamePackets].
  */
-enum class WatchModel(val clockCount: Int, val reminderCount: Int) {
-	CLASSIC_SQUARE(clockCount = 6, reminderCount = 5), // GMW-B5000, GW-B5600
-	MIP_SQUARE(clockCount = 3, reminderCount = 0);     // GW-BX5600, GMW-BZ5000
+enum class WatchModel(val clockCount: Int, val reminderCount: Int, val hasShortCityNames: Boolean) {
+	CLASSIC_SQUARE(clockCount = 6, reminderCount = 5, hasShortCityNames = false), // GMW-B5000, GW-B5600
+	MIP_SQUARE(clockCount = 3, reminderCount = 0, hasShortCityNames = true);      // GW-BX5600, GMW-BZ5000
 
 	companion object {
 		private val models = mapOf(

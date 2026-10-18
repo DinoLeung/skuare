@@ -34,6 +34,18 @@ sealed class Clock {
 			else WorldClock.fromTimeZoneId(timeZoneId, dstSettings)
 	}
 
+	/**
+	 * This clock with [DstSettings.unknownBits] replaced, the time zone and the rest of the DST
+	 * settings unchanged.
+	 */
+	fun withUnknownDstBits(unknownBits: Int): Clock {
+		val dstSettings = dstSettings.copy(unknownBits = unknownBits)
+		return when (this) {
+			is HomeClock -> copy(dstSettings = dstSettings)
+			is WorldClock -> copy(dstSettings = dstSettings)
+		}
+	}
+
 	fun ianaOffsetString(): String = timeZone.ianaOffsetString()
 
 	/**

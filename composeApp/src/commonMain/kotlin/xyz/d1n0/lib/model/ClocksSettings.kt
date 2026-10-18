@@ -58,13 +58,20 @@ data class ClocksSettings(
 	 * Swaps the clock at [index] with the pinned clock, the same as swapping them on the watch.
 	 * Each clock moves as a whole, keeping its time zone, its type and its DST settings.
 	 *
+	 * Only [DstSettings.unknownBits] stay in their slot. On the GW-BX5600 the 0x04 bit is on
+	 * positions 0 and 1 and never on position 2, which had Adelaide (03) then Tokyo (02) in the
+	 * captures, so it looks like it belongs to the position, not the clock. Not confirmed.
+	 *
 	 * @param index The index into [clocks], 0-4 for positions 1-5.
 	 * @throws IllegalArgumentException if either clock is not initialized.
 	 */
 	fun pin(index: Int): ClocksSettings {
 		val pinned = requireNotNull(pinnedClock) { "Pinned clock must be initialized" }
 		val clock = requireNotNull(clocks.getOrNull(index)) { "Clock at position ${index + 1} must be initialized" }
-		return copy(pinnedClock = clock, clocks = clocks.replaceAt(index, pinned))
+		return copy(
+			pinnedClock = clock.withUnknownDstBits(pinned.dstSettings.unknownBits),
+			clocks = clocks.replaceAt(index, pinned.withUnknownDstBits(clock.dstSettings.unknownBits)),
+		)
 	}
 
 	/**
@@ -209,6 +216,21 @@ data class ClocksSettings(
 		}
 
 	/**
+	 * Packets with the short city name, the [Timezone.cityCode], of each clock, for watches that
+	 * store one ([WatchModel.hasShortCityNames]). They use the city name opcode at the clock's
+	 * position + [SHORT_NAME_POSITION_OFFSET], e.g. 1F 06 41 44 4C 00 … for ADL at position 0.
+	 *
+	 * @throws IllegalArgumentException if any of the clocks is not initialized.
+	 */
+	val timeZoneShortNamePackets: List<ByteArray>
+		get() = allClocks.mapIndexed { index, clock ->
+			requireNotNull(clock) { "Clock at position $index must be initialized" }
+			byteArrayOf(
+				OpCode.TIMEZONE_NAME.byte, (index + SHORT_NAME_POSITION_OFFSET).toByte()
+			) + clock.timeZone.cityCodeBytes
+		}
+
+	/**
 	 * Constructs and returns a list of byte arrays representing configuration packets
 	 * containing coordinates and radio IDs for all initialized clocks.
 	 *
@@ -234,6 +256,12 @@ data class ClocksSettings(
 		}
 
 	companion object {
+		/**
+		 * The short city name of the clock at position n is at position n + 6, see
+		 * [timeZoneShortNamePackets].
+		 */
+		const val SHORT_NAME_POSITION_OFFSET = 6
+
 		/**
 		 * Uninitialized clocks for a watch with [clockCount] clocks, the pinned clock included.
 		 */

@@ -32,12 +32,11 @@ import xyz.d1n0.ui.theme.SkuareTheme
 /**
  * Shows a clock. If [onPin] is set, pressing and holding the card opens a menu with a "Pin" option.
  * A [pinned] clock is the one shown on the watch's home screen, and gets an accent-coloured border.
- * Without [onClick] and [onPin] the card is read-only, shown in normal colours but not clickable.
  */
 @Composable
 fun ClockCard(
 	clock: Clock,
-	onClick: (() -> Unit)?,
+	onClick: () -> Unit,
 	modifier: Modifier = Modifier,
 	enabled: Boolean = true,
 	pinned: Boolean = false,
@@ -75,7 +74,7 @@ fun ClockCard(
 //					enabled = clock.dstSettings.enable,
 					enabled = clock.timeZone.isExpectedDst(),
 					label = { Text("DST") },
-					onClick = onClick ?: {},
+					onClick = onClick,
 				)
 			},
 			content = {

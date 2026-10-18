@@ -16,7 +16,6 @@ import xyz.d1n0.lib.helper.replaceAt
 import xyz.d1n0.lib.model.Clock
 import xyz.d1n0.lib.model.ClocksSettings
 import xyz.d1n0.lib.model.Watch
-import xyz.d1n0.lib.model.canWriteClocks
 import xyz.d1n0.lib.model.requestClocks
 import xyz.d1n0.lib.model.writeClocksTimezones
 import xyz.d1n0.ui.boilerplate.updateCatching
@@ -29,11 +28,6 @@ data class ClocksUiState(
 	val pendingClocks: ClocksSettings = ClocksSettings(),
 	val pendingPinnedClockError: Throwable? = null,
 	val pendingClockErrors: List<Throwable?> = List(5) { null },
-	/**
-	 * False on watches that can't take clock writes yet, the clocks are then read-only.
-	 * Temporary, goes away with [xyz.d1n0.lib.model.canWriteClocks].
-	 */
-	val isEditable: Boolean = true,
 ) {
 	val isInitialized: Boolean
 		get() = savedClocks.isInitialized
@@ -61,7 +55,6 @@ class ClocksScreenViewModel : ViewModel(), KoinComponent, SaveableScreen {
 			savedClocks = clocks.value,
 			pendingClocks = clocks.value,
 			pendingClockErrors = List(watch.model.clockCount - 1) { null },
-			isEditable = watch.canWriteClocks,
 		)
 	)
 	val uiState: StateFlow<ClocksUiState> = _uiState.asStateFlow()

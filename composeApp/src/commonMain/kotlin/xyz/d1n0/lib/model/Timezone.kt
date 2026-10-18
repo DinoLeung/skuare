@@ -54,6 +54,12 @@ abstract class Timezone {
 		get() = cityName.encodeToByteArray().copyOf(18)
 
 	/**
+	 * The [cityCode] as 18 bytes, zero padded like [cityNameBytes], all zeros if there is none.
+	 */
+	val cityCodeBytes: ByteArray
+		get() = (cityCode ?: "").encodeToByteArray().copyOf(18)
+
+	/**
 	 * Converts the offset, which is represented as a double indicating the time zone offset in hours, into a single byte.
 	 * The conversion scales the offset by a factor of 4 because the offset is stored in 15-minute intervals.
 	 * This means every unit increase in the byte value represents a 15-minute difference in the time zone offset.
