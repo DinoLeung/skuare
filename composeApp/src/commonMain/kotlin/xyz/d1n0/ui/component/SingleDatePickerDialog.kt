@@ -9,6 +9,7 @@ import kotlinx.datetime.LocalDate
 import xyz.d1n0.lib.helper.fromMillis
 import xyz.d1n0.lib.helper.toMillis
 import xyz.d1n0.ui.boilerplate.DatePickerCustomerFormatter
+import xyz.d1n0.ui.theme.SkuareTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,7 +50,7 @@ fun SingleDatePickerDialog(
 @Preview(showBackground = true, widthDp = 420, heightDp = 720)
 @Composable
 private fun SingleDatePickerDialogPreview() {
-	MaterialTheme {
+	SkuareTheme {
 		SingleDatePickerDialog(
 			date = LocalDate(
 				year = 2025,

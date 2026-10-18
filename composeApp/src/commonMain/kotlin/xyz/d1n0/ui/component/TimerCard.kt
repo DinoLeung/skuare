@@ -13,6 +13,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
+import xyz.d1n0.ui.theme.SkuareTheme
 
 @Composable
 fun TimerCard(
@@ -47,31 +48,33 @@ fun TimerCard(
 @Preview
 @Composable
 private fun TimerCardPreview() {
-	Column {
-		TimerCard(
-			modifier = Modifier.fillMaxWidth(),
-			timer = Timer(duration = 69.seconds, status = TimerStatus.NOT_STARTED),
-			onDurationChange = {},
-			enabled = true,
-			isError = false,
-			supportingText = null,
-		)
-		TimerCard(
-			modifier = Modifier.fillMaxWidth(),
-			timer = Timer(duration = 69.minutes, status = TimerStatus.ACTIVE),
-			onDurationChange = {},
-			enabled = true,
-			isError = true,
-			supportingText = { Text("Something wrong") },
-		)
+	SkuareTheme {
+		Column {
+			TimerCard(
+				modifier = Modifier.fillMaxWidth(),
+				timer = Timer(duration = 69.seconds, status = TimerStatus.NOT_STARTED),
+				onDurationChange = {},
+				enabled = true,
+				isError = false,
+				supportingText = null,
+			)
+			TimerCard(
+				modifier = Modifier.fillMaxWidth(),
+				timer = Timer(duration = 69.minutes, status = TimerStatus.ACTIVE),
+				onDurationChange = {},
+				enabled = true,
+				isError = true,
+				supportingText = { Text("Something wrong") },
+			)
 
-		TimerCard(
-			modifier = Modifier.fillMaxWidth(),
-			timer = Timer(duration = 24.hours - 1.seconds, status = TimerStatus.SUSPENDED),
-			onDurationChange = {},
-			enabled = false,
-			isError = false,
-			supportingText = null,
-		)
+			TimerCard(
+				modifier = Modifier.fillMaxWidth(),
+				timer = Timer(duration = 24.hours - 1.seconds, status = TimerStatus.SUSPENDED),
+				onDurationChange = {},
+				enabled = false,
+				isError = false,
+				supportingText = null,
+			)
+		}
 	}
 }

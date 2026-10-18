@@ -10,6 +10,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import xyz.d1n0.ui.theme.SkuareTheme
 
 @Composable
 fun SaveFab(
@@ -37,8 +38,10 @@ fun SaveFab(
 @Preview
 @Composable
 private fun SaveFabPreview() {
-	SaveFab(
-		visible = true,
-		onClick = {},
-	)
+	SkuareTheme {
+		SaveFab(
+			visible = true,
+			onClick = {},
+		)
+	}
 }

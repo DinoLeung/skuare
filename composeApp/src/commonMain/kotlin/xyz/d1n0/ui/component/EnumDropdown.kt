@@ -13,6 +13,7 @@ import xyz.d1n0.lib.constant.ConnectionTimeout
 import xyz.d1n0.lib.constant.ReminderDayOfWeek
 import xyz.d1n0.lib.constant.ReminderRecurrence
 import xyz.d1n0.lib.constant.WeekdayLanguage
+import xyz.d1n0.ui.theme.SkuareTheme
 
 @Composable
 fun <T : Enum<T>> EnumDropdown(
@@ -116,10 +117,13 @@ private fun <T : Enum<T>> BaseEnumDropdown(
 								)
 						}
 					} else null,
-					modifier = Modifier.background(
-						color = if (isSelected) MaterialTheme.colorScheme.primaryContainer
-						else MaterialTheme.colorScheme.surfaceContainer
-					),
+					modifier = if (isSelected)
+						Modifier.background(MaterialTheme.colorScheme.primaryContainer)
+					else Modifier,
+					colors = if (isSelected) MenuDefaults.itemColors(
+						textColor = MaterialTheme.colorScheme.onPrimaryContainer,
+						leadingIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+					) else MenuDefaults.itemColors(),
 					onClick = {
 						onItemClick(option)
 						if (isMultiSelect == false)
@@ -134,73 +138,75 @@ private fun <T : Enum<T>> BaseEnumDropdown(
 @Preview
 @Composable
 private fun EnumSingleDropdownPreview() {
-	var connectionTimeout by remember { mutableStateOf(ConnectionTimeout.MINUTES_5) }
-	var selectedLanguage by remember { mutableStateOf(WeekdayLanguage.EN) }
+	SkuareTheme {
+		var connectionTimeout by remember { mutableStateOf(ConnectionTimeout.MINUTES_5) }
+		var selectedLanguage by remember { mutableStateOf(WeekdayLanguage.EN) }
 
-	var selectedRecurrence by remember { mutableStateOf(ReminderRecurrence.REPEAT_WEEKLY) }
-	var selectedWeekDays by remember { mutableStateOf(setOf<ReminderDayOfWeek>()) }
+		var selectedRecurrence by remember { mutableStateOf(ReminderRecurrence.REPEAT_WEEKLY) }
+		var selectedWeekDays by remember { mutableStateOf(setOf<ReminderDayOfWeek>()) }
 
-	Column(
-		modifier = Modifier
-			.fillMaxSize()
-			.safeContentPadding(),
-		verticalArrangement = Arrangement.spacedBy(8.dp)
-	) {
-		CardView(modifier = Modifier.fillMaxWidth()) {
-			EnumDropdown(
-				selectedOption = connectionTimeout,
-				onOptionSelected = { connectionTimeout = it },
-				label = "Select delay",
-				options = ConnectionTimeout.values().toSet(),
-				modifier = Modifier.fillMaxWidth()
-			)
-		}
-
-		CardView(modifier = Modifier.fillMaxWidth()) {
-			EnumDropdown(
-				selectedOption = selectedLanguage,
-				onOptionSelected = { selectedLanguage = it },
-				label = "Select language",
-				options = WeekdayLanguage.values().toSet(),
-				modifier = Modifier.wrapContentWidth(),
-				enabled = false
-			)
-		}
-
-		CardView(modifier = Modifier.fillMaxWidth()) {
-			Column(
-				modifier = Modifier.fillMaxWidth(),
-				verticalArrangement = Arrangement.spacedBy(8.dp)
-			) {
-				SwitchField(
-					title = "Test 123",
-					check = true,
-					onCheckedChange = {},
-					enabled = true,
+		Column(
+			modifier = Modifier
+				.fillMaxSize()
+				.safeContentPadding(),
+			verticalArrangement = Arrangement.spacedBy(8.dp)
+		) {
+			CardView(modifier = Modifier.fillMaxWidth()) {
+				EnumDropdown(
+					selectedOption = connectionTimeout,
+					onOptionSelected = { connectionTimeout = it },
+					label = "Select delay",
+					options = ConnectionTimeout.values().toSet(),
 					modifier = Modifier.fillMaxWidth()
 				)
-				Row(
-					modifier = Modifier.fillMaxWidth(),
-					horizontalArrangement = Arrangement.spacedBy(8.dp)
-				) {
-					EnumDropdown(
-						selectedOption = selectedRecurrence,
-						onOptionSelected = { selectedRecurrence = it },
-						label = "Recurrence",
-						options = ReminderRecurrence.values().toSet(),
-						modifier = Modifier.weight(1f)
-					)
-					EnumDropdown(
-						selectedOptions = selectedWeekDays,
-						onOptionSelected = { selectedWeekDays = it },
-						label = "On",
-						options = ReminderDayOfWeek.values().toSet(),
-						modifier = Modifier.weight(2f)
-					)
-				}
-
 			}
-		}
 
+			CardView(modifier = Modifier.fillMaxWidth()) {
+				EnumDropdown(
+					selectedOption = selectedLanguage,
+					onOptionSelected = { selectedLanguage = it },
+					label = "Select language",
+					options = WeekdayLanguage.values().toSet(),
+					modifier = Modifier.wrapContentWidth(),
+					enabled = false
+				)
+			}
+
+			CardView(modifier = Modifier.fillMaxWidth()) {
+				Column(
+					modifier = Modifier.fillMaxWidth(),
+					verticalArrangement = Arrangement.spacedBy(8.dp)
+				) {
+					SwitchField(
+						title = "Test 123",
+						check = true,
+						onCheckedChange = {},
+						enabled = true,
+						modifier = Modifier.fillMaxWidth()
+					)
+					Row(
+						modifier = Modifier.fillMaxWidth(),
+						horizontalArrangement = Arrangement.spacedBy(8.dp)
+					) {
+						EnumDropdown(
+							selectedOption = selectedRecurrence,
+							onOptionSelected = { selectedRecurrence = it },
+							label = "Recurrence",
+							options = ReminderRecurrence.values().toSet(),
+							modifier = Modifier.weight(1f)
+						)
+						EnumDropdown(
+							selectedOptions = selectedWeekDays,
+							onOptionSelected = { selectedWeekDays = it },
+							label = "On",
+							options = ReminderDayOfWeek.values().toSet(),
+							modifier = Modifier.weight(2f)
+						)
+					}
+
+				}
+			}
+
+		}
 	}
 }

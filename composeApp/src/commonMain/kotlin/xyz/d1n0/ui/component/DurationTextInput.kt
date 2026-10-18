@@ -2,7 +2,7 @@ package xyz.d1n0.ui.component
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Card
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -27,6 +27,7 @@ import xyz.d1n0.lib.helper.toHHMMSSString
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
+import xyz.d1n0.ui.theme.SkuareTheme
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -113,19 +114,21 @@ private class MaskVisualTransformation : VisualTransformation {
 @Preview
 @Composable
 private fun DurationTextInputPreview() {
-	var duration by remember { mutableStateOf(69.minutes) }
+	SkuareTheme {
+		var duration by remember { mutableStateOf(69.minutes) }
 
-	Card(modifier = Modifier.padding(8.dp)) {
-		DurationTextInput(
-			duration = duration,
-			onDurationChange = { duration = it },
-			modifier = Modifier.padding(8.dp),
-			isError = duration > 12.hours,
-			supportingText = {
-				if (duration > 12.hours) {
-					androidx.compose.material.Text("Cannot exceed 12 hours.")
+		Card(modifier = Modifier.padding(8.dp)) {
+			DurationTextInput(
+				duration = duration,
+				onDurationChange = { duration = it },
+				modifier = Modifier.padding(8.dp),
+				isError = duration > 12.hours,
+				supportingText = {
+					if (duration > 12.hours) {
+						Text("Cannot exceed 12 hours.")
+					}
 				}
-			}
-		)
+			)
+		}
 	}
 }

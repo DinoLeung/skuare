@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
+import xyz.d1n0.ui.theme.SkuareTheme
 
 @Composable
 fun SwitchField(
@@ -67,49 +68,51 @@ fun SwitchField(
 @Preview
 @Composable
 private fun SwitchCardPreview() {
-	Column(
-		modifier = Modifier
-			.fillMaxSize()
-			.safeContentPadding()
-	) {
-		CardView(modifier = Modifier.fillMaxWidth()) {
-			SwitchField(
-				title = "Test 123",
-				check = true,
-				onCheckedChange = {},
-				enabled = true,
-				modifier = Modifier.fillMaxWidth()
-			)
-		}
+	SkuareTheme {
+		Column(
+			modifier = Modifier
+				.fillMaxSize()
+				.safeContentPadding()
+		) {
+			CardView(modifier = Modifier.fillMaxWidth()) {
+				SwitchField(
+					title = "Test 123",
+					check = true,
+					onCheckedChange = {},
+					enabled = true,
+					modifier = Modifier.fillMaxWidth()
+				)
+			}
 
-		CardView(modifier = Modifier.fillMaxWidth()) {
-			SwitchField(
-				title = "Test 123",
-				check = true,
-				onCheckedChange = {},
-				enabled = false,
-				modifier = Modifier.fillMaxWidth()
-			)
-		}
+			CardView(modifier = Modifier.fillMaxWidth()) {
+				SwitchField(
+					title = "Test 123",
+					check = true,
+					onCheckedChange = {},
+					enabled = false,
+					modifier = Modifier.fillMaxWidth()
+				)
+			}
 
-		CardView(modifier = Modifier.fillMaxWidth()) {
-			SwitchField(
-				title = "Test 456",
-				check = false,
-				onCheckedChange = {},
-				enabled = true,
-				modifier = Modifier.fillMaxWidth()
-			)
-		}
+			CardView(modifier = Modifier.fillMaxWidth()) {
+				SwitchField(
+					title = "Test 456",
+					check = false,
+					onCheckedChange = {},
+					enabled = true,
+					modifier = Modifier.fillMaxWidth()
+				)
+			}
 
-		CardView(modifier = Modifier.fillMaxWidth()) {
-			SwitchField(
-				title = "Test 456",
-				check = false,
-				onCheckedChange = {},
-				enabled = false,
-				modifier = Modifier.fillMaxWidth()
-			)
+			CardView(modifier = Modifier.fillMaxWidth()) {
+				SwitchField(
+					title = "Test 456",
+					check = false,
+					onCheckedChange = {},
+					enabled = false,
+					modifier = Modifier.fillMaxWidth()
+				)
+			}
 		}
 	}
 }

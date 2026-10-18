@@ -3,7 +3,6 @@ package xyz.d1n0.ui.screen.settings
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -16,6 +15,7 @@ import xyz.d1n0.lib.constant.ConnectionTimeout
 import xyz.d1n0.lib.constant.DateFormat
 import xyz.d1n0.lib.constant.WeekdayLanguage
 import xyz.d1n0.ui.component.*
+import xyz.d1n0.ui.theme.SkuareTheme
 
 @Composable
 fun SettingsScreen(viewModel: SettingsScreenViewModel) {
@@ -236,7 +236,7 @@ private fun SettingsScreenContent(
 @Preview(showBackground = true)
 @Composable
 private fun SettingsScreenPreview() {
-	MaterialTheme {
+	SkuareTheme {
 		SettingsScreenContent(
 			state = SettingsUiState(
 				isNameInitialized = true,

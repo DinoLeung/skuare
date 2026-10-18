@@ -23,6 +23,7 @@ import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
 import xyz.d1n0.data.database.PairedWatch
 import kotlin.time.Instant
+import xyz.d1n0.ui.theme.SkuareTheme
 
 /**
  * A paired watch with its last background sync, and a button to forget it after confirming.
@@ -93,7 +94,7 @@ private fun Instant.format(): String =
 @Preview(showBackground = true)
 @Composable
 private fun PairedWatchCardPreview() {
-	MaterialTheme {
+	SkuareTheme {
 		PairedWatchCard(
 			watch = PairedWatch(
 				address = "D8:70:90:50:94:26",

@@ -40,6 +40,7 @@ import xyz.d1n0.lib.helper.searchTimeZones
 import xyz.d1n0.lib.model.HomeTimezone
 import xyz.d1n0.lib.model.Timezone
 import xyz.d1n0.lib.model.WorldTimezone
+import xyz.d1n0.ui.theme.SkuareTheme
 
 /**
  * Selects a timezone from either [HomeTimezone] or [WorldTimezone] data.
@@ -81,6 +82,7 @@ fun <T : Timezone> TimeZonePickerDialog(
 		Surface(
 			modifier = Modifier.wrapContentSize(),
 			shape = MaterialTheme.shapes.extraLarge,
+			color = AlertDialogDefaults.containerColor,
 			tonalElevation = AlertDialogDefaults.TonalElevation,
 		) {
 			Column {
@@ -150,7 +152,7 @@ fun <T : Timezone> TimeZonePickerDialog(
 					}
 				}
 				Surface(
-					color = MaterialTheme.colorScheme.surface,
+					color = AlertDialogDefaults.containerColor,
 				) {
 					Column {
 						HorizontalDivider()
@@ -187,7 +189,7 @@ internal fun <T : Timezone> List<T>.withTimeZoneFirst(identifier: Short): List<T
 private fun TimeZonePickerDialogPreview() {
 	val timeZones = WorldTimezoneData.values.toList()
 	val selectedTimeZone = timeZones.find { it.city == "Hong Kong" } ?: timeZones.first()
-	MaterialTheme {
+	SkuareTheme {
 		TimeZonePickerDialog(
 			timeZone = selectedTimeZone,
 			timeZones = timeZones,

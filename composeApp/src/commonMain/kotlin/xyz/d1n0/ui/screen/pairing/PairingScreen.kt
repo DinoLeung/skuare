@@ -36,6 +36,7 @@ import org.koin.core.parameter.parametersOf
 import xyz.d1n0.data.database.PairedWatch
 import xyz.d1n0.ui.component.PairedWatchCard
 import kotlin.time.Instant
+import xyz.d1n0.ui.theme.SkuareTheme
 
 @Composable
 fun PairingScreen(
@@ -138,7 +139,7 @@ private fun PairingScreenContent(
 @Preview(showBackground = true)
 @Composable
 private fun PairingScreenPreview() {
-	MaterialTheme {
+	SkuareTheme {
 		PairingScreenContent(
 			state = PairingUiState(
 				isSearching = false,
@@ -162,7 +163,7 @@ private fun PairingScreenPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun PairingScreenEmptyPreview() {
-	MaterialTheme {
+	SkuareTheme {
 		PairingScreenContent(
 			state = PairingUiState(
 				scanPermissionState = PermissionState.Granted,
@@ -177,7 +178,7 @@ private fun PairingScreenEmptyPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun PairingScreenNoPermissionPreview() {
-	MaterialTheme {
+	SkuareTheme {
 		PairingScreenContent(
 			state = PairingUiState(),
 			onEvent = {},

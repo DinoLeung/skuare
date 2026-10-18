@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -25,6 +24,7 @@ import xyz.d1n0.lib.model.HomeClock
 import xyz.d1n0.lib.model.WorldClock
 import xyz.d1n0.ui.component.ClockCard
 import xyz.d1n0.ui.component.TimeZonePickerDialog
+import xyz.d1n0.ui.theme.SkuareTheme
 
 @Composable
 fun ClocksScreen(viewModel: ClocksScreenViewModel) {
@@ -133,7 +133,7 @@ private fun ClocksScreenPreview() {
 			),
 		),
 	)
-	MaterialTheme {
+	SkuareTheme {
 		ClocksScreenContent(
 			state = ClocksUiState(
 				isLoading = false,

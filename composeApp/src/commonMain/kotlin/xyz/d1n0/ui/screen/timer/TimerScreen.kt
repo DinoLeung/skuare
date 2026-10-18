@@ -1,7 +1,6 @@
 package xyz.d1n0.ui.screen.timer
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -12,6 +11,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import xyz.d1n0.lib.constant.TimerStatus
 import xyz.d1n0.lib.model.Timer
 import xyz.d1n0.ui.component.TimerCard
+import xyz.d1n0.ui.theme.SkuareTheme
 import kotlin.time.Duration.Companion.minutes
 
 @Composable
@@ -51,7 +51,7 @@ private fun TimerScreenContent(
 private fun TimerScreenPreview() {
 	val timer = Timer(duration = 10.minutes, status = TimerStatus.NOT_STARTED)
 
-	MaterialTheme {
+	SkuareTheme {
 		TimerScreenContent(
 			state = TimerUiState(
 				isInitialized = true,

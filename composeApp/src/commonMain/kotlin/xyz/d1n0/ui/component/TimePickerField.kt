@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.datetime.LocalTime
 import androidx.compose.ui.tooling.preview.Preview
 import xyz.d1n0.lib.helper.toHHMMString
+import xyz.d1n0.ui.theme.SkuareTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,38 +68,40 @@ fun TimePickerField(
 @Preview
 @Composable
 private fun TimePickerFieldPreview() {
-	var time by remember { mutableStateOf(LocalTime(hour = 10, minute = 10)) }
+	SkuareTheme {
+		var time by remember { mutableStateOf(LocalTime(hour = 10, minute = 10)) }
 
-	Column(
-		modifier = Modifier.fillMaxSize(),
-		horizontalAlignment = Alignment.Start,
-		verticalArrangement = Arrangement.spacedBy(8.dp)
-	) {
-		TimePickerField(
-			value = time,
-			onValueChange = { time = it },
-//			label = "",
-			leadingIcon = {
-				Icon(
-					imageVector = Icons.Outlined.Alarm,
-					contentDescription = "Alarm"
-				)
-			},
-			enabled = false,
-			modifier = Modifier.fillMaxWidth()
-		)
-		TimePickerField(
-			value = time,
-			onValueChange = { time = it },
-//			label = "",
-			leadingIcon = {
-				Icon(
-					imageVector = Icons.Outlined.Snooze,
-					contentDescription = "Snooze Alarm"
-				)
-			},
-			enabled = true,
-			modifier = Modifier.fillMaxWidth()
-		)
+		Column(
+			modifier = Modifier.fillMaxSize(),
+			horizontalAlignment = Alignment.Start,
+			verticalArrangement = Arrangement.spacedBy(8.dp)
+		) {
+			TimePickerField(
+				value = time,
+				onValueChange = { time = it },
+	//			label = "",
+				leadingIcon = {
+					Icon(
+						imageVector = Icons.Outlined.Alarm,
+						contentDescription = "Alarm"
+					)
+				},
+				enabled = false,
+				modifier = Modifier.fillMaxWidth()
+			)
+			TimePickerField(
+				value = time,
+				onValueChange = { time = it },
+	//			label = "",
+				leadingIcon = {
+					Icon(
+						imageVector = Icons.Outlined.Snooze,
+						contentDescription = "Snooze Alarm"
+					)
+				},
+				enabled = true,
+				modifier = Modifier.fillMaxWidth()
+			)
+		}
 	}
 }

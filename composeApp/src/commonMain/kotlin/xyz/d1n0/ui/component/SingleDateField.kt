@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.datetime.LocalDate
 import androidx.compose.ui.tooling.preview.Preview
 import xyz.d1n0.lib.helper.toDayMonthYear
+import xyz.d1n0.ui.theme.SkuareTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -68,38 +69,40 @@ fun SingleDatePickerField(
 @Preview
 @Composable
 private fun SingleDatePickerFieldPreview() {
-	var date by remember { mutableStateOf(LocalDate(2025, 6, 9)) }
+	SkuareTheme {
+		var date by remember { mutableStateOf(LocalDate(2025, 6, 9)) }
 
-	Column(
-		modifier = Modifier.fillMaxSize(),
-		horizontalAlignment = Alignment.Start,
-		verticalArrangement = Arrangement.spacedBy(8.dp)
-	) {
-		SingleDatePickerField(
-			value = date,
-			onValueChange = { date = it },
-			label = "on",
-			leadingIcon = {
-				Icon(
-					imageVector = Icons.Outlined.CalendarMonth,
-					contentDescription = "Alarm"
-				)
-			},
-			enabled = false,
-			modifier = Modifier.fillMaxWidth()
-		)
-		SingleDatePickerField(
-			value = date,
-			onValueChange = { date = it },
-			label = "on",
-			leadingIcon = {
-				Icon(
-					imageVector = Icons.Outlined.CalendarToday,
-					contentDescription = "Snooze Alarm"
-				)
-			},
-			enabled = true,
-			modifier = Modifier.fillMaxWidth()
-		)
+		Column(
+			modifier = Modifier.fillMaxSize(),
+			horizontalAlignment = Alignment.Start,
+			verticalArrangement = Arrangement.spacedBy(8.dp)
+		) {
+			SingleDatePickerField(
+				value = date,
+				onValueChange = { date = it },
+				label = "on",
+				leadingIcon = {
+					Icon(
+						imageVector = Icons.Outlined.CalendarMonth,
+						contentDescription = "Alarm"
+					)
+				},
+				enabled = false,
+				modifier = Modifier.fillMaxWidth()
+			)
+			SingleDatePickerField(
+				value = date,
+				onValueChange = { date = it },
+				label = "on",
+				leadingIcon = {
+					Icon(
+						imageVector = Icons.Outlined.CalendarToday,
+						contentDescription = "Snooze Alarm"
+					)
+				},
+				enabled = true,
+				modifier = Modifier.fillMaxWidth()
+			)
+		}
 	}
 }

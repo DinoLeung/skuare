@@ -11,7 +11,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Alarm
 import androidx.compose.material.icons.outlined.Snooze
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,6 +25,7 @@ import xyz.d1n0.lib.model.HourlySignal
 import xyz.d1n0.ui.component.CardView
 import xyz.d1n0.ui.component.SwitchField
 import xyz.d1n0.ui.component.TimePickerField
+import xyz.d1n0.ui.theme.SkuareTheme
 
 @Composable
 fun AlarmsScreen(viewModel: AlarmsScreenViewModel) {
@@ -162,7 +162,7 @@ private fun AlarmsScreenPreview() {
 	)
 	val snoozeAlarm = Alarm(enable = true, time = LocalTime(hour = 0, minute = 10))
 
-	MaterialTheme {
+	SkuareTheme {
 		AlarmsScreenContent(
 			state = AlarmsUiState(
 				isHourlySignalInitialized = true,

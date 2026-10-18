@@ -12,6 +12,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import xyz.d1n0.lib.constant.AutoSyncDelay
+import xyz.d1n0.ui.theme.SkuareTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -80,40 +81,42 @@ fun SliderField(
 @Preview
 @Composable
 private fun SliderPreview() {
+	SkuareTheme {
 
-	var delay by remember { mutableStateOf(AutoSyncDelay(30)) }
-	var error: Throwable? by remember { mutableStateOf(null) }
+		var delay by remember { mutableStateOf(AutoSyncDelay(30)) }
+		var error: Throwable? by remember { mutableStateOf(null) }
 
-	fun update(value: Int) {
-		runCatching {
-			AutoSyncDelay(value)
-		}.fold(
-			onSuccess = {
-				delay = it
-				error = null
-			},
-			onFailure = { error = it },
-		)
-	}
-
-	Column(
-		modifier = Modifier
-			.fillMaxSize()
-			.safeContentPadding(),
-		verticalArrangement = Arrangement.spacedBy(8.dp)
-	) {
-		CardView(modifier = Modifier.fillMaxWidth()) {
-			SliderField(
-				modifier = Modifier.fillMaxWidth(),
-				label = "test",
-				enabled = true,
-				value = delay.minutes,
-				range = 0..59,
-				onValueChange = {
-					update(it)
+		fun update(value: Int) {
+			runCatching {
+				AutoSyncDelay(value)
+			}.fold(
+				onSuccess = {
+					delay = it
+					error = null
 				},
-				error = error,
+				onFailure = { error = it },
 			)
+		}
+
+		Column(
+			modifier = Modifier
+				.fillMaxSize()
+				.safeContentPadding(),
+			verticalArrangement = Arrangement.spacedBy(8.dp)
+		) {
+			CardView(modifier = Modifier.fillMaxWidth()) {
+				SliderField(
+					modifier = Modifier.fillMaxWidth(),
+					label = "test",
+					enabled = true,
+					value = delay.minutes,
+					range = 0..59,
+					onValueChange = {
+						update(it)
+					},
+					error = error,
+				)
+			}
 		}
 	}
 }

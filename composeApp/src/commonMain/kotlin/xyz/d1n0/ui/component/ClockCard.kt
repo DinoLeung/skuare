@@ -17,6 +17,7 @@ import xyz.d1n0.lib.model.Clock
 import xyz.d1n0.lib.model.DstSettings
 import xyz.d1n0.lib.model.HomeClock
 import xyz.d1n0.lib.model.WorldClock
+import xyz.d1n0.ui.theme.SkuareTheme
 
 @Composable
 fun ClockCard(
@@ -62,14 +63,16 @@ fun ClockCard(
 @Preview
 @Composable
 private fun ClockCardPreview() {
-	Column {
-		ClockCard(
-			clock = HomeClock.fromTimeZoneId(30335, DstSettings(false, true)),
-			onClick = {},
-		)
-		ClockCard(
-			clock = WorldClock.fromTimeZoneId(95, DstSettings(true, false)),
-			onClick = {},
-		)
+	SkuareTheme {
+		Column {
+			ClockCard(
+				clock = HomeClock.fromTimeZoneId(30335, DstSettings(false, true)),
+				onClick = {},
+			)
+			ClockCard(
+				clock = WorldClock.fromTimeZoneId(95, DstSettings(true, false)),
+				onClick = {},
+			)
+		}
 	}
 }

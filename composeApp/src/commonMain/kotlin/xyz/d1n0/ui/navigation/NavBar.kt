@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import xyz.d1n0.ui.theme.SkuareTheme
 
 @Composable
 fun NavBar(
@@ -49,10 +50,12 @@ fun NavBar(
 @Preview
 @Composable
 private fun NavBarPreview() {
-	NavBar(
-		items = navBarItems,
-		currentRoute = navBarItems[2].route,
-		unsavedRoutes = setOf(navBarItems[0].route, navBarItems[4].route),
-		onItemClick = {}
-	)
+	SkuareTheme {
+		NavBar(
+			items = navBarItems,
+			currentRoute = navBarItems[2].route,
+			unsavedRoutes = setOf(navBarItems[0].route, navBarItems[4].route),
+			onItemClick = {}
+		)
+	}
 }

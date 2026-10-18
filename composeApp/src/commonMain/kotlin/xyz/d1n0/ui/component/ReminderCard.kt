@@ -14,6 +14,7 @@ import xyz.d1n0.lib.constant.ReminderRecurrence
 import xyz.d1n0.lib.model.Reminder
 import xyz.d1n0.lib.model.ReminderConfig
 import xyz.d1n0.lib.model.ReminderTitle
+import xyz.d1n0.ui.theme.SkuareTheme
 
 @Composable
 fun ReminderCard(
@@ -143,100 +144,102 @@ fun ReminderCard(
 @Preview
 @Composable
 private fun ReminderCardPreview() {
-	Column {
-		ReminderCard(
-			reminder = Reminder(
-				ReminderTitle("Reminder once"),
-				ReminderConfig(
-					enable = true,
-					recurrence = ReminderRecurrence.ONCE,
-					startDate = LocalDate(year = 2025, month = 1, day = 1),
-					endDate = LocalDate(year = 2025, month = 1, day = 1),
-					daysOfWeek = setOf<ReminderDayOfWeek>(),
-				)
-			),
-			onTitleChange = {},
-			toggleChange = {},
-			recurrenceChange = {},
-			startDateChange = {},
-			endDateChange = {},
-			daysOfWeekChange = {},
-		)
-		ReminderCard(
-			reminder = Reminder(
-				ReminderTitle("Reminder Daily"),
-				ReminderConfig(
-					enable = true,
-					recurrence = ReminderRecurrence.REPEAT_DAILY,
-					startDate = LocalDate(year = 2025, month = 1, day = 1),
-					endDate = LocalDate(year = 2025, month = 12, day = 31),
-					daysOfWeek = setOf<ReminderDayOfWeek>(),
-				)
-			),
-			onTitleChange = {},
-			toggleChange = {},
-			recurrenceChange = {},
-			startDateChange = {},
-			endDateChange = {},
-			daysOfWeekChange = {},
-		)
-		ReminderCard(
-			reminder = Reminder(
-				ReminderTitle("Reminder weekly"),
-				ReminderConfig(
-					enable = true,
-					recurrence = ReminderRecurrence.REPEAT_WEEKLY,
-					startDate = LocalDate(year = 2025, month = 1, day = 1),
-					endDate = LocalDate(year = 2025, month = 1, day = 1),
-					daysOfWeek = setOf(
-						ReminderDayOfWeek.MONDAY,
-						ReminderDayOfWeek.WEDNESDAY,
-						ReminderDayOfWeek.FRIDAY
+	SkuareTheme {
+		Column {
+			ReminderCard(
+				reminder = Reminder(
+					ReminderTitle("Reminder once"),
+					ReminderConfig(
+						enable = true,
+						recurrence = ReminderRecurrence.ONCE,
+						startDate = LocalDate(year = 2025, month = 1, day = 1),
+						endDate = LocalDate(year = 2025, month = 1, day = 1),
+						daysOfWeek = setOf<ReminderDayOfWeek>(),
 					)
-				)
-			),
-			onTitleChange = {},
-			toggleChange = {},
-			recurrenceChange = {},
-			startDateChange = {},
-			endDateChange = {},
-			daysOfWeekChange = {},
-		)
-		ReminderCard(
-			reminder = Reminder(
-				ReminderTitle("Reminder monthly"),
-				ReminderConfig(
-					enable = true,
-					recurrence = ReminderRecurrence.REPEAT_MONTHLY,
-					startDate = LocalDate(year = 2025, month = 6, day = 13),
-					endDate = LocalDate(year = 2025, month = 6, day = 13),
-					daysOfWeek = setOf<ReminderDayOfWeek>(),
-				)
-			),
-			onTitleChange = {},
-			toggleChange = {},
-			recurrenceChange = {},
-			startDateChange = {},
-			endDateChange = {},
-			daysOfWeekChange = {},
-		)
-		ReminderCard(
-			reminder = Reminder(
-				ReminderTitle("Reminder yearly"),
-				ReminderConfig(
-					enable = true,
-					recurrence = ReminderRecurrence.REPEAT_YEARLY,
-					startDate = LocalDate(year = 2025, month = 6, day = 9),
-					endDate = LocalDate(year = 2025, month = 6, day = 9),
-					daysOfWeek = setOf<ReminderDayOfWeek>(),
-				)
-			),
-			onTitleChange = {},
-			toggleChange = {},
-			recurrenceChange = {},
-			startDateChange = {},
-			endDateChange = {},
-			daysOfWeekChange = {},
-		)
+				),
+				onTitleChange = {},
+				toggleChange = {},
+				recurrenceChange = {},
+				startDateChange = {},
+				endDateChange = {},
+				daysOfWeekChange = {},
+			)
+			ReminderCard(
+				reminder = Reminder(
+					ReminderTitle("Reminder Daily"),
+					ReminderConfig(
+						enable = true,
+						recurrence = ReminderRecurrence.REPEAT_DAILY,
+						startDate = LocalDate(year = 2025, month = 1, day = 1),
+						endDate = LocalDate(year = 2025, month = 12, day = 31),
+						daysOfWeek = setOf<ReminderDayOfWeek>(),
+					)
+				),
+				onTitleChange = {},
+				toggleChange = {},
+				recurrenceChange = {},
+				startDateChange = {},
+				endDateChange = {},
+				daysOfWeekChange = {},
+			)
+			ReminderCard(
+				reminder = Reminder(
+					ReminderTitle("Reminder weekly"),
+					ReminderConfig(
+						enable = true,
+						recurrence = ReminderRecurrence.REPEAT_WEEKLY,
+						startDate = LocalDate(year = 2025, month = 1, day = 1),
+						endDate = LocalDate(year = 2025, month = 1, day = 1),
+						daysOfWeek = setOf(
+							ReminderDayOfWeek.MONDAY,
+							ReminderDayOfWeek.WEDNESDAY,
+							ReminderDayOfWeek.FRIDAY
+						)
+					)
+				),
+				onTitleChange = {},
+				toggleChange = {},
+				recurrenceChange = {},
+				startDateChange = {},
+				endDateChange = {},
+				daysOfWeekChange = {},
+			)
+			ReminderCard(
+				reminder = Reminder(
+					ReminderTitle("Reminder monthly"),
+					ReminderConfig(
+						enable = true,
+						recurrence = ReminderRecurrence.REPEAT_MONTHLY,
+						startDate = LocalDate(year = 2025, month = 6, day = 13),
+						endDate = LocalDate(year = 2025, month = 6, day = 13),
+						daysOfWeek = setOf<ReminderDayOfWeek>(),
+					)
+				),
+				onTitleChange = {},
+				toggleChange = {},
+				recurrenceChange = {},
+				startDateChange = {},
+				endDateChange = {},
+				daysOfWeekChange = {},
+			)
+			ReminderCard(
+				reminder = Reminder(
+					ReminderTitle("Reminder yearly"),
+					ReminderConfig(
+						enable = true,
+						recurrence = ReminderRecurrence.REPEAT_YEARLY,
+						startDate = LocalDate(year = 2025, month = 6, day = 9),
+						endDate = LocalDate(year = 2025, month = 6, day = 9),
+						daysOfWeek = setOf<ReminderDayOfWeek>(),
+					)
+				),
+				onTitleChange = {},
+				toggleChange = {},
+				recurrenceChange = {},
+				startDateChange = {},
+				endDateChange = {},
+				daysOfWeekChange = {},
+			)
+		}
 	}
 }
