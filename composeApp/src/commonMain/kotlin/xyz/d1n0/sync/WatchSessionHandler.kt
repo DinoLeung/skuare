@@ -106,11 +106,12 @@ class WatchSessionHandler(
 	 * Runs when the user connected from the app.
 	 *
 	 * This function:
-	 * 1. Reads the app info and the connect reason (for the watch address).
+	 * 1. Reads the app info, the connect reason (for the watch address) and the watch name.
 	 * 2. Pairs the watch, see [pair].
 	 * 3. Requests the watch status and adjusts the time.
 	 *
-	 * Only pairing errors fail the result, a failed watch status or time adjustment is logged.
+	 * Only pairing errors fail the result, a failed watch name, watch status or time adjustment is
+	 * logged.
 	 *
 	 * @param watch A connected watch.
 	 * @return A [Result] that fails if the watch could not be paired.
@@ -119,6 +120,7 @@ class WatchSessionHandler(
 		runCatching {
 			val appInfo = AppInfo.fromPacket(watch.query(OpCode.APP_INFO))
 			watch.query(OpCode.CONNECT_REASON)
+			watch.queryName()
 			val address = checkNotNull(watch.info.value.address) { "Watch address unknown" }
 			pair(watch, address, appInfo)
 		}.onFailure { error ->
@@ -213,6 +215,10 @@ class WatchSessionHandler(
 				return BackgroundSessionResult.Skipped("$address is not paired")
 		}
 
+		// the user may have renamed the watch since it was paired
+		watch.queryName()
+		watchDisplayName(watch)?.let { pairedWatchRepository.updateDisplayName(address, it) }
+
 		return when (connectReason) {
 			ConnectReason.AUTO_SYNC, ConnectReason.MANUAL_SYNC ->
 				BackgroundSessionResult.Synced(adjustTimeAndRecord(watch, address))
@@ -245,7 +251,7 @@ class WatchSessionHandler(
 	/**
 	 * Pairs the watch with this install:
 	 * 1. Writes our app info if the watch holds another one, then checks the watch stored it.
-	 * 2. Stores the watch, keeping the display name and settings of an existing entry.
+	 * 2. Stores the watch with its display name, keeping the settings of an existing entry.
 	 * 3. Registers the watch with [WatchPresenceMonitor] for background sync.
 	 */
 	private suspend fun pair(watch: Watch, address: String, appInfo: AppInfo) {
@@ -259,15 +265,31 @@ class WatchSessionHandler(
 		}
 
 		val advertisedName = watch.advertisedName ?: address
-		val pairedWatch = pairedWatchRepository.find(address)?.copy(advertisedName = advertisedName)
+		val existing = pairedWatchRepository.find(address)
+		val displayName = watchDisplayName(watch) ?: existing?.displayName ?: advertisedName
+		val pairedWatch = existing?.copy(advertisedName = advertisedName, displayName = displayName)
 			?: PairedWatch(
 				address = address,
 				advertisedName = advertisedName,
-				displayName = advertisedName,
+				displayName = displayName,
 				pairedAt = Clock.System.now(),
 			)
 		pairedWatchRepository.upsert(presenceMonitor.register(pairedWatch))
 	}
+
+	/**
+	 * Reads the watch name into [Watch.info], a failed read is logged and leaves the name unknown.
+	 */
+	private suspend fun Watch.queryName() {
+		runCatching { query(OpCode.WATCH_NAME) }
+			.onFailure { log.w { "Failed to read watch name: ${it.message}" } }
+	}
+
+	/**
+	 * The name the user set on the watch, null if it is unknown or blank.
+	 */
+	private fun watchDisplayName(watch: Watch): String? =
+		watch.info.value.name?.value?.takeIf { it.isNotBlank() }
 
 	private fun holdForApp(watch: Watch) {
 		_pendingForegroundWatch.value = watch

@@ -20,6 +20,9 @@ interface PairedWatchDao {
 	@Query("UPDATE paired_watch SET lastSyncAt = :at, lastSyncError = :error WHERE address = :address")
 	suspend fun updateLastSync(address: String, at: Instant, error: String?)
 
+	@Query("UPDATE paired_watch SET displayName = :displayName WHERE address = :address")
+	suspend fun updateDisplayName(address: String, displayName: String)
+
 	@Query("DELETE FROM paired_watch WHERE address = :address")
 	suspend fun delete(address: String)
 }

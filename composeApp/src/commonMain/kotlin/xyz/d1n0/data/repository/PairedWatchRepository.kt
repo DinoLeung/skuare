@@ -23,5 +23,8 @@ class PairedWatchRepository(private val dao: PairedWatchDao) {
 	suspend fun recordSync(address: String, error: String? = null, at: Instant = Clock.System.now()) =
 		dao.updateLastSync(address = address, at = at, error = error)
 
+	suspend fun updateDisplayName(address: String, displayName: String) =
+		dao.updateDisplayName(address = address, displayName = displayName)
+
 	suspend fun remove(address: String) = dao.delete(address)
 }

@@ -16,7 +16,10 @@ import xyz.d1n0.lib.constant.AutoSyncDelay
 import xyz.d1n0.lib.constant.BacklightDuration
 import xyz.d1n0.lib.constant.ConnectionTimeout
 import xyz.d1n0.lib.constant.DateFormat
+import xyz.d1n0.Log
+import xyz.d1n0.data.repository.PairedWatchRepository
 import xyz.d1n0.lib.constant.FontStyle
+import xyz.d1n0.lib.constant.OpCode
 import xyz.d1n0.lib.constant.WeekdayLanguage
 import xyz.d1n0.lib.model.ConnectionSettings
 import xyz.d1n0.lib.model.Watch
@@ -97,6 +100,8 @@ sealed interface SettingsUiEvent {
 
 class SettingsScreenViewModel : ViewModel(), KoinComponent, SaveableScreen {
 	private val watch: Watch by inject()
+	private val pairedWatchRepository: PairedWatchRepository by inject()
+	private val log: Log by inject()
 	private val watchInfo: StateFlow<WatchInfo> = watch.info
 
 	private val _uiState = MutableStateFlow(SettingsUiState(hasFontStyle = watch.model.hasFontStyle))
@@ -187,9 +192,24 @@ class SettingsScreenViewModel : ViewModel(), KoinComponent, SaveableScreen {
 			)
 		}
 
-		if (isNameUpdated) watch.writeName(_uiState.value.pendingName)
+		if (isNameUpdated) saveName(_uiState.value.pendingName)
 		if (isWatchSettingsUpdated) watch.writeWatchSettings(_uiState.value.pendingWatchSettings)
 		if (isConnectionSettingsUpdated) watch.writeConnectionSettings(_uiState.value.pendingConnectionSettings)
+	}
+
+	/**
+	 * Writes the name, then stores the name the watch reports as its [PairedWatch.displayName], so the
+	 * pairing screen shows it. Writes can fail silently, so the stored name is what the watch confirms.
+	 */
+	private suspend fun saveName(name: WatchName) {
+		watch.writeName(name)
+		// a failed read-back leaves the name the watch last reported, the other writes still go ahead
+		runCatching { watch.query(OpCode.WATCH_NAME) }
+			.onFailure { log.w { "Failed to read back watch name: ${it.message}" } }
+		val address = watch.info.value.address ?: return
+		val displayName = watch.info.value.name?.value?.takeIf { it.isNotBlank() }
+			?: watch.advertisedName ?: address
+		pairedWatchRepository.updateDisplayName(address, displayName)
 	}
 
 	private fun onNameInputChange(name: String) = _uiState.updateCatching(
