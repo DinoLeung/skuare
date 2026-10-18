@@ -122,7 +122,8 @@ private fun PairingScreenContent(
 					.padding(scaffoldPadding),
 				// extra bottom padding, so the FAB doesn't cover the last card's forget button
 				contentPadding = PaddingValues(start = 8.dp, top = 8.dp, end = 8.dp, bottom = 88.dp),
-				verticalArrangement = Arrangement.spacedBy(8.dp),
+				// a single card sits in the middle of the screen; longer lists start at the top and scroll
+				verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
 			) {
 				items(state.pairedWatches, key = { it.address }) { watch ->
 					PairedWatchCard(
@@ -145,9 +146,16 @@ private fun PairingScreenPreview() {
 				isSearching = false,
 				pairedWatches = listOf(
 					PairedWatch(
-						address = "D8:70:90:50:94:26",
+						address = "AA:BB:CC:DD:EE:FF",
 						advertisedName = "CASIO GW-B5600#",
 						displayName = "CASIO GW-B5600#",
+						pairedAt = Instant.fromEpochMilliseconds(1792220000000),
+						lastSyncAt = Instant.fromEpochMilliseconds(1792231646000),
+					),
+					PairedWatch(
+						address = "A1:B2:C3:D4:E5:F6",
+						advertisedName = "CASIO GW-B5000#",
+						displayName = "CASIO GW-B5000#",
 						pairedAt = Instant.fromEpochMilliseconds(1792220000000),
 						lastSyncAt = Instant.fromEpochMilliseconds(1792231646000),
 					),

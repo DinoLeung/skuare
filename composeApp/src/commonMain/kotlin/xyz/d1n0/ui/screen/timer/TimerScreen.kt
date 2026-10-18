@@ -1,11 +1,14 @@
 package xyz.d1n0.ui.screen.timer
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import xyz.d1n0.lib.constant.TimerStatus
@@ -34,16 +37,21 @@ private fun TimerScreenContent(
 	state: TimerUiState,
 	onEvent: (TimerUiEvent) -> Unit,
 ) {
-	TimerCard(
-		modifier = Modifier.fillMaxWidth(),
-		timer = state.pendingTimer,
-		onDurationChange = { onEvent(TimerUiEvent.TimerInputChange(it)) },
-		enabled = state.isInitialized && state.isLoading == false,
-		isError = state.hasErrors,
-		supportingText = {
-			state.pendingTimerError?.let { Text(it.message ?: "Unknown errors") }
-		}
-	)
+	Box(
+		modifier = Modifier.fillMaxSize(),
+		contentAlignment = Alignment.Center,
+	) {
+		TimerCard(
+			modifier = Modifier.fillMaxWidth(),
+			timer = state.pendingTimer,
+			onDurationChange = { onEvent(TimerUiEvent.TimerInputChange(it)) },
+			enabled = state.isInitialized && state.isLoading == false,
+			isError = state.hasErrors,
+			supportingText = {
+				state.pendingTimerError?.let { Text(it.message ?: "Unknown errors") }
+			}
+		)
+	}
 }
 
 @Preview(showBackground = true)
