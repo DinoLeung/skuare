@@ -11,19 +11,20 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"net/http"
+	"math"
 	"os"
 	"strconv"
 	"strings"
-	"time"
 )
+
+// Run together with iataCityCodes.go: go run generateWorldCitymap.go iataCityCodes.go
 
 const (
 	boundaryReleaseURL = "https://api.github.com/repos/evansiroky/timezone-boundary-builder/releases/latest"
 	boundaryAssetName  = "timezones-with-oceans.geojson.zip"
-	ianaDataURL        = "https://data.iana.org/time-zones/tzdb/tzdata.zi"
-	maxDownloadSize    = 128 << 20
 	maxGeoJSONSize     = 512 << 20
+	// a city code is only taken from a city with the same name within this distance
+	maxCityCodeDistanceKm = 100
 )
 
 type cityRecord struct {
@@ -32,6 +33,7 @@ type cityRecord struct {
 	dstDiff   float64
 	dstRule   int
 	cityName  string
+	cityCode  string
 	country   string
 	city      string
 	longitude float64
@@ -63,8 +65,6 @@ type geoJSONFeature struct {
 type position []float64
 type ring []position
 type polygon []ring
-
-var httpClient = &http.Client{Timeout: 10 * time.Minute}
 
 func main() {
 	if err := run(); err != nil {
@@ -127,6 +127,12 @@ func run() error {
 			)
 		}
 	}
+
+	iataCities, err := downloadIATACities()
+	if err != nil {
+		return err
+	}
+	assignCityCodes(cities, iataCities)
 
 	output := generateKotlin(cities, ianaVersion, release.TagName)
 	if err := os.WriteFile("worldCities.kt", []byte(output), 0o644); err != nil {
@@ -250,37 +256,6 @@ func findBoundaryAsset(release githubRelease) (githubAsset, error) {
 		}
 	}
 	return githubAsset{}, fmt.Errorf("release %s does not contain %s", release.TagName, boundaryAssetName)
-}
-
-func download(url string) ([]byte, error) {
-	request, err := http.NewRequest(http.MethodGet, url, nil)
-	if err != nil {
-		return nil, err
-	}
-	request.Header.Set("Accept", "application/vnd.github+json, text/plain, application/octet-stream")
-	request.Header.Set("User-Agent", "skuare-world-timezone-generator")
-	if token := os.Getenv("GITHUB_TOKEN"); token != "" &&
-		(request.URL.Hostname() == "github.com" || request.URL.Hostname() == "api.github.com") {
-		request.Header.Set("Authorization", "Bearer "+token)
-	}
-
-	response, err := httpClient.Do(request)
-	if err != nil {
-		return nil, err
-	}
-	defer response.Body.Close()
-	if response.StatusCode < 200 || response.StatusCode >= 300 {
-		return nil, fmt.Errorf("GET %s returned %s", url, response.Status)
-	}
-
-	data, err := io.ReadAll(io.LimitReader(response.Body, maxDownloadSize+1))
-	if err != nil {
-		return nil, err
-	}
-	if len(data) > maxDownloadSize {
-		return nil, fmt.Errorf("GET %s exceeded the %d-byte download limit", url, maxDownloadSize)
-	}
-	return data, nil
 }
 
 func parseIANAData(data []byte) (string, map[string]struct{}, error) {
@@ -519,15 +494,16 @@ func generateKotlin(cities []*cityRecord, ianaVersion, boundaryVersion string) s
 	for _, city := range cities {
 		fmt.Fprintf(
 			&kotlinMap,
-			"    %d to WorldTimezone(\n        timeZone = \"%s\",\n        country = \"%s\",\n        city = \"%s\",\n        cityName = \"%s\",\n        identifier = %d,\n        offset = %.2f,\n        dstDiff = %.2f,\n        dstRules = %d,\n        longitude = %.5f,\n        latitude = %.5f\n    ),\n",
+			"\t%d to WorldTimezone(\n\t\ttimeZone = \"%s\",\n\t\tcountry = \"%s\",\n\t\tcity = \"%s\",\n\t\tcityName = \"%s\",\n\t\tcityCode = %s,\n\t\tidentifier = %d,\n\t\toffset = %s,\n\t\tdstDiff = %s,\n\t\tdstRules = %d,\n\t\tlongitude = %.5f,\n\t\tlatitude = %.5f\n\t),\n",
 			city.id,
 			kotlinString(city.timeZone),
 			kotlinString(city.country),
 			kotlinString(city.city),
 			kotlinString(city.cityName),
+			kotlinNullableString(city.cityCode),
 			city.id,
-			city.offset,
-			city.dstDiff,
+			kotlinDouble(city.offset),
+			kotlinDouble(city.dstDiff),
 			city.dstRule,
 			city.longitude,
 			city.latitude,
@@ -537,14 +513,35 @@ func generateKotlin(cities []*cityRecord, ianaVersion, boundaryVersion string) s
 	return strings.TrimSuffix(kotlinMap.String(), ",\n") + "\n)"
 }
 
-func kotlinString(value string) string {
-	replacer := strings.NewReplacer(
-		"\\", "\\\\",
-		"\"", "\\\"",
-		"$", "\\$",
-		"\n", "\\n",
-		"\r", "\\r",
-		"\t", "\\t",
-	)
-	return replacer.Replace(value)
+// assignCityCodes gives each city the IATA city code of the nearest city with the same name
+// (its city or its watch name) within maxCityCodeDistanceKm, or null if there is none.
+func assignCityCodes(cities []*cityRecord, iataCities []*iataCity) {
+	var missing []string
+	for _, city := range cities {
+		nearest := maxCityCodeDistanceKm + 1.0
+		for _, iata := range iataCities {
+			if !iata.hasName(city.city) && !iata.hasName(city.cityName) {
+				continue
+			}
+			if distance := distanceKm(city.latitude, city.longitude, iata.latitude, iata.longitude); distance < nearest {
+				nearest = distance
+				city.cityCode = iata.code
+			}
+		}
+		if city.cityCode == "" {
+			missing = append(missing, fmt.Sprintf("%d %s, %s", city.id, city.city, city.country))
+		}
+	}
+	printMissingCityCodes(missing, len(cities))
+}
+
+// distanceKm is the great-circle distance between two coordinates.
+func distanceKm(latitudeA, longitudeA, latitudeB, longitudeB float64) float64 {
+	const earthRadiusKm = 6371
+	radians := func(degrees float64) float64 { return degrees * math.Pi / 180 }
+	deltaLatitude := radians(latitudeB - latitudeA)
+	deltaLongitude := radians(longitudeB - longitudeA)
+	h := math.Pow(math.Sin(deltaLatitude/2), 2) +
+		math.Cos(radians(latitudeA))*math.Cos(radians(latitudeB))*math.Pow(math.Sin(deltaLongitude/2), 2)
+	return 2 * earthRadiusKm * math.Asin(math.Sqrt(h))
 }

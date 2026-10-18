@@ -10,6 +10,7 @@ data class WorldTimezone(
 	val longitude: Double,
 	val latitude: Double,
 	override val cityName: String,
+	override val cityCode: String?,
 	override val identifier: Short,
 	override val offset: Double,
 	override val dstDiff: Double,

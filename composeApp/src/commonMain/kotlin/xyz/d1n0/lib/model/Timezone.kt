@@ -12,6 +12,12 @@ import kotlin.time.Instant
 abstract class Timezone {
 	abstract val timeZone: String
 	abstract val cityName: String
+
+	/**
+	 * The 3-letter IATA city code, e.g. TYO for Tokyo, null if the city has none. The GW-BX5600
+	 * stores it as the short city name next to the full one.
+	 */
+	abstract val cityCode: String?
 	abstract val identifier: Short
 	abstract val offset: Double
 	abstract val dstDiff: Double

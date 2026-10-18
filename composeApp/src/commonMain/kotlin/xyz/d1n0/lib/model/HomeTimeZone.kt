@@ -6,6 +6,7 @@ import xyz.d1n0.lib.constant.WorldTimezoneData
 data class HomeTimezone(
 	override val timeZone: String,
 	override val cityName: String,
+	override val cityCode: String?,
 	override val identifier: Short,
 	override val offset: Double,
 	override val dstDiff: Double,
