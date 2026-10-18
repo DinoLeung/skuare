@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import xyz.d1n0.lib.constant.BacklightDuration
 import xyz.d1n0.lib.constant.ConnectionTimeout
 import xyz.d1n0.lib.constant.DateFormat
+import xyz.d1n0.lib.constant.FontStyle
 import xyz.d1n0.lib.constant.WeekdayLanguage
 import xyz.d1n0.ui.component.*
 import xyz.d1n0.ui.theme.SkuareTheme
@@ -90,6 +91,18 @@ private fun SettingsScreenContent(
 							enabled = state.isWatchSettingsInitialized && state.isLoading == false,
 							options = WeekdayLanguage.values().toSet(),
 							modifier = Modifier.weight(1f)
+						)
+					}
+					if (state.hasFontStyle) {
+						EnumDropdown(
+							label = "Font style",
+							selectedOption = state.pendingWatchSettings.fontStyle,
+							onOptionSelected = {
+								onEvent(SettingsUiEvent.FontStyleChange(it))
+							},
+							enabled = state.isWatchSettingsInitialized && state.isLoading == false,
+							options = FontStyle.values().toSet(),
+							modifier = Modifier.fillMaxWidth()
 						)
 					}
 				}

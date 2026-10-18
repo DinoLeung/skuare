@@ -16,6 +16,7 @@ import xyz.d1n0.lib.constant.AutoSyncDelay
 import xyz.d1n0.lib.constant.BacklightDuration
 import xyz.d1n0.lib.constant.ConnectionTimeout
 import xyz.d1n0.lib.constant.DateFormat
+import xyz.d1n0.lib.constant.FontStyle
 import xyz.d1n0.lib.constant.WeekdayLanguage
 import xyz.d1n0.lib.model.ConnectionSettings
 import xyz.d1n0.lib.model.Watch
@@ -45,6 +46,8 @@ data class SettingsUiState(
 	val savedWatchSettings: WatchSettings = defaultWatchSettings,
 	val pendingWatchSettings: WatchSettings = defaultWatchSettings,
 	val pendingWatchSettingsError: Throwable? = null,
+	// Only watches with a font style setting, see [xyz.d1n0.lib.model.WatchModel.hasFontStyle]
+	val hasFontStyle: Boolean = false,
 
 	val isConnectionSettingsInitialized: Boolean = false,
 	val isConnectionSettingsLoading: Boolean = false,
@@ -86,6 +89,7 @@ sealed interface SettingsUiEvent {
 	data class BacklightDurationChange(val backlightDuration: BacklightDuration) : SettingsUiEvent
 	data class DateFormatChange(val dateFormat: DateFormat) : SettingsUiEvent
 	data class WeekdayLanguageChange(val weekdayLanguage: WeekdayLanguage) : SettingsUiEvent
+	data class FontStyleChange(val fontStyle: FontStyle) : SettingsUiEvent
 	data class AutoSyncChange(val enable: Boolean) : SettingsUiEvent
 	data class AutoSyncDelayChange(val minutes: Int) : SettingsUiEvent
 	data class ConnectionTimeoutChange(val connectionTimeout: ConnectionTimeout) : SettingsUiEvent
@@ -95,7 +99,7 @@ class SettingsScreenViewModel : ViewModel(), KoinComponent, SaveableScreen {
 	private val watch: Watch by inject()
 	private val watchInfo: StateFlow<WatchInfo> = watch.info
 
-	private val _uiState = MutableStateFlow(SettingsUiState())
+	private val _uiState = MutableStateFlow(SettingsUiState(hasFontStyle = watch.model.hasFontStyle))
 	val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
 
 	override val saveState: StateFlow<SaveState> = _uiState
@@ -148,6 +152,7 @@ class SettingsScreenViewModel : ViewModel(), KoinComponent, SaveableScreen {
 		is SettingsUiEvent.BacklightDurationChange -> onBacklightDurationChange(backlightDuration = event.backlightDuration)
 		is SettingsUiEvent.DateFormatChange -> onDateFormatChange(dateFormat = event.dateFormat)
 		is SettingsUiEvent.WeekdayLanguageChange -> onWeekdayLanguageChange(weekdayLanguage = event.weekdayLanguage)
+		is SettingsUiEvent.FontStyleChange -> onFontStyleChange(fontStyle = event.fontStyle)
 		is SettingsUiEvent.AutoSyncChange -> onAutoSyncChange(enable = event.enable)
 		is SettingsUiEvent.AutoSyncDelayChange -> onAutoSyncDelayChange(minutes = event.minutes)
 		is SettingsUiEvent.ConnectionTimeoutChange -> onConnectionTimeoutChange(connectionTimeout = event.connectionTimeout)
@@ -250,6 +255,12 @@ class SettingsScreenViewModel : ViewModel(), KoinComponent, SaveableScreen {
 
 	private fun onDateFormatChange(dateFormat: DateFormat) = _uiState.updateCatching(
 		transform = { it.pendingWatchSettings.copy(dateFormat = dateFormat) },
+		onSuccess = { copy(pendingWatchSettings = it, pendingWatchSettingsError = null) },
+		onFailure = { copy(pendingWatchSettingsError = it) },
+	)
+
+	private fun onFontStyleChange(fontStyle: FontStyle) = _uiState.updateCatching(
+		transform = { it.pendingWatchSettings.copy(fontStyle = fontStyle) },
 		onSuccess = { copy(pendingWatchSettings = it, pendingWatchSettingsError = null) },
 		onFailure = { copy(pendingWatchSettingsError = it) },
 	)

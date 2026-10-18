@@ -2,6 +2,7 @@ package xyz.d1n0.lib.model
 
 import xyz.d1n0.lib.constant.BacklightDuration
 import xyz.d1n0.lib.constant.DateFormat
+import xyz.d1n0.lib.constant.FontStyle
 import xyz.d1n0.lib.constant.OpCode
 import xyz.d1n0.lib.constant.WeekdayLanguage
 
@@ -10,6 +11,7 @@ data class WatchSettings(
 	val backlightDuration: BacklightDuration,
 	val dateFormat: DateFormat,
 	val weekdayLanguage: WeekdayLanguage,
+	val fontStyle: FontStyle = FontStyle.STANDARD,
 ) {
 	companion object {
 		@OptIn(ExperimentalStdlibApi::class)
@@ -29,6 +31,7 @@ data class WatchSettings(
 				backlightDuration = BacklightDuration.fromByte(packet[2]),
 				dateFormat = DateFormat.fromByte(packet[4]),
 				weekdayLanguage = WeekdayLanguage.fromByte(packet[5]),
+				fontStyle = FontStyle.fromByte(packet[8]),
 			)
 		}
 	}
@@ -41,6 +44,7 @@ data class WatchSettings(
 				2 -> backlightDuration.byte
 				4 -> dateFormat.byte
 				5 -> weekdayLanguage.byte
+				8 -> fontStyle.byte
 				else -> 0x00
 			}
 		}
