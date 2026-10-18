@@ -1,21 +1,18 @@
 package xyz.d1n0.sync
 
 import com.juul.kable.Peripheral
-import com.juul.kable.State
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 import xyz.d1n0.Log
 import xyz.d1n0.data.database.PairedWatch
 import xyz.d1n0.data.repository.InstallationRepository
@@ -25,9 +22,6 @@ import xyz.d1n0.lib.constant.ConnectReason
 import xyz.d1n0.lib.constant.OpCode
 import xyz.d1n0.lib.model.AppInfo
 import xyz.d1n0.lib.model.Watch
-import xyz.d1n0.lib.model.adjustTime
-import xyz.d1n0.lib.model.requestWatchStatus
-import xyz.d1n0.lib.model.writeAppInfo
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Clock
 import kotlin.time.Duration
@@ -56,7 +50,7 @@ sealed interface BackgroundSessionResult {
 	 * Lower-left long press. Time adjusted, or failed with [syncError], and still connected, held
 	 * in [WatchSessionHandler.pendingForegroundWatch] until the app opens.
 	 */
-	data class OpenAppRequested(val watch: Watch, val syncError: Throwable?) : BackgroundSessionResult
+	data class OpenAppRequested(val watch: ConnectedWatch, val syncError: Throwable?) : BackgroundSessionResult
 
 	/**
 	 * Find phone (lower-right long press), not supported yet, disconnected.
@@ -77,23 +71,23 @@ class WatchSessionHandler(
 	private val pairedWatchRepository: PairedWatchRepository,
 	private val installationRepository: InstallationRepository,
 	private val presenceMonitor: WatchPresenceMonitor,
-) : KoinComponent {
-	private val log: Log by inject()
+) {
+	private val log = Log
 
 	private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
-	private val _pendingForegroundWatch = MutableStateFlow<Watch?>(null)
+	private val _pendingForegroundWatch = MutableStateFlow<ConnectedWatch?>(null)
 
 	/**
 	 * Watch connected in background after a lower-left long press, waiting for the app to open and
 	 * run [runForeground] on it. Cleared when the watch disconnects.
 	 */
-	val pendingForegroundWatch: StateFlow<Watch?> = _pendingForegroundWatch.asStateFlow()
+	val pendingForegroundWatch: StateFlow<ConnectedWatch?> = _pendingForegroundWatch.asStateFlow()
 
 	/**
 	 * Takes [pendingForegroundWatch], so only one caller runs the foreground session for it.
 	 */
-	fun takePendingForegroundWatch(): Watch? = _pendingForegroundWatch.getAndUpdate { null }
+	fun takePendingForegroundWatch(): ConnectedWatch? = _pendingForegroundWatch.getAndUpdate { null }
 
 	/**
 	 * Gives up on [pendingForegroundWatch] and disconnects it, e.g. the notification was dismissed.
@@ -116,7 +110,9 @@ class WatchSessionHandler(
 	 * @param watch A connected watch.
 	 * @return A [Result] that fails if the watch could not be paired.
 	 */
-	suspend fun runForeground(watch: Watch): Result<Unit> {
+	suspend fun runForeground(watch: Watch): Result<Unit> = runForeground(KableConnectedWatch(watch))
+
+	internal suspend fun runForeground(watch: ConnectedWatch): Result<Unit> {
 		val result = runCatching {
 			val appInfo = AppInfo.fromPacket(watch.query(OpCode.APP_INFO))
 			watch.query(OpCode.CONNECT_REASON)
@@ -156,19 +152,29 @@ class WatchSessionHandler(
 		peripheral: Peripheral,
 		address: String,
 		timeout: Duration = 60.seconds,
+	): BackgroundSessionResult = runBackground(address, timeout) { storedName ->
+		connectionManager.connectIfIdle(peripheral, storedName)?.let(::KableConnectedWatch)
+	}
+
+	internal suspend fun runBackground(
+		address: String,
+		timeout: Duration = 60.seconds,
+		connectIfIdle: suspend (storedName: String?) -> ConnectedWatch?,
 	): BackgroundSessionResult {
-		var watch: Watch? = null
+		var watch: ConnectedWatch? = null
 		var keepConnected = false
 		try {
 			val result = withTimeoutOrNull(timeout) {
 				val storedName = pairedWatchRepository.find(address)?.advertisedName
-				val connected = connectionManager.connectIfIdle(peripheral, storedName)
+				val connected = connectIfIdle(storedName)
 					?: return@withTimeoutOrNull BackgroundSessionResult.Busy
 				watch = connected
 				backgroundSession(connected)
 			} ?: BackgroundSessionResult.Failed(IllegalStateException("Timed out after $timeout"))
 			keepConnected = result is BackgroundSessionResult.OpenAppRequested
 			return result.also { log.i { "Background session: $it" } }
+		} catch (e: TimeoutCancellationException) {
+			return BackgroundSessionResult.Failed(e).also { log.e { "Background session timed out: ${e.message}" } }
 		} catch (e: CancellationException) {
 			throw e
 		} catch (e: Exception) {
@@ -194,15 +200,22 @@ class WatchSessionHandler(
 	 * @param address BLE address of the watch.
 	 */
 	suspend fun forget(address: String) {
+		forget(
+			address = address,
+			connectedWatch = connectionManager.watch.value?.let(::KableConnectedWatch),
+		)
+	}
+
+	internal suspend fun forget(address: String, connectedWatch: ConnectedWatch?) {
 		pairedWatchRepository.find(address)?.let { presenceMonitor.unregister(it) }
 		pairedWatchRepository.remove(address)
 		log.i { "Forgot $address" }
-		connectionManager.watch.value
+		connectedWatch
 			?.takeIf { it.info.value.address == address }
 			?.let { runCatching { it.disconnect() } }
 	}
 
-	private suspend fun backgroundSession(watch: Watch): BackgroundSessionResult {
+	private suspend fun backgroundSession(watch: ConnectedWatch): BackgroundSessionResult {
 		val appInfo = AppInfo.fromPacket(watch.query(OpCode.APP_INFO))
 		watch.query(OpCode.CONNECT_REASON)
 		val address = checkNotNull(watch.info.value.address) { "Watch address unknown" }
@@ -241,7 +254,7 @@ class WatchSessionHandler(
 	 * @param address BLE address of the watch, nothing is stored if it is unknown.
 	 * @return Why the time adjustment failed, null if it succeeded.
 	 */
-	private suspend fun adjustTimeAndRecord(watch: Watch, address: String?): Throwable? {
+	private suspend fun adjustTimeAndRecord(watch: ConnectedWatch, address: String?): Throwable? {
 		val error = watch.adjustTime().exceptionOrNull()
 		address?.let {
 			pairedWatchRepository.recordSync(
@@ -258,7 +271,7 @@ class WatchSessionHandler(
 	 * 2. Stores the watch with its display name, keeping the settings of an existing entry.
 	 * 3. Registers the watch with [WatchPresenceMonitor] for background sync.
 	 */
-	private suspend fun pair(watch: Watch, address: String, appInfo: AppInfo) {
+	private suspend fun pair(watch: ConnectedWatch, address: String, appInfo: AppInfo) {
 		val ourAppInfo = installationRepository.appInfo()
 		if (appInfo != ourAppInfo) {
 			log.i { "Pairing $address, it held $appInfo" }
@@ -284,7 +297,7 @@ class WatchSessionHandler(
 	/**
 	 * Reads the watch name into [Watch.info], a failed read is logged and leaves the name unknown.
 	 */
-	private suspend fun Watch.queryName() {
+	private suspend fun ConnectedWatch.queryName() {
 		runCatching { query(OpCode.WATCH_NAME) }
 			.onFailure { log.w { "Failed to read watch name: ${it.message}" } }
 	}
@@ -292,13 +305,13 @@ class WatchSessionHandler(
 	/**
 	 * The name the user set on the watch, null if it is unknown or blank.
 	 */
-	private fun watchDisplayName(watch: Watch): String? =
+	private fun watchDisplayName(watch: ConnectedWatch): String? =
 		watch.info.value.name?.value?.takeIf { it.isNotBlank() }
 
-	private fun holdForApp(watch: Watch) {
+	private fun holdForApp(watch: ConnectedWatch) {
 		_pendingForegroundWatch.value = watch
 		scope.launch {
-			watch.state.first { it is State.Disconnected }
+			watch.awaitDisconnected()
 			_pendingForegroundWatch.compareAndSet(watch, null)
 		}
 	}

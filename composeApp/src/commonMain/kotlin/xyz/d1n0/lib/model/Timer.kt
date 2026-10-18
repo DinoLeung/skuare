@@ -30,7 +30,9 @@ data class Timer(
 			return packet.drop(1).toByteArray().let {
 				Timer(
 					duration = Duration.fromByteArray(it.sliceArray(0..2)),
-					status = TimerStatus.fromByte(it.last()),
+					// The 15-byte GW-BX5600 packet keeps the normal fields in the first
+					// eight bytes and appends seven padding bytes.
+					status = TimerStatus.fromByte(it[6]),
 				)
 			}
 		}

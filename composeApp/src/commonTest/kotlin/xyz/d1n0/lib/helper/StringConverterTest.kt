@@ -1,6 +1,8 @@
 package xyz.d1n0.lib.helper
 
-import kotlin.test.DefaultAsserter.assertEquals
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.Month
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -29,21 +31,21 @@ class StringConverterTest {
 		)
 		cases.forEach { (input, expected) ->
 			assertEquals(
-				"Expected $expected to become ${input.toOrdinalString()}",
 				expected,
-				input.toOrdinalString()
+				input.toOrdinalString(),
+				"Expected $input to become $expected",
 			)
 		}
 	}
 
 	@Test
 	fun `Double toSignedString handles positive negative and zero`() {
-		assertEquals("Zero should be prefixed with ±", "±0.0", 0.0.toSignedString())
-		assertEquals("Positive values should be prefixed with +", "+1.23", 1.23.toSignedString())
+		assertEquals("±0.0", 0.0.toSignedString(), "Zero should be prefixed with ±")
+		assertEquals("+1.23", 1.23.toSignedString(), "Positive values should be prefixed with +")
 		assertEquals(
-			"Negative values should remain with - as default",
 			"-4.56",
-			(-4.56).toSignedString()
+			(-4.56).toSignedString(),
+			"Negative values should retain their sign",
 		)
 	}
 
@@ -90,5 +92,39 @@ class StringConverterTest {
 	fun `Duration fromHHMMSS throws for invalid input`() {
 		assertFailsWith<IllegalArgumentException> { Duration.fromHHMMSS("123") }
 		assertFailsWith<IllegalArgumentException> { Duration.fromHHMMSS("1234567") }
+		assertFailsWith<NumberFormatException> { Duration.fromHHMMSS("12AB56") }
+	}
+
+	@Test
+	fun `LocalTime toHHMMString pads both fields`() {
+		assertEquals("00:00", LocalTime(0, 0).toHHMMString())
+		assertEquals("07:05", LocalTime(7, 5).toHHMMString())
+		assertEquals("23:59", LocalTime(23, 59).toHHMMString())
+	}
+
+	@Test
+	fun `Month name helpers cover every month`() {
+		val abbreviated = listOf(
+			"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+			"Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+		)
+		val full = listOf(
+			"January", "February", "March", "April", "May", "June",
+			"July", "August", "September", "October", "November", "December",
+		)
+
+		Month.entries.forEachIndexed { index, month ->
+			assertEquals(abbreviated[index], month.abbreviatedName())
+			assertEquals(full[index], month.fullName())
+		}
+	}
+
+	@Test
+	fun `LocalDate helpers format picker labels`() {
+		val date = LocalDate(2026, 10, 8)
+
+		assertEquals("October 2026", date.toMonthYear())
+		assertEquals("8 October", date.toDayMonth())
+		assertEquals("8 Oct 26", date.toDayMonthYear())
 	}
 }

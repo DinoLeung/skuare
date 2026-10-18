@@ -20,9 +20,11 @@ import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertNull
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.nanoseconds
 import kotlin.time.Duration.Companion.seconds
 
 class BytesConverterTest {
@@ -33,6 +35,15 @@ class BytesConverterTest {
 		val result = value.toLittleEndianByteArray()
 		val expected = byteArrayOf(0x34, 0x12)
 		assertContentEquals(expected, result)
+	}
+
+	@Test
+	fun shortConversionPreservesSignedBitPatterns() {
+		listOf(Short.MIN_VALUE, (-1).toShort(), 0.toShort(), Short.MAX_VALUE).forEach { value ->
+			assertEquals(value, Short.fromLittleEndianByteArray(value.toLittleEndianByteArray()))
+		}
+		assertContentEquals(byteArrayOf(0x00, 0x80.toByte()), Short.MIN_VALUE.toLittleEndianByteArray())
+		assertContentEquals(byteArrayOf(0xFF.toByte(), 0xFF.toByte()), (-1).toShort().toLittleEndianByteArray())
 	}
 
 	@Test
@@ -61,6 +72,19 @@ class BytesConverterTest {
 	}
 
 	@Test
+	fun doubleConversionUsesBigEndianAndPreservesSpecialValues() {
+		assertContentEquals(
+			byteArrayOf(0x3F, 0xF0.toByte(), 0, 0, 0, 0, 0, 0),
+			1.0.toByteArray(),
+		)
+		listOf(0.0, -0.0, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY).forEach { value ->
+			assertEquals(value.toBits(), Double.fromByteArray(value.toByteArray()).toBits())
+		}
+		val nan = Double.fromBits(0x7FF8_0000_0000_1234L)
+		assertEquals(nan.toBits(), Double.fromByteArray(nan.toByteArray()).toBits())
+	}
+
+	@Test
 	fun testIntToBcdByteAndFromBcdByte() {
 		val value = 31
 		val bcdByte = value.toBcdByte()
@@ -82,6 +106,18 @@ class BytesConverterTest {
 	}
 
 	@Test
+	fun bcdConversionCoversBoundariesAndBothInvalidNibbles() {
+		assertEquals(0x00, 0.toBcdByte().toInt())
+		assertEquals(0x99.toByte(), 99.toBcdByte())
+		assertEquals(0, Int.fromBcdByte(0x00))
+		assertEquals(99, Int.fromBcdByte(0x99.toByte()))
+		assertFailsWith<IllegalArgumentException> { (-1).toBcdByte() }
+		assertFailsWith<IllegalArgumentException> { 100.toBcdByte() }
+		assertFailsWith<IllegalArgumentException> { Int.fromBcdByte(0xA0.toByte()) }
+		assertFailsWith<IllegalArgumentException> { Int.fromBcdByte(0x0A) }
+	}
+
+	@Test
 	fun testLocalDateTimeToByteArray() {
 		val localDateTime = LocalDateTime(2025, 12, 31, 23, 59, 59, 500_000_000)
 		val bytes = localDateTime.toByteArray()
@@ -90,6 +126,10 @@ class BytesConverterTest {
 		val expectedYearBytes = localDateTime.year.toShort().toLittleEndianByteArray()
 		assertContentEquals(expectedYearBytes, bytes.sliceArray(0..1))
 		assertEquals(localDateTime.month.number.toByte(), bytes[2])
+		assertContentEquals(
+			byteArrayOf(0xE9.toByte(), 0x07, 12, 31, 23, 59, 59, 3, 127),
+			bytes,
+		)
 	}
 
 	@Test
@@ -109,6 +149,18 @@ class BytesConverterTest {
 	}
 
 	@Test
+	fun localDateBcdConversionRejectsInvalidValues() {
+		assertFailsWith<IllegalArgumentException> { LocalDate(1999, 12, 31).toBcdByteArray() }
+		assertFailsWith<IllegalArgumentException> { LocalDate(2100, 1, 1).toBcdByteArray() }
+		assertFailsWith<IllegalArgumentException> {
+			LocalDate.fromBcdByteArray(byteArrayOf(0x25, 0x13, 0x01))
+		}
+		assertFailsWith<IllegalArgumentException> {
+			LocalDate.fromBcdByteArray(byteArrayOf(0x25, 0x02, 0x30))
+		}
+	}
+
+	@Test
 	fun testLocalTimeConversion() {
 		val localTime = LocalTime(15, 30)
 		val bytes = localTime.toByteArray()
@@ -124,6 +176,12 @@ class BytesConverterTest {
 	}
 
 	@Test
+	fun localTimeConversionRejectsInvalidFields() {
+		assertFailsWith<IllegalArgumentException> { LocalTime.fromByteArray(byteArrayOf(24, 0)) }
+		assertFailsWith<IllegalArgumentException> { LocalTime.fromByteArray(byteArrayOf(23, 60)) }
+	}
+
+	@Test
 	fun testDurationConversion() {
 		val duration = 12.hours + 30.minutes + 45.seconds
 		val bytes = duration.toByteArray()
@@ -136,6 +194,14 @@ class BytesConverterTest {
 		assertFailsWith<IllegalArgumentException> {
 			Duration.fromByteArray(byteArrayOf(12, 30))
 		}
+	}
+
+	@Test
+	fun durationConversionDropsSubSecondPrecision() {
+		val duration = 1.hours + 2.minutes + 3.seconds + 999_999_999.nanoseconds
+
+		assertContentEquals(byteArrayOf(1, 2, 3), duration.toByteArray())
+		assertEquals(1.hours + 2.minutes + 3.seconds, Duration.fromByteArray(duration.toByteArray()))
 	}
 
 	@Test
@@ -168,10 +234,29 @@ class BytesConverterTest {
 	}
 
 	@Test
+	fun casioConversionCoversEmptyJisAndFallbackRows() {
+		assertNull(Char.fromCasioByte(0x00))
+		assertNull(Char.fromCasioByte(0x0F))
+		assertEquals('■', Char.fromCasioByte(0x10))
+		assertEquals('■', Char.fromCasioByte(0x8F.toByte()))
+		assertEquals('ｱ', Char.fromCasioByte(0xB1.toByte()))
+		assertEquals(0xB1.toByte(), 'ｱ'.toCasioByte())
+		assertEquals(0x00, '\u0001'.toCasioByte().toInt())
+		assertEquals(0xFF.toByte(), 'é'.toCasioByte())
+		assertEquals('■', Char.fromCasioByte(0xFF.toByte()))
+	}
+
+	@Test
 	fun testCasioStringConversion() {
 		val original = "◆♪ ｢TeSt!｣"
 		val bytes = original.toCasioByteArray()
 		val decoded = String.fromCasioByteArray(bytes)
 		assertEquals(original, decoded)
+	}
+
+	@Test
+	fun casioStringDecodingSkipsZeroPaddingAndUsesFallback() {
+		assertEquals("AB■", String.fromCasioByteArray(byteArrayOf(0, 'A'.code.toByte(), 'B'.code.toByte(), 0xFF.toByte())))
+		assertContentEquals(byteArrayOf('A'.code.toByte(), 0xFF.toByte()), "Aé".toCasioByteArray())
 	}
 }

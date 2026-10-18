@@ -6,16 +6,8 @@ import com.juul.kable.State
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.dropWhile
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 import xyz.d1n0.Log
 import xyz.d1n0.lib.model.Watch
 
@@ -23,24 +15,28 @@ import xyz.d1n0.lib.model.Watch
  * Owns the connection to the watch. It is the only place that creates or drops a [Watch], so the
  * UI and background sync never connect to a watch at the same time.
  */
-class WatchConnectionManager : KoinComponent {
-	private val log: Log by inject()
+class WatchConnectionManager {
+	private val log = Log
 
 	private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
-	private val connectMutex = Mutex()
-
-	private val _watch = MutableStateFlow<Watch?>(null)
+	private val slot = SingleConnectionSlot(
+		scope = scope,
+		disconnect = Watch::disconnect,
+		awaitDisconnected = { watch -> watch.state.first { it is State.Disconnected } },
+		close = Watch::close,
+		onDisconnected = { log.d { "Watch disconnected" } },
+	)
 
 	/**
 	 * The connected watch, or null when no watch is connected.
 	 */
-	val watch: StateFlow<Watch?> = _watch.asStateFlow()
+	val watch: StateFlow<Watch?> = slot.value
 
 	/**
 	 * @return The connected watch.
 	 * @throws IllegalStateException if no watch is connected.
 	 */
-	fun requireWatch(): Watch = _watch.value ?: error("No watch connected")
+	fun requireWatch(): Watch = slot.requireValue()
 
 	/**
 	 * Connects to [peripheral] and makes it the current watch.
@@ -54,13 +50,7 @@ class WatchConnectionManager : KoinComponent {
 	 * @param peripheral The peripheral to connect to.
 	 * @return The connected watch.
 	 */
-	suspend fun connect(peripheral: Peripheral): Watch = connectMutex.withLock {
-		_watch.value?.let { previous ->
-			runCatching { previous.disconnect() }
-			release(previous)
-		}
-		connectLocked(peripheral)
-	}
+	suspend fun connect(peripheral: Peripheral): Watch = slot.replace { connectPeripheral(peripheral) }
 
 	/**
 	 * Like [connect], but leaves the current watch alone. Used by background sync, so it never
@@ -73,31 +63,18 @@ class WatchConnectionManager : KoinComponent {
 	 * @return The connected watch, or null if another watch is already connected.
 	 */
 	@OptIn(ExperimentalKableApi::class)
-	suspend fun connectIfIdle(peripheral: Peripheral, storedName: String? = null): Watch? = connectMutex.withLock {
-		if (_watch.value != null) {
-			peripheral.close()
-			null
-		} else {
-			connectLocked(peripheral, advertisedName = peripheral.name ?: storedName)
-		}
-	}
+	suspend fun connectIfIdle(peripheral: Peripheral, storedName: String? = null): Watch? =
+		slot.connectIfIdle(
+			onBusy = peripheral::close,
+			connect = { connectPeripheral(peripheral, advertisedName = peripheral.name ?: storedName) },
+		)
 
 	@OptIn(ExperimentalKableApi::class)
-	private suspend fun connectLocked(peripheral: Peripheral, advertisedName: String? = peripheral.name): Watch {
+	private suspend fun connectPeripheral(peripheral: Peripheral, advertisedName: String? = peripheral.name): Watch {
 		val watch = Watch(peripheral, advertisedName)
 		runCatching { watch.connect() }
 			.onFailure { watch.close() }
 			.getOrThrow()
-		_watch.value = watch
-
-		scope.launch {
-			watch.state
-				.dropWhile { it !is State.Connected }
-				.first { it is State.Disconnected }
-			log.d { "Watch disconnected" }
-			release(watch)
-		}
-
 		return watch
 	}
 
@@ -105,10 +82,6 @@ class WatchConnectionManager : KoinComponent {
 	 * Disconnects the current watch, if there is one. It is dropped from [watch] once disconnected.
 	 */
 	suspend fun disconnect() {
-		_watch.value?.disconnect()
-	}
-
-	private fun release(watch: Watch) {
-		if (_watch.compareAndSet(watch, null)) watch.close()
+		slot.disconnect()
 	}
 }
