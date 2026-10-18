@@ -1,9 +1,13 @@
 package xyz.d1n0.ui.component
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -79,91 +83,102 @@ fun <T : Timezone> TimeZonePickerDialog(
 		modifier = Modifier.wrapContentSize(),
 		properties = DialogProperties(usePlatformDefaultWidth = false),
 	) {
-		Surface(
-			modifier = Modifier.wrapContentSize(),
-			shape = MaterialTheme.shapes.extraLarge,
-			color = AlertDialogDefaults.containerColor,
-			tonalElevation = AlertDialogDefaults.TonalElevation,
+		// imePadding shrinks the space available to the dialog while the keyboard is open, so the
+		// buttons stay visible and the list shrinks to fit the remaining height.
+		Box(
+			modifier = Modifier
+				.fillMaxSize()
+				.imePadding(),
+			contentAlignment = Alignment.Center,
 		) {
-			Column {
-				Text(
-					text = title,
-					style = MaterialTheme.typography.headlineSmall,
-					modifier = Modifier.padding(start = 24.dp, top = 24.dp, end = 24.dp),
-				)
-				OutlinedTextField(
-					value = query,
-					onValueChange = { query = it },
-					modifier = Modifier
-						.fillMaxWidth()
-						.padding(horizontal = 24.dp, vertical = 16.dp),
-					singleLine = true,
-					label = { Text("Time zone") },
-					leadingIcon = {
-						Icon(
-							imageVector = Icons.Outlined.Search,
-							contentDescription = null,
-						)
-					},
-					trailingIcon = if (query.isNotEmpty()) {
-						{
-							IconButton(onClick = { query = "" }) {
-								Icon(
-									imageVector = Icons.Outlined.Clear,
-									contentDescription = "Clear search",
+			Surface(
+				modifier = Modifier
+					.wrapContentSize()
+					.heightIn(max = 600.dp),
+				shape = MaterialTheme.shapes.extraLarge,
+				color = AlertDialogDefaults.containerColor,
+				tonalElevation = AlertDialogDefaults.TonalElevation,
+			) {
+				Column {
+					Text(
+						text = title,
+						style = MaterialTheme.typography.headlineSmall,
+						modifier = Modifier.padding(start = 24.dp, top = 24.dp, end = 24.dp),
+					)
+					OutlinedTextField(
+						value = query,
+						onValueChange = { query = it },
+						modifier = Modifier
+							.fillMaxWidth()
+							.padding(horizontal = 24.dp, vertical = 16.dp),
+						singleLine = true,
+						label = { Text("Time zone") },
+						leadingIcon = {
+							Icon(
+								imageVector = Icons.Outlined.Search,
+								contentDescription = null,
+							)
+						},
+						trailingIcon = if (query.isNotEmpty()) {
+							{
+								IconButton(onClick = { query = "" }) {
+									Icon(
+										imageVector = Icons.Outlined.Clear,
+										contentDescription = "Clear search",
+									)
+								}
+							}
+						} else null,
+					)
+					HorizontalDivider()
+					if (results.isEmpty()) {
+						Column(
+							modifier = Modifier
+								.weight(1f)
+								.fillMaxWidth()
+								.padding(24.dp),
+							verticalArrangement = Arrangement.Center,
+							horizontalAlignment = Alignment.CenterHorizontally,
+						) {
+							Text(
+								text = "No matching time zones",
+								style = MaterialTheme.typography.bodyLarge,
+							)
+						}
+					} else {
+						LazyColumn(
+							state = listState,
+							modifier = Modifier
+								.weight(1f)
+								.fillMaxWidth()
+								.clipToBounds(),
+						) {
+							items(
+								items = results,
+								key = { it.identifier },
+							) { result ->
+								TimeZoneResultRow(
+									timeZone = result,
+									selected = result.identifier == selectedTimeZone.identifier,
+									onClick = { selectedTimeZone = result },
 								)
 							}
 						}
-					} else null,
-				)
-				HorizontalDivider()
-				if (results.isEmpty()) {
-					Column(
-						modifier = Modifier
-							.weight(1f)
-							.fillMaxWidth()
-							.padding(24.dp),
-						verticalArrangement = Arrangement.Center,
-						horizontalAlignment = Alignment.CenterHorizontally,
-					) {
-						Text(
-							text = "No matching time zones",
-							style = MaterialTheme.typography.bodyLarge,
-						)
 					}
-				} else {
-					LazyColumn(
-						state = listState,
-						modifier = Modifier
-							.weight(1f)
-							.fillMaxWidth()
-							.clipToBounds(),
+					Surface(
+						color = AlertDialogDefaults.containerColor,
 					) {
-						items(
-							items = results,
-							key = { it.identifier },
-						) { result ->
-							TimeZoneResultRow(
-								timeZone = result,
-								selected = result.identifier == selectedTimeZone.identifier,
-								onClick = { selectedTimeZone = result },
-							)
-						}
-					}
-				}
-				Surface(
-					color = AlertDialogDefaults.containerColor,
-				) {
-					Column {
-						HorizontalDivider()
-						Row(
-							modifier = Modifier
-								.fillMaxWidth()
-								.padding(horizontal = 16.dp, vertical = 8.dp),
-							horizontalArrangement = Arrangement.End,
-						) {
-							TextButton(onClick = onDismiss) { Text("Cancel") }
-							TextButton(onClick = { onConfirm(selectedTimeZone) }) { Text("Confirm") }
+						Column {
+							HorizontalDivider()
+							Row(
+								modifier = Modifier
+									.fillMaxWidth()
+									.padding(horizontal = 16.dp, vertical = 8.dp),
+								horizontalArrangement = Arrangement.End,
+							) {
+								TextButton(onClick = onDismiss) { Text("Cancel") }
+								TextButton(onClick = { onConfirm(selectedTimeZone) }) { Text("Confirm") }
+							}
 						}
 					}
 				}
