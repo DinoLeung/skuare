@@ -94,11 +94,18 @@ abstract class Timezone {
 	abstract val coordinatesBytes: ByteArray
 
 	/**
+	 * Returns this timezone's effective UTC offset at [instant] in whole minutes, including daylight
+	 * saving time, e.g. `630` for Adelaide during daylight saving time.
+	 */
+	fun currentOffsetMinutes(instant: Instant = KotlinClock.System.now()): Int =
+		KotlinTimeZone.of(timeZone).offsetAt(instant).totalSeconds / 60
+
+	/**
 	 * Returns this timezone's effective UTC offset at [instant], including daylight saving time,
 	 * in signed hours and minutes such as `+8:00` or `-12:45`.
 	 */
 	fun ianaOffsetString(instant: Instant = KotlinClock.System.now()): String {
-		val totalMinutes = KotlinTimeZone.of(timeZone).offsetAt(instant).totalSeconds / 60
+		val totalMinutes = currentOffsetMinutes(instant)
 		val sign = if (totalMinutes < 0) "-" else "+"
 		val absoluteMinutes = abs(totalMinutes)
 		val hours = absoluteMinutes / 60

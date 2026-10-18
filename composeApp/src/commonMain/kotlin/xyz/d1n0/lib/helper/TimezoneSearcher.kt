@@ -4,12 +4,14 @@ import xyz.d1n0.lib.model.HomeTimezone
 import xyz.d1n0.lib.model.Timezone
 import xyz.d1n0.lib.model.WorldTimezone
 import kotlin.math.abs
-import kotlin.math.roundToInt
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 /**
  * Searches [timeZones] for entries matching [query].
  *
- * A query containing a UTC offset is matched against timezone offsets. Other queries are
+ * A query containing a UTC offset is matched against each timezone's current offset, including
+ * daylight saving time, as shown in the picker. Other queries are
  * normalized and matched against timezone names, cities, and countries using exact, prefix,
  * substring, and typo-tolerant comparisons. Text matches are ordered by relevance while ties
  * preserve the source collection's iteration order. A blank query returns all entries in their
@@ -17,14 +19,16 @@ import kotlin.math.roundToInt
  *
  * @param timeZones the timezone entries to search.
  * @param query the timezone name, location, or UTC offset to find.
+ * @param instant the moment whose offsets are used for UTC offset queries.
  * @return the matching timezone entries in relevance order.
  */
 fun <T : Timezone> searchTimeZones(
 	timeZones: Collection<T>,
 	query: String,
+	instant: Instant = Clock.System.now(),
 ): List<T> {
 	query.toUtcOffsetQuery()?.let { offsetQuery ->
-		return timeZones.filter { offsetQuery.matches(it.offset) }
+		return timeZones.filter { offsetQuery.matches(it.currentOffsetMinutes(instant)) }
 	}
 
 	val normalizedQuery = query.normalizeForSearch()
@@ -61,11 +65,10 @@ private data class UtcOffsetQuery(
 	 * An explicitly signed query only matches offsets with the same sign. An unsigned query
 	 * matches either sign, and an omitted minute component matches every offset within [hours].
 	 *
-	 * @param offset the UTC offset expressed as fractional hours.
+	 * @param totalMinutes the UTC offset in signed whole minutes.
 	 * @return `true` when the offset has the requested sign, hour, and optional minute component.
 	 */
-	fun matches(offset: Double): Boolean {
-		val totalMinutes = (offset * 60).roundToInt()
+	fun matches(totalMinutes: Int): Boolean {
 		when (sign) {
 			1 -> if (totalMinutes < 0) return false
 			-1 -> if (totalMinutes >= 0) return false
