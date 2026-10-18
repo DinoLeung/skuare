@@ -177,6 +177,17 @@ class ClocksSettingsTest {
 	}
 
 	@Test
+	fun pickedCityGetsAutoDstAndKeepsUnknownBits() {
+		// Chatham Islands as read from position 0 with DST on and the 0x04 bit, then Tokyo picked,
+		// which has no DST: the official app wrote Tokyo as 02, plus the position's 0x04 bit
+		val tokyo = WorldClock.fromTimeZoneId(281, DstSettings(enable = false, auto = false)).timeZone
+		val dstSettings = DstSettings.fromByte(0x05).autoFor(tokyo)
+
+		assertEquals(DstSettings(enable = false, auto = true, unknownBits = 0x04), dstSettings)
+		assertEquals(0x06, dstSettings.byte.toInt())
+	}
+
+	@Test
 	fun unknownDstBitsStayInTheirPosition() {
 		// Tokyo (02) pinned: it takes the 0x04 bit of position 0, Adelaide moves to position 2 without it
 		val clocks = parseThreeClocks().pin(1)

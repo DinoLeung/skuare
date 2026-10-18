@@ -22,6 +22,13 @@ data class DstSettings(
 		)
 	}
 
+	/**
+	 * Auto DST for a clock that now shows [timeZone], e.g. after picking another city, so the
+	 * watch switches DST itself without waiting for the app. DST starts on if [timeZone] is in DST
+	 * now, [unknownBits] are kept as they belong to the clock's position.
+	 */
+	fun autoFor(timeZone: Timezone) = copy(enable = timeZone.isExpectedDst(), auto = true)
+
 	val byte: Byte
 		get() {
 			var bitMask = unknownBits
