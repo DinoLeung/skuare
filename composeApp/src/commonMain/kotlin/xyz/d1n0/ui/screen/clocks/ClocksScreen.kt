@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import xyz.d1n0.lib.constant.HomeTimezoneData
 import xyz.d1n0.lib.constant.WorldTimezoneData
+import xyz.d1n0.lib.model.Clock
 import xyz.d1n0.lib.model.ClocksSettings
 import xyz.d1n0.lib.model.DstSettings
 import xyz.d1n0.lib.model.HomeClock
@@ -48,8 +49,8 @@ private fun ClocksScreenContent(
 	onEvent: (ClocksUiEvent) -> Unit,
 ) {
 	var selectedClockPosition by remember { mutableStateOf<Int?>(null) }
-	val homeClock = state.pendingClocks.homeClock
-	val worldClocks = state.pendingClocks.worldClocks
+	val pinnedClock = state.pendingClocks.pinnedClock
+	val clocks = state.pendingClocks.clocks
 
 	Column(
 		horizontalAlignment = Alignment.CenterHorizontally,
@@ -58,7 +59,7 @@ private fun ClocksScreenContent(
 			.verticalScroll(rememberScrollState())
 			.padding(8.dp),
 	) {
-		homeClock?.let {
+		pinnedClock?.let {
 			ClockCard(
 				modifier = Modifier.fillMaxWidth(),
 				clock = it,
@@ -66,69 +67,109 @@ private fun ClocksScreenContent(
 				enabled = state.isInitialized && state.isLoading == false,
 			)
 		}
-		worldClocks.forEachIndexed { index, clock ->
+		clocks.forEachIndexed { index, clock ->
 			clock?.let {
 				ClockCard(
 					modifier = Modifier.fillMaxWidth(),
 					clock = it,
 					onClick = { selectedClockPosition = index + 1 },
 					enabled = state.isInitialized && state.isLoading == false,
+					onPin = { onEvent(ClocksUiEvent.PinClock(index)) },
 				)
 			}
 		}
 	}
 
 	selectedClockPosition?.let { position ->
-		if (position == 0) {
-			homeClock?.let { clock ->
-				TimeZonePickerDialog(
-					timeZone = clock.timeZone,
-					timeZones = HomeTimezoneData.values,
-					visible = true,
-					onConfirm = { timeZone ->
-						onEvent(ClocksUiEvent.HomeTimeZoneChange(timeZone))
-						selectedClockPosition = null
-					},
-					onDismiss = { selectedClockPosition = null },
-					title = "Select home time zone",
-				)
-			}
-		} else {
-			val worldClockIndex = position - 1
-			worldClocks.getOrNull(worldClockIndex)?.let { clock ->
-				TimeZonePickerDialog(
-					timeZone = clock.timeZone,
-					timeZones = WorldTimezoneData.values,
-					visible = true,
-					onConfirm = { timeZone ->
-						onEvent(
-							ClocksUiEvent.WorldTimeZoneChange(
-								index = worldClockIndex,
-								timeZone = timeZone,
-							)
-						)
-						selectedClockPosition = null
-					},
-					onDismiss = { selectedClockPosition = null },
-					title = "Select world time zone",
-				)
-			}
+		val clock = if (position == 0) pinnedClock else clocks.getOrNull(position - 1)
+		clock?.let {
+			ClockTimeZonePickerDialog(
+				clock = it,
+				onConfirm = { newClock ->
+					onEvent(
+						if (position == 0) ClocksUiEvent.PinnedClockChange(newClock)
+						else ClocksUiEvent.ClockChange(index = position - 1, clock = newClock)
+					)
+					selectedClockPosition = null
+				},
+				onDismiss = { selectedClockPosition = null },
+			)
 		}
 	}
+}
+
+/**
+ * Opens the time zone picker for [clock], listing time zones from the table that matches its type,
+ * so a swapped clock keeps choosing from its own table whichever slot it is in.
+ */
+@Composable
+private fun ClockTimeZonePickerDialog(
+	clock: Clock,
+	onConfirm: (Clock) -> Unit,
+	onDismiss: () -> Unit,
+) = when (clock) {
+	is HomeClock -> TimeZonePickerDialog(
+		timeZone = clock.timeZone,
+		timeZones = HomeTimezoneData.values,
+		visible = true,
+		onConfirm = { onConfirm(clock.copy(timeZone = it)) },
+		onDismiss = onDismiss,
+		title = "Select home time zone",
+	)
+
+	is WorldClock -> TimeZonePickerDialog(
+		timeZone = clock.timeZone,
+		timeZones = WorldTimezoneData.values,
+		visible = true,
+		onConfirm = { onConfirm(clock.copy(timeZone = it)) },
+		onDismiss = onDismiss,
+		title = "Select world time zone",
+	)
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun ClocksScreenPreview() {
 	val clocks = ClocksSettings(
-		homeClock = HomeClock.fromTimeZoneId(
+		pinnedClock = HomeClock.fromTimeZoneId(
 			timeZoneId = 30335,
 			dstSettings = DstSettings(enable = false, auto = true),
 		),
-		worldClocks = listOf(
+		clocks = listOf(
 			WorldClock.fromTimeZoneId(
 				timeZoneId = 95,
 				dstSettings = DstSettings(enable = true, auto = false),
+			),
+			WorldClock.fromTimeZoneId(
+				timeZoneId = 310,
+				dstSettings = DstSettings(enable = true, auto = false),
+			),
+		),
+	)
+	SkuareTheme {
+		ClocksScreenContent(
+			state = ClocksUiState(
+				isLoading = false,
+				savedClocks = clocks,
+				pendingClocks = clocks,
+			),
+			onEvent = {},
+		)
+	}
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ClocksScreenSwappedPreview() {
+	val clocks = ClocksSettings(
+		pinnedClock = WorldClock.fromTimeZoneId(
+			timeZoneId = 122,
+			dstSettings = DstSettings(enable = false, auto = true),
+		),
+		clocks = listOf(
+			HomeClock.fromTimeZoneId(
+				timeZoneId = 30335,
+				dstSettings = DstSettings(enable = false, auto = true),
 			),
 			WorldClock.fromTimeZoneId(
 				timeZoneId = 310,

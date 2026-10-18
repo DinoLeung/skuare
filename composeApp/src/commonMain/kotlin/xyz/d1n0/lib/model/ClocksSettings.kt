@@ -3,16 +3,17 @@ package xyz.d1n0.lib.model
 import xyz.d1n0.lib.constant.ClocksUpdateSession
 import xyz.d1n0.lib.constant.OpCode
 import xyz.d1n0.lib.helper.fromLittleEndianByteArray
+import xyz.d1n0.lib.helper.replaceAt
 import xyz.d1n0.lib.helper.requireIn
 
 data class ClocksSettings(
-	val homeClock: HomeClock? = null,
-	val worldClocks: List<WorldClock?> = List(5) { null },
+	val pinnedClock: Clock? = null,
+	val clocks: List<Clock?> = List(5) { null },
 ) {
 	private val allClocks: List<Clock?>
 		get() = listOf(
-			homeClock,
-			*worldClocks.toTypedArray(),
+			pinnedClock,
+			*clocks.toTypedArray(),
 		)
 
 	val isInitialized: Boolean get() = listOfNotNull(*allClocks.toTypedArray()).size == 6
@@ -20,23 +21,40 @@ data class ClocksSettings(
 	/**
 	 * Sets a clock for the specified position with the given time zone ID and DST status.
 	 *
-	 * @param position The position of the clock, where 0 is homeClock and 1-5 are worldClocks.
+	 * The position only decides the slot. Whether the clock is a [HomeClock] or a [WorldClock]
+	 * comes from the time zone ID, because the watch can swap a world clock into the pinned slot.
+	 *
+	 * @param position The position of the clock, where 0 is pinnedClock and 1-5 are clocks.
 	 * @param timeZoneId The ID of the time zone to assign to the specified clock position.
 	 * @param dstSettings The daylight saving time status applicable to the time zone.
 	 *
 	 * @throws IllegalArgumentException if the position is not within the range 0..5.
 	 */
-	private fun setClock(position: Byte, timeZoneId: Short, dstSettings: DstSettings) =
-		when (position.toInt()) {
-			0 -> this.copy(homeClock = HomeClock.fromTimeZoneId(timeZoneId, dstSettings))
+	private fun setClock(position: Byte, timeZoneId: Short, dstSettings: DstSettings): ClocksSettings {
+		val clock = Clock.fromTimeZoneId(timeZoneId, dstSettings)
+		return when (position.toInt()) {
+			0 -> this.copy(pinnedClock = clock)
 			else -> {
 				val index =
 					position.toInt().requireIn(1..5) { "TimeZones position must be in 0..5" }
 						.minus(1)
-				val clock = WorldClock.fromTimeZoneId(timeZoneId, dstSettings)
-				this.copy(worldClocks = worldClocks.toMutableList().also { it[index] = clock })
+				this.copy(clocks = clocks.toMutableList().also { it[index] = clock })
 			}
 		}
+	}
+
+	/**
+	 * Swaps the clock at [index] with the pinned clock, the same as swapping them on the watch.
+	 * Each clock moves as a whole, keeping its time zone, its type and its DST settings.
+	 *
+	 * @param index The index into [clocks], 0-4 for positions 1-5.
+	 * @throws IllegalArgumentException if either clock is not initialized.
+	 */
+	fun pin(index: Int): ClocksSettings {
+		val pinned = requireNotNull(pinnedClock) { "Pinned clock must be initialized" }
+		val clock = requireNotNull(clocks.getOrNull(index)) { "Clock at position ${index + 1} must be initialized" }
+		return copy(pinnedClock = clock, clocks = clocks.replaceAt(index, pinned))
+	}
 
 	/**
 	 * Constructs a byte array representing a pair of clocks for packet transmission.
@@ -102,8 +120,8 @@ data class ClocksSettings(
 	 * for all clocks currently initialized in the system.
 	 *
 	 * Validates that all clock objects are initialized before attempting to create packets.
-	 * Generates packets as pairs: homeClock with worldClock1, worldClock2 with worldClock3,
-	 * and worldClock4 with worldClock5.
+	 * Generates packets as pairs: pinnedClock with clock 1, clock 2 with clock 3,
+	 * and clock 4 with clock 5.
 	 *
 	 * @return A list of clock packets represented as byte arrays, each calculated using a
 	 *         helper function to encapsulate positions, DST status, and time zone IDs for
@@ -114,14 +132,14 @@ data class ClocksSettings(
 	 */
 	val clocksPackets: List<ByteArray>
 		get() {
-			val homeClockValue = requireNotNull(homeClock) { "HomeClock must be initialized" }
-			val worldClockValues = worldClocks.mapIndexed { index, clock ->
-				requireNotNull(clock) { "WorldClock at position $index must be initialized" }
+			val pinnedClockValue = requireNotNull(pinnedClock) { "Pinned clock must be initialized" }
+			val clockValues = clocks.mapIndexed { index, clock ->
+				requireNotNull(clock) { "Clock at position ${index + 1} must be initialized" }
 			}
 			return listOf(
-				getClocksPairPacket(0, 1, homeClockValue, worldClockValues[0]),
-				getClocksPairPacket(2, 3, worldClockValues[1], worldClockValues[2]),
-				getClocksPairPacket(4, 5, worldClockValues[3], worldClockValues[4])
+				getClocksPairPacket(0, 1, pinnedClockValue, clockValues[0]),
+				getClocksPairPacket(2, 3, clockValues[1], clockValues[2]),
+				getClocksPairPacket(4, 5, clockValues[3], clockValues[4])
 			)
 		}
 
@@ -178,7 +196,7 @@ data class ClocksSettings(
 	 *
 	 * Each packet includes:
 	 * - A command code for the timezone location radio ID (`TIMEZONE_LOCATION_RADIO_ID`).
-	 * - The clock's position identifier (ranging from 0 for homeClock to 5 for worldClock5).
+	 * - The clock's position identifier (ranging from 0 for pinnedClock to 5 for clock 5).
 	 * - A byte of 0x01 indicates that timezone data is in the database
 	 * - The timezone coordinates as a byte array.
 	 * - The radio ID associated with the timezone.

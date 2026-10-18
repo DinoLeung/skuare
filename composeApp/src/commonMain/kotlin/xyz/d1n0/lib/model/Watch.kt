@@ -76,6 +76,9 @@ class Watch(private val peripheral: Peripheral) : KoinComponent {
 	internal val _clocks = MutableStateFlow(ClocksSettings())
 	val clocks: StateFlow<ClocksSettings> get() = _clocks.asStateFlow()
 
+	/** Last clocks packet parse failure since clocks were requested, so waits can fail fast. */
+	internal val _clocksError = MutableStateFlow<Throwable?>(null)
+
 	internal val _alarms = MutableStateFlow(AlarmsSettings())
 	val alarms: StateFlow<AlarmsSettings> get() = _alarms.asStateFlow()
 

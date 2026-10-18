@@ -13,10 +13,9 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import xyz.d1n0.lib.helper.replaceAt
+import xyz.d1n0.lib.model.Clock
 import xyz.d1n0.lib.model.ClocksSettings
-import xyz.d1n0.lib.model.HomeTimezone
 import xyz.d1n0.lib.model.Watch
-import xyz.d1n0.lib.model.WorldTimezone
 import xyz.d1n0.lib.model.requestClocks
 import xyz.d1n0.lib.model.writeClocksTimezones
 import xyz.d1n0.ui.boilerplate.updateCatching
@@ -27,8 +26,8 @@ data class ClocksUiState(
 	val isLoading: Boolean = false,
 	val savedClocks: ClocksSettings = ClocksSettings(),
 	val pendingClocks: ClocksSettings = ClocksSettings(),
-	val pendingHomeClockError: Throwable? = null,
-	val pendingWorldClockErrors: List<Throwable?> = List(5) { null },
+	val pendingPinnedClockError: Throwable? = null,
+	val pendingClockErrors: List<Throwable?> = List(5) { null },
 ) {
 	val isInitialized: Boolean
 		get() = savedClocks.isInitialized
@@ -37,13 +36,14 @@ data class ClocksUiState(
 		get() = savedClocks != pendingClocks
 
 	val hasErrors: Boolean
-		get() = pendingHomeClockError != null || pendingWorldClockErrors.any { it != null }
+		get() = pendingPinnedClockError != null || pendingClockErrors.any { it != null }
 }
 
 sealed interface ClocksUiEvent {
 	object RequestClocks : ClocksUiEvent
-	data class HomeTimeZoneChange(val timeZone: HomeTimezone) : ClocksUiEvent
-	data class WorldTimeZoneChange(val index: Int, val timeZone: WorldTimezone) : ClocksUiEvent
+	data class PinnedClockChange(val clock: Clock) : ClocksUiEvent
+	data class ClockChange(val index: Int, val clock: Clock) : ClocksUiEvent
+	data class PinClock(val index: Int) : ClocksUiEvent
 }
 
 class ClocksScreenViewModel : ViewModel(), KoinComponent, SaveableScreen {
@@ -86,11 +86,12 @@ class ClocksScreenViewModel : ViewModel(), KoinComponent, SaveableScreen {
 
 	fun onEvent(event: ClocksUiEvent) = when (event) {
 		ClocksUiEvent.RequestClocks -> requestClocks()
-		is ClocksUiEvent.HomeTimeZoneChange -> onHomeTimeZoneChange(event.timeZone)
-		is ClocksUiEvent.WorldTimeZoneChange -> onWorldTimeZoneChange(
+		is ClocksUiEvent.PinnedClockChange -> onPinnedClockChange(event.clock)
+		is ClocksUiEvent.ClockChange -> onClockChange(
 			index = event.index,
-			timeZone = event.timeZone,
+			clock = event.clock,
 		)
+		is ClocksUiEvent.PinClock -> onPinClock(event.index)
 	}
 
 	private fun requestClocks() = watch.scope.launch {
@@ -104,41 +105,56 @@ class ClocksScreenViewModel : ViewModel(), KoinComponent, SaveableScreen {
 			.onFailure { _uiState.update { it.copy(isLoading = false) } }
 	}
 
-	private fun onHomeTimeZoneChange(timeZone: HomeTimezone) = _uiState.updateCatching(
+	private fun onPinnedClockChange(clock: Clock) = _uiState.updateCatching(
 		transform = {
-			requireNotNull(it.pendingClocks.homeClock) { "Home clock is not initialized" }
-				.copy(timeZone = timeZone)
+			requireNotNull(it.pendingClocks.pinnedClock) { "Pinned clock is not initialized" }
+			clock
 		},
 		onSuccess = {
 			copy(
-				pendingClocks = pendingClocks.copy(homeClock = it),
-				pendingHomeClockError = null,
+				pendingClocks = pendingClocks.copy(pinnedClock = it),
+				pendingPinnedClockError = null,
 			)
 		},
-		onFailure = { copy(pendingHomeClockError = it) },
+		onFailure = { copy(pendingPinnedClockError = it) },
 	)
 
-	private fun onWorldTimeZoneChange(index: Int, timeZone: WorldTimezone) =
+	private fun onPinClock(index: Int) = _uiState.updateCatching(
+		transform = { it.pendingClocks.pin(index) },
+		onSuccess = {
+			copy(
+				pendingClocks = it,
+				pendingPinnedClockError = pendingClockErrors[index],
+				pendingClockErrors = pendingClockErrors.replaceAt(index, pendingPinnedClockError),
+			)
+		},
+		onFailure = {
+			copy(pendingClockErrors = pendingClockErrors.replaceAt(index, it))
+		},
+	)
+
+	private fun onClockChange(index: Int, clock: Clock) =
 		_uiState.updateCatching(
 			transform = {
-				requireNotNull(it.pendingClocks.worldClocks[index]) {
-					"World clock at index $index is not initialized"
-				}.copy(timeZone = timeZone)
+				requireNotNull(it.pendingClocks.clocks[index]) {
+					"Clock at index $index is not initialized"
+				}
+				clock
 			},
 			onSuccess = {
 				copy(
 					pendingClocks = pendingClocks.copy(
-						worldClocks = pendingClocks.worldClocks.replaceAt(
+						clocks = pendingClocks.clocks.replaceAt(
 							index = index,
 							with = it,
 						),
 					),
-					pendingWorldClockErrors = pendingWorldClockErrors.replaceAt(index, null),
+					pendingClockErrors = pendingClockErrors.replaceAt(index, null),
 				)
 			},
 			onFailure = {
 				copy(
-					pendingWorldClockErrors = pendingWorldClockErrors.replaceAt(index, it),
+					pendingClockErrors = pendingClockErrors.replaceAt(index, it),
 				)
 			},
 		)

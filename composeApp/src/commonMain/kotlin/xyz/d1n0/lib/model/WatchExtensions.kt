@@ -45,16 +45,19 @@ suspend fun Watch.writeName(watchName: WatchName) = write(watchName.packet).also
 suspend fun Watch.requestTimer() = request(OpCode.TIMER)
 suspend fun Watch.writeTimer(timer: Timer) = write(timer.packet).also { requestTimer() }
 
-suspend fun Watch.requestClocks() = repeat(3) {
-	log.d { "requestClocks" }
-	request(OpCode.CLOCK)
+suspend fun Watch.requestClocks() {
+	_clocksError.value = null
+	repeat(3) {
+		log.d { "requestClocks" }
+		request(OpCode.CLOCK)
+	}
 }
 
 suspend fun Watch.writeClocks(clocksSettings: ClocksSettings) =
 	clocksSettings.clocksPackets.forEach { write(it) }
 
 suspend fun Watch.writeTime(delay: Duration = 0.seconds) =
-	clocks.value.homeClock?.let { write(it.getCurrentDateTimePacket(delay = delay)) }
+	clocks.value.pinnedClock?.let { write(it.getCurrentDateTimePacket(delay = delay)) }
 
 suspend fun Watch.requestAlarms() {
 	request(OpCode.ALARM_A)
@@ -173,6 +176,7 @@ suspend fun Watch.adjustTime(delay: Duration = 0.seconds, writeTimezoneMetadata:
 			requestClocks()
 			withTimeoutOrNull(10.seconds) {
 				while (clocks.value.isInitialized == false) {
+					_clocksError.value?.let { throw it }
 					delay(100.milliseconds)
 				}
 			} ?: throw IllegalStateException("Timeout waiting for clocks initialization")
@@ -250,7 +254,10 @@ suspend fun Watch.handlePacket(packet: ByteArray) = when (OpCode.fromByte(packet
 		runCatching {
 			log.d { packet.toHexString(HexFormat.UpperCase) }
 			_clocks.update { it.parseClocksPacket(packet) }
-		}.onFailure { log.e { "Failed to parse clocks packet: ${it.message}" } }
+		}.onFailure {
+			_clocksError.value = it
+			log.e { "Failed to parse clocks packet: ${it.message}" }
+		}
 	}
 
 	OpCode.TIMEZONE_NAME -> { /* Do Nothing */
