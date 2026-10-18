@@ -33,7 +33,18 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import kotlin.uuid.ExperimentalUuidApi
 
-class Watch(private val peripheral: Peripheral) : KoinComponent {
+/**
+ * A connected Casio watch.
+ *
+ * @param peripheral The watch to talk to.
+ * @param advertisedName Name the watch advertises, e.g. CASIO GMW-B5000#, null if unknown. It
+ *        decides [model], so it is fixed when the watch is created. Not the same as the watch
+ *        name from [OpCode.WATCH_NAME], which the user can set to anything.
+ */
+class Watch @OptIn(ExperimentalKableApi::class) constructor(
+	private val peripheral: Peripheral,
+	val advertisedName: String? = peripheral.name,
+) : KoinComponent {
 
 	@OptIn(ExperimentalUuidApi::class)
 	companion object {
@@ -70,6 +81,14 @@ class Watch(private val peripheral: Peripheral) : KoinComponent {
 
 	val log: Log by inject()
 
+	/**
+	 * What this watch has, from [advertisedName]. Unknown names are treated as
+	 * [WatchModel.CLASSIC_SQUARE], which is what skuare supported before there were models.
+	 */
+	val model: WatchModel = WatchModel.fromAdvertisedName(advertisedName)
+		?.also { log.i { "Watch $advertisedName is $it" } }
+		?: WatchModel.CLASSIC_SQUARE.also { log.w { "Unknown watch $advertisedName, treating it as $it" } }
+
 	internal val _info = MutableStateFlow(WatchInfo())
 	val info: StateFlow<WatchInfo> = _info.asStateFlow()
 
@@ -99,12 +118,6 @@ class Watch(private val peripheral: Peripheral) : KoinComponent {
 	 * This can be observed to react to connection state changes, such as connected, disconnected, or connecting.
 	 */
 	val state: StateFlow<State> get() = peripheral.state
-
-	/**
-	 * Name the watch advertises, e.g. CASIO GMW-B5000#, null if the platform doesn't know it yet.
-	 */
-	@OptIn(ExperimentalKableApi::class)
-	val advertisedName: String? get() = peripheral.name
 
 	private val _packets = MutableSharedFlow<ByteArray>(extraBufferCapacity = 64)
 

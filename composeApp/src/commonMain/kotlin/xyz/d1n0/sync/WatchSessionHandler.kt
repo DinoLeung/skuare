@@ -145,14 +145,21 @@ class WatchSessionHandler(
 	 * 5. Disconnects, unless the watch is waiting for the app.
 	 *
 	 * @param peripheral The watch that wants to connect.
+	 * @param address BLE address of the watch, used to look up its stored name in case the
+	 *        platform doesn't know the peripheral's name.
 	 * @param timeout How long the whole session may take.
 	 */
-	suspend fun runBackground(peripheral: Peripheral, timeout: Duration = 60.seconds): BackgroundSessionResult {
+	suspend fun runBackground(
+		peripheral: Peripheral,
+		address: String,
+		timeout: Duration = 60.seconds,
+	): BackgroundSessionResult {
 		var watch: Watch? = null
 		var keepConnected = false
 		try {
 			val result = withTimeoutOrNull(timeout) {
-				val connected = connectionManager.connectIfIdle(peripheral)
+				val storedName = pairedWatchRepository.find(address)?.advertisedName
+				val connected = connectionManager.connectIfIdle(peripheral, storedName)
 					?: return@withTimeoutOrNull BackgroundSessionResult.Busy
 				watch = connected
 				backgroundSession(connected)

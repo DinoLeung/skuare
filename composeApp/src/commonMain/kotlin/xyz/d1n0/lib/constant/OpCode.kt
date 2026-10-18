@@ -4,7 +4,7 @@ enum class OpCode(val byte: Byte) {
 	CONNECT_REASON(0x10),
 	CONNECTION_SETTINGS(0x11),
 	WATCH_SETTINGS(0x13),
-	WATCH_NAME(0x23),
+	WATCH_NAME(0x23), // user-set name, not the advertised name, see WatchModel
 	APP_INFO(0x22),
 	WATCH_CONDITION(0x28),
 //	CLASS_WATCH_FEATURE_SERVICE_MODULE_ID(0x26),

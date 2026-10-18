@@ -1,5 +1,6 @@
 package xyz.d1n0.lib.connection
 
+import com.juul.kable.ExperimentalKableApi
 import com.juul.kable.Peripheral
 import com.juul.kable.State
 import kotlinx.coroutines.CoroutineScope
@@ -66,19 +67,24 @@ class WatchConnectionManager : KoinComponent {
 	 * takes over a watch the UI is connected to.
 	 *
 	 * @param peripheral The peripheral to connect to, closed if another watch is connected.
+	 * @param storedName Name stored for the watch, e.g. [xyz.d1n0.data.database.PairedWatch.advertisedName].
+	 *        Used when the platform doesn't know the peripheral's name, which can happen when the
+	 *        peripheral is made from an address, so the watch still gets the right model.
 	 * @return The connected watch, or null if another watch is already connected.
 	 */
-	suspend fun connectIfIdle(peripheral: Peripheral): Watch? = connectMutex.withLock {
+	@OptIn(ExperimentalKableApi::class)
+	suspend fun connectIfIdle(peripheral: Peripheral, storedName: String? = null): Watch? = connectMutex.withLock {
 		if (_watch.value != null) {
 			peripheral.close()
 			null
 		} else {
-			connectLocked(peripheral)
+			connectLocked(peripheral, advertisedName = peripheral.name ?: storedName)
 		}
 	}
 
-	private suspend fun connectLocked(peripheral: Peripheral): Watch {
-		val watch = Watch(peripheral)
+	@OptIn(ExperimentalKableApi::class)
+	private suspend fun connectLocked(peripheral: Peripheral, advertisedName: String? = peripheral.name): Watch {
+		val watch = Watch(peripheral, advertisedName)
 		runCatching { watch.connect() }
 			.onFailure { watch.close() }
 			.getOrThrow()
