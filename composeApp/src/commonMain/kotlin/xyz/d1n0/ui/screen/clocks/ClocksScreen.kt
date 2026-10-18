@@ -63,6 +63,7 @@ private fun ClocksScreenContent(
 			ClockCard(
 				modifier = Modifier.fillMaxWidth(),
 				clock = it,
+				pinned = true,
 				onClick = { selectedClockPosition = 0 },
 				enabled = state.isInitialized && state.isLoading == false,
 			)
@@ -142,6 +143,18 @@ private fun ClocksScreenPreview() {
 			),
 			WorldClock.fromTimeZoneId(
 				timeZoneId = 310,
+				dstSettings = DstSettings(enable = true, auto = false),
+			),
+			WorldClock.fromTimeZoneId(
+				timeZoneId = 95,
+				dstSettings = DstSettings(enable = true, auto = false),
+			),
+			WorldClock.fromTimeZoneId(
+				timeZoneId = 310,
+				dstSettings = DstSettings(enable = true, auto = false),
+			),
+			WorldClock.fromTimeZoneId(
+				timeZoneId = 95,
 				dstSettings = DstSettings(enable = true, auto = false),
 			),
 		),

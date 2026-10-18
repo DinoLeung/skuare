@@ -1,5 +1,6 @@
 package xyz.d1n0.ui.component
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import xyz.d1n0.lib.model.Clock
 import xyz.d1n0.lib.model.DstSettings
 import xyz.d1n0.lib.model.HomeClock
@@ -29,6 +31,7 @@ import xyz.d1n0.ui.theme.SkuareTheme
 
 /**
  * Shows a clock. If [onPin] is set, pressing and holding the card opens a menu with a "Pin" option.
+ * A [pinned] clock is the one shown on the watch's home screen, and gets an accent-coloured border.
  */
 @Composable
 fun ClockCard(
@@ -36,6 +39,7 @@ fun ClockCard(
 	onClick: () -> Unit,
 	modifier: Modifier = Modifier,
 	enabled: Boolean = true,
+	pinned: Boolean = false,
 	onPin: (() -> Unit)? = null,
 ) {
 	var menuExpanded by remember { mutableStateOf(false) }
@@ -45,6 +49,7 @@ fun ClockCard(
 			enabled = enabled,
 			onClick = onClick,
 			onLongClick = onPin?.let { { menuExpanded = true } },
+			border = if (pinned) BorderStroke(2.dp, MaterialTheme.colorScheme.primary) else null,
 			leadingIcon = {
 				if (clock is HomeClock) {
 					Icon(
@@ -107,6 +112,7 @@ private fun ClockCardPreview() {
 		Column {
 			ClockCard(
 				clock = HomeClock.fromTimeZoneId(30335, DstSettings(false, true)),
+				pinned = true,
 				onClick = {},
 			)
 			ClockCard(

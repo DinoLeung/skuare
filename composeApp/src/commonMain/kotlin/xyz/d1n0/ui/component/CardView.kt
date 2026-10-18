@@ -1,5 +1,6 @@
 package xyz.d1n0.ui.component
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Card
@@ -17,6 +18,7 @@ fun CardView(
 	enabled: Boolean = true,
 	onClick: (() -> Unit)? = null,
 	onLongClick: (() -> Unit)? = null,
+	border: BorderStroke? = null,
 	leadingIcon: @Composable (() -> Unit)? = null,
 	title: @Composable (() -> Unit)? = null,
 	indicator: @Composable (() -> Unit)? = null,
@@ -52,6 +54,7 @@ fun CardView(
 					onLongClick = onLongClick,
 				),
 			shape = MaterialTheme.shapes.medium,
+			border = border,
 			colors = colors,
 			content = cardContent,
 		)
@@ -59,6 +62,7 @@ fun CardView(
 		Card(
 			modifier = modifier,
 			shape = MaterialTheme.shapes.medium,
+			border = border,
 			content = cardContent,
 		)
 	} else {
@@ -67,6 +71,7 @@ fun CardView(
 			modifier = modifier,
 			enabled = enabled,
 			shape = MaterialTheme.shapes.medium,
+			border = border,
 			content = cardContent,
 		)
 	}
