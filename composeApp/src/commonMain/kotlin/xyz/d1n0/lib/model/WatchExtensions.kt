@@ -178,13 +178,12 @@ suspend fun Watch.writeClocksTimezones(clocksSettings: ClocksSettings) =
  * This function:
  * 1. Ensures clock settings are initialized, requesting them if necessary (with a 10-second timeout).
  * 2. Writes current clock settings to the watch.
- * 3. Optionally writes time zone radio configuration and coordinates.
+ * 3. Writes time zone radio configuration and coordinates.
  * 4. Sends the current date and time (optionally delayed) to the watch.
  *
  * @param delay Optional delay to apply to the current time before syncing (default is 0).
- * @param writeTimezoneMetadata If true, timezone metadata will also be written (default is false).
  */
-suspend fun Watch.adjustTime(delay: Duration = 0.seconds, writeTimezoneMetadata: Boolean = false) =
+suspend fun Watch.adjustTime(delay: Duration = 0.seconds) =
 	runCatching {
 		if (clocks.value.isInitialized == false) {
 			requestClocks()
@@ -198,7 +197,7 @@ suspend fun Watch.adjustTime(delay: Duration = 0.seconds, writeTimezoneMetadata:
 		writeClocks(clocks.value)
 		writeTimeZoneConfigs(clocks.value)
 		writeTimeZoneNames(clocks.value)
-		if (writeTimezoneMetadata) writeTimeZoneCoordinatesAndRadioId(clocks.value)
+		writeTimeZoneCoordinatesAndRadioId(clocks.value)
 		writeTime(delay = delay)
 	}.onSuccess {
 		log.d { "Time sync completed" }
