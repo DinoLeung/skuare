@@ -130,8 +130,9 @@ on `MIP_SQUARE`:
 2. Write only the time packet `09` for the pinned clock, the same `getCurrentDateTimePacket` as
    on the classic route.
 3. Skip the clock, config, name and coordinate writes, and log that they were skipped.
-4. Clocks screen: saving is disabled on `MIP_SQUARE` until phase 4, so `writeClocksTimezones` is
-   never called on a BX.
+4. Clocks screen: the clocks are read-only on `MIP_SQUARE` until phase 4 (`Watch.canWriteClocks`), so
+   nothing can be edited and `writeClocksTimezones` is never called on a BX. It still refuses
+   MIP_SQUARE as a safety net.
 
 Check on the watch:
 
@@ -156,7 +157,9 @@ editing clocks on the BX.
 3. **Transport**: try the single writes on 0x000e first, the same as the classic route.
    If the BX refuses them, add the batched path on 0x0017 / 0x0019 (only for watches that have
    those characteristics, not assumed for the BZ5000).
-4. Turn clock writes and the clocks screen save back on for `MIP_SQUARE`.
+4. Remove the temporary `Watch.canWriteClocks`, `checkClockWritesSupported` and
+   `ClocksUiState.isEditable` with every check of them, so `MIP_SQUARE` writes clocks and the
+   clocks screen is editable again. It was only a stopgap, not a model capability.
 
 ## Phase 5: device checks
 

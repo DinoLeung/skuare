@@ -64,7 +64,7 @@ private fun ClocksScreenContent(
 				modifier = Modifier.fillMaxWidth(),
 				clock = it,
 				pinned = true,
-				onClick = { selectedClockPosition = 0 },
+				onClick = { selectedClockPosition = 0 }.takeIf { state.isEditable },
 				enabled = state.isInitialized && state.isLoading == false,
 			)
 		}
@@ -73,9 +73,9 @@ private fun ClocksScreenContent(
 				ClockCard(
 					modifier = Modifier.fillMaxWidth(),
 					clock = it,
-					onClick = { selectedClockPosition = index + 1 },
+					onClick = { selectedClockPosition = index + 1 }.takeIf { state.isEditable },
 					enabled = state.isInitialized && state.isLoading == false,
-					onPin = { onEvent(ClocksUiEvent.PinClock(index)) },
+					onPin = { onEvent(ClocksUiEvent.PinClock(index)) }.takeIf { state.isEditable },
 				)
 			}
 		}

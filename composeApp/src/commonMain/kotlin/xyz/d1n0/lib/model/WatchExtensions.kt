@@ -168,12 +168,12 @@ suspend fun Watch.writeClocksTimezones(clocksSettings: ClocksSettings) =
  *
  * This function:
  * 1. Ensures clock settings are initialized, requesting them if necessary (with a 10-second timeout).
- * 2. Writes current clock settings to the watch.
- * 3. Optionally writes time zone radio configuration and coordinates.
+ * 2. Writes current clock settings to the watch, if [Watch.canWriteClocks].
+ * 3. Optionally writes time zone radio configuration and coordinates, if [Watch.canWriteClocks].
  * 4. Sends the current date and time (optionally delayed) to the watch.
  *
- * Fails after reading the clocks if the watch doesn't support clock writes yet, so the clocks
- * are still read on connect.
+ * On watches that can't take clock writes yet only the time is written. The time packet only
+ * needs the pinned clock's time zone, which comes from the clocks read in step 1.
  *
  * @param delay Optional delay to apply to the current time before syncing (default is 0).
  * @param writeTimezoneMetadata If true, timezone metadata will also be written (default is false).
@@ -189,11 +189,14 @@ suspend fun Watch.adjustTime(delay: Duration = 0.seconds, writeTimezoneMetadata:
 				}
 			} ?: throw IllegalStateException("Timeout waiting for clocks initialization")
 		}
-		checkClockWritesSupported()
-		writeClocks(clocks.value)
-		writeTimeZoneConfigs(clocks.value)
-		writeTimeZoneNames(clocks.value)
-		if (writeTimezoneMetadata) writeTimeZoneCoordinatesAndRadioId(clocks.value)
+		if (canWriteClocks) {
+			writeClocks(clocks.value)
+			writeTimeZoneConfigs(clocks.value)
+			writeTimeZoneNames(clocks.value)
+			if (writeTimezoneMetadata) writeTimeZoneCoordinatesAndRadioId(clocks.value)
+		} else {
+			log.i { "Clock writes not supported on $model yet, writing the time only" }
+		}
 		writeTime(delay = delay)
 	}.onSuccess {
 		log.d { "Time sync completed" }
@@ -202,13 +205,22 @@ suspend fun Watch.adjustTime(delay: Duration = 0.seconds, writeTimezoneMetadata:
 	}
 
 /**
- * Clock writes on [WatchModel.MIP_SQUARE] would drop the unknown 0x04 clock flag bit and skip the
- * short city names, so they are off until those are handled, see bx5600-time-sync-plan.md.
+ * Temporary, remove once clock writes work on [WatchModel.MIP_SQUARE], with every check of it
+ * and [checkClockWritesSupported]. It is not a model capability, every model can write clocks.
  *
- * @throws IllegalStateException if the watch doesn't support clock writes yet.
+ * Whether clocks and their time zone data can be written to this watch yet. Clock writes on
+ * [WatchModel.MIP_SQUARE] would drop the unknown 0x04 clock flag bit and skip the short city
+ * names, so they are off until those are handled, see bx5600-time-sync-plan.md phase 4.
+ */
+// TODO: remove in bx5600-time-sync-plan.md phase 4
+val Watch.canWriteClocks: Boolean
+	get() = model != WatchModel.MIP_SQUARE
+
+/**
+ * @throws IllegalStateException if the watch can't take clock writes yet, see [canWriteClocks].
  */
 private fun Watch.checkClockWritesSupported() =
-	check(model != WatchModel.MIP_SQUARE) { "Writing clocks to $model watches is not supported yet" }
+	check(canWriteClocks) { "Writing clocks to $model watches is not supported yet" }
 
 suspend fun Watch.startClockUpdateSession() = write(ClocksSettings.clocksUpdateSessionStartPacket)
 
