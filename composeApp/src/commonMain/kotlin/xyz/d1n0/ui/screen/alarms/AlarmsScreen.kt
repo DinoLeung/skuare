@@ -11,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Alarm
 import androidx.compose.material.icons.outlined.Snooze
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -154,31 +155,33 @@ private fun AlarmsScreenContent(
 @Preview(showBackground = true)
 @Composable
 private fun AlarmsScreenPreview() {
-	val alarms = listOf(
-		Alarm(enable = true, time = LocalTime(hour = 6, minute = 30)),
-		Alarm(enable = false, time = LocalTime(hour = 7, minute = 0)),
-		Alarm(enable = true, time = LocalTime(hour = 8, minute = 15)),
-		Alarm(enable = false, time = LocalTime(hour = 9, minute = 45)),
-	)
-	val snoozeAlarm = Alarm(enable = true, time = LocalTime(hour = 0, minute = 10))
-
 	SkuareTheme {
-		AlarmsScreenContent(
-			state = AlarmsUiState(
-				isHourlySignalInitialized = true,
-				isHourlySignalLoading = false,
-				savedHourlySignal = HourlySignal(enable = false),
-				pendingHourlySignal = HourlySignal(enable = true),
-				isAlarmsInitialized = true,
-				isAlarmsLoading = false,
-				savedAlarms = alarms,
-				pendingAlarms = alarms,
-				isSnoozeAlarmInitialized = true,
-				isSnoozeAlarmLoading = false,
-				savedSnoozeAlarm = snoozeAlarm,
-				pendingSnoozeAlarm = snoozeAlarm,
-			),
-			onEvent = {},
+		val alarms = listOf(
+			Alarm(enable = true, time = LocalTime(hour = 6, minute = 30)),
+			Alarm(enable = false, time = LocalTime(hour = 7, minute = 0)),
+			Alarm(enable = true, time = LocalTime(hour = 8, minute = 15)),
+			Alarm(enable = false, time = LocalTime(hour = 9, minute = 45)),
 		)
+		val snoozeAlarm = Alarm(enable = true, time = LocalTime(hour = 0, minute = 10))
+
+		MaterialTheme {
+			AlarmsScreenContent(
+				state = AlarmsUiState(
+					isHourlySignalInitialized = true,
+					isHourlySignalLoading = false,
+					savedHourlySignal = HourlySignal(enable = false),
+					pendingHourlySignal = HourlySignal(enable = true),
+					isAlarmsInitialized = true,
+					isAlarmsLoading = false,
+					savedAlarms = alarms,
+					pendingAlarms = alarms,
+					isSnoozeAlarmInitialized = true,
+					isSnoozeAlarmLoading = false,
+					savedSnoozeAlarm = snoozeAlarm,
+					pendingSnoozeAlarm = snoozeAlarm,
+				),
+				onEvent = {},
+			)
+		}
 	}
 }
