@@ -1,7 +1,8 @@
 # GW-BX5600 (module 3578) research
 
-Notes from official Casio app HCI snoop captures, collected 2026-10-16/17. Nothing here is
-implemented in skuare yet.
+Notes from official Casio app HCI snoop captures, collected 2026-10-16/17, plus a logcat of
+current skuare pairing the BX (2026-10-18, see [skuare on the BX](#skuare-on-the-bx-logcat-2026-10-18)).
+Nothing here is implemented in skuare yet.
 
 ## Captures
 
@@ -26,6 +27,8 @@ implemented in skuare yet.
 - The official app picks the watch status size (`ab` vs `d8`) right after 0x26, so the
   decision is made before it reads 0x20. The advertised name is the only thing that tells
   the BX apart at that point.
+- The watch name from 0x23 (`OpCode.WATCH_NAME`) is a separate value the user can set to
+  anything, so it can't be used to detect the model.
 - Trailing `#` on the name marks the newer modules (3539/3540). It is part of the name, not
   noise.
 - 0x20 (version information) bytes 12–13 also split the modules, could be a more reliable signal:
@@ -76,16 +79,23 @@ The app enables notifications on 0x0019 at connect. MTU negotiated to 517.
 
 - BX 0x28 reply is 9 bytes (5 bytes longer). Byte 2 is still temperature (27 °C).
 - BX watch status request is `00 05 d8 00 00` → 216 bytes (older modules `00 05 ab 00 00` → 171).
-  The size field is used, the reply length matched exactly.
+  The size field is ignored: skuare sent `00 05 ab 00 00` and the BX still replied with 216
+  bytes (logcat 2026-10-18). The reply size is fixed per model.
 - BX watch status layout is completely different, no timestamp at the start:
   - [0..143] `ff 7f ff 00 00 00` × 24, probably empty hourly slots
   - [144..157] `00 3f` × 7
   - [158] battery `18`, [159] probably temperature `1c` (28 °C)
   - rest `ff` / `7f` filler, ends `00 00`
+- A day later (logcat 2026-10-18) 14 of the 24 slots were filled, e.g. `18 20 00 00 00 00`,
+  `18 1d 01 00 00 00`, `18 19 00 00 01 00`. Looks like an hourly log: byte 0 battery (`18`
+  in all 14), byte 1 maybe temperature (`20` 32 °C … `18` 24 °C), meaning of the `01` bytes
+  unknown. [158] was still `18`, [159] was `20`. The tail had more values than the capture:
+  [160..162] `18 18 18`, [178..180] `19 19 1d`, [196..198] `00 00 01`, [214] `3d`. Maybe more
+  logs with `ff` / `7f` as the empty marker, not checked.
 - On the BX the 0x28 battery byte and the watch status battery byte agree (0x18). Scale is
   unknown from one reading; GShockAPI's 14..24 range would put 0x18 at full.
-- skuare's current `WatchStatus` would fail on the BX (wrong request size, then size check or
-  `BatteryLevel.fromByte`). `requestWatchStatus()` only logs the error.
+- skuare's current `WatchStatus` fails on the BX at the 171-byte size check (confirmed in the
+  logcat). `requestWatchStatus()` only logs the error.
 
 ## World time (batched)
 
@@ -181,18 +191,64 @@ Settings byte 8 = `0x20` is the font (GShockAPI `SettingsIO`: `0x20` = Classic).
 - Time write (0x09) still goes to 0x000e. GShockAPI uses a separate `GwBx5600TimeIO` for it
   (not compared yet).
 
+## skuare on the BX (logcat 2026-10-18)
+
+Current skuare (B5000-only, 6 clocks) pairing the GW-BX5600 (`FD:BA:14:39:46:45`) from the app.
+
+| Step | Result |
+|---|---|
+| Pairing (0x22 / 0x10) | Works. The watch held the official app's token `F33EB0AB2254D9DC03C4 02`, skuare wrote its own and read it back. |
+| Watch status | `00 05 ab 00 00` → 216 bytes, failed the 171-byte size check. |
+| Clocks (single 0x1d on 0x000c) | First read: 2 records, then `FF 81 1D`. Second read: `FF 81 1D` for all 3. |
+| `adjustTime` | Timed out waiting for clocks, nothing written to the watch. |
+| Alarms (0x15 / 0x16) | No errors. |
+| Timer (0x18) | 15-byte reply failed the 8-byte check. |
+| Name / settings / connection settings (0x23 / 0x13 / 0x11) | Requested, no errors logged. |
+
+### Single clock requests
+
+```
+→ 1d   ← 1D 00 01 07 06 7F76 7A00 FF…   pinned Adelaide (home 30335), clock 1 Hong Kong (world 122)
+→ 1d   ← 1D 02 03 02 00 1901 0000 FF…   clock 2 Tokyo (world 281), position 3 unused (0000, DST 00)
+→ 1d   ← FF 81 1D                        past the last record
+```
+
+- The BX answers single 0x1d requests on 0x000c, same records as the batched replies. The
+  watch walks the records, so 2 requests are enough for 3 clocks, a 3rd one errors.
+- `FF 81 1D` looks like `error, ?, failed opcode`. skuare only logs `OpCode.ERROR`, it doesn't
+  reach `_clocksError`, so `adjustTime` waited the full 10 s.
+- With 6 clocks, skuare filled positions 0–3 (the unused `0000` slot as a UTC world clock) and
+  never initialized 4–5.
+- A second read about 10 s later (clocks screen) got `FF 81 1D` for all three requests.
+  Likely cause: the clocks session was never closed. This is the usual behaviour, e.g. on the
+  B5000 reads error after writes that weren't ended with `21 01 01`. skuare sent no `21 00 01`
+  here and wrote nothing, so either the read itself opens something, or the watch waits for
+  the end of the sync. The official app's connect sync always follows the reads with the
+  write-back and the `09` time write. skuare sent neither, `adjustTime` timed out first.
+  Test on one connection: read twice, send `21 01 01` (or write back + `09`), read again.
+- Flags `07` / `06` on clocks 0 and 1 again, so the `0x04` bit isn't a one-off.
+
+0x1e / 0x1f / 0x24 single requests weren't sent, skuare only requests them when writing.
+
 ## To do for BX support
 
-1. Model profile from the advertised name (keep the `#`), log 0x20 bytes 12–13 as a cross-check.
+1. Model profile from the advertised name (trailing `#` ignored, it doesn't change the
+   protocol), log 0x20 bytes 12–13 as a cross-check. See `bx5600-time-sync-plan.md`.
 2. Watch status request size and parser per model, BX battery scale.
 3. Batched world time on 0x0017 / 0x0019 with 3 clocks and short names.
 4. 15-byte timer packet.
 5. Preserve unknown bytes on write: alarm byte 1, settings byte 8, clock flag `0x04`.
+6. Route `FF xx 1D` errors to `_clocksError`, so clock waits fail fast.
 
 ## Open questions
 
 - What 0x20 bytes 12–13 encode.
 - BX battery scale (only 5/5 observed).
-- Whether the BX still answers single 0x1d / 0x1e / 0x1f / 0x24 requests on 0x000c.
+- Which message closes the clocks session after single 0x1d reads (`21 01 01`, the write-back
+  or `09`), so a second read works. Probably a session left open, not a limit on single
+  requests (logcat 2026-10-18).
+- Whether single 0x1e / 0x1f / 0x24 requests work on the BX.
+- Meaning of byte 1 in `FF 81 1D`.
+- Whether the filled watch status slots are an hourly battery / temperature log.
 - Meaning of the alarm `0x40` byte and the clock flag `0x04` bit.
 - Whether the app uses the name or a value saved at pairing (needs a first-pairing capture).
