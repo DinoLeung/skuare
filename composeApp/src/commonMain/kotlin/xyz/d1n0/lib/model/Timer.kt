@@ -23,8 +23,9 @@ data class Timer(
 					)
 				}"
 			}
-			require(packet.size == 8) {
-				"Timer packet bytes must be exactly 8 bytes long, e.g. 18 17 0F 1E 00 00 00 00"
+			// The GW-BX5600 replies with 15 bytes: the same fields followed by zero padding
+			require(packet.size == 8 || packet.size == 15) {
+				"Timer packet bytes must be 8 or 15 bytes long, e.g. 18 17 0F 1E 00 00 00 00"
 			}
 			return packet.drop(1).toByteArray().let {
 				Timer(
