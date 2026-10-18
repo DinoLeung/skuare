@@ -50,7 +50,13 @@ class ClocksScreenViewModel : ViewModel(), KoinComponent, SaveableScreen {
 	private val watch: Watch by inject()
 	private val clocks: StateFlow<ClocksSettings> = watch.clocks
 
-	private val _uiState = MutableStateFlow(ClocksUiState())
+	private val _uiState = MutableStateFlow(
+		ClocksUiState(
+			savedClocks = clocks.value,
+			pendingClocks = clocks.value,
+			pendingClockErrors = List(watch.model.clockCount - 1) { null },
+		)
+	)
 	val uiState: StateFlow<ClocksUiState> = _uiState.asStateFlow()
 
 	override val saveState: StateFlow<SaveState> = _uiState

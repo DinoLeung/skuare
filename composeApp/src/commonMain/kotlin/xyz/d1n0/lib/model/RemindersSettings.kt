@@ -3,10 +3,24 @@ package xyz.d1n0.lib.model
 import xyz.d1n0.lib.constant.OpCode
 import xyz.d1n0.lib.helper.requireIn
 
+/**
+ * The reminders on the watch, sized by the lists: [empty] makes one for a
+ * [WatchModel.reminderCount]. Reminder positions start at 1.
+ */
 data class RemindersSettings(
 	val reminderTitles: List<ReminderTitle?> = List(5) { null },
 	val reminderConfigs: List<ReminderConfig?> = List(5) { null },
 ) {
+	companion object {
+		/**
+		 * Uninitialized reminders for a watch with [reminderCount] reminders, empty if it has none.
+		 */
+		fun empty(reminderCount: Int) = RemindersSettings(
+			reminderTitles = List(reminderCount) { null },
+			reminderConfigs = List(reminderCount) { null },
+		)
+	}
+
 	@OptIn(ExperimentalStdlibApi::class)
 	fun parseReminderTitlePacket(packet: ByteArray): RemindersSettings {
 		require(packet.first() == OpCode.REMINDER_TITLE.byte) {
@@ -20,7 +34,7 @@ data class RemindersSettings(
 			"Reminder title packet must be exactly 20 bytes long, e.g. 30 01 8D 8C 90 91 92 93 80 87 82 8B 2D 2C 00 00 00 00 00 00"
 		}
 		val index =
-			packet[1].toInt().requireIn(1..5) { "Reminder position must be in 1..5" }.minus(1)
+			packet[1].toInt().requireIn(1..reminderTitles.size) { "Reminder position must be in 1..${reminderTitles.size}" }.minus(1)
 		return this.copy(
 			reminderTitles = reminderTitles.toMutableList()
 				.also {
@@ -41,7 +55,7 @@ data class RemindersSettings(
 			"Reminder config packet must be exactly 11 bytes long, e.g. 31 01 11 25 03 25 25 03 25 12 00"
 		}
 		val index =
-			packet[1].toInt().requireIn(1..5) { "Reminder position must be in 1..5" }.minus(1)
+			packet[1].toInt().requireIn(1..reminderConfigs.size) { "Reminder position must be in 1..${reminderConfigs.size}" }.minus(1)
 		val config = ReminderConfig.fromBytes(packet.sliceArray(2..packet.lastIndex))
 		return this.copy(
 			reminderConfigs = reminderConfigs.toMutableList()

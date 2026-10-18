@@ -3,8 +3,10 @@ package xyz.d1n0.lib.model
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertFailsWith
 import kotlin.test.assertIs
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalStdlibApi::class)
 class ClocksSettingsTest {
@@ -86,6 +88,67 @@ class ClocksSettingsTest {
 	@Test
 	fun pinRequiresInitializedClocks() {
 		assertFailsWith<IllegalArgumentException> { ClocksSettings().pin(0) }
+	}
+
+	// from a GW-BX5600 (logcat 2026-10-18): pinned Adelaide (home), Hong Kong, Tokyo, then the
+	// unused slot 3 with time zone ID 0000
+	private val threeClockPackets = listOf(
+		"1D000107067F767A00FFFFFFFFFFFF",
+		"1D0203020019010000FFFFFFFFFFFF",
+	).map { it.hexToByteArray() }
+
+	private fun parseThreeClocks() =
+		threeClockPackets.fold(ClocksSettings.empty(3)) { clocks, packet -> clocks.parseClocksPacket(packet) }
+
+	@Test
+	fun emptyIsSizedByClockCount() {
+		assertEquals(6, ClocksSettings.empty(6).clockCount)
+		assertEquals(3, ClocksSettings.empty(3).clockCount)
+		assertFalse(ClocksSettings.empty(3).isInitialized)
+	}
+
+	@Test
+	fun parsesThreeClocksAndIgnoresTheUnusedSlot() {
+		val clocks = parseThreeClocks()
+
+		assertTrue(clocks.isInitialized)
+		assertEquals(2, clocks.clocks.size)
+		assertEquals("Australia/Adelaide", assertIs<HomeClock>(clocks.pinnedClock).timeZone.timeZone)
+		assertEquals("Asia/Hong_Kong", assertIs<WorldClock>(clocks.clocks[0]).timeZone.timeZone)
+		assertEquals("Asia/Tokyo", assertIs<WorldClock>(clocks.clocks[1]).timeZone.timeZone)
+	}
+
+	@Test
+	fun threeClocksAreNotInitializedByTheFirstPairOnly() {
+		assertFalse(ClocksSettings.empty(3).parseClocksPacket(threeClockPackets[0]).isInitialized)
+	}
+
+	@Test
+	fun writesTheUnusedSlotAsFiller() {
+		// the second packet matches the official app's write in world_clock_write_bx:
+		// Tokyo with DST 02, then the unused slot as DST 00 and ID FF FF.
+		// The first packet still drops the 0x04 flag bit (07 / 06 → 03 / 02), see the plan's phase 4
+		assertEquals(
+			listOf(
+				"1D000103027F767A00FFFFFFFFFFFF",
+				"1D020302001901FFFFFFFFFFFFFFFF",
+			),
+			parseThreeClocks().clocksPackets.map { it.toHexString(HexFormat.UpperCase) },
+		)
+	}
+
+	@Test
+	fun sixClocksStillNeedAllThreePairs() {
+		assertFalse(parseAll(watchPackets.take(2)).isInitialized)
+		assertTrue(parseAll(watchPackets).isInitialized)
+		assertEquals(3, parseAll(watchPackets).clocksPackets.size)
+	}
+
+	@Test
+	fun rejectsPositionsPastTheLastSlot() {
+		assertFailsWith<IllegalArgumentException> {
+			ClocksSettings().parseClocksPacket("1D060703027F760000FFFFFFFFFFFF".hexToByteArray())
+		}
 	}
 
 	@Test

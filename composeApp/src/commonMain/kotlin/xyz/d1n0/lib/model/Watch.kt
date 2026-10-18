@@ -92,7 +92,7 @@ class Watch @OptIn(ExperimentalKableApi::class) constructor(
 	internal val _info = MutableStateFlow(WatchInfo())
 	val info: StateFlow<WatchInfo> = _info.asStateFlow()
 
-	internal val _clocks = MutableStateFlow(ClocksSettings())
+	internal val _clocks = MutableStateFlow(ClocksSettings.empty(model.clockCount))
 	val clocks: StateFlow<ClocksSettings> get() = _clocks.asStateFlow()
 
 	/** Last clocks packet parse failure since clocks were requested, so waits can fail fast. */
@@ -104,7 +104,7 @@ class Watch @OptIn(ExperimentalKableApi::class) constructor(
 	internal val _timer = MutableStateFlow(TimerSettings())
 	val timer: StateFlow<TimerSettings> get() = _timer.asStateFlow()
 
-	internal val _reminders = MutableStateFlow(RemindersSettings())
+	internal val _reminders = MutableStateFlow(RemindersSettings.empty(model.reminderCount))
 	val reminders: StateFlow<RemindersSettings> = _reminders.asStateFlow()
 
 	/**

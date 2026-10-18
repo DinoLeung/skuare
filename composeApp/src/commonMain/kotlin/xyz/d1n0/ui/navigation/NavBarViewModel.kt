@@ -14,6 +14,11 @@ class NavBarViewModel : ViewModel(), KoinComponent {
 
 	val watchState: StateFlow<PeripheralState> get() = watch.state
 
+	/**
+	 * Tabs for the connected watch, without the ones for features it doesn't have.
+	 */
+	val navBarItems: List<NavBarItem> = navBarItemsFor(watch.model)
+
 	private val _disconnectEvents = MutableSharedFlow<Unit>()
 	val disconnectEvents: SharedFlow<Unit> = _disconnectEvents.asSharedFlow()
 

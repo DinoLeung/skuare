@@ -45,9 +45,13 @@ suspend fun Watch.writeName(watchName: WatchName) = write(watchName.packet).also
 suspend fun Watch.requestTimer() = request(OpCode.TIMER)
 suspend fun Watch.writeTimer(timer: Timer) = write(timer.packet).also { requestTimer() }
 
+/**
+ * Requests the clocks, one request per pair of clocks. The watch walks the pairs itself, a
+ * request past the last pair gets an error.
+ */
 suspend fun Watch.requestClocks() {
 	_clocksError.value = null
-	repeat(3) {
+	repeat((model.clockCount + 1) / 2) {
 		log.d { "requestClocks" }
 		request(OpCode.CLOCK)
 	}
@@ -71,7 +75,7 @@ suspend fun Watch.writeAlarms(alarmSettings: AlarmsSettings) {
 }
 
 suspend fun Watch.requestTimeZoneConfigs() {
-	for (i in 0..5) {
+	for (i in 0 until model.clockCount) {
 		request(OpCode.TIMEZONE_CONFIG, i)
 	}
 }
@@ -81,7 +85,7 @@ suspend fun Watch.writeTimeZoneConfigs(clocksSettings: ClocksSettings) =
 //        .also { requestTimeZoneConfigs() }
 
 suspend fun Watch.requestTimeZoneNames() {
-	for (i in 0..5) {
+	for (i in 0 until model.clockCount) {
 		request(OpCode.TIMEZONE_NAME, i)
 	}
 }
@@ -91,7 +95,7 @@ suspend fun Watch.writeTimeZoneNames(clocksSettings: ClocksSettings) =
 //        .also { requestTimeZoneNames() }
 
 suspend fun Watch.requestTimeZoneCoordinatesAndRadioId() {
-	for (i in 0..5) {
+	for (i in 0 until model.clockCount) {
 		request(OpCode.TIMEZONE_LOCATION_RADIO_ID, i)
 	}
 }
@@ -101,7 +105,7 @@ suspend fun Watch.writeTimeZoneCoordinatesAndRadioId(clocksSettings: ClocksSetti
 //        .also { requestTimeZoneNames() }
 
 suspend fun Watch.requestReminderTitles() {
-	for (i in 1..5) {
+	for (i in 1..model.reminderCount) {
 		request(OpCode.REMINDER_TITLE, i)
 	}
 }
@@ -111,7 +115,7 @@ suspend fun Watch.writeReminderTitles(remindersSettings: RemindersSettings) =
 
 
 suspend fun Watch.requestReminderConfigs() {
-	for (i in 1..5) {
+	for (i in 1..model.reminderCount) {
 		request(OpCode.REMINDER_CONFIG, i)
 	}
 }
@@ -135,12 +139,13 @@ suspend fun Watch.writeReminderConfigs(remindersSettings: RemindersSettings) =
  * Packets are built by each write as it runs, so if one cannot be built (e.g. an uninitialized
  * clock) the update session has already started and is left open.
  *
- * @param clocksSettings The clocks to write, all six clocks must be initialized.
- * @return A [Result] that fails if a packet could not be built or written, or if requesting
- *         clocks afterwards fails.
+ * @param clocksSettings The clocks to write, all clocks must be initialized.
+ * @return A [Result] that fails if a packet could not be built or written, if requesting
+ *         clocks afterwards fails, or if the watch doesn't support clock writes yet.
  */
 suspend fun Watch.writeClocksTimezones(clocksSettings: ClocksSettings) =
 	runCatching {
+		checkClockWritesSupported()
 		startClockUpdateSession()
 		writeClocks(clocksSettings)
 		writeTimeZoneConfigs(clocksSettings)
@@ -167,6 +172,9 @@ suspend fun Watch.writeClocksTimezones(clocksSettings: ClocksSettings) =
  * 3. Optionally writes time zone radio configuration and coordinates.
  * 4. Sends the current date and time (optionally delayed) to the watch.
  *
+ * Fails after reading the clocks if the watch doesn't support clock writes yet, so the clocks
+ * are still read on connect.
+ *
  * @param delay Optional delay to apply to the current time before syncing (default is 0).
  * @param writeTimezoneMetadata If true, timezone metadata will also be written (default is false).
  */
@@ -181,6 +189,7 @@ suspend fun Watch.adjustTime(delay: Duration = 0.seconds, writeTimezoneMetadata:
 				}
 			} ?: throw IllegalStateException("Timeout waiting for clocks initialization")
 		}
+		checkClockWritesSupported()
 		writeClocks(clocks.value)
 		writeTimeZoneConfigs(clocks.value)
 		writeTimeZoneNames(clocks.value)
@@ -191,6 +200,15 @@ suspend fun Watch.adjustTime(delay: Duration = 0.seconds, writeTimezoneMetadata:
 	}.onFailure { error ->
 		log.e { "Error syncing time: ${error.message}" }
 	}
+
+/**
+ * Clock writes on [WatchModel.MIP_SQUARE] would drop the unknown 0x04 clock flag bit and skip the
+ * short city names, so they are off until those are handled, see bx5600-time-sync-plan.md.
+ *
+ * @throws IllegalStateException if the watch doesn't support clock writes yet.
+ */
+private fun Watch.checkClockWritesSupported() =
+	check(model != WatchModel.MIP_SQUARE) { "Writing clocks to $model watches is not supported yet" }
 
 suspend fun Watch.startClockUpdateSession() = write(ClocksSettings.clocksUpdateSessionStartPacket)
 

@@ -40,13 +40,15 @@ fun NavBarScaffold(
 	val remindersViewModel = koinViewModel<RemindersScreenViewModel>()
 	val settingsViewModel = koinViewModel<SettingsScreenViewModel>()
 
+	val navBarItems = viewModel.navBarItems
+	// only screens with a tab, so a hidden screen is never saved
 	val saveableScreens: Map<NavBarRoute, SaveableScreen> = mapOf(
 		NavBarRoute.Clocks to clocksViewModel,
 		NavBarRoute.Alarms to alarmsViewModel,
 		NavBarRoute.Timer to timerViewModel,
 		NavBarRoute.Reminders to remindersViewModel,
 		NavBarRoute.Settings to settingsViewModel,
-	)
+	).filterKeys { route -> navBarItems.any { it.route == route } }
 	val saveStates = saveableScreens.mapValues { (_, screen) ->
 		screen.saveState.collectAsState().value
 	}
