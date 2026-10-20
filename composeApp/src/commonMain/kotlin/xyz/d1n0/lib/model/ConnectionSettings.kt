@@ -27,7 +27,6 @@ data class ConnectionSettings(
 			require(packet.size == 15) {
 				"Auto Sync Settings packet must be exactly 15 bytes long, e.g. 11 0F 0F 0F 06 00 50 00 04 00 01 00 00 20 03"
 			}
-			packet[12].toInt() and AutoSyncBitmask.DISABLE == 0
 			return ConnectionSettings(
 				autoSyncEnable = packet[12].toInt() and AutoSyncBitmask.DISABLE == 0,
 				autoSyncDelay = AutoSyncDelay.fromByte(packet[13]),

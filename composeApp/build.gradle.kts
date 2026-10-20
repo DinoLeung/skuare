@@ -1,3 +1,4 @@
+import com.android.build.api.dsl.ApplicationExtension
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -93,7 +94,7 @@ kotlin {
 	}
 }
 
-android {
+extensions.configure<ApplicationExtension> {
 	namespace = "xyz.d1n0"
 	compileSdk = libs.versions.android.compileSdk.get().toInt()
 
@@ -101,8 +102,8 @@ android {
 		applicationId = "xyz.d1n0"
 		minSdk = libs.versions.android.minSdk.get().toInt()
 		targetSdk = libs.versions.android.targetSdk.get().toInt()
-		versionCode = 1
-		versionName = "1.0"
+		versionCode = 2
+		versionName = "0.0.1"
 	}
 	packaging {
 		resources {
