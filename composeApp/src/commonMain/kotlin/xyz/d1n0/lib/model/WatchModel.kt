@@ -22,20 +22,21 @@ enum class WatchModel(
 
 	companion object {
 		private val models = mapOf(
-			"GMW-B5000" to CLASSIC_SQUARE,  // modules 3459, 3539
-			"GW-B5600" to CLASSIC_SQUARE,   // modules 3461, 3540
-			"GW-BX5600" to MIP_SQUARE,      // module 3578
-			"GMW-BZ5000" to MIP_SQUARE,     // module 3575
+			"B5000" to CLASSIC_SQUARE,  // modules 3459, 3539
+			"B5600" to CLASSIC_SQUARE,  // modules 3461, 3540
+			"BX5600" to MIP_SQUARE,     // module 3578
+			"BZ5000" to MIP_SQUARE,     // module 3575
 		)
 
 		/**
-		 * Finds the model by exact match on the name without the leading "CASIO " and the
-		 * trailing #. The # only marks newer modules of the same model, e.g. CASIO GMW-B5000#.
+		 * Finds the model by exact match on the part after the last hyphen. The family prefix is
+		 * ignored, so GMW-B5000 is matched as B5000. A trailing # only marks newer modules of the
+		 * same model, e.g. CASIO GMW-B5000#.
 		 *
 		 * @param name Name the watch advertises, e.g. CASIO GW-BX5600.
 		 * @return The model, or null if the name is unknown or null.
 		 */
 		fun fromAdvertisedName(name: String?): WatchModel? =
-			name?.removePrefix("CASIO ")?.removeSuffix("#")?.let { models[it] }
+			name?.removeSuffix("#")?.substringAfterLast('-')?.let { models[it] }
 	}
 }

@@ -22,6 +22,12 @@ class WatchModelTest {
 	}
 
 	@Test
+	fun ignoresFamilyPrefix() {
+		assertEquals(WatchModel.CLASSIC_SQUARE, WatchModel.fromAdvertisedName("CASIO OTHER-B5000"))
+		assertEquals(WatchModel.MIP_SQUARE, WatchModel.fromAdvertisedName("CASIO OTHER-BX5600#"))
+	}
+
+	@Test
 	fun returnsNullForUnknownNames() {
 		assertNull(WatchModel.fromAdvertisedName(null))
 		assertNull(WatchModel.fromAdvertisedName("CASIO GA-B2100"))
