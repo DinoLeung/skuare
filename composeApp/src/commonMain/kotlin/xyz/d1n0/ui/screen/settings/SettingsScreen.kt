@@ -152,7 +152,7 @@ private fun SettingsScreenContent(
 		item {
 			CardView(
 				modifier = Modifier.fillMaxWidth(),
-				title = { Text(("Timer Adjustment")) }
+				title = { Text(("Time Adjustment")) }
 			) {
 				Column {
 					SwitchField(
