@@ -14,14 +14,14 @@ object WatchNotifications {
 	 * Ongoing notification of [WatchSyncService]. Immediate foreground-service behavior prevents
 	 * Android from deferring its display during a short connection.
 	 */
-	fun connected(context: Context, advertisedName: String?): Notification =
-		connectionNotification(context, "Connected to ${advertisedName ?: "watch"}")
+	fun connected(context: Context, name: String?): Notification =
+		connectionNotification(context, "Connected to ${name ?: "watch"}")
 
 	fun syncing(context: Context): Notification = connectionNotification(context, "Syncing time")
 
-	fun updateConnected(context: Context, advertisedName: String?) {
+	fun updateConnected(context: Context, name: String?) {
 		context.getSystemService(NotificationManager::class.java)
-			.notify(CONNECTION_ID, connected(context, advertisedName))
+			.notify(CONNECTION_ID, connected(context, name))
 	}
 
 	fun updateSyncing(context: Context) {

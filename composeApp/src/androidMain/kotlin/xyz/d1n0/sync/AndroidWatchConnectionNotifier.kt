@@ -9,17 +9,21 @@ class AndroidWatchConnectionNotifier(context: Context) : WatchConnectionNotifier
 	@Volatile
 	private var connectionActive = false
 
-	override fun connectionStarted(advertisedName: String?) {
+	override fun connectionStarted(name: String?) {
 		connectionActive = true
-		WatchSyncService.showConnected(applicationContext, advertisedName)
+		WatchSyncService.showConnected(applicationContext, name)
+	}
+
+	override fun connectionNameUpdated(name: String?) {
+		if (connectionActive) WatchNotifications.updateConnected(applicationContext, name)
 	}
 
 	override fun timeSyncStarted() {
 		if (connectionActive) WatchNotifications.updateSyncing(applicationContext)
 	}
 
-	override fun timeSyncFinished(advertisedName: String?) {
-		if (connectionActive) WatchNotifications.updateConnected(applicationContext, advertisedName)
+	override fun timeSyncFinished(name: String?) {
+		if (connectionActive) WatchNotifications.updateConnected(applicationContext, name)
 	}
 
 	override fun connectionEnded() {

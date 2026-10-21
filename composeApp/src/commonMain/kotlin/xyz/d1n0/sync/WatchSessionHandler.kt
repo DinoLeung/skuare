@@ -256,11 +256,12 @@ class WatchSessionHandler(
 	 * @return Why the time adjustment failed, null if it succeeded.
 	 */
 	private suspend fun adjustTimeAndRecord(watch: ConnectedWatch, address: String?): Throwable? {
+		val connectionName = watchConnectionName(watch, address)
 		connectionNotifier.timeSyncStarted()
 		val error = try {
 			watch.adjustTime().exceptionOrNull()
 		} finally {
-			connectionNotifier.timeSyncFinished(watch.advertisedName)
+			connectionNotifier.timeSyncFinished(connectionName)
 		}
 		address?.let {
 			pairedWatchRepository.recordSync(
@@ -306,6 +307,7 @@ class WatchSessionHandler(
 	private suspend fun ConnectedWatch.queryName() {
 		runCatching { query(OpCode.WATCH_NAME) }
 			.onFailure { log.w { "Failed to read watch name: ${it.message}" } }
+		connectionNotifier.connectionNameUpdated(watchConnectionName(this, info.value.address))
 	}
 
 	/**
@@ -313,6 +315,12 @@ class WatchSessionHandler(
 	 */
 	private fun watchDisplayName(watch: ConnectedWatch): String? =
 		watch.info.value.name?.value?.takeIf { it.isNotBlank() }
+
+	/** Live watch name, falling back to its stored display name and then advertised model name. */
+	private suspend fun watchConnectionName(watch: ConnectedWatch, address: String?): String? =
+		watchDisplayName(watch)
+			?: address?.let { pairedWatchRepository.find(it)?.displayName?.takeIf { name -> name.isNotBlank() } }
+			?: watch.advertisedName
 
 	private fun holdForApp(watch: ConnectedWatch) {
 		_pendingForegroundWatch.value = watch

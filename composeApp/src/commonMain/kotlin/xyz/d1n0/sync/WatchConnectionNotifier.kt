@@ -7,22 +7,26 @@ package xyz.d1n0.sync
  * [None] until they have an equivalent implementation.
  */
 interface WatchConnectionNotifier {
-	/** Called immediately before the BLE connection attempt starts. */
-	fun connectionStarted(advertisedName: String?)
+	/** Called immediately before the BLE connection attempt starts with its best known name. */
+	fun connectionStarted(name: String?)
+
+	/** Updates the connected message after the user-defined watch name has been read. */
+	fun connectionNameUpdated(name: String?)
 
 	/** Called immediately before the watch time is adjusted. */
 	fun timeSyncStarted()
 
 	/** Restores the connected state after the time adjustment finishes. */
-	fun timeSyncFinished(advertisedName: String?)
+	fun timeSyncFinished(name: String?)
 
 	/** Called after the BLE connection ends or its connection attempt fails. */
 	fun connectionEnded()
 
 	object None : WatchConnectionNotifier {
-		override fun connectionStarted(advertisedName: String?) = Unit
+		override fun connectionStarted(name: String?) = Unit
+		override fun connectionNameUpdated(name: String?) = Unit
 		override fun timeSyncStarted() = Unit
-		override fun timeSyncFinished(advertisedName: String?) = Unit
+		override fun timeSyncFinished(name: String?) = Unit
 		override fun connectionEnded() = Unit
 	}
 }

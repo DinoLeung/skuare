@@ -9,6 +9,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import xyz.d1n0.Log
+import xyz.d1n0.data.repository.PairedWatchRepository
 import xyz.d1n0.lib.model.Watch
 import xyz.d1n0.sync.WatchConnectionNotifier
 
@@ -18,6 +19,7 @@ import xyz.d1n0.sync.WatchConnectionNotifier
  */
 class WatchConnectionManager(
 	private val connectionNotifier: WatchConnectionNotifier = WatchConnectionNotifier.None,
+	private val pairedWatchRepository: PairedWatchRepository? = null,
 ) {
 	private val log = Log
 
@@ -76,9 +78,14 @@ class WatchConnectionManager(
 		)
 
 	@OptIn(ExperimentalKableApi::class)
+	@Suppress("REDUNDANT_CALL_OF_CONVERSION_METHOD") // Android Identifier is a String; other targets are not.
 	private suspend fun connectPeripheral(peripheral: Peripheral, advertisedName: String? = peripheral.name): Watch {
 		val watch = Watch(peripheral, advertisedName)
-		connectionNotifier.connectionStarted(advertisedName)
+		val notificationName = resolveInitialNotificationName(
+			identifier = peripheral.identifier.toString(),
+			peripheralName = peripheral.name,
+		)
+		connectionNotifier.connectionStarted(notificationName)
 		runCatching { watch.connect() }
 			.onFailure {
 				connectionNotifier.connectionEnded()
@@ -87,6 +94,13 @@ class WatchConnectionManager(
 			.getOrThrow()
 		return watch
 	}
+
+	internal suspend fun resolveInitialNotificationName(identifier: String, peripheralName: String?): String? =
+		pairedWatchRepository
+			?.find(identifier.uppercase())
+			?.displayName
+			?.takeIf { it.isNotBlank() }
+			?: peripheralName
 
 	/**
 	 * Disconnects the current watch, if there is one. It is dropped from [watch] once disconnected.
