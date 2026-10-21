@@ -50,12 +50,11 @@ internal class SingleConnectionSlot<T>(
 		_value.value = value
 		scope.launch {
 			awaitDisconnected(value)
-			onDisconnected()
-			release(value)
+			if (release(value)) onDisconnected()
 		}
 	}
 
-	private fun release(value: T) {
-		if (_value.compareAndSet(value, null)) close(value)
+	private fun release(value: T): Boolean = _value.compareAndSet(value, null).also { released ->
+		if (released) close(value)
 	}
 }

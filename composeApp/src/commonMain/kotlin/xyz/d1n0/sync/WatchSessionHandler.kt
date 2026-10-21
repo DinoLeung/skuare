@@ -71,6 +71,7 @@ class WatchSessionHandler(
 	private val pairedWatchRepository: PairedWatchRepository,
 	private val installationRepository: InstallationRepository,
 	private val presenceMonitor: WatchPresenceMonitor,
+	private val connectionNotifier: WatchConnectionNotifier = WatchConnectionNotifier.None,
 ) {
 	private val log = Log
 
@@ -90,7 +91,7 @@ class WatchSessionHandler(
 	fun takePendingForegroundWatch(): ConnectedWatch? = _pendingForegroundWatch.getAndUpdate { null }
 
 	/**
-	 * Gives up on [pendingForegroundWatch] and disconnects it, e.g. the notification was dismissed.
+	 * Gives up on [pendingForegroundWatch] and disconnects it.
 	 */
 	suspend fun dropPendingForegroundWatch() {
 		takePendingForegroundWatch()?.let { runCatching { it.disconnect() } }
@@ -255,7 +256,12 @@ class WatchSessionHandler(
 	 * @return Why the time adjustment failed, null if it succeeded.
 	 */
 	private suspend fun adjustTimeAndRecord(watch: ConnectedWatch, address: String?): Throwable? {
-		val error = watch.adjustTime().exceptionOrNull()
+		connectionNotifier.timeSyncStarted()
+		val error = try {
+			watch.adjustTime().exceptionOrNull()
+		} finally {
+			connectionNotifier.timeSyncFinished(watch.advertisedName)
+		}
 		address?.let {
 			pairedWatchRepository.recordSync(
 				address = it,

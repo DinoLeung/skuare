@@ -27,7 +27,7 @@ Manager), this is what's left for iOS. Written 2026-10-17, nothing here is imple
   and repositories.
 - The pairing screen already takes `pendingForegroundWatch` and opens the watch screens.
 
-iOS needs its own `WatchPresenceMonitor`, the background trigger, and the "open skuare" prompt.
+iOS needs its own `WatchPresenceMonitor` and background trigger.
 
 ## Approach
 
@@ -37,9 +37,8 @@ iOS needs its own `WatchPresenceMonitor`, the background trigger, and the "open 
 - A pending connect to each paired watch. CoreBluetooth connect requests don't time out, iOS
   connects when the watch advertises and wakes the app.
 - On connect, run `WatchSessionHandler.runBackground` with that peripheral.
-- `OpenAppRequested` (lower-left long press): post a local notification (`UNUserNotificationCenter`)
-  that opens the app, the pairing screen then takes the waiting watch. Remove it once
-  `pendingForegroundWatch` clears, dismissing it should call `dropPendingForegroundWatch()`.
+- `OpenAppRequested` (lower-left long press): keep the watch in `pendingForegroundWatch`; if the
+  user opens the app themselves, the pairing screen takes the waiting watch.
 - `WatchPresenceMonitor.register` / `unregister` start and cancel the pending connect.
 - Once `isSupported` is true, the pairing screen also asks for notification permission.
 

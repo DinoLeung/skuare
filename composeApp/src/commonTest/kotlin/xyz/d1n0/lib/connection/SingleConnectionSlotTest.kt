@@ -59,6 +59,22 @@ class SingleConnectionSlotTest {
 	}
 
 	@Test
+	fun replacedValueDisconnectingLateDoesNotReleaseCurrentValue() = runTest {
+		val first = FakeConnection()
+		val second = FakeConnection()
+		var observed = 0
+		val slot = slot { observed++ }
+		slot.replace { first }
+		slot.replace { second }
+
+		first.disconnected.complete(Unit)
+		runCurrent()
+
+		assertTrue(slot.value.value === second)
+		assertEquals(0, observed)
+	}
+
+	@Test
 	fun connectIfIdleRejectsSecondConnectionWithoutCreatingIt() = runTest {
 		val first = FakeConnection()
 		val slot = slot()

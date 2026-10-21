@@ -97,6 +97,26 @@ class WatchSessionHandlerTest {
 		}
 	}
 
+	private class FakeConnectionNotifier : WatchConnectionNotifier {
+		val events = mutableListOf<String>()
+
+		override fun connectionStarted(advertisedName: String?) {
+			events += "connected:$advertisedName"
+		}
+
+		override fun timeSyncStarted() {
+			events += "syncing"
+		}
+
+		override fun timeSyncFinished(advertisedName: String?) {
+			events += "connected:$advertisedName"
+		}
+
+		override fun connectionEnded() {
+			events += "disconnected"
+		}
+	}
+
 	private class FakeConnectedWatch(
 		override val advertisedName: String? = "CASIO GMW-B5000#",
 		address: String? = ADDRESS,
@@ -162,11 +182,13 @@ class WatchSessionHandlerTest {
 		val dao = FakePairedWatchDao()
 		val repository = PairedWatchRepository(dao)
 		val presenceMonitor = FakePresenceMonitor()
+		val connectionNotifier = FakeConnectionNotifier()
 		val handler = WatchSessionHandler(
 			connectionManager = WatchConnectionManager(),
 			pairedWatchRepository = repository,
 			installationRepository = InstallationRepository(FakeAppConfigDao(OUR_APP_INFO)),
 			presenceMonitor = presenceMonitor,
+			connectionNotifier = connectionNotifier,
 		)
 
 		suspend fun pair(
@@ -200,6 +222,10 @@ class WatchSessionHandlerTest {
 		assertEquals(42, stored.platformAssociationId)
 		assertNotNull(stored.lastSyncAt)
 		assertNull(stored.lastSyncError)
+		assertEquals(
+			listOf("syncing", "connected:CASIO GMW-B5000#"),
+			fixture.connectionNotifier.events,
+		)
 	}
 
 	@Test
@@ -297,6 +323,10 @@ class WatchSessionHandlerTest {
 		assertTrue(synced.error === failure)
 		assertEquals("write failed", fixture.repository.find(ADDRESS)?.lastSyncError)
 		assertEquals(1, watch.disconnectCount)
+		assertEquals(
+			listOf("syncing", "connected:CASIO GMW-B5000#"),
+			fixture.connectionNotifier.events,
+		)
 	}
 
 	@Test

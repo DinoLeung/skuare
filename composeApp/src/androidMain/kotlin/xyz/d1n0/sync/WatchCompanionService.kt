@@ -22,7 +22,9 @@ class WatchCompanionService : CompanionDeviceService(), KoinComponent {
 	override fun onDeviceAppeared(associationInfo: AssociationInfo) {
 		// API 36+ calls this too, next to onDevicePresenceEvent, also when the app itself connects
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) return
-		associationInfo.deviceMacAddress?.let { startSync(it.toString()) }
+		associationInfo.deviceMacAddress?.let {
+			startSync(it.toString(), associationInfo.displayName?.toString())
+		}
 	}
 
 	@RequiresApi(Build.VERSION_CODES.BAKLAVA)
@@ -30,13 +32,16 @@ class WatchCompanionService : CompanionDeviceService(), KoinComponent {
 		if (event.event != DevicePresenceEvent.EVENT_BLE_APPEARED) return
 		getSystemService(CompanionDeviceManager::class.java).myAssociations
 			.firstOrNull { it.id == event.associationId }
-			?.deviceMacAddress
-			?.let { startSync(it.toString()) }
+			?.let { association ->
+				association.deviceMacAddress?.let {
+					startSync(it.toString(), association.displayName?.toString())
+				}
+			}
 	}
 
-	private fun startSync(address: String) {
+	private fun startSync(address: String, advertisedName: String?) {
 		log.d { "Watch appeared: $address" }
-		runCatching { WatchSyncService.start(this, address.uppercase()) }
+		runCatching { WatchSyncService.start(this, address.uppercase(), advertisedName) }
 			.onFailure { log.e { "Failed to start background sync for $address: ${it.message}" } }
 	}
 }

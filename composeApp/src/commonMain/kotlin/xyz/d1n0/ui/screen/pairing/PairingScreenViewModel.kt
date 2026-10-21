@@ -127,7 +127,7 @@ class PairingScreenViewModel(
 		}
 		if (_state.value.scanPermissionState != PermissionState.Granted) requestScanPermission()
 		if (_state.value.connectPermissionState != PermissionState.Granted) requestConnectionPermission()
-		// optional, only the "open skuare" prompt after a lower-left long press needs it
+		// Required for Android to show the ongoing connection notification in the notification shade.
 		if (presenceMonitor.isSupported && !hasRequestedNotificationPermission) requestNotificationPermission()
 	}
 

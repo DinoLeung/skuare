@@ -10,12 +10,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import xyz.d1n0.Log
 import xyz.d1n0.lib.model.Watch
+import xyz.d1n0.sync.WatchConnectionNotifier
 
 /**
  * Owns the connection to the watch. It is the only place that creates or drops a [Watch], so the
  * UI and background sync never connect to a watch at the same time.
  */
-class WatchConnectionManager {
+class WatchConnectionManager(
+	private val connectionNotifier: WatchConnectionNotifier = WatchConnectionNotifier.None,
+) {
 	private val log = Log
 
 	private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
@@ -24,7 +27,10 @@ class WatchConnectionManager {
 		disconnect = Watch::disconnect,
 		awaitDisconnected = { watch -> watch.state.first { it is State.Disconnected } },
 		close = Watch::close,
-		onDisconnected = { log.d { "Watch disconnected" } },
+		onDisconnected = {
+			connectionNotifier.connectionEnded()
+			log.d { "Watch disconnected" }
+		},
 	)
 
 	/**
@@ -72,8 +78,12 @@ class WatchConnectionManager {
 	@OptIn(ExperimentalKableApi::class)
 	private suspend fun connectPeripheral(peripheral: Peripheral, advertisedName: String? = peripheral.name): Watch {
 		val watch = Watch(peripheral, advertisedName)
+		connectionNotifier.connectionStarted(advertisedName)
 		runCatching { watch.connect() }
-			.onFailure { watch.close() }
+			.onFailure {
+				connectionNotifier.connectionEnded()
+				watch.close()
+			}
 			.getOrThrow()
 		return watch
 	}

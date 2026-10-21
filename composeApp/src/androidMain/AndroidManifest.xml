@@ -21,7 +21,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
 
-    <!-- "open skuare" prompt after a lower-left long press while the app is closed -->
+    <!-- Ongoing watch connection status -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
@@ -55,12 +55,8 @@
         <service
             android:name=".sync.WatchSyncService"
             android:exported="false"
-            android:foregroundServiceType="connectedDevice" />
-
-        <receiver
-            android:name=".sync.OpenAppPromptDismissedReceiver"
-            android:exported="false" />
-
+            android:foregroundServiceType="connectedDevice"
+            android:stopWithTask="false" />
     </application>
 
 </manifest>
