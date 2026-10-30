@@ -19,12 +19,13 @@ fun SingleDatePickerDialog(
 	onConfirm: (LocalDate) -> Unit,
 	onDismiss: () -> Unit,
 ) {
-	val state = rememberDatePickerState(
-		initialSelectedDateMillis = date.toMillis(),
-		yearRange = IntRange(2000, 2099)
-	)
-
 	if (visible) {
+		// created on open so the picker starts from the current date, not the one from the first composition
+		val state = rememberDatePickerState(
+			initialSelectedDateMillis = date.toMillis(),
+			yearRange = IntRange(2000, 2099)
+		)
+
 		DatePickerDialog(
 			modifier = Modifier.wrapContentSize(),
 			onDismissRequest = { onDismiss() },

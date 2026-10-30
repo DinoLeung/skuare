@@ -19,13 +19,13 @@ fun TimePickerDialog(
 	onConfirm: (LocalTime) -> Unit,
 	onDismiss: () -> Unit,
 ) {
-	val state = rememberTimePickerState(
-		initialHour = time.hour,
-		initialMinute = time.minute,
-		is24Hour = true
-	)
-
 	if (visible) {
+		val state = rememberTimePickerState(
+			initialHour = time.hour,
+			initialMinute = time.minute,
+			is24Hour = true
+		)
+
 		BasicAlertDialog(
 			onDismissRequest = onDismiss,
 			modifier = Modifier.wrapContentSize(),

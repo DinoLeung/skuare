@@ -1,14 +1,11 @@
 package xyz.d1n0.lib.model
 
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.toLocalDateTime
 import xyz.d1n0.lib.constant.ReminderBitmask
 import xyz.d1n0.lib.constant.ReminderDayOfWeek
 import xyz.d1n0.lib.constant.ReminderRecurrence
 import xyz.d1n0.lib.helper.fromBcdByteArray
 import xyz.d1n0.lib.helper.toBcdByteArray
-import kotlin.time.Clock as KotlinClock
-import kotlinx.datetime.TimeZone as KotlinTimeZone
 
 data class ReminderConfig(
 	val enable: Boolean,
@@ -18,20 +15,19 @@ data class ReminderConfig(
 	val daysOfWeek: Set<ReminderDayOfWeek>,
 ) {
 	companion object {
+		// the date the watch shows for a reminder that was never set, also the earliest it supports
+		val DEFAULT_DATE = LocalDate(year = 2000, month = 1, day = 1)
+
 		fun fromBytes(bytes: ByteArray): ReminderConfig {
 			require(bytes.size == 9) { "Reminder Config bytes must be exactly 9 bytes long, e.g. 11 25 03 25 25 03 25 12 00" }
 
 			val startDate = runCatching {
 				LocalDate.fromBcdByteArray(bytes.sliceArray(1..3))
-			}.getOrElse {
-				KotlinClock.System.now().toLocalDateTime(KotlinTimeZone.currentSystemDefault()).date
-			}
+			}.getOrElse { DEFAULT_DATE }
 
 			val endDate = runCatching {
 				LocalDate.fromBcdByteArray(bytes.sliceArray(4..6))
-			}.getOrElse {
-				KotlinClock.System.now().toLocalDateTime(KotlinTimeZone.currentSystemDefault()).date
-			}
+			}.getOrElse { DEFAULT_DATE }
 
 			return ReminderConfig(
 				enable = bytes[0].toInt() and ReminderBitmask.ENABLE != 0,

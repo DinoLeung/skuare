@@ -58,6 +58,14 @@ class RemindersSettingsTest {
 	}
 
 	@Test
+	fun unsetDatesFallBackToWatchDefault() {
+		val parsed = ReminderConfig.fromBytes("000000000000000000".hexToByteArray())
+
+		assertEquals(ReminderConfig.DEFAULT_DATE, parsed.startDate)
+		assertEquals(ReminderConfig.DEFAULT_DATE, parsed.endDate)
+	}
+
+	@Test
 	fun configRejectsInvalidLength() {
 		assertFailsWith<IllegalArgumentException> { ReminderConfig.fromBytes(ByteArray(8)) }
 	}

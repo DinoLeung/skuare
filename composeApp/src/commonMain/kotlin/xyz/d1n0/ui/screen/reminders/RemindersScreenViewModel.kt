@@ -266,8 +266,8 @@ private val defaultReminderConfigs = List(5) {
 	ReminderConfig(
 		enable = false,
 		recurrence = ReminderRecurrence.ONCE,
-		startDate = LocalDate(year = 2000, month = 1, day = 1),
-		endDate = LocalDate(year = 2000, month = 1, day = 1),
+		startDate = ReminderConfig.DEFAULT_DATE,
+		endDate = ReminderConfig.DEFAULT_DATE,
 		daysOfWeek = setOf()
 	)
 }
