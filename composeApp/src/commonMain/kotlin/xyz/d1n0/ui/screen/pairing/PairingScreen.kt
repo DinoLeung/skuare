@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -35,6 +36,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import xyz.d1n0.data.database.PairedWatch
 import xyz.d1n0.ui.component.PairedWatchCard
+import xyz.d1n0.ui.component.appVersion
 import kotlin.time.Instant
 import xyz.d1n0.ui.theme.SkuareTheme
 
@@ -74,6 +76,19 @@ private fun PairingScreenContent(
 	onOpenSettings: () -> Unit,
 ) {
 	Scaffold(
+		// the FAB sits above the bottom bar, so the version stays visible in the corner
+		bottomBar = {
+			Text(
+				text = appVersion(),
+				style = MaterialTheme.typography.labelSmall,
+				color = MaterialTheme.colorScheme.onSurfaceVariant,
+				textAlign = TextAlign.End,
+				modifier = Modifier
+					.fillMaxWidth()
+					.navigationBarsPadding()
+					.padding(horizontal = 16.dp, vertical = 4.dp),
+			)
+		},
 		floatingActionButton = {
 			when {
 				!state.isPermissionGranted -> Unit
