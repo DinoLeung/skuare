@@ -110,8 +110,20 @@ extensions.configure<ApplicationExtension> {
 			excludes += "/META-INF/{AL2.0,LGPL2.1}"
 		}
 	}
+	signingConfigs {
+		// Only set in CI (see .github/workflows/release.yml); local builds stay unsigned
+		System.getenv("UPLOAD_KEYSTORE_PATH")?.let { path ->
+			create("release") {
+				storeFile = file(path)
+				storePassword = System.getenv("UPLOAD_KEYSTORE_PASSWORD")
+				keyAlias = System.getenv("UPLOAD_KEY_ALIAS")
+				keyPassword = System.getenv("UPLOAD_KEY_PASSWORD")
+			}
+		}
+	}
 	buildTypes {
 		getByName("release") {
+			signingConfig = signingConfigs.findByName("release")
 			isMinifyEnabled = true
 			isShrinkResources = true
 			proguardFiles(

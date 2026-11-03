@@ -1,0 +1,74 @@
+name: "Release"
+
+on:
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+-rc[0-9]+'
+
+permissions:
+  contents: write
+
+env:
+  # Play track for -rc tags: alpha = closed testing, beta = open testing
+  PLAY_TESTING_TRACK: alpha
+
+jobs:
+  unit-test:
+    uses: ./.github/workflows/unit-test.yml
+  release:
+    needs: unit-test
+    runs-on: ubuntu-latest
+    environment: playstore
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 21
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Verify tag matches versionName
+        run: |
+          v=$(grep -oP 'versionName = "\K[^"]+' composeApp/build.gradle.kts)
+          [ "$v" = "$GITHUB_REF_NAME" ] || { echo "Tag $GITHUB_REF_NAME does not match versionName $v"; exit 1; }
+      - name: Pick release channel
+        id: channel
+        run: |
+          if [[ "$GITHUB_REF_NAME" == *-rc* ]]; then
+            echo "track=$PLAY_TESTING_TRACK" >> "$GITHUB_OUTPUT"
+            echo "prerelease=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "track=production" >> "$GITHUB_OUTPUT"
+            echo "prerelease=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Decode upload keystore
+        run: echo "$UPLOAD_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/upload.jks"
+        env:
+          UPLOAD_KEYSTORE_BASE64: ${{ secrets.UPLOAD_KEYSTORE_BASE64 }}
+      - name: Build release bundle and APK
+        run: ./gradlew :composeApp:bundleRelease :composeApp:assembleRelease
+        env:
+          UPLOAD_KEYSTORE_PATH: ${{ runner.temp }}/upload.jks
+          UPLOAD_KEYSTORE_PASSWORD: ${{ secrets.UPLOAD_KEYSTORE_PASSWORD }}
+          UPLOAD_KEY_ALIAS: ${{ secrets.UPLOAD_KEY_ALIAS }}
+          UPLOAD_KEY_PASSWORD: ${{ secrets.UPLOAD_KEY_PASSWORD }}
+      - name: Upload to Google Play
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: xyz.d1n0
+          releaseFiles: composeApp/build/outputs/bundle/release/composeApp-release.aab
+          mappingFile: composeApp/build/outputs/mapping/release/mapping.txt
+          track: ${{ steps.channel.outputs.track }}
+          status: completed
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          prerelease: ${{ steps.channel.outputs.prerelease }}
+          files: |
+            composeApp/build/outputs/apk/release/composeApp-release.apk
+            composeApp/build/outputs/mapping/release/mapping.txt
