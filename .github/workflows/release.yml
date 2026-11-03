@@ -25,8 +25,6 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -48,19 +46,14 @@ jobs:
             echo "track=production" >> "$GITHUB_OUTPUT"
             echo "prerelease=false" >> "$GITHUB_OUTPUT"
           fi
-      - name: Generate Play release notes
+      - name: Copy Play release notes
         run: |
-          # Production notes cover everything since the last production release, skipping RCs
-          exclude=$([[ "$GITHUB_REF_NAME" == *-rc* ]] || echo '--exclude=*-rc*')
-          prev=$(git describe --tags --abbrev=0 $exclude "$GITHUB_REF_NAME^" 2>/dev/null || true)
+          # Committed by scripts/changelog.sh so F-Droid reads the same notes from the tag
+          code=$(grep -oP 'versionCode = \K[0-9]+' composeApp/build.gradle.kts)
+          notes=fastlane/metadata/android/en-US/changelogs/$code.txt
+          [ -f "$notes" ] || { echo "Missing $notes, run scripts/changelog.sh before tagging"; exit 1; }
           mkdir -p "$RUNNER_TEMP/whatsnew"
-          git log --no-merges --format='%s' "${prev:+$prev..}$GITHUB_REF_NAME" \
-            | grep -E '^(feat|fix)(\(.+\))?!?: ' \
-            | sed -E 's/^(feat|fix)(\(.+\))?!?: (.)/- \u\3/' \
-            | awk '{ n += length($0) + 1; if (n > 500) exit; print }' \
-            > "$RUNNER_TEMP/whatsnew/whatsnew-$PLAY_LOCALE"
-          [ -s "$RUNNER_TEMP/whatsnew/whatsnew-$PLAY_LOCALE" ] \
-            || echo "- Bug fixes and improvements" > "$RUNNER_TEMP/whatsnew/whatsnew-$PLAY_LOCALE"
+          cp "$notes" "$RUNNER_TEMP/whatsnew/whatsnew-$PLAY_LOCALE"
           cat "$RUNNER_TEMP/whatsnew/whatsnew-$PLAY_LOCALE"
       - name: Decode upload keystore
         run: echo "$UPLOAD_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/upload.jks"
