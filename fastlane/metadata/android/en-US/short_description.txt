@@ -1,0 +1,1 @@
+Offline companion app for G-Shock watches over Bluetooth

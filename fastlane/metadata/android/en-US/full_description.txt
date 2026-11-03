@@ -1,0 +1,18 @@
+Skuare is a minimal, open-source companion app for Casio G-Shock watches. It speaks the watch's Bluetooth protocol directly and never sends your data over the internet: the app has no network permission at all.
+
+<b>Features</b>
+<ul>
+<li>Pair through the Android companion device manager</li>
+<li>Automatic time adjustment in the background when the watch connects</li>
+<li>Home time and world time zones, including DST, coordinates and radio signal settings</li>
+<li>Alarms and hourly signal</li>
+<li>Timer</li>
+<li>Reminder titles and settings</li>
+<li>Watch settings: name, connection timeout, time adjustment, date and time display, power saving, backlight duration and auto backlight</li>
+</ul>
+
+<b>Tested modules</b>
+3459, 3461, 3539, 3540, 3575 and 3578.
+
+<b>Disclaimer</b>
+Skuare is an independent implementation and is not affiliated with, endorsed by, or sponsored by Casio Computer Co., Ltd. All brand names and trademarks are the property of their respective owners.
