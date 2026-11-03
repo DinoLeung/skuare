@@ -110,6 +110,11 @@ extensions.configure<ApplicationExtension> {
 			excludes += "/META-INF/{AL2.0,LGPL2.1}"
 		}
 	}
+	// F-Droid and IzzyOnDroid reject the dependency metadata block, it is encrypted with Google's key
+	dependenciesInfo {
+		includeInApk = false
+		includeInBundle = false
+	}
 	signingConfigs {
 		// Only set in CI (see .github/workflows/release.yml); local builds stay unsigned
 		System.getenv("UPLOAD_KEYSTORE_PATH")?.let { path ->
