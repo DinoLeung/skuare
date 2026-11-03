@@ -62,7 +62,7 @@ jobs:
           packageName: xyz.d1n0
           releaseFiles: composeApp/build/outputs/bundle/release/composeApp-release.aab
           mappingFile: composeApp/build/outputs/mapping/release/mapping.txt
-          track: ${{ steps.channel.outputs.track }}
+          tracks: ${{ steps.channel.outputs.track }}
           status: completed
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
