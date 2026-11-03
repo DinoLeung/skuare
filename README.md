@@ -56,7 +56,7 @@ excellent opportunity to learn JetBrains Compose Multiplatform and core BLE comm
 - [x] Time adjustment procedure
 - [x] Home timezone and world timezone
     - [x] Timezone names, info and DST settings
-        - Currently ignores outputs from the watch, it always use values from timezones lookup
+        - Currently ignores outputs from the watch, it always uses values from timezones lookup
           tables.
     - [x] Timezone gps coordinates and radio signal ID
         - For home time timezones, it tries to get coordinates from the equivalent world timezone.
@@ -78,7 +78,7 @@ excellent opportunity to learn JetBrains Compose Multiplatform and core BLE comm
 
 ## To be fixed
 
-- [ ] Handle multiple peripheral found when scanning for watches
+- [x] Handle multiple peripheral found when scanning for watches
 - [ ] Default data when invalid data received from watch, including timezone
 
 ## Disclaimer
