@@ -12,6 +12,8 @@ permissions:
 env:
   # Play track for -rc tags: alpha = closed testing, beta = open testing
   PLAY_TESTING_TRACK: alpha
+  # Must match the default language of the Play listing
+  PLAY_LOCALE: en-AU
 
 jobs:
   unit-test:
@@ -23,6 +25,8 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -44,6 +48,20 @@ jobs:
             echo "track=production" >> "$GITHUB_OUTPUT"
             echo "prerelease=false" >> "$GITHUB_OUTPUT"
           fi
+      - name: Generate Play release notes
+        run: |
+          # Production notes cover everything since the last production release, skipping RCs
+          exclude=$([[ "$GITHUB_REF_NAME" == *-rc* ]] || echo '--exclude=*-rc*')
+          prev=$(git describe --tags --abbrev=0 $exclude "$GITHUB_REF_NAME^" 2>/dev/null || true)
+          mkdir -p "$RUNNER_TEMP/whatsnew"
+          git log --no-merges --format='%s' "${prev:+$prev..}$GITHUB_REF_NAME" \
+            | grep -E '^(feat|fix)(\(.+\))?!?: ' \
+            | sed -E 's/^(feat|fix)(\(.+\))?!?: (.)/- \u\3/' \
+            | awk '{ n += length($0) + 1; if (n > 500) exit; print }' \
+            > "$RUNNER_TEMP/whatsnew/whatsnew-$PLAY_LOCALE"
+          [ -s "$RUNNER_TEMP/whatsnew/whatsnew-$PLAY_LOCALE" ] \
+            || echo "- Bug fixes and improvements" > "$RUNNER_TEMP/whatsnew/whatsnew-$PLAY_LOCALE"
+          cat "$RUNNER_TEMP/whatsnew/whatsnew-$PLAY_LOCALE"
       - name: Decode upload keystore
         run: echo "$UPLOAD_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/upload.jks"
         env:
@@ -64,6 +82,7 @@ jobs:
           mappingFile: composeApp/build/outputs/mapping/release/mapping.txt
           tracks: ${{ steps.channel.outputs.track }}
           status: completed
+          whatsNewDirectory: ${{ runner.temp }}/whatsnew
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
