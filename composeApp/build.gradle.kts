@@ -102,8 +102,8 @@ extensions.configure<ApplicationExtension> {
 		applicationId = "xyz.d1n0"
 		minSdk = libs.versions.android.minSdk.get().toInt()
 		targetSdk = libs.versions.android.targetSdk.get().toInt()
-		versionCode = 6
-		versionName = "0.0.5-rc1"
+		versionCode = 7
+		versionName = "0.0.5-rc2"
 	}
 	packaging {
 		resources {
