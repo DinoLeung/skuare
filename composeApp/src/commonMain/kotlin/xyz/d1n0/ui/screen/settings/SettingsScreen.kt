@@ -82,16 +82,18 @@ private fun SettingsScreenContent(
 							options = DateFormat.values().toSet(),
 							modifier = Modifier.weight(1f)
 						)
-						EnumDropdown(
-							label = "Weekday Language",
-							selectedOption = state.pendingWatchSettings.weekdayLanguage,
-							onOptionSelected = {
-								onEvent(SettingsUiEvent.WeekdayLanguageChange(it))
-							},
-							enabled = state.isWatchSettingsInitialized && state.isLoading == false,
-							options = WeekdayLanguage.values().toSet(),
-							modifier = Modifier.weight(1f)
-						)
+						if (state.hasWeekdayLanguage) {
+							EnumDropdown(
+								label = "Weekday Language",
+								selectedOption = state.pendingWatchSettings.weekdayLanguage,
+								onOptionSelected = {
+									onEvent(SettingsUiEvent.WeekdayLanguageChange(it))
+								},
+								enabled = state.isWatchSettingsInitialized && state.isLoading == false,
+								options = WeekdayLanguage.values().toSet(),
+								modifier = Modifier.weight(1f)
+							)
+						}
 					}
 					if (state.hasFontStyle) {
 						EnumDropdown(

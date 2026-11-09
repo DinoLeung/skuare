@@ -2,7 +2,9 @@ package xyz.d1n0.lib.model
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 class WatchModelTest {
 	@Test
@@ -25,6 +27,12 @@ class WatchModelTest {
 	fun ignoresFamilyPrefix() {
 		assertEquals(WatchModel.CLASSIC_SQUARE, WatchModel.fromAdvertisedName("CASIO OTHER-B5000"))
 		assertEquals(WatchModel.MIP_SQUARE, WatchModel.fromAdvertisedName("CASIO OTHER-BX5600#"))
+	}
+
+	@Test
+	fun onlyClassicSquareHasWeekdayLanguage() {
+		assertTrue(WatchModel.CLASSIC_SQUARE.hasWeekdayLanguage)
+		assertFalse(WatchModel.MIP_SQUARE.hasWeekdayLanguage)
 	}
 
 	@Test

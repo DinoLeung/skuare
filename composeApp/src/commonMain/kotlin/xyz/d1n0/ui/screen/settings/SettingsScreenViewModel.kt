@@ -51,6 +51,8 @@ data class SettingsUiState(
 	val pendingWatchSettingsError: Throwable? = null,
 	// Only watches with a font style setting, see [xyz.d1n0.lib.model.WatchModel.hasFontStyle]
 	val hasFontStyle: Boolean = false,
+	// Only watches that can change it, see [xyz.d1n0.lib.model.WatchModel.hasWeekdayLanguage]
+	val hasWeekdayLanguage: Boolean = true,
 
 	val isConnectionSettingsInitialized: Boolean = false,
 	val isConnectionSettingsLoading: Boolean = false,
@@ -104,7 +106,12 @@ class SettingsScreenViewModel : ViewModel(), KoinComponent, SaveableScreen {
 	private val log: Log by inject()
 	private val watchInfo: StateFlow<WatchInfo> = watch.info
 
-	private val _uiState = MutableStateFlow(SettingsUiState(hasFontStyle = watch.model.hasFontStyle))
+	private val _uiState = MutableStateFlow(
+		SettingsUiState(
+			hasFontStyle = watch.model.hasFontStyle,
+			hasWeekdayLanguage = watch.model.hasWeekdayLanguage,
+		)
+	)
 	val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
 
 	override val saveState: StateFlow<SaveState> = _uiState
