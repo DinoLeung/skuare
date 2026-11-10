@@ -1,26 +1,19 @@
 package xyz.d1n0.lib.model
 
 /**
- * What a watch model has, decided from the name it advertises, see [fromAdvertisedName].
+ * A watch model skuare knows, decided from the name it advertises, see [fromAdvertisedName].
  * The watch name from [xyz.d1n0.lib.constant.OpCode.WATCH_NAME] can't be used for this, the user
- * can set it to anything.
+ * can set it to anything. Other watches use a [CustomWatchModel].
  *
- * @property clockCount Clocks on the watch, the pinned clock included.
- * @property reminderCount Reminders on the watch, 0 if it has none.
- * @property hasFontStyle Whether the watch has a font style setting, see [xyz.d1n0.lib.constant.FontStyle].
- * @property hasShortCityNames Whether the watch stores a 3-letter city code next to each city
- *           name, see [ClocksSettings.timeZoneShortNamePackets].
- * @property hasWeekdayLanguage Whether the weekday language can be changed, see
- *           [xyz.d1n0.lib.constant.WeekdayLanguage]. Watches without it always report English in
- *           [WatchSettings] and ignore the byte when written.
+ * See [WatchFeatures] for what each property means.
  */
 enum class WatchModel(
-	val clockCount: Int,
-	val reminderCount: Int,
-	val hasFontStyle: Boolean,
-	val hasShortCityNames: Boolean,
-	val hasWeekdayLanguage: Boolean,
-) {
+	override val clockCount: Int,
+	override val reminderCount: Int,
+	override val hasFontStyle: Boolean,
+	override val hasShortCityNames: Boolean,
+	override val hasWeekdayLanguage: Boolean,
+) : WatchFeatures {
 	CLASSIC_SQUARE( // MRG-5000, GMW-B5000, GW-B5600
 		clockCount = 6,
 		reminderCount = 5,
