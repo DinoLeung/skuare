@@ -79,7 +79,7 @@ fun ClockCard(
 			},
 			content = {
 				Text(
-					text = clock.ianaOffsetString(),
+					text = clock.offsetString(),
 					textAlign = TextAlign.End,
 					modifier = Modifier.fillMaxWidth(),
 					style = MaterialTheme.typography.titleMedium,

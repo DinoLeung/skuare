@@ -104,15 +104,27 @@ abstract class Timezone {
 	 * Returns this timezone's effective UTC offset at [instant], including daylight saving time,
 	 * in signed hours and minutes such as `+8:00` or `-12:45`.
 	 */
-	fun ianaOffsetString(instant: Instant = KotlinClock.System.now()): String {
-		val totalMinutes = currentOffsetMinutes(instant)
-		val sign = if (totalMinutes < 0) "-" else "+"
-		val absoluteMinutes = abs(totalMinutes)
-		val hours = absoluteMinutes / 60
-		val minutes = absoluteMinutes % 60
+	fun ianaOffsetString(instant: Instant = KotlinClock.System.now()): String =
+		formatOffsetMinutes(currentOffsetMinutes(instant))
 
-		return "$sign$hours:${minutes.toString().padStart(2, '0')}"
-	}
+	/**
+	 * The UTC offset a clock showing this timezone with [dstSettings] has at [instant], in whole
+	 * minutes.
+	 *
+	 * With auto DST it is the IANA offset, the phone's up to date rules. With DST set manually it
+	 * is [offset], plus [dstDiff] if DST is on, what the user forced the watch to show, e.g. DST
+	 * off for a place that dropped DST the watch still observes.
+	 */
+	fun currentOffsetMinutes(dstSettings: DstSettings, instant: Instant = KotlinClock.System.now()): Int =
+		if (dstSettings.auto) {
+			currentOffsetMinutes(instant)
+		} else {
+			((offset + if (dstSettings.enable) dstDiff else 0.0) * 60).roundToInt()
+		}
+
+	/** [currentOffsetMinutes] with [dstSettings] as signed hours and minutes, e.g. `+9:30`. */
+	fun offsetString(dstSettings: DstSettings, instant: Instant = KotlinClock.System.now()): String =
+		formatOffsetMinutes(currentOffsetMinutes(dstSettings, instant))
 
 	/**
 	 * Returns whether the effective IANA offset at [instant] differs from this lookup entry's
@@ -124,4 +136,16 @@ abstract class Timezone {
 
 		return currentOffsetSeconds != defaultOffsetSeconds
 	}
+}
+
+/**
+ * Formats a UTC offset in whole minutes as signed hours and minutes, e.g. `+8:00` or `-12:45`.
+ */
+internal fun formatOffsetMinutes(totalMinutes: Int): String {
+	val sign = if (totalMinutes < 0) "-" else "+"
+	val absoluteMinutes = abs(totalMinutes)
+	val hours = absoluteMinutes / 60
+	val minutes = absoluteMinutes % 60
+
+	return "$sign$hours:${minutes.toString().padStart(2, '0')}"
 }

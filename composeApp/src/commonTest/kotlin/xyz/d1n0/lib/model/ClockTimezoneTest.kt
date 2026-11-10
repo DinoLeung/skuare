@@ -1,5 +1,6 @@
 package xyz.d1n0.lib.model
 
+import kotlinx.datetime.LocalDateTime
 import xyz.d1n0.lib.constant.HomeTimezoneData
 import xyz.d1n0.lib.constant.OpCode
 import xyz.d1n0.lib.constant.WorldTimezoneData
@@ -108,5 +109,31 @@ class ClockTimezoneTest {
 		assertEquals(11, packet.size)
 		assertEquals(OpCode.CURRENT_TIME.byte, packet.first())
 		assertEquals(0x01, packet.last().toInt())
+	}
+
+	// Adelaide is in DST (+10:30) in January, standard time is +9:30
+	private val adelaideSummer = Instant.parse("2026-01-15T00:00:00Z")
+
+	@Test
+	fun autoDstTimeFollowsIanaRules() {
+		val clock = HomeClock(adelaideHome, DstSettings(enable = false, auto = true))
+
+		assertEquals(LocalDateTime(2026, 1, 15, 10, 30), clock.getCurrentDateTime(now = adelaideSummer))
+	}
+
+	@Test
+	fun manualDstTimeFollowsTheClocksOffset() {
+		val off = HomeClock(adelaideHome, DstSettings(enable = false, auto = false))
+		val tokyoOn = WorldClock(WorldTimezoneData.getValue(281), DstSettings(enable = true, auto = false))
+
+		assertEquals(LocalDateTime(2026, 1, 15, 9, 30), off.getCurrentDateTime(now = adelaideSummer))
+		assertEquals(LocalDateTime(2026, 1, 15, 10, 0), tokyoOn.getCurrentDateTime(now = adelaideSummer))
+	}
+
+	@Test
+	fun offsetStringFollowsTheDstSettings() {
+		assertEquals("+10:30", HomeClock(adelaideHome, DstSettings(enable = false, auto = true)).offsetString(adelaideSummer))
+		assertEquals("+9:30", HomeClock(adelaideHome, DstSettings(enable = false, auto = false)).offsetString(adelaideSummer))
+		assertEquals("+10:00", WorldClock(WorldTimezoneData.getValue(281), DstSettings(enable = true, auto = false)).offsetString(adelaideSummer))
 	}
 }

@@ -17,9 +17,13 @@ import xyz.d1n0.lib.model.HomeTimezone
 import xyz.d1n0.lib.model.Timezone
 import xyz.d1n0.lib.model.WorldTimezone
 
+/**
+ * @param offset The offset to show, e.g. from [Timezone.offsetString] with the picked DST settings.
+ */
 @Composable
 internal fun TimeZoneResultRow(
 	timeZone: Timezone,
+	offset: String,
 	selected: Boolean,
 	onClick: () -> Unit,
 ) {
@@ -53,7 +57,7 @@ internal fun TimeZoneResultRow(
 			}
 		}
 		Text(
-			text = timeZone.ianaOffsetString(),
+			text = offset,
 			style = MaterialTheme.typography.labelLarge,
 			color = MaterialTheme.colorScheme.onSurfaceVariant,
 		)

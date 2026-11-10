@@ -191,6 +191,8 @@ fun <T : Timezone> TimeZonePickerDialog(
 							) { result ->
 								TimeZoneResultRow(
 									timeZone = result,
+									// what the clock would show with the picked DST settings
+									offset = result.offsetString(selectedDstSettings),
 									selected = result.identifier == selectedTimeZone.identifier,
 									onClick = { selectedTimeZone = result },
 								)

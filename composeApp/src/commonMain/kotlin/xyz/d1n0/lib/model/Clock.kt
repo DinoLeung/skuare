@@ -1,13 +1,15 @@
 package xyz.d1n0.lib.model
 
+import kotlinx.datetime.FixedOffsetTimeZone
+import kotlinx.datetime.UtcOffset
 import kotlinx.datetime.toLocalDateTime
 import xyz.d1n0.lib.constant.OpCode
 import xyz.d1n0.lib.helper.toByteArray
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
 import kotlin.time.Clock as KotlinClock
 import kotlinx.datetime.LocalDateTime as KotlinLocalDateTime
-import kotlinx.datetime.TimeZone as KotlinTimeZone
 
 /**
  * A clock on the watch. The subclass says which lookup table the time zone comes from,
@@ -46,21 +48,32 @@ sealed class Clock {
 		}
 	}
 
-	fun ianaOffsetString(): String = timeZone.ianaOffsetString()
+	/**
+	 * The UTC offset this clock shows at [instant], in whole minutes, see
+	 * [Timezone.currentOffsetMinutes].
+	 */
+	fun currentOffsetMinutes(instant: Instant = KotlinClock.System.now()): Int =
+		timeZone.currentOffsetMinutes(dstSettings, instant)
+
+	/** [currentOffsetMinutes] as signed hours and minutes, e.g. `+9:30`. */
+	fun offsetString(instant: Instant = KotlinClock.System.now()): String =
+		timeZone.offsetString(dstSettings, instant)
 
 	/**
-	 * Returns the current local date and time, optionally adjusted by a delay.
-	 *
-	 * Uses the system clock to obtain the current time, applies an optional delay,
-	 * and converts the result into a [KotlinLocalDateTime] in the clock's time zone.
+	 * Returns the current local date and time at [currentOffsetMinutes], optionally adjusted by a
+	 * delay.
 	 *
 	 * @param delay An optional duration to shift the current time forward (default is no delay).
+	 * @param now The current instant.
 	 * @return The adjusted local date and time.
 	 */
-	fun getCurrentDateTime(delay: Duration = 0.seconds): KotlinLocalDateTime {
-		val timeZone = KotlinTimeZone.of(timeZone.timeZone)
-		val now = KotlinClock.System.now() + delay
-		return now.toLocalDateTime(timeZone)
+	fun getCurrentDateTime(
+		delay: Duration = 0.seconds,
+		now: Instant = KotlinClock.System.now(),
+	): KotlinLocalDateTime {
+		val instant = now + delay
+		val offset = UtcOffset(seconds = currentOffsetMinutes(instant) * 60)
+		return instant.toLocalDateTime(FixedOffsetTimeZone(offset))
 	}
 
 	/**
