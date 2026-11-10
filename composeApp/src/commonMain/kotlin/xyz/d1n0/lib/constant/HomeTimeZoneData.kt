@@ -3289,7 +3289,7 @@ val HomeTimezoneData: Map<Int, HomeTimezone> = mapOf(
 		dstRules = 1
 	),
 	30365 to HomeTimezone(
-		timeZone = "Canada/East-Saskatchewan",
+		timeZone = "America/Regina",
 		cityName = "EAST-SASKATCHEWAN",
 		cityCode = null,
 		identifier = 30365,
@@ -3388,7 +3388,7 @@ val HomeTimezoneData: Map<Int, HomeTimezone> = mapOf(
 		dstRules = 0
 	),
 	30376 to HomeTimezone(
-		timeZone = "EST",
+		timeZone = "Etc/GMT+5",
 		cityName = "EST ",
 		cityCode = null,
 		identifier = 30376,
@@ -4333,7 +4333,7 @@ val HomeTimezoneData: Map<Int, HomeTimezone> = mapOf(
 		dstRules = 0
 	),
 	30481 to HomeTimezone(
-		timeZone = "HST",
+		timeZone = "Etc/GMT+10",
 		cityName = "HST",
 		cityCode = null,
 		identifier = 30481,
@@ -4522,7 +4522,7 @@ val HomeTimezoneData: Map<Int, HomeTimezone> = mapOf(
 		dstRules = 2
 	),
 	30502 to HomeTimezone(
-		timeZone = "MST",
+		timeZone = "Etc/GMT+7",
 		cityName = "MST",
 		cityCode = null,
 		identifier = 30502,
@@ -5008,7 +5008,7 @@ val HomeTimezoneData: Map<Int, HomeTimezone> = mapOf(
 		dstRules = 2
 	),
 	30556 to HomeTimezone(
-		timeZone = "ROC",
+		timeZone = "Asia/Taipei",
 		cityName = "ROC",
 		cityCode = null,
 		identifier = 30556,
@@ -5233,7 +5233,7 @@ val HomeTimezoneData: Map<Int, HomeTimezone> = mapOf(
 		dstRules = 0
 	),
 	30581 to HomeTimezone(
-		timeZone = "Asia/Hanoi",
+		timeZone = "Asia/Ho_Chi_Minh",
 		cityName = "HANOI",
 		cityCode = null,
 		identifier = 30581,
