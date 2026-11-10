@@ -18,6 +18,7 @@ import xyz.d1n0.ui.screen.timer.TimerScreenViewModel
 @Composable
 fun NavGraph(
 	navHostController: NavHostController,
+	startDestination: NavBarRoute,
 	timezonesViewModel: TimezonesScreenViewModel,
 	alarmsViewModel: AlarmsScreenViewModel,
 	timerViewModel: TimerScreenViewModel,
@@ -26,7 +27,7 @@ fun NavGraph(
 ) {
 	NavHost(
 		navController = navHostController,
-		startDestination = NavBarRoute.Timezones.route,
+		startDestination = startDestination.route,
 	) {
 		composable(route = NavBarRoute.Timezones.route) {
 			TimezonesScreen(viewModel = timezonesViewModel)

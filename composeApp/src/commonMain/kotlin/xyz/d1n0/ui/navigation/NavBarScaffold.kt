@@ -32,11 +32,17 @@ import xyz.d1n0.ui.screen.settings.SettingsScreenViewModel
 import xyz.d1n0.ui.screen.timer.TimerScreenViewModel
 import com.juul.kable.State as PeripheralState
 
+/**
+ * @param startRoute Route of the tab to open on, e.g. the one the user was on before a reload.
+ *        Timezones if null or the watch has no such tab.
+ * @param onReload Rebuilds the watch screens, with the route of the tab the user is on.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavBarScaffold(
+	startRoute: String?,
 	onDisconnect: () -> Unit,
-	onReload: () -> Unit,
+	onReload: (NavBarRoute?) -> Unit,
 ) {
 	val viewModel = koinViewModel<NavBarViewModel>()
 
@@ -63,6 +69,8 @@ fun NavBarScaffold(
 	val isSaving by viewModel.isSaving.collectAsState()
 	val isLoading = isSaving || saveStates.values.any { it.isLoading }
 
+	val startDestination = navBarItems.find { it.route.route == startRoute }?.route
+		?: NavBarRoute.Timezones
 	val navHostController = rememberNavController()
 	val navBackStackEntry by navHostController.currentBackStackEntryAsState()
 	val currentBottomNavBarRoute by remember(navBackStackEntry) {
@@ -81,7 +89,10 @@ fun NavBarScaffold(
 	}
 
 	LaunchedEffect(viewModel.reloadEvents) {
-		viewModel.reloadEvents.collect { onReload() }
+		viewModel.reloadEvents.collect {
+			val route = navHostController.currentDestination?.route
+			onReload(navBarItems.find { it.route.route == route }?.route)
+		}
 	}
 
 	val customModel by viewModel.customModel.collectAsState()
@@ -194,6 +205,7 @@ fun NavBarScaffold(
 			if (watchConnectionState.value is PeripheralState.Connected)
 				NavGraph(
 					navHostController = navHostController,
+					startDestination = startDestination,
 					timezonesViewModel = timezonesViewModel,
 					alarmsViewModel = alarmsViewModel,
 					timerViewModel = timerViewModel,
