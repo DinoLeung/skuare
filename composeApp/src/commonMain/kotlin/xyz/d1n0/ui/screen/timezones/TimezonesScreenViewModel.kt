@@ -113,6 +113,11 @@ class TimezonesScreenViewModel : ViewModel(), KoinComponent, SaveableScreen {
 	override suspend fun save() {
 		_uiState.update { it.copy(isLoading = true) }
 		watch.writeClocksTimezones(_uiState.value.pendingClocks)
+			// show what the watch kept, it ignores clocks it doesn't have, e.g. a 4th clock on a
+			// watch with 3, so waiting for the read back to match the pending clocks never ends
+			.onSuccess { saved ->
+				_uiState.update { it.copy(isLoading = false, savedClocks = saved, pendingClocks = saved) }
+			}
 			.onFailure { _uiState.update { it.copy(isLoading = false) } }
 	}
 

@@ -1,7 +1,15 @@
 package xyz.d1n0.lib.model
 
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.withTimeout
 import kotlinx.coroutines.withTimeoutOrNull
 import xyz.d1n0.lib.constant.OpCode
 import kotlin.time.Duration
@@ -55,6 +63,40 @@ suspend fun Watch.requestClocks() {
 		log.d { "requestClocks" }
 		request(OpCode.CLOCK)
 	}
+}
+
+/**
+ * Requests the clocks like [requestClocks] and waits until the watch has replied to every
+ * request. The clocks may differ from what was last written, the watch ignores clocks it doesn't
+ * have, e.g. a 4th clock on a watch with 3.
+ *
+ * @return The clocks the watch sent, see [Watch.clocks]. Fails if the watch replies to a clocks
+ *         request with an error, or doesn't reply within [timeout].
+ */
+suspend fun Watch.readClocks(timeout: Duration = 5.seconds): Result<ClocksSettings> =
+	runCatching {
+		val replies = (model.clockCount + 1) / 2
+		withTimeout(timeout) {
+			coroutineScope {
+				// subscribe before requesting, so no reply arrives before we listen
+				val received = async(start = CoroutineStart.UNDISPATCHED) {
+					packets
+						.filter { it.isClocksReply() }
+						.onEach { if (it.first() == OpCode.ERROR.byte) throw WatchErrorPacket(it) }
+						.take(replies)
+						.collect()
+				}
+				requestClocks()
+				received.await()
+			}
+		}
+		clocks.value
+	}
+
+private fun ByteArray.isClocksReply() = when (firstOrNull()) {
+	OpCode.CLOCK.byte -> true
+	OpCode.ERROR.byte -> getOrNull(2) == OpCode.CLOCK.byte
+	else -> false
 }
 
 suspend fun Watch.writeClocks(clocksSettings: ClocksSettings) =
@@ -144,16 +186,17 @@ suspend fun Watch.writeReminderConfigs(remindersSettings: RemindersSettings) =
  * 1. Starts the clocks update session.
  * 2. Writes clocks, time zone configs, time zone names, then coordinates and radio IDs.
  * 3. Ends the clocks update session.
- * 4. Requests clocks so [Watch.clocks] reflects what the watch saved.
+ * 4. Reads the clocks back, see [readClocks], so [Watch.clocks] holds what the watch saved.
+ *    That can differ from [clocksSettings], e.g. the watch ignores clocks it doesn't have.
  *
  * Packets are built by each write as it runs, so if one cannot be built (e.g. an uninitialized
  * clock) the update session has already started and is left open.
  *
  * @param clocksSettings The clocks to write, all clocks must be initialized.
- * @return A [Result] that fails if a packet could not be built or written, or if requesting
- *         clocks afterwards fails.
+ * @return A [Result] with the clocks the watch saved, that fails if a packet could not be built
+ *         or written, or if reading the clocks back fails.
  */
-suspend fun Watch.writeClocksTimezones(clocksSettings: ClocksSettings) =
+suspend fun Watch.writeClocksTimezones(clocksSettings: ClocksSettings): Result<ClocksSettings> =
 	runCatching {
 		startClockUpdateSession()
 		writeClocks(clocksSettings)
@@ -162,7 +205,7 @@ suspend fun Watch.writeClocksTimezones(clocksSettings: ClocksSettings) =
 		writeTimeZoneCoordinatesAndRadioId(clocksSettings)
 		endClockUpdateSession()
 
-		requestClocks()
+		readClocks().getOrThrow()
 //		requestTimeZoneConfigs()
 //		requestTimeZoneNames()
 //		requestTimeZoneCoordinatesAndRadioId()
