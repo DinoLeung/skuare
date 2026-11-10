@@ -40,10 +40,13 @@ import kotlin.uuid.ExperimentalUuidApi
  * @param advertisedName Name the watch advertises, e.g. CASIO GMW-B5000#, null if unknown. It
  *        decides [model], so it is fixed when the watch is created. Not the same as the watch
  *        name from [OpCode.WATCH_NAME], which the user can set to anything.
+ * @param customModel The custom model stored for the watch, null if none or not known yet, see
+ *        [resolveWatchModel]. Ignored for watches with a known [advertisedName].
  */
 class Watch @OptIn(ExperimentalKableApi::class) constructor(
 	private val peripheral: Peripheral,
 	val advertisedName: String? = peripheral.name,
+	customModel: CustomWatchModel? = null,
 ) : KoinComponent {
 
 	@OptIn(ExperimentalUuidApi::class)
@@ -81,13 +84,15 @@ class Watch @OptIn(ExperimentalKableApi::class) constructor(
 
 	val log: Log by inject()
 
+	private val _model = MutableStateFlow(
+		resolveWatchModel(advertisedName, customModel).also { log.i { "Watch $advertisedName is $it" } }
+	)
+
 	/**
-	 * What this watch has, from [advertisedName]. Unknown names are treated as
-	 * [WatchModel.CLASSIC_SQUARE], which is what skuare supported before there were models.
+	 * What this watch has, see [resolveWatchModel]. A known [WatchModel] is fixed, a
+	 * [CustomWatchModel] can be replaced with [useCustomModel].
 	 */
-	val model: WatchModel = WatchModel.fromAdvertisedName(advertisedName)
-		?.also { log.i { "Watch $advertisedName is $it" } }
-		?: WatchModel.CLASSIC_SQUARE.also { log.w { "Unknown watch $advertisedName, treating it as $it" } }
+	val model: WatchFeatures get() = _model.value
 
 	internal val _info = MutableStateFlow(WatchInfo())
 	val info: StateFlow<WatchInfo> = _info.asStateFlow()
@@ -106,6 +111,23 @@ class Watch @OptIn(ExperimentalKableApi::class) constructor(
 
 	internal val _reminders = MutableStateFlow(RemindersSettings.empty(model.reminderCount))
 	val reminders: StateFlow<RemindersSettings> = _reminders.asStateFlow()
+
+	/**
+	 * Switches an unrecognised watch to [customModel], e.g. the one stored when it was paired.
+	 * Clocks and reminders are emptied at its sizes, so they must be requested again, e.g.
+	 * [adjustTime] requests the clocks when they aren't initialized. Does nothing if the watch
+	 * already uses [customModel].
+	 *
+	 * @throws IllegalStateException if the watch is a known [WatchModel], its features are fixed.
+	 */
+	internal fun useCustomModel(customModel: CustomWatchModel) {
+		if (!shouldSwitchToCustomModel(model, customModel)) return
+		log.i { "Watch $advertisedName now uses $customModel" }
+		_model.value = customModel
+		_clocks.value = ClocksSettings.empty(customModel.clockCount)
+		_clocksError.value = null
+		_reminders.value = RemindersSettings.empty(customModel.reminderCount)
+	}
 
 	/**
 	 * Provides the [CoroutineScope] associated with the watch connection.

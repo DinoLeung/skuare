@@ -48,3 +48,15 @@ data class CustomWatchModel(
  */
 fun resolveWatchModel(advertisedName: String?, customModel: CustomWatchModel?): WatchFeatures =
 	WatchModel.fromAdvertisedName(advertisedName) ?: customModel ?: CustomWatchModel()
+
+/**
+ * Whether a watch using [current] should switch to [next], see [Watch.useCustomModel]. Only a
+ * watch that is already custom can switch, a known [WatchModel] is fixed by its advertised name.
+ *
+ * @return false if [current] already is [next].
+ * @throws IllegalStateException if [current] is a known [WatchModel].
+ */
+internal fun shouldSwitchToCustomModel(current: WatchFeatures, next: CustomWatchModel): Boolean {
+	check(current is CustomWatchModel) { "$current is a known model, its features can't be changed" }
+	return current != next
+}

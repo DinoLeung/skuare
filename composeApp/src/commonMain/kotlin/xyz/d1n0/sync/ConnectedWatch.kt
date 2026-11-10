@@ -4,7 +4,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import xyz.d1n0.lib.constant.OpCode
 import xyz.d1n0.lib.model.AppInfo
+import xyz.d1n0.lib.model.CustomWatchModel
 import xyz.d1n0.lib.model.Watch
+import xyz.d1n0.lib.model.WatchFeatures
 import xyz.d1n0.lib.model.WatchInfo
 import xyz.d1n0.lib.model.adjustTime
 import xyz.d1n0.lib.model.requestWatchStatus
@@ -19,6 +21,10 @@ import xyz.d1n0.lib.model.writeAppInfo
 interface ConnectedWatch {
 	val advertisedName: String?
 	val info: StateFlow<WatchInfo>
+	val model: WatchFeatures
+
+	/** See [Watch.useCustomModel]. */
+	fun useCustomModel(customModel: CustomWatchModel)
 
 	suspend fun query(opCode: OpCode): ByteArray
 	suspend fun writeAppInfo(appInfo: AppInfo)
@@ -31,6 +37,9 @@ interface ConnectedWatch {
 internal class KableConnectedWatch(private val watch: Watch) : ConnectedWatch {
 	override val advertisedName: String? get() = watch.advertisedName
 	override val info: StateFlow<WatchInfo> get() = watch.info
+	override val model: WatchFeatures get() = watch.model
+
+	override fun useCustomModel(customModel: CustomWatchModel) = watch.useCustomModel(customModel)
 
 	override suspend fun query(opCode: OpCode): ByteArray = watch.query(opCode)
 	override suspend fun writeAppInfo(appInfo: AppInfo) = watch.writeAppInfo(appInfo)

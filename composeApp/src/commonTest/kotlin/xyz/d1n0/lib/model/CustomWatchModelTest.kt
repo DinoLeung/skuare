@@ -4,6 +4,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class CustomWatchModelTest {
 	@Test
@@ -68,5 +69,25 @@ class CustomWatchModelTest {
 		// the address is stored as the name when the watch didn't advertise one
 		assertEquals(CustomWatchModel(), resolveWatchModel("ED:A1:AF:D5:A2:40", null))
 		assertEquals(CustomWatchModel(), resolveWatchModel(null, null))
+	}
+
+	@Test
+	fun customWatchSwitchesToOtherCustomModel() {
+		assertTrue(shouldSwitchToCustomModel(CustomWatchModel(), CustomWatchModel(clockCount = 4)))
+	}
+
+	@Test
+	fun customWatchKeepsSameCustomModel() {
+		// nothing to reset, so the clocks and reminders read from the watch are kept
+		assertFalse(shouldSwitchToCustomModel(CustomWatchModel(clockCount = 4), CustomWatchModel(clockCount = 4)))
+	}
+
+	@Test
+	fun knownWatchCannotSwitchToCustomModel() {
+		WatchModel.entries.forEach { known ->
+			assertFailsWith<IllegalStateException>("$known") {
+				shouldSwitchToCustomModel(known, CustomWatchModel.from(known))
+			}
+		}
 	}
 }

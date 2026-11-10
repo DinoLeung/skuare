@@ -19,8 +19,12 @@ import xyz.d1n0.lib.connection.WatchConnectionManager
 import xyz.d1n0.lib.constant.ConnectReason
 import xyz.d1n0.lib.constant.OpCode
 import xyz.d1n0.lib.model.AppInfo
+import xyz.d1n0.lib.model.CustomWatchModel
+import xyz.d1n0.lib.model.WatchFeatures
 import xyz.d1n0.lib.model.WatchInfo
 import xyz.d1n0.lib.model.WatchName
+import xyz.d1n0.lib.model.resolveWatchModel
+import xyz.d1n0.lib.model.shouldSwitchToCustomModel
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -133,6 +137,17 @@ class WatchSessionHandlerTest {
 			WatchInfo(address = address, connectReason = connectReason),
 		)
 		override val info: StateFlow<WatchInfo> = mutableInfo
+
+		override var model: WatchFeatures = resolveWatchModel(advertisedName, customModel = null)
+			private set
+
+		/** Every model passed to [useCustomModel], in order, including ones that changed nothing. */
+		val customModelsUsed = mutableListOf<CustomWatchModel>()
+
+		override fun useCustomModel(customModel: CustomWatchModel) {
+			customModelsUsed += customModel
+			if (shouldSwitchToCustomModel(model, customModel)) model = customModel
+		}
 
 		val disconnected = CompletableDeferred<Unit>()
 		var queryFailure: Pair<OpCode, Throwable>? = null
