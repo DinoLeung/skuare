@@ -64,6 +64,11 @@ class TimezonesScreenViewModel : ViewModel(), KoinComponent, SaveableScreen {
 		.stateIn(viewModelScope, SharingStarted.Eagerly, SaveState())
 
 	init {
+		// a request the watch errors on gets no reply, stop waiting for it,
+		// clocks that weren't read stay uninitialized and disabled
+		viewModelScope.launch {
+			watch.errors.collect { _uiState.update { it.copy(isLoading = false) } }
+		}
 		viewModelScope.launch {
 			clocks.collect { fetchedClocks ->
 				_uiState.updateCatching(

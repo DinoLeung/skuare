@@ -55,6 +55,11 @@ class TimerScreenViewModel : ViewModel(), KoinComponent, SaveableScreen {
 		.stateIn(viewModelScope, SharingStarted.Eagerly, SaveState())
 
 	init {
+		// a request the watch errors on gets no reply, stop waiting for it,
+		// a timer that wasn't read stays uninitialized and disabled
+		viewModelScope.launch {
+			watch.errors.collect { _uiState.update { it.copy(isLoading = false) } }
+		}
 		viewModelScope.launch {
 			timerSettings.collect { settings ->
 				_uiState.updateCatching(

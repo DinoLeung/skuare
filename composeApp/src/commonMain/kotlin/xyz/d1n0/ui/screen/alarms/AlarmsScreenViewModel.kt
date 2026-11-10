@@ -89,6 +89,19 @@ class AlarmsScreenViewModel : ViewModel(), KoinComponent, SaveableScreen {
 		.stateIn(viewModelScope, SharingStarted.Eagerly, SaveState())
 
 	init {
+		// a request the watch errors on gets no reply, stop waiting for it,
+		// alarms that weren't read stay uninitialized and disabled
+		viewModelScope.launch {
+			watch.errors.collect {
+				_uiState.update {
+					it.copy(
+						isHourlySignalLoading = false,
+						isAlarmsLoading = false,
+						isSnoozeAlarmLoading = false,
+					)
+				}
+			}
+		}
 		viewModelScope.launch {
 			alarmsSettings.collect { settings ->
 				_uiState.updateCatching(

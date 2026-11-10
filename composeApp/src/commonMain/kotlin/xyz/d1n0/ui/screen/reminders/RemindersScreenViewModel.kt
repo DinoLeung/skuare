@@ -84,6 +84,13 @@ class RemindersScreenViewModel : ViewModel(), KoinComponent, SaveableScreen {
 		.stateIn(viewModelScope, SharingStarted.Eagerly, SaveState())
 
 	init {
+		// a request the watch errors on gets no reply, stop waiting for it,
+		// reminders that weren't read stay uninitialized and disabled
+		viewModelScope.launch {
+			watch.errors.collect {
+				_uiState.update { it.copy(isTitlesLoading = false, isConfigsLoading = false) }
+			}
+		}
 		viewModelScope.launch {
 			remindersSettings.collect { settings ->
 				_uiState.updateCatching(

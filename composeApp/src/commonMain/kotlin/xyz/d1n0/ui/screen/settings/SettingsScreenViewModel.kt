@@ -119,6 +119,19 @@ class SettingsScreenViewModel : ViewModel(), KoinComponent, SaveableScreen {
 		.stateIn(viewModelScope, SharingStarted.Eagerly, SaveState())
 
 	init {
+		// a request the watch errors on gets no reply, stop waiting for it,
+		// settings that weren't read stay uninitialized and disabled
+		viewModelScope.launch {
+			watch.errors.collect {
+				_uiState.update {
+					it.copy(
+						isNameLoading = false,
+						isWatchSettingsLoading = false,
+						isConnectionSettingsLoading = false,
+					)
+				}
+			}
+		}
 		viewModelScope.launch {
 			watchInfo.collect { info ->
 				_uiState.updateCatching(
