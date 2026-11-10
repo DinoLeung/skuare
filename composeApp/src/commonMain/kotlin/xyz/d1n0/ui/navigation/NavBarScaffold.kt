@@ -6,7 +6,11 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.sharp.Build
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -17,6 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import org.koin.compose.viewmodel.koinViewModel
+import xyz.d1n0.ui.component.CustomWatchModelDialog
+import xyz.d1n0.ui.component.CustomWatchModelIntroDialog
 import xyz.d1n0.ui.component.SaveFab
 import xyz.d1n0.ui.screen.alarms.AlarmsScreenViewModel
 import xyz.d1n0.ui.screen.timezones.TimezonesScreenViewModel
@@ -29,6 +35,7 @@ import com.juul.kable.State as PeripheralState
 @Composable
 fun NavBarScaffold(
 	onDisconnect: () -> Unit,
+	onReload: () -> Unit,
 ) {
 	val viewModel = koinViewModel<NavBarViewModel>()
 
@@ -72,10 +79,53 @@ fun NavBarScaffold(
 		viewModel.disconnectEvents.collect { onDisconnect() }
 	}
 
+	LaunchedEffect(viewModel.reloadEvents) {
+		viewModel.reloadEvents.collect { onReload() }
+	}
+
+	val customModel by viewModel.customModel.collectAsState()
+	val showCustomModelIntro by viewModel.showCustomModelIntro.collectAsState()
+	var showCustomModelDialog by remember { mutableStateOf(false) }
+
+	if (showCustomModelIntro) {
+		CustomWatchModelIntroDialog(
+			watchName = viewModel.watchName,
+			onAdjust = {
+				viewModel.dismissCustomModelIntro()
+				showCustomModelDialog = true
+			},
+			onLater = viewModel::dismissCustomModelIntro,
+		)
+	}
+
+	customModel?.takeIf { showCustomModelDialog }?.let { model ->
+		CustomWatchModelDialog(
+			watchName = viewModel.watchName,
+			initial = model,
+			hasUnsavedChanges = saveStates.values.any { it.hasUpdates },
+			onSave = {
+				showCustomModelDialog = false
+				viewModel.saveCustomModel(it)
+			},
+			onDismiss = { showCustomModelDialog = false },
+		)
+	}
+
 	Scaffold(
 		topBar = {
 			TopAppBar(
-				title = { Text(currentBottomNavBarRoute?.route ?: "Skuare") })
+				title = { Text(currentBottomNavBarRoute?.route ?: "Skuare") },
+				actions = {
+					if (customModel != null) {
+						IconButton(
+							onClick = { showCustomModelDialog = true },
+							enabled = !isSaving && watchConnectionState.value is PeripheralState.Connected,
+						) {
+							Icon(Icons.Sharp.Build, contentDescription = "Adjust watch features")
+						}
+					}
+				},
+			)
 		},
 		bottomBar = {
 			AnimatedVisibility(

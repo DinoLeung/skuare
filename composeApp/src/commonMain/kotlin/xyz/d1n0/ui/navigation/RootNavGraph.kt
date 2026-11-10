@@ -22,6 +22,14 @@ fun RootNavGraph() {
 		}
 	}
 
+	// a new back stack entry, so every watch screen view model is created again for the
+	// watch's new features, e.g. after its custom model changed
+	val onReload = {
+		rootNavHostController.navigate(RootNavRoute.Watch.route) {
+			popUpTo(RootNavRoute.Watch.route) { inclusive = true }
+		}
+	}
+
 	NavHost(
 		navController = rootNavHostController,
 		startDestination = RootNavRoute.Pairing.route,
@@ -30,7 +38,7 @@ fun RootNavGraph() {
 			PairingScreen(onConnect = onConnect)
 		}
 		composable(RootNavRoute.Watch.route) {
-			NavBarScaffold(onDisconnect = onDisconnect)
+			NavBarScaffold(onDisconnect = onDisconnect, onReload = onReload)
 		}
 	}
 }
