@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import xyz.d1n0.lib.constant.AutoSyncDelay
 import xyz.d1n0.ui.theme.SkuareTheme
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,8 +58,8 @@ fun SliderField(
 				value = textFieldValue,
 				onValueChange = {
 					textFieldValue = it.copy(selection = TextRange(it.text.length))
-					if (it.text.isNotEmpty())
-						onValueChange(it.text.toInt())
+					// e.g. a lone "-" isn't a number yet
+					it.text.toIntOrNull()?.let(onValueChange)
 				},
 				keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
 				isError = error != null,
@@ -68,9 +69,10 @@ fun SliderField(
 		Slider(
 			enabled = enabled,
 			value = value.toFloat(),
-			steps = range.count(),
+			// stops between the ends, so every whole number in range is one stop
+			steps = (range.last - range.first - 1).coerceAtLeast(0),
 			valueRange = range.first.toFloat()..range.last.toFloat(),
-			onValueChange = { onValueChange(it.toInt()) },
+			onValueChange = { onValueChange(it.roundToInt()) },
 			modifier = modifier,
 		)
 		error?.message?.let { ErrorText(text = it) }
