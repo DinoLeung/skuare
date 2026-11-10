@@ -18,7 +18,10 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
@@ -147,6 +150,14 @@ class Watch @OptIn(ExperimentalKableApi::class) constructor(
 	 * Packets received on the IO characteristic, emitted after [handlePacket] has processed them.
 	 */
 	val packets: SharedFlow<ByteArray> = _packets.asSharedFlow()
+
+	/**
+	 * Errors the watch sent instead of a reply, e.g. when asked for more clocks than it has.
+	 * A request that errors gets no reply, so anything waiting for one should stop.
+	 */
+	val errors: Flow<WatchErrorPacket> = packets
+		.filter { it.firstOrNull() == OpCode.ERROR.byte }
+		.map(::WatchErrorPacket)
 
 	/**
 	 * A coroutine Job that continuously observes the peripheral’s IO characteristic.
