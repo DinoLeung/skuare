@@ -2,7 +2,6 @@ package xyz.d1n0.sync
 
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.awaitCancellation
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
@@ -11,8 +10,8 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withTimeout
 import xyz.d1n0.data.database.AppConfig
 import xyz.d1n0.data.database.AppConfigDao
+import xyz.d1n0.data.database.FakePairedWatchDao
 import xyz.d1n0.data.database.PairedWatch
-import xyz.d1n0.data.database.PairedWatchDao
 import xyz.d1n0.data.repository.InstallationRepository
 import xyz.d1n0.data.repository.PairedWatchRepository
 import xyz.d1n0.lib.connection.WatchConnectionManager
@@ -50,39 +49,6 @@ class WatchSessionHandlerTest {
 
 		override suspend fun insertIfMissing(config: AppConfig) {
 			if (this.config == null) this.config = config
-		}
-	}
-
-	private class FakePairedWatchDao : PairedWatchDao {
-		private val watches = MutableStateFlow<List<PairedWatch>>(emptyList())
-
-		override fun observeAll(): Flow<List<PairedWatch>> = watches
-
-		override suspend fun find(address: String): PairedWatch? =
-			watches.value.firstOrNull { it.address == address }
-
-		override suspend fun upsert(watch: PairedWatch) {
-			watches.update { current -> current.filterNot { it.address == watch.address } + watch }
-		}
-
-		override suspend fun updateLastSync(address: String, at: Instant, error: String?) {
-			watches.update { current ->
-				current.map { watch ->
-					if (watch.address == address) watch.copy(lastSyncAt = at, lastSyncError = error) else watch
-				}
-			}
-		}
-
-		override suspend fun updateDisplayName(address: String, displayName: String) {
-			watches.update { current ->
-				current.map { watch ->
-					if (watch.address == address) watch.copy(displayName = displayName) else watch
-				}
-			}
-		}
-
-		override suspend fun delete(address: String) {
-			watches.update { current -> current.filterNot { it.address == address } }
 		}
 	}
 

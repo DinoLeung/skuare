@@ -1,7 +1,10 @@
 package xyz.d1n0.data.database
 
+import androidx.room.ColumnInfo
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import xyz.d1n0.lib.model.CustomWatchModel
 import kotlin.time.Instant
 
 /**
@@ -14,6 +17,10 @@ import kotlin.time.Instant
  * @property lastSyncAt When the last time sync finished, in the background or from the app, null if it never ran.
  * @property lastSyncError Why the last time sync failed, null if it succeeded.
  * @property platformAssociationId Android Companion Device Manager association id, unused on iOS.
+ * @property customModel Features the user set for a watch skuare doesn't recognise, null for a
+ *           known [xyz.d1n0.lib.model.WatchModel]. Only a watch paired as custom has one, see
+ *           [PairedWatchDao.updateCustomModel].
+ * @property customModelIntroShown Whether the dialog explaining [customModel] was shown.
  */
 @Entity(tableName = "paired_watch")
 data class PairedWatch(
@@ -24,4 +31,6 @@ data class PairedWatch(
 	val lastSyncAt: Instant? = null,
 	val lastSyncError: String? = null,
 	val platformAssociationId: Int? = null,
+	@Embedded(prefix = "model_") val customModel: CustomWatchModel? = null,
+	@ColumnInfo(defaultValue = "0") val customModelIntroShown: Boolean = false,
 )

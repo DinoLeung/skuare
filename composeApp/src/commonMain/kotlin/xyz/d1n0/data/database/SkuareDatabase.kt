@@ -1,5 +1,6 @@
 package xyz.d1n0.data.database
 
+import androidx.room.AutoMigration
 import androidx.room.ConstructedBy
 import androidx.room.Database
 import androidx.room.RoomDatabase
@@ -17,7 +18,11 @@ const val DATABASE_NAME = "skuare.db"
  * count as unpaired. Bump [Database.version] and add a migration instead, the exported schemas in
  * composeApp/schemas are what auto migrations compare against.
  */
-@Database(entities = [PairedWatch::class, AppConfig::class], version = 1)
+@Database(
+	entities = [PairedWatch::class, AppConfig::class],
+	version = 2,
+	autoMigrations = [AutoMigration(from = 1, to = 2, spec = CustomWatchModelMigration::class)],
+)
 @TypeConverters(Converters::class)
 @ConstructedBy(SkuareDatabaseConstructor::class)
 abstract class SkuareDatabase : RoomDatabase() {
