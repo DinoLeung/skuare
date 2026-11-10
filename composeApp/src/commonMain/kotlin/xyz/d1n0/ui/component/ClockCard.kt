@@ -71,8 +71,8 @@ fun ClockCard(
 			},
 			indicator = {
 				AssistChip(
-//					enabled = clock.dstSettings.enable,
-					enabled = clock.timeZone.isExpectedDst(),
+					// what the watch uses, auto DST turns it on when the city's DST starts
+					enabled = clock.dstSettings.enable,
 					label = { Text("DST") },
 					onClick = onClick,
 				)
