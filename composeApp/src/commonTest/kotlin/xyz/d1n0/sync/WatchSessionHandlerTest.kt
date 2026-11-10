@@ -308,6 +308,78 @@ class WatchSessionHandlerTest {
 	}
 
 	@Test
+	fun foregroundClearsCustomModelOfWatchThatIsNowKnown() = runTest {
+		val fixture = Fixture()
+		// stored while GW-BX5600 wasn't recognised yet
+		fixture.pair(advertisedName = "CASIO GW-BX5600", customModel = ADJUSTED_MODEL, customModelIntroShown = true)
+		val watch = FakeConnectedWatch(advertisedName = "CASIO GW-BX5600")
+
+		fixture.handler.runForeground(watch)
+
+		val stored = assertNotNull(fixture.repository.find(ADDRESS))
+		assertNull(stored.customModel)
+		assertFalse(stored.customModelIntroShown)
+		assertTrue(watch.customModelsUsed.isEmpty())
+		assertEquals(WatchModel.MIP_SQUARE, watch.modelAtAdjust)
+		// the guard now refuses it too
+		assertFalse(fixture.repository.updateCustomModel(ADDRESS, ADJUSTED_MODEL))
+	}
+
+	@Test
+	fun backgroundClearsCustomModelOfWatchThatIsNowKnown() = runTest {
+		val fixture = Fixture()
+		fixture.pair(
+			advertisedName = "CASIO GW-BX5600",
+			displayName = "Old name",
+			customModel = ADJUSTED_MODEL,
+			customModelIntroShown = true,
+		)
+		var watch: FakeConnectedWatch? = null
+
+		val result = fixture.handler.runBackground(ADDRESS) { stored ->
+			FakeConnectedWatch(advertisedName = "CASIO GW-BX5600", reportedName = "New name", customModel = stored?.customModel)
+				.also { watch = it }
+		}
+
+		assertIs<BackgroundSessionResult.Synced>(result)
+		assertEquals(WatchModel.MIP_SQUARE, watch?.modelAtAdjust)
+		val stored = assertNotNull(fixture.repository.find(ADDRESS))
+		assertNull(stored.customModel)
+		// only the custom model is cleared, the rest of the row is still updated
+		assertEquals("New name", stored.displayName)
+		assertNotNull(stored.lastSyncAt)
+		assertFalse(stored.customModelIntroShown)
+	}
+
+	@Test
+	fun watchButtonSessionClearsCustomModelOfWatchThatIsNowKnown() = runTest {
+		val fixture = Fixture()
+		fixture.pair(advertisedName = "CASIO GW-BX5600", customModel = ADJUSTED_MODEL, customModelIntroShown = true)
+		val watch = FakeConnectedWatch(advertisedName = "CASIO GW-BX5600", connectReason = ConnectReason.DEFAULT)
+
+		val result = fixture.handler.runBackground(ADDRESS) { watch }
+
+		// the app takes this watch over without running the foreground session
+		assertIs<BackgroundSessionResult.OpenAppRequested>(result)
+		val stored = assertNotNull(fixture.repository.find(ADDRESS))
+		assertNull(stored.customModel)
+		assertFalse(stored.customModelIntroShown)
+		fixture.handler.dropPendingForegroundWatch()
+	}
+
+	@Test
+	fun backgroundKeepsCustomModelOfUnknownWatch() = runTest {
+		val fixture = Fixture()
+		fixture.pair(advertisedName = UNKNOWN_NAME, customModel = ADJUSTED_MODEL)
+
+		fixture.handler.runBackground(ADDRESS) { stored ->
+			FakeConnectedWatch(advertisedName = UNKNOWN_NAME, customModel = stored?.customModel)
+		}
+
+		assertEquals(ADJUSTED_MODEL, assertNotNull(fixture.repository.find(ADDRESS)).customModel)
+	}
+
+	@Test
 	fun foregroundKeepsDefaultModelWhenPairingFails() = runTest {
 		val fixture = Fixture()
 		val watch = FakeConnectedWatch(advertisedName = UNKNOWN_NAME, address = null)

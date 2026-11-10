@@ -226,13 +226,12 @@ class WatchSessionHandler(
 		val address = checkNotNull(watch.info.value.address) { "Watch address unknown" }
 		val connectReason = checkNotNull(watch.info.value.connectReason) { "Connect reason unknown" }
 
-		when {
-			appInfo != installationRepository.appInfo() ->
-				return BackgroundSessionResult.Skipped("$address is paired with another app")
+		if (appInfo != installationRepository.appInfo())
+			return BackgroundSessionResult.Skipped("$address is paired with another app")
+		val stored = pairedWatchRepository.find(address)
+			?: return BackgroundSessionResult.Skipped("$address is not paired")
 
-			pairedWatchRepository.find(address) == null ->
-				return BackgroundSessionResult.Skipped("$address is not paired")
-		}
+		clearCustomModelIfKnown(watch, stored)
 
 		// the user may have renamed the watch since it was paired
 		watch.queryName()
@@ -281,7 +280,8 @@ class WatchSessionHandler(
 	 * 1. Writes our app info if the watch holds another one, then checks the watch stored it.
 	 * 2. Stores the watch with its display name, keeping the settings of an existing entry, its
 	 *    custom model and intro flag included. An unrecognised watch without a custom model gets
-	 *    the default [CustomWatchModel], a known watch never gets one.
+	 *    the default [CustomWatchModel]. A known watch has none, one stored while it wasn't
+	 *    recognised, e.g. before skuare supported it, is cleared with its intro flag.
 	 * 3. Registers the watch with [WatchPresenceMonitor] for background sync.
 	 *
 	 * @return The stored watch.
@@ -299,12 +299,18 @@ class WatchSessionHandler(
 		val advertisedName = watch.advertisedName ?: address
 		val existing = pairedWatchRepository.find(address)
 		val displayName = watchDisplayName(watch) ?: existing?.displayName ?: advertisedName
-		val customModel = existing?.customModel
-			?: CustomWatchModel().takeIf { watch.model is CustomWatchModel }
+		val customModel = if (watch.model is CustomWatchModel) {
+			existing?.customModel ?: CustomWatchModel()
+		} else {
+			existing?.customModel?.also { logClearingCustomModel(address, watch) }
+			null
+		}
 		val pairedWatch = existing?.copy(
 			advertisedName = advertisedName,
 			displayName = displayName,
 			customModel = customModel,
+			// the intro is about the custom model, a known watch never shows it
+			customModelIntroShown = customModel != null && existing.customModelIntroShown,
 		) ?: PairedWatch(
 			address = address,
 			advertisedName = advertisedName,
@@ -314,6 +320,21 @@ class WatchSessionHandler(
 		)
 		return presenceMonitor.register(pairedWatch).also { pairedWatchRepository.upsert(it) }
 	}
+
+	/**
+	 * Clears the custom model stored while the watch wasn't recognised, and its intro flag, once it
+	 * connects as a known [xyz.d1n0.lib.model.WatchModel], e.g. after an update added it. Nothing
+	 * can edit it then, the Adjust button only shows for custom watches. [pair] does the same when
+	 * connecting from the app.
+	 */
+	private suspend fun clearCustomModelIfKnown(watch: ConnectedWatch, stored: PairedWatch) {
+		if (watch.model is CustomWatchModel || stored.customModel == null) return
+		logClearingCustomModel(stored.address, watch)
+		pairedWatchRepository.clearCustomModel(stored.address)
+	}
+
+	private fun logClearingCustomModel(address: String, watch: ConnectedWatch) =
+		log.i { "Clearing custom model of $address, it is ${watch.model}" }
 
 	/**
 	 * Reads the watch name into [Watch.info], a failed read is logged and leaves the name unknown.

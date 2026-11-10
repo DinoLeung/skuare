@@ -55,6 +55,9 @@ internal class FakePairedWatchDao : PairedWatchDao {
 		return 1
 	}
 
+	override suspend fun clearCustomModel(address: String) =
+		updateWhere(address) { it.copy(customModel = null, customModelIntroShown = false) }
+
 	override suspend fun markCustomModelIntroShown(address: String) =
 		updateWhere(address) { it.copy(customModelIntroShown = true) }
 

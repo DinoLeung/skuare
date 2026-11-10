@@ -46,5 +46,8 @@ class PairedWatchRepository(private val dao: PairedWatchDao) {
 
 	suspend fun markCustomModelIntroShown(address: String) = dao.markCustomModelIntroShown(address)
 
+	/** See [PairedWatchDao.clearCustomModel]. */
+	suspend fun clearCustomModel(address: String) = dao.clearCustomModel(address)
+
 	suspend fun remove(address: String) = dao.delete(address)
 }

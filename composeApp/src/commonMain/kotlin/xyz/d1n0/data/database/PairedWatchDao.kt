@@ -51,6 +51,21 @@ interface PairedWatchDao {
 		hasWeekdayLanguage: Boolean,
 	): Int
 
+	/**
+	 * Removes the custom model and resets its intro, for a watch that is a known
+	 * [xyz.d1n0.lib.model.WatchModel] now, so its row is the same as a watch that never had one.
+	 */
+	@Query(
+		"""
+		UPDATE paired_watch SET
+			model_clockCount = NULL, model_reminderCount = NULL, model_hasFontStyle = NULL,
+			model_hasShortCityNames = NULL, model_hasWeekdayLanguage = NULL,
+			customModelIntroShown = 0
+		WHERE address = :address
+		"""
+	)
+	suspend fun clearCustomModel(address: String)
+
 	@Query("UPDATE paired_watch SET customModelIntroShown = 1 WHERE address = :address")
 	suspend fun markCustomModelIntroShown(address: String)
 
