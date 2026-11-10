@@ -101,8 +101,8 @@ private fun TimezonesScreenContent(
 
 /**
  * Opens the time zone picker for [clock], listing time zones from the table that matches its type,
- * so a swapped clock keeps choosing from its own table whichever slot it is in. The picked city
- * gets auto DST, see [xyz.d1n0.lib.model.DstSettings.autoFor].
+ * so a swapped clock keeps choosing from its own table whichever slot it is in, with the DST
+ * settings picked next to the search field.
  */
 @Composable
 private fun ClockTimeZonePickerDialog(
@@ -113,8 +113,11 @@ private fun ClockTimeZonePickerDialog(
 	is HomeClock -> TimeZonePickerDialog(
 		timeZone = clock.timeZone,
 		timeZones = HomeTimezoneData.values,
+		dstSettings = clock.dstSettings,
 		visible = true,
-		onConfirm = { onConfirm(clock.copy(timeZone = it, dstSettings = clock.dstSettings.autoFor(it))) },
+		onConfirm = { timeZone, dstSettings ->
+			onConfirm(clock.copy(timeZone = timeZone, dstSettings = dstSettings))
+		},
 		onDismiss = onDismiss,
 		title = "Select home time zone",
 	)
@@ -122,8 +125,11 @@ private fun ClockTimeZonePickerDialog(
 	is WorldClock -> TimeZonePickerDialog(
 		timeZone = clock.timeZone,
 		timeZones = WorldTimezoneData.values,
+		dstSettings = clock.dstSettings,
 		visible = true,
-		onConfirm = { onConfirm(clock.copy(timeZone = it, dstSettings = clock.dstSettings.autoFor(it))) },
+		onConfirm = { timeZone, dstSettings ->
+			onConfirm(clock.copy(timeZone = timeZone, dstSettings = dstSettings))
+		},
 		onDismiss = onDismiss,
 		title = "Select world time zone",
 	)

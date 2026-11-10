@@ -67,14 +67,41 @@ fun <T : Enum<T>> EnumDropdown(
 	)
 }
 
+/**
+ * Picks one of [options], for values that aren't an enum. [optionLabel] names each option, in the
+ * menu and in the field.
+ */
+@Composable
+fun <T> Dropdown(
+	selectedOption: T,
+	options: List<T>,
+	optionLabel: (T) -> String,
+	onOptionSelected: (T) -> Unit,
+	label: String,
+	enabled: Boolean = true,
+	modifier: Modifier = Modifier,
+) {
+	BaseEnumDropdown(
+		value = optionLabel(selectedOption),
+		options = options,
+		optionLabel = optionLabel,
+		selectedChecker = { it == selectedOption },
+		onItemClick = onOptionSelected,
+		label = label,
+		enabled = enabled,
+		modifier = modifier
+	)
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun <T : Enum<T>> BaseEnumDropdown(
+private fun <T> BaseEnumDropdown(
 	value: String,
-	options: Set<T>,
+	options: Collection<T>,
 	selectedChecker: (T) -> Boolean,
 	onItemClick: (T) -> Unit,
 	label: String,
+	optionLabel: (T) -> String = { it.toString() },
 	isMultiSelect: Boolean = false,
 	enabled: Boolean = true,
 	modifier: Modifier = Modifier,
@@ -106,7 +133,7 @@ private fun <T : Enum<T>> BaseEnumDropdown(
 			options.forEach { option ->
 				val isSelected = selectedChecker(option)
 				DropdownMenuItem(
-					text = { Text(option.toString()) },
+					text = { Text(optionLabel(option)) },
 					leadingIcon = if (isMultiSelect) {
 						{
 							if (isSelected)

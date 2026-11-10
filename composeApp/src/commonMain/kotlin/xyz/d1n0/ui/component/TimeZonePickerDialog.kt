@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -41,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import xyz.d1n0.lib.constant.WorldTimezoneData
 import xyz.d1n0.lib.helper.searchTimeZones
+import xyz.d1n0.lib.model.DstSettings
 import xyz.d1n0.lib.model.HomeTimezone
 import xyz.d1n0.lib.model.Timezone
 import xyz.d1n0.lib.model.WorldTimezone
@@ -52,14 +54,20 @@ import xyz.d1n0.ui.theme.SkuareTheme
  * Selection is kept as dialog-local draft state and is only emitted through [onConfirm].
  * [timeZones] should contain one timezone family because the returned value has the same
  * generic type as the supplied collection and current [timeZone].
+ *
+ * @param dstSettings The clock's DST settings, picked next to the search field as Auto, On or
+ *        Off. Auto turns DST on if the selected time zone is in DST now, see
+ *        [DstSettings.autoFor]. Unknown bits are kept.
+ * @param onConfirm Called with the selected time zone and DST settings.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun <T : Timezone> TimeZonePickerDialog(
 	timeZone: T,
 	timeZones: Collection<T>,
+	dstSettings: DstSettings,
 	visible: Boolean,
-	onConfirm: (T) -> Unit,
+	onConfirm: (T, DstSettings) -> Unit,
 	onDismiss: () -> Unit,
 	title: String = "Select time zone",
 ) {
@@ -67,6 +75,16 @@ fun <T : Timezone> TimeZonePickerDialog(
 
 	var query by remember { mutableStateOf("") }
 	var selectedTimeZone by remember(timeZone.identifier) { mutableStateOf(timeZone) }
+	var selectedDstSettings by remember(dstSettings) { mutableStateOf(dstSettings) }
+	// auto follows the selected time zone, so its enable is worked out for it
+	val dstSettingsFor = { settings: DstSettings ->
+		if (settings.auto) settings.autoFor(selectedTimeZone) else settings
+	}
+	val dstOptions = listOf(
+		selectedDstSettings.copy(auto = true),
+		selectedDstSettings.copy(enable = true, auto = false),
+		selectedDstSettings.copy(enable = false, auto = false),
+	).map(dstSettingsFor)
 	val results = remember(query, timeZones, timeZone.identifier) {
 		searchTimeZones(timeZones, query).let { matches ->
 			if (query.isBlank()) matches.withTimeZoneFirst(timeZone.identifier) else matches
@@ -105,31 +123,45 @@ fun <T : Timezone> TimeZonePickerDialog(
 						style = MaterialTheme.typography.headlineSmall,
 						modifier = Modifier.padding(start = 24.dp, top = 24.dp, end = 24.dp),
 					)
-					OutlinedTextField(
-						value = query,
-						onValueChange = { query = it },
+					Row(
 						modifier = Modifier
 							.fillMaxWidth()
 							.padding(horizontal = 24.dp, vertical = 16.dp),
-						singleLine = true,
-						label = { Text("Time zone") },
-						leadingIcon = {
-							Icon(
-								imageVector = Icons.Outlined.Search,
-								contentDescription = null,
-							)
-						},
-						trailingIcon = if (query.isNotEmpty()) {
-							{
-								IconButton(onClick = { query = "" }) {
-									Icon(
-										imageVector = Icons.Outlined.Clear,
-										contentDescription = "Clear search",
-									)
+						horizontalArrangement = Arrangement.spacedBy(8.dp),
+						verticalAlignment = Alignment.CenterVertically,
+					) {
+						OutlinedTextField(
+							value = query,
+							onValueChange = { query = it },
+							modifier = Modifier.weight(1f),
+							singleLine = true,
+							label = { Text("Time zone") },
+							leadingIcon = {
+								Icon(
+									imageVector = Icons.Outlined.Search,
+									contentDescription = null,
+								)
+							},
+							trailingIcon = if (query.isNotEmpty()) {
+								{
+									IconButton(onClick = { query = "" }) {
+										Icon(
+											imageVector = Icons.Outlined.Clear,
+											contentDescription = "Clear search",
+										)
+									}
 								}
-							}
-						} else null,
-					)
+							} else null,
+						)
+						Dropdown(
+							selectedOption = dstSettingsFor(selectedDstSettings),
+							options = dstOptions,
+							optionLabel = { it.label },
+							onOptionSelected = { selectedDstSettings = it },
+							label = "DST",
+							modifier = Modifier.width(112.dp),
+						)
+					}
 					HorizontalDivider()
 					if (results.isEmpty()) {
 						Column(
@@ -177,7 +209,9 @@ fun <T : Timezone> TimeZonePickerDialog(
 								horizontalArrangement = Arrangement.End,
 							) {
 								TextButton(onClick = onDismiss) { Text("Cancel") }
-								TextButton(onClick = { onConfirm(selectedTimeZone) }) { Text("Confirm") }
+								TextButton(
+									onClick = { onConfirm(selectedTimeZone, dstSettingsFor(selectedDstSettings)) },
+								) { Text("Confirm") }
 							}
 						}
 					}
@@ -186,6 +220,13 @@ fun <T : Timezone> TimeZonePickerDialog(
 		}
 	}
 }
+
+private val DstSettings.label: String
+	get() = when {
+		auto -> "Auto"
+		enable -> "On"
+		else -> "Off"
+	}
 
 internal fun <T : Timezone> List<T>.withTimeZoneFirst(identifier: Short): List<T> {
 	val selectedIndex = indexOfFirst { it.identifier == identifier }
@@ -208,8 +249,9 @@ private fun TimeZonePickerDialogPreview() {
 		TimeZonePickerDialog(
 			timeZone = selectedTimeZone,
 			timeZones = timeZones,
+			dstSettings = DstSettings(enable = false, auto = true),
 			visible = true,
-			onConfirm = {},
+			onConfirm = { _, _ -> },
 			onDismiss = {},
 		)
 	}
