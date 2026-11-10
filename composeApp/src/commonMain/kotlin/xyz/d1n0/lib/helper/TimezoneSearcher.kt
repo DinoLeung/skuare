@@ -1,5 +1,6 @@
 package xyz.d1n0.lib.helper
 
+import xyz.d1n0.lib.model.DstSettings
 import xyz.d1n0.lib.model.HomeTimezone
 import xyz.d1n0.lib.model.Timezone
 import xyz.d1n0.lib.model.WorldTimezone
@@ -10,8 +11,9 @@ import kotlin.time.Instant
 /**
  * Searches [timeZones] for entries matching [query].
  *
- * A query containing a UTC offset is matched against each timezone's current offset, including
- * daylight saving time, as shown in the picker. Other queries are
+ * A query containing a UTC offset is matched against the offset each timezone has with
+ * [dstSettings], as shown in the picker, see [Timezone.currentOffsetMinutes]: the current offset
+ * including daylight saving time with auto DST, the fixed one with DST set manually. Other queries are
  * normalized and matched against timezone names, cities, and countries using exact, prefix,
  * substring, and typo-tolerant comparisons. Text matches are ordered by relevance while ties
  * preserve the source collection's iteration order. A blank query returns all entries in their
@@ -20,15 +22,17 @@ import kotlin.time.Instant
  * @param timeZones the timezone entries to search.
  * @param query the timezone name, location, or UTC offset to find.
  * @param instant the moment whose offsets are used for UTC offset queries.
+ * @param dstSettings the DST settings the offsets are worked out with, auto DST by default.
  * @return the matching timezone entries in relevance order.
  */
 fun <T : Timezone> searchTimeZones(
 	timeZones: Collection<T>,
 	query: String,
 	instant: Instant = Clock.System.now(),
+	dstSettings: DstSettings = DstSettings(enable = false, auto = true),
 ): List<T> {
 	query.toUtcOffsetQuery()?.let { offsetQuery ->
-		return timeZones.filter { offsetQuery.matches(it.currentOffsetMinutes(instant)) }
+		return timeZones.filter { offsetQuery.matches(it.currentOffsetMinutes(dstSettings, instant)) }
 	}
 
 	val normalizedQuery = query.normalizeForSearch()

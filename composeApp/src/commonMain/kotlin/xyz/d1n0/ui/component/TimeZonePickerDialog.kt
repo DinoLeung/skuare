@@ -85,8 +85,9 @@ fun <T : Timezone> TimeZonePickerDialog(
 		selectedDstSettings.copy(enable = true, auto = false),
 		selectedDstSettings.copy(enable = false, auto = false),
 	).map(dstSettingsFor)
-	val results = remember(query, timeZones, timeZone.identifier) {
-		searchTimeZones(timeZones, query).let { matches ->
+	// offsets are matched as the rows show them, with the picked DST settings
+	val results = remember(query, timeZones, timeZone.identifier, selectedDstSettings) {
+		searchTimeZones(timeZones, query, dstSettings = selectedDstSettings).let { matches ->
 			if (query.isBlank()) matches.withTimeZoneFirst(timeZone.identifier) else matches
 		}
 	}

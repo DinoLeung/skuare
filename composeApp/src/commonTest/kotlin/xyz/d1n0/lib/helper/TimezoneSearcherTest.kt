@@ -1,6 +1,7 @@
 package xyz.d1n0.lib.helper
 
 import xyz.d1n0.lib.constant.WorldTimezoneData
+import xyz.d1n0.lib.model.DstSettings
 import xyz.d1n0.lib.model.WorldTimezone
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -46,6 +47,19 @@ class TimezoneSearcherTest {
 	fun offsetQueryDoesNotMatchStandardOffsetDuringDaylightSaving() {
 		assertFalse(adelaide in search("+9:30"))
 		assertFalse(adelaide in search("9:30"))
+	}
+
+	@Test
+	fun offsetQueryMatchesTheOffsetOfManualDst() {
+		val timeZones = WorldTimezoneData.values.toList()
+		val dstOff = DstSettings(enable = false, auto = false)
+		val dstOn = DstSettings(enable = true, auto = false)
+		val tokyo = WorldTimezoneData.getValue(281) // +9:00, no DST
+
+		assertTrue(adelaide in searchTimeZones(timeZones, "+9:30", duringDaylightSaving, dstOff))
+		assertFalse(adelaide in searchTimeZones(timeZones, "+10:30", duringDaylightSaving, dstOff))
+		assertTrue(tokyo in searchTimeZones(timeZones, "+10:00", duringDaylightSaving, dstOn))
+		assertFalse(tokyo in searchTimeZones(timeZones, "+9:00", duringDaylightSaving, dstOn))
 	}
 
 	@Test
