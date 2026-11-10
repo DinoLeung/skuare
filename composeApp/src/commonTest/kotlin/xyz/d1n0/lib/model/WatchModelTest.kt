@@ -24,14 +24,19 @@ class WatchModelTest {
 	}
 
 	@Test
-	fun ignoresFamilyPrefix() {
-		assertEquals(WatchModel.CLASSIC_SQUARE, WatchModel.fromAdvertisedName("CASIO OTHER-B5000"))
-		assertEquals(WatchModel.MIP_SQUARE, WatchModel.fromAdvertisedName("CASIO OTHER-BX5600#"))
+	fun matchesFamilyPrefix() {
+		assertEquals(WatchModel.DW_SQUARE, WatchModel.fromAdvertisedName("CASIO DW-B5600"))
+		assertEquals(WatchModel.DW_SQUARE, WatchModel.fromAdvertisedName("CASIO DW-B5600#"))
+		assertEquals(WatchModel.CLASSIC_SQUARE, WatchModel.fromAdvertisedName("CASIO GW-B5600"))
+		assertEquals(WatchModel.CLASSIC_SQUARE, WatchModel.fromAdvertisedName("CASIO MRG-B5000"))
+		assertNull(WatchModel.fromAdvertisedName("CASIO OTHER-B5000"))
+		assertNull(WatchModel.fromAdvertisedName("CASIO OTHER-BX5600#"))
 	}
 
 	@Test
-	fun onlyClassicSquareHasWeekdayLanguage() {
+	fun weekdayLanguage() {
 		assertTrue(WatchModel.CLASSIC_SQUARE.hasWeekdayLanguage)
+		assertTrue(WatchModel.DW_SQUARE.hasWeekdayLanguage)
 		assertFalse(WatchModel.MIP_SQUARE.hasWeekdayLanguage)
 	}
 

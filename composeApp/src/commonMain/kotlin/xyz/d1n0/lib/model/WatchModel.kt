@@ -21,7 +21,7 @@ enum class WatchModel(
 	val hasShortCityNames: Boolean,
 	val hasWeekdayLanguage: Boolean,
 ) {
-	CLASSIC_SQUARE( // GMW-B5000, GW-B5600
+	CLASSIC_SQUARE( // MRG-5000, GMW-B5000, GW-B5600
 		clockCount = 6,
 		reminderCount = 5,
 		hasFontStyle = false,
@@ -34,25 +34,34 @@ enum class WatchModel(
 		hasFontStyle = true,
 		hasShortCityNames = true,
 		hasWeekdayLanguage = false,
+	),
+	DW_SQUARE( // DW-B5600
+		clockCount = 2,
+		reminderCount = 0,
+		hasFontStyle = false,
+		hasShortCityNames = false,
+		hasWeekdayLanguage = true,
 	);
 
 	companion object {
 		private val models = mapOf(
-			"B5000" to CLASSIC_SQUARE,  // modules 3459, 3539
-			"B5600" to CLASSIC_SQUARE,  // modules 3461, 3540
-			"BX5600" to MIP_SQUARE,     // module 3578
-			"BZ5000" to MIP_SQUARE,     // module 3575
+			"MRG-B5000" to CLASSIC_SQUARE,  // module 3501
+			"GMW-B5000" to CLASSIC_SQUARE,  // modules 3459, 3539
+			"GW-B5600" to CLASSIC_SQUARE,   // modules 3461, 3540
+			"GW-BX5600" to MIP_SQUARE,      // module 3578
+			"GMW-BZ5000" to MIP_SQUARE,     // module 3575
+			"DW-B5600" to DW_SQUARE,        // module 3509
 		)
 
 		/**
-		 * Finds the model by exact match on the part after the last hyphen. The family prefix is
-		 * ignored, so GMW-B5000 is matched as B5000. A trailing # only marks newer modules of the
-		 * same model, e.g. CASIO GMW-B5000#.
+		 * Finds the model by exact match on the full model after the last space, e.g. GW-BX5600 in
+		 * CASIO GW-BX5600. A trailing # only marks newer modules of the same model, e.g.
+		 * CASIO GMW-B5000#.
 		 *
 		 * @param name Name the watch advertises, e.g. CASIO GW-BX5600.
 		 * @return The model, or null if the name is unknown or null.
 		 */
 		fun fromAdvertisedName(name: String?): WatchModel? =
-			name?.removeSuffix("#")?.substringAfterLast('-')?.let { models[it] }
+			name?.removeSuffix("#")?.substringAfterLast(' ')?.let { models[it] }
 	}
 }
