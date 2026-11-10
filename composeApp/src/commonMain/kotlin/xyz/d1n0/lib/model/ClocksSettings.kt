@@ -7,7 +7,7 @@ import xyz.d1n0.lib.helper.replaceAt
 import xyz.d1n0.lib.helper.requireIn
 
 /**
- * The clocks on the watch, sized by [clocks]: [empty] makes one for a [WatchModel.clockCount].
+ * The clocks on the watch, sized by [clocks]: [empty] makes one for a [WatchFeatures.clockCount].
  *
  * @property pinnedClock The clock shown on the watch's home screen, position 0.
  * @property clocks The other clocks, positions 1 and up.
@@ -217,7 +217,7 @@ data class ClocksSettings(
 
 	/**
 	 * Packets with the short city name, the [Timezone.cityCode], of each clock, for watches that
-	 * store one ([WatchModel.hasShortCityNames]). They use the city name opcode at the clock's
+	 * store one ([WatchFeatures.hasShortCityNames]). They use the city name opcode at the clock's
 	 * position + [SHORT_NAME_POSITION_OFFSET], e.g. 1F 06 41 44 4C 00 … for ADL at position 0.
 	 *
 	 * @throws IllegalArgumentException if any of the clocks is not initialized.

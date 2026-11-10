@@ -5,7 +5,7 @@ import xyz.d1n0.lib.helper.requireIn
 
 /**
  * The reminders on the watch, sized by the lists: [empty] makes one for a
- * [WatchModel.reminderCount]. Reminder positions start at 1.
+ * [WatchFeatures.reminderCount]. Reminder positions start at 1.
  */
 data class RemindersSettings(
 	val reminderTitles: List<ReminderTitle?> = List(5) { null },

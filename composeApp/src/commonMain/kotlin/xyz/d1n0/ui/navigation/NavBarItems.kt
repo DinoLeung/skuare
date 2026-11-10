@@ -7,7 +7,7 @@ import androidx.compose.material.icons.sharp.TaskAlt
 import androidx.compose.material.icons.sharp.Timer
 import androidx.compose.material.icons.sharp.Tune
 import androidx.compose.ui.graphics.vector.ImageVector
-import xyz.d1n0.lib.model.WatchModel
+import xyz.d1n0.lib.model.WatchFeatures
 
 data class NavBarItem(
 	val title: String,
@@ -43,6 +43,6 @@ val navBarItems = listOf(
 /**
  * [navBarItems] without the tabs for features [model] doesn't have, e.g. reminders.
  */
-fun navBarItemsFor(model: WatchModel): List<NavBarItem> = navBarItems.filter {
+fun navBarItemsFor(model: WatchFeatures): List<NavBarItem> = navBarItems.filter {
 	it.route != NavBarRoute.Reminders || model.reminderCount > 0
 }

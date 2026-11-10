@@ -49,9 +49,9 @@ data class SettingsUiState(
 	val savedWatchSettings: WatchSettings = defaultWatchSettings,
 	val pendingWatchSettings: WatchSettings = defaultWatchSettings,
 	val pendingWatchSettingsError: Throwable? = null,
-	// Only watches with a font style setting, see [xyz.d1n0.lib.model.WatchModel.hasFontStyle]
+	// Only watches with a font style setting, see [xyz.d1n0.lib.model.WatchFeatures.hasFontStyle]
 	val hasFontStyle: Boolean = false,
-	// Only watches that can change it, see [xyz.d1n0.lib.model.WatchModel.hasWeekdayLanguage]
+	// Only watches that can change it, see [xyz.d1n0.lib.model.WatchFeatures.hasWeekdayLanguage]
 	val hasWeekdayLanguage: Boolean = true,
 
 	val isConnectionSettingsInitialized: Boolean = false,

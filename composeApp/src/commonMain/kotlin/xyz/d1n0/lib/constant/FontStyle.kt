@@ -2,7 +2,7 @@ package xyz.d1n0.lib.constant
 
 /**
  * Font style, the 0x20 bit of watch settings byte 8. Only MIP square watches have it, see
- * [xyz.d1n0.lib.model.WatchModel.hasFontStyle].
+ * [xyz.d1n0.lib.model.WatchFeatures.hasFontStyle].
  */
 enum class FontStyle(val byte: Byte) {
 	STANDARD(0x00),
