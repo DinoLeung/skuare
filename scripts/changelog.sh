@@ -14,8 +14,12 @@ exclude=$([[ "$name" == *-rc* ]] || echo '--exclude=*-rc*')
 prev=$(git describe --tags --abbrev=0 $exclude HEAD 2>/dev/null || true)
 
 mkdir -p "$(dirname "$out")"
-git log --no-merges --format='%s' "${prev:+$prev..}HEAD" \
-	| { grep -E '^(feat|fix)(\(.+\))?!?: ' || true; } \
+subjects=$(git log --no-merges --format='%s' "${prev:+$prev..}HEAD")
+# Features before fixes, each newest first, so the 500 character cut drops fixes first
+{
+	grep -E '^feat(\(.+\))?!?: ' <<<"$subjects" || true
+	grep -E '^fix(\(.+\))?!?: ' <<<"$subjects" || true
+} \
 	| sed -E 's/^(feat|fix)(\(.+\))?!?: (.)/- \u\3/' \
 	| awk '{ n += length($0) + 1; if (n > 500) exit; print }' \
 	> "$out"
