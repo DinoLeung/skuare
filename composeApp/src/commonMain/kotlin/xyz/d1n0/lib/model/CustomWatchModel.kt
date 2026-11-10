@@ -36,3 +36,15 @@ data class CustomWatchModel(
 		)
 	}
 }
+
+/**
+ * Decides what a watch has. A known advertised name always wins, so a watch that gets supported
+ * later drops its custom model by itself.
+ *
+ * @param advertisedName Name the watch advertises, e.g. CASIO GW-BX5600.
+ * @param customModel The custom model stored for the watch, null if none, e.g. it isn't paired yet
+ *        or was paired before custom models existed.
+ * @return The known model, else [customModel], else the default [CustomWatchModel].
+ */
+fun resolveWatchModel(advertisedName: String?, customModel: CustomWatchModel?): WatchFeatures =
+	WatchModel.fromAdvertisedName(advertisedName) ?: customModel ?: CustomWatchModel()

@@ -47,4 +47,26 @@ class CustomWatchModelTest {
 			assertEquals(known.hasWeekdayLanguage, custom.hasWeekdayLanguage, "$known hasWeekdayLanguage")
 		}
 	}
+
+	@Test
+	fun resolvesKnownNameOverCustomModel() {
+		val custom = CustomWatchModel(clockCount = 4)
+		assertEquals(WatchModel.MIP_SQUARE, resolveWatchModel("CASIO GW-BX5600", custom))
+		assertEquals(WatchModel.DW_SQUARE, resolveWatchModel("CASIO DW-B5600#", null))
+	}
+
+	@Test
+	fun resolvesStoredCustomModel() {
+		val custom = CustomWatchModel(clockCount = 4, hasWeekdayLanguage = true)
+		assertEquals(custom, resolveWatchModel("CASIO GA-B2100", custom))
+	}
+
+	@Test
+	fun resolvesUnknownWatchWithoutCustomModelToDefault() {
+		// not paired yet, or paired before custom models existed
+		assertEquals(CustomWatchModel(), resolveWatchModel("CASIO GA-B2100", null))
+		// the address is stored as the name when the watch didn't advertise one
+		assertEquals(CustomWatchModel(), resolveWatchModel("ED:A1:AF:D5:A2:40", null))
+		assertEquals(CustomWatchModel(), resolveWatchModel(null, null))
+	}
 }
