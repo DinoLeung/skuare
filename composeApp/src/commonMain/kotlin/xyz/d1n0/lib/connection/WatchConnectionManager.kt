@@ -9,7 +9,9 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import xyz.d1n0.Log
+import xyz.d1n0.data.database.PairedWatch
 import xyz.d1n0.data.repository.PairedWatchRepository
+import xyz.d1n0.lib.model.CustomWatchModel
 import xyz.d1n0.lib.model.Watch
 import xyz.d1n0.sync.WatchConnectionNotifier
 
@@ -65,22 +67,34 @@ class WatchConnectionManager(
 	 * takes over a watch the UI is connected to.
 	 *
 	 * @param peripheral The peripheral to connect to, closed if another watch is connected.
-	 * @param storedName Name stored for the watch, e.g. [xyz.d1n0.data.database.PairedWatch.advertisedName].
-	 *        Used when the platform doesn't know the peripheral's name, which can happen when the
-	 *        peripheral is made from an address, so the watch still gets the right model.
+	 * @param stored The watch's stored row, null if it isn't paired. Its
+	 *        [PairedWatch.advertisedName] is used when the platform doesn't know the peripheral's
+	 *        name, which can happen when the peripheral is made from an address, and its
+	 *        [PairedWatch.customModel] is used for an unrecognised watch, so the watch gets the
+	 *        right model either way.
 	 * @return The connected watch, or null if another watch is already connected.
 	 */
 	@OptIn(ExperimentalKableApi::class)
-	suspend fun connectIfIdle(peripheral: Peripheral, storedName: String? = null): Watch? =
+	suspend fun connectIfIdle(peripheral: Peripheral, stored: PairedWatch? = null): Watch? =
 		slot.connectIfIdle(
 			onBusy = peripheral::close,
-			connect = { connectPeripheral(peripheral, advertisedName = peripheral.name ?: storedName) },
+			connect = {
+				connectPeripheral(
+					peripheral = peripheral,
+					advertisedName = peripheral.name ?: stored?.advertisedName,
+					customModel = stored?.customModel,
+				)
+			},
 		)
 
 	@OptIn(ExperimentalKableApi::class)
 	@Suppress("REDUNDANT_CALL_OF_CONVERSION_METHOD") // Android Identifier is a String; other targets are not.
-	private suspend fun connectPeripheral(peripheral: Peripheral, advertisedName: String? = peripheral.name): Watch {
-		val watch = Watch(peripheral, advertisedName)
+	private suspend fun connectPeripheral(
+		peripheral: Peripheral,
+		advertisedName: String? = peripheral.name,
+		customModel: CustomWatchModel? = null,
+	): Watch {
+		val watch = Watch(peripheral, advertisedName, customModel)
 		val notificationName = resolveInitialNotificationName(
 			identifier = peripheral.identifier.toString(),
 			peripheralName = peripheral.name,

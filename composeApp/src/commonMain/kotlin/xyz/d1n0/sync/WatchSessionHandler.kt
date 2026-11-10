@@ -21,6 +21,7 @@ import xyz.d1n0.lib.connection.WatchConnectionManager
 import xyz.d1n0.lib.constant.ConnectReason
 import xyz.d1n0.lib.constant.OpCode
 import xyz.d1n0.lib.model.AppInfo
+import xyz.d1n0.lib.model.CustomWatchModel
 import xyz.d1n0.lib.model.Watch
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Clock
@@ -103,7 +104,9 @@ class WatchSessionHandler(
 	 * This function:
 	 * 1. Reads the app info, the connect reason (for the watch address) and the watch name.
 	 * 2. Pairs the watch, see [pair].
-	 * 3. Requests the watch status and adjusts the time.
+	 * 3. Switches an unrecognised watch to its stored custom model, so the time is adjusted with
+	 *    the right clock count.
+	 * 4. Requests the watch status and adjusts the time.
 	 *
 	 * Only pairing errors fail the result, a failed watch name, watch status or time adjustment is
 	 * logged. Every time adjustment is stored in [PairedWatch], like a background sync.
@@ -119,7 +122,9 @@ class WatchSessionHandler(
 			watch.query(OpCode.CONNECT_REASON)
 			watch.queryName()
 			val address = checkNotNull(watch.info.value.address) { "Watch address unknown" }
-			pair(watch, address, appInfo)
+			val customModel = pair(watch, address, appInfo).customModel
+			// a known watch has no custom model, its features are fixed
+			if (customModel != null && watch.model is CustomWatchModel) watch.useCustomModel(customModel)
 		}.onFailure { error ->
 			log.e { "Failed to pair watch: ${error.message}" }
 		}
@@ -145,29 +150,28 @@ class WatchSessionHandler(
 	 * 5. Disconnects, unless the watch is waiting for the app.
 	 *
 	 * @param peripheral The watch that wants to connect.
-	 * @param address BLE address of the watch, used to look up its stored name in case the
-	 *        platform doesn't know the peripheral's name.
+	 * @param address BLE address of the watch, used to look up its stored row, for its name in case
+	 *        the platform doesn't know the peripheral's name, and its custom model.
 	 * @param timeout How long the whole session may take.
 	 */
 	suspend fun runBackground(
 		peripheral: Peripheral,
 		address: String,
 		timeout: Duration = 60.seconds,
-	): BackgroundSessionResult = runBackground(address, timeout) { storedName ->
-		connectionManager.connectIfIdle(peripheral, storedName)?.let(::KableConnectedWatch)
+	): BackgroundSessionResult = runBackground(address, timeout) { stored ->
+		connectionManager.connectIfIdle(peripheral, stored)?.let(::KableConnectedWatch)
 	}
 
 	internal suspend fun runBackground(
 		address: String,
 		timeout: Duration = 60.seconds,
-		connectIfIdle: suspend (storedName: String?) -> ConnectedWatch?,
+		connectIfIdle: suspend (stored: PairedWatch?) -> ConnectedWatch?,
 	): BackgroundSessionResult {
 		var watch: ConnectedWatch? = null
 		var keepConnected = false
 		try {
 			val result = withTimeoutOrNull(timeout) {
-				val storedName = pairedWatchRepository.find(address)?.advertisedName
-				val connected = connectIfIdle(storedName)
+				val connected = connectIfIdle(pairedWatchRepository.find(address))
 					?: return@withTimeoutOrNull BackgroundSessionResult.Busy
 				watch = connected
 				backgroundSession(connected)
@@ -275,10 +279,14 @@ class WatchSessionHandler(
 	/**
 	 * Pairs the watch with this install:
 	 * 1. Writes our app info if the watch holds another one, then checks the watch stored it.
-	 * 2. Stores the watch with its display name, keeping the settings of an existing entry.
+	 * 2. Stores the watch with its display name, keeping the settings of an existing entry, its
+	 *    custom model and intro flag included. An unrecognised watch without a custom model gets
+	 *    the default [CustomWatchModel], a known watch never gets one.
 	 * 3. Registers the watch with [WatchPresenceMonitor] for background sync.
+	 *
+	 * @return The stored watch.
 	 */
-	private suspend fun pair(watch: ConnectedWatch, address: String, appInfo: AppInfo) {
+	private suspend fun pair(watch: ConnectedWatch, address: String, appInfo: AppInfo): PairedWatch {
 		val ourAppInfo = installationRepository.appInfo()
 		if (appInfo != ourAppInfo) {
 			log.i { "Pairing $address, it held $appInfo" }
@@ -291,14 +299,20 @@ class WatchSessionHandler(
 		val advertisedName = watch.advertisedName ?: address
 		val existing = pairedWatchRepository.find(address)
 		val displayName = watchDisplayName(watch) ?: existing?.displayName ?: advertisedName
-		val pairedWatch = existing?.copy(advertisedName = advertisedName, displayName = displayName)
-			?: PairedWatch(
-				address = address,
-				advertisedName = advertisedName,
-				displayName = displayName,
-				pairedAt = Clock.System.now(),
-			)
-		pairedWatchRepository.upsert(presenceMonitor.register(pairedWatch))
+		val customModel = existing?.customModel
+			?: CustomWatchModel().takeIf { watch.model is CustomWatchModel }
+		val pairedWatch = existing?.copy(
+			advertisedName = advertisedName,
+			displayName = displayName,
+			customModel = customModel,
+		) ?: PairedWatch(
+			address = address,
+			advertisedName = advertisedName,
+			displayName = displayName,
+			pairedAt = Clock.System.now(),
+			customModel = customModel,
+		)
+		return presenceMonitor.register(pairedWatch).also { pairedWatchRepository.upsert(it) }
 	}
 
 	/**

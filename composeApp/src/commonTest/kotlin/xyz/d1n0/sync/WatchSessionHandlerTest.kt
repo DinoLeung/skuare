@@ -21,6 +21,7 @@ import xyz.d1n0.lib.model.AppInfo
 import xyz.d1n0.lib.model.CustomWatchModel
 import xyz.d1n0.lib.model.WatchFeatures
 import xyz.d1n0.lib.model.WatchInfo
+import xyz.d1n0.lib.model.WatchModel
 import xyz.d1n0.lib.model.WatchName
 import xyz.d1n0.lib.model.resolveWatchModel
 import xyz.d1n0.lib.model.shouldSwitchToCustomModel
@@ -40,6 +41,8 @@ class WatchSessionHandlerTest {
 		val OUR_APP_INFO = AppInfo(byteArrayOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
 		val OTHER_APP_INFO = AppInfo(byteArrayOf(10, 9, 8, 7, 6, 5, 4, 3, 2, 1))
 		val PAIRED_AT = Instant.parse("2026-01-01T00:00:00Z")
+		const val UNKNOWN_NAME = "CASIO GA-B2100"
+		val ADJUSTED_MODEL = CustomWatchModel(clockCount = 4, reminderCount = 5, hasWeekdayLanguage = true)
 	}
 
 	private class FakeAppConfigDao(appInfo: AppInfo) : AppConfigDao {
@@ -98,14 +101,19 @@ class WatchSessionHandlerTest {
 		var appInfo: AppInfo = OUR_APP_INFO,
 		private val reportedName: String? = "Test watch",
 		var adjustResult: Result<Unit> = Result.success(Unit),
+		customModel: CustomWatchModel? = null,
 	) : ConnectedWatch {
 		private val mutableInfo = MutableStateFlow(
 			WatchInfo(address = address, connectReason = connectReason),
 		)
 		override val info: StateFlow<WatchInfo> = mutableInfo
 
-		override var model: WatchFeatures = resolveWatchModel(advertisedName, customModel = null)
+		// like the Watch constructor
+		override var model: WatchFeatures = resolveWatchModel(advertisedName, customModel)
 			private set
+
+		/** The model when [adjustTime] was last called, null if it wasn't. */
+		var modelAtAdjust: WatchFeatures? = null
 
 		/** Every model passed to [useCustomModel], in order, including ones that changed nothing. */
 		val customModelsUsed = mutableListOf<CustomWatchModel>()
@@ -150,6 +158,7 @@ class WatchSessionHandlerTest {
 
 		override suspend fun adjustTime(): Result<Unit> {
 			adjustCount++
+			modelAtAdjust = model
 			return adjustResult
 		}
 
@@ -180,11 +189,15 @@ class WatchSessionHandlerTest {
 			address: String = ADDRESS,
 			advertisedName: String = "CASIO GMW-B5000#",
 			displayName: String = advertisedName,
+			customModel: CustomWatchModel? = null,
+			customModelIntroShown: Boolean = false,
 		): PairedWatch = PairedWatch(
 			address = address,
 			advertisedName = advertisedName,
 			displayName = displayName,
 			pairedAt = PAIRED_AT,
+			customModel = customModel,
+			customModelIntroShown = customModelIntroShown,
 		).also { repository.upsert(it) }
 	}
 
@@ -230,6 +243,99 @@ class WatchSessionHandlerTest {
 	}
 
 	@Test
+	fun foregroundPairsUnknownWatchWithDefaultCustomModel() = runTest {
+		val fixture = Fixture()
+		val watch = FakeConnectedWatch(advertisedName = UNKNOWN_NAME, appInfo = OTHER_APP_INFO)
+
+		val result = fixture.handler.runForeground(watch)
+
+		assertTrue(result.isSuccess)
+		val stored = assertNotNull(fixture.repository.find(ADDRESS))
+		assertEquals(CustomWatchModel(), stored.customModel)
+		assertFalse(stored.customModelIntroShown)
+		assertEquals(CustomWatchModel(), watch.modelAtAdjust)
+	}
+
+	@Test
+	fun foregroundPairsKnownWatchWithoutCustomModel() = runTest {
+		val fixture = Fixture()
+		val watch = FakeConnectedWatch(advertisedName = "CASIO GW-BX5600", appInfo = OTHER_APP_INFO)
+
+		fixture.handler.runForeground(watch)
+
+		assertNull(assertNotNull(fixture.repository.find(ADDRESS)).customModel)
+		assertTrue(watch.customModelsUsed.isEmpty())
+		assertEquals(WatchModel.MIP_SQUARE, watch.modelAtAdjust)
+	}
+
+	@Test
+	fun foregroundUsesStoredCustomModelBeforeAdjustingTime() = runTest {
+		val fixture = Fixture()
+		fixture.pair(advertisedName = UNKNOWN_NAME, customModel = ADJUSTED_MODEL, customModelIntroShown = true)
+		val watch = FakeConnectedWatch(advertisedName = UNKNOWN_NAME)
+
+		fixture.handler.runForeground(watch)
+
+		assertEquals(listOf(ADJUSTED_MODEL), watch.customModelsUsed)
+		assertEquals(ADJUSTED_MODEL, watch.modelAtAdjust)
+	}
+
+	@Test
+	fun repairingKeepsAdjustedCustomModelAndIntroFlag() = runTest {
+		val fixture = Fixture()
+		fixture.pair(advertisedName = UNKNOWN_NAME, customModel = ADJUSTED_MODEL, customModelIntroShown = true)
+		// the watch's app info was reset, so it is paired again
+		val watch = FakeConnectedWatch(advertisedName = UNKNOWN_NAME, appInfo = OTHER_APP_INFO)
+
+		fixture.handler.runForeground(watch)
+
+		assertEquals(1, watch.appInfoWriteCount)
+		val stored = assertNotNull(fixture.repository.find(ADDRESS))
+		assertEquals(ADJUSTED_MODEL, stored.customModel)
+		assertTrue(stored.customModelIntroShown)
+	}
+
+	@Test
+	fun foregroundGivesExistingRowWithoutCustomModelTheDefaultWhenWatchIsUnknown() = runTest {
+		val fixture = Fixture()
+		// stored while the watch advertised a known name
+		fixture.pair(advertisedName = "CASIO GW-BX5600")
+		val watch = FakeConnectedWatch(advertisedName = null)
+
+		fixture.handler.runForeground(watch)
+
+		assertEquals(CustomWatchModel(), assertNotNull(fixture.repository.find(ADDRESS)).customModel)
+	}
+
+	@Test
+	fun foregroundKeepsDefaultModelWhenPairingFails() = runTest {
+		val fixture = Fixture()
+		val watch = FakeConnectedWatch(advertisedName = UNKNOWN_NAME, address = null)
+
+		val result = fixture.handler.runForeground(watch)
+
+		assertTrue(result.isFailure)
+		assertTrue(watch.customModelsUsed.isEmpty())
+		assertEquals(1, watch.adjustCount)
+		assertEquals(CustomWatchModel(), watch.modelAtAdjust)
+	}
+
+	@Test
+	fun backgroundConnectsWithStoredCustomModel() = runTest {
+		val fixture = Fixture()
+		fixture.pair(advertisedName = UNKNOWN_NAME, customModel = ADJUSTED_MODEL)
+		var watch: FakeConnectedWatch? = null
+
+		val result = fixture.handler.runBackground(ADDRESS) { stored ->
+			FakeConnectedWatch(advertisedName = UNKNOWN_NAME, customModel = stored?.customModel)
+				.also { watch = it }
+		}
+
+		assertIs<BackgroundSessionResult.Synced>(result)
+		assertEquals(ADJUSTED_MODEL, watch?.modelAtAdjust)
+	}
+
+	@Test
 	fun initialNotificationUsesStoredDisplayNameFoundByPeripheralIdentifier() = runTest {
 		val fixture = Fixture()
 		fixture.pair(displayName = "Stored watch")
@@ -259,15 +365,18 @@ class WatchSessionHandlerTest {
 	@Test
 	fun backgroundReturnsBusyWithoutStartingSession() = runTest {
 		val fixture = Fixture()
-		var storedName: String? = "not called"
+		var called = false
+		var stored: PairedWatch? = null
 
 		val result = fixture.handler.runBackground(ADDRESS) {
-			storedName = it
+			called = true
+			stored = it
 			null
 		}
 
 		assertEquals(BackgroundSessionResult.Busy, result)
-		assertNull(storedName)
+		assertTrue(called)
+		assertNull(stored)
 	}
 
 	@Test
@@ -301,16 +410,16 @@ class WatchSessionHandlerTest {
 		val fixture = Fixture()
 		fixture.pair(displayName = "Old name")
 		val watch = FakeConnectedWatch(reportedName = "New name")
-		var receivedStoredName: String? = null
+		var receivedStored: PairedWatch? = null
 
-		val result = fixture.handler.runBackground(ADDRESS) { storedName ->
-			receivedStoredName = storedName
+		val result = fixture.handler.runBackground(ADDRESS) { stored ->
+			receivedStored = stored
 			watch
 		}
 
 		val synced = assertIs<BackgroundSessionResult.Synced>(result)
 		assertNull(synced.error)
-		assertEquals("CASIO GMW-B5000#", receivedStoredName)
+		assertEquals("CASIO GMW-B5000#", receivedStored?.advertisedName)
 		assertEquals(1, watch.adjustCount)
 		assertEquals(1, watch.disconnectCount)
 		val stored = assertNotNull(fixture.repository.find(ADDRESS))
