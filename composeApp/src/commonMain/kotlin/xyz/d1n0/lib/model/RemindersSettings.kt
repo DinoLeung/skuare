@@ -21,6 +21,15 @@ data class RemindersSettings(
 		)
 	}
 
+	/**
+	 * These reminders for a watch with [reminderCount] reminders. Fewer reminders keep the first
+	 * ones, more add uninitialized ones, which must be requested.
+	 */
+	fun resizedTo(reminderCount: Int) = RemindersSettings(
+		reminderTitles = List(reminderCount) { reminderTitles.getOrNull(it) },
+		reminderConfigs = List(reminderCount) { reminderConfigs.getOrNull(it) },
+	)
+
 	@OptIn(ExperimentalStdlibApi::class)
 	fun parseReminderTitlePacket(packet: ByteArray): RemindersSettings {
 		require(packet.first() == OpCode.REMINDER_TITLE.byte) {

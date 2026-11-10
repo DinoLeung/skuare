@@ -218,4 +218,35 @@ class ClocksSettingsTest {
 			ClocksSettings().parseClocksPacket(unknownIdPacket)
 		}
 	}
+
+	private val home = HomeClock.fromTimeZoneId(timeZoneId = 30335, dstSettings = DstSettings(enable = false, auto = true))
+	private fun world(id: Int) = WorldClock.fromTimeZoneId(timeZoneId = id.toShort(),dstSettings = DstSettings(enable = false, auto = true))
+
+	@Test
+	fun resizingToFewerClocksKeepsTheFirstOnes() {
+		val clocks = ClocksSettings(pinnedClock = home, clocks = listOf(world(122), world(281), world(310)))
+
+		val resized = clocks.resizedTo(3)
+
+		assertEquals(ClocksSettings(pinnedClock = home, clocks = listOf(world(122), world(281))), resized)
+		assertTrue(resized.isInitialized)
+	}
+
+	@Test
+	fun resizingToMoreClocksAddsUninitializedOnes() {
+		val clocks = ClocksSettings(pinnedClock = home, clocks = listOf(world(122)))
+
+		val resized = clocks.resizedTo(4)
+
+		assertEquals(listOf(world(122), null, null), resized.clocks)
+		assertEquals(home, resized.pinnedClock)
+		assertFalse(resized.isInitialized)
+	}
+
+	@Test
+	fun resizingEmptiesClocksWhenTheHomeClockWouldBeDropped() {
+		val clocks = ClocksSettings(pinnedClock = world(122), clocks = listOf(world(281), home))
+
+		assertEquals(ClocksSettings.empty(2), clocks.resizedTo(2))
+	}
 }

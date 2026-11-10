@@ -130,4 +130,14 @@ class RemindersSettingsTest {
 		assertFailsWith<IllegalArgumentException> { RemindersSettings.empty(1).reminderTitlePackets }
 		assertFailsWith<IllegalArgumentException> { RemindersSettings.empty(1).reminderConfigPackets }
 	}
+
+	@Test
+	fun resizingKeepsTheFirstRemindersAndAddsUninitializedOnes() {
+		val title = ReminderTitle("MEETING")
+		val reminders = RemindersSettings(reminderTitles = listOf(title, title), reminderConfigs = listOf(config, config))
+
+		assertEquals(RemindersSettings(listOf(title), listOf(config)), reminders.resizedTo(1))
+		assertEquals(RemindersSettings(listOf(title, title, null), listOf(config, config, null)), reminders.resizedTo(3))
+		assertEquals(RemindersSettings.empty(0), reminders.resizedTo(0))
+	}
 }

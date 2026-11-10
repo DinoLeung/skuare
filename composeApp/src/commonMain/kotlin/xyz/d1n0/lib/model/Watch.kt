@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import kotlinx.io.IOException
@@ -117,19 +118,25 @@ class Watch @OptIn(ExperimentalKableApi::class) constructor(
 
 	/**
 	 * Switches an unrecognised watch to [customModel], e.g. the one stored when it was paired.
-	 * Clocks and reminders are emptied at its sizes, so they must be requested again, e.g.
-	 * [adjustTime] requests the clocks when they aren't initialized. Does nothing if the watch
-	 * already uses [customModel].
+	 * Clocks and reminders are resized to its counts, see [ClocksSettings.resizedTo] and
+	 * [RemindersSettings.resizedTo]: fewer keep the ones already read, more must be requested
+	 * again, e.g. [adjustTime] requests the clocks when they aren't initialized. Does nothing if
+	 * the watch already uses [customModel].
 	 *
 	 * @throws IllegalStateException if the watch is a known [WatchModel], its features are fixed.
 	 */
 	internal fun useCustomModel(customModel: CustomWatchModel) {
-		if (!shouldSwitchToCustomModel(model, customModel)) return
+		val current = model
+		if (!shouldSwitchToCustomModel(current, customModel)) return
 		log.i { "Watch $advertisedName now uses $customModel" }
 		_model.value = customModel
-		_clocks.value = ClocksSettings.empty(customModel.clockCount)
-		_clocksError.value = null
-		_reminders.value = RemindersSettings.empty(customModel.reminderCount)
+		if (customModel.clockCount != current.clockCount) {
+			_clocks.update { it.resizedTo(customModel.clockCount) }
+			_clocksError.value = null
+		}
+		if (customModel.reminderCount != current.reminderCount) {
+			_reminders.update { it.resizedTo(customModel.reminderCount) }
+		}
 	}
 
 	/**

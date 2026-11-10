@@ -30,6 +30,18 @@ data class ClocksSettings(
 	val isInitialized: Boolean get() = pinnedClock != null && clocks.all { it != null }
 
 	/**
+	 * These clocks for a watch with [clockCount] clocks, the pinned clock included. Fewer clocks
+	 * keep the first ones, so initialized clocks stay initialized. More clocks add uninitialized
+	 * ones, which must be requested. Emptied instead, see [empty], if the home clock would be
+	 * dropped, e.g. after it was swapped into a later position.
+	 */
+	fun resizedTo(clockCount: Int): ClocksSettings {
+		val kept = clockCount - 1
+		if (clocks.drop(kept).any { it is HomeClock }) return empty(clockCount)
+		return copy(clocks = List(kept) { clocks.getOrNull(it) })
+	}
+
+	/**
 	 * Sets a clock for the specified position with the given time zone ID and DST status.
 	 *
 	 * The position only decides the slot. Whether the clock is a [HomeClock] or a [WorldClock]
