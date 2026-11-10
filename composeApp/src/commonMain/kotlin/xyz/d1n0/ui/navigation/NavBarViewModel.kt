@@ -9,13 +9,16 @@ import org.koin.core.component.inject
 import xyz.d1n0.Log
 import xyz.d1n0.data.database.PairedWatch
 import xyz.d1n0.data.repository.PairedWatchRepository
+import xyz.d1n0.lib.connection.WatchConnectionManager
 import xyz.d1n0.lib.model.CustomWatchModel
 import xyz.d1n0.lib.model.Watch
+import xyz.d1n0.lib.model.WatchErrorPacket
 import com.juul.kable.State as PeripheralState
 
 class NavBarViewModel : ViewModel(), KoinComponent {
 	private val watch: Watch by inject()
 	private val pairedWatchRepository: PairedWatchRepository by inject()
+	private val connectionManager: WatchConnectionManager by inject()
 	private val log: Log by inject()
 
 	val watchState: StateFlow<PeripheralState> get() = watch.state
@@ -63,11 +66,32 @@ class NavBarViewModel : ViewModel(), KoinComponent {
 	 */
 	val reloadEvents: SharedFlow<Unit> = _reloadEvents.asSharedFlow()
 
+	private val _watchError = MutableStateFlow<WatchErrorPacket?>(null)
+
+	/**
+	 * First error the watch replied with, until the user dismisses it. Later ones are dropped
+	 * meanwhile, one failed read often errors on every request, e.g. FF 81 1D for each 1D.
+	 */
+	val watchError: StateFlow<WatchErrorPacket?> = _watchError.asStateFlow()
+
 	init {
 		watchState
 			.filterIsInstance<PeripheralState.Disconnected>()
 			.onEach { _disconnectEvents.emit(Unit) }
 			.launchIn(viewModelScope)
+
+		watch.errors
+			.onEach { error -> _watchError.update { it ?: error } }
+			.launchIn(viewModelScope)
+	}
+
+	fun dismissWatchError() {
+		_watchError.value = null
+	}
+
+	/** Disconnects the watch, [disconnectEvents] follows once it is disconnected. */
+	fun disconnect() {
+		viewModelScope.launch { connectionManager.disconnect() }
 	}
 
 	/**
@@ -97,13 +121,22 @@ class NavBarViewModel : ViewModel(), KoinComponent {
 	/**
 	 * Stores [model], switches the watch to it, then asks for the watch screens to be rebuilt,
 	 * which discards their unsaved changes. Does nothing while the screens are saving.
+	 *
+	 * @param disconnect Disconnect instead of rebuilding the screens, [model] is then used once
+	 *        the watch reconnects. For when the user came from a [watchError], the watch can
+	 *        keep refusing on this connection.
 	 */
-	fun saveCustomModel(model: CustomWatchModel) {
+	fun saveCustomModel(model: CustomWatchModel, disconnect: Boolean = false) {
 		val address = address ?: return
 		if (_isSaving.value) return
 		viewModelScope.launch {
 			if (!pairedWatchRepository.updateCustomModel(address, model)) {
 				log.w { "Custom model not stored, $address isn't paired as custom" }
+				return@launch
+			}
+			if (disconnect) {
+				log.i { "Disconnecting to recover from a watch error, $model is used on reconnect" }
+				connectionManager.disconnect()
 				return@launch
 			}
 			watch.useCustomModel(model)

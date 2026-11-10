@@ -27,6 +27,8 @@ import xyz.d1n0.ui.theme.SkuareTheme
  * @param initial The watch's current custom model.
  * @param hasUnsavedChanges Whether any tab has unsaved changes, saving rebuilds the tabs and
  *        discards them.
+ * @param disconnectsOnSave Whether saving disconnects the watch, after it errored on this
+ *        connection, see [xyz.d1n0.ui.navigation.NavBarViewModel.saveCustomModel].
  * @param onSave Called with the edited model, only if it differs from [initial].
  */
 @Composable
@@ -34,6 +36,7 @@ fun CustomWatchModelDialog(
 	watchName: String,
 	initial: CustomWatchModel,
 	hasUnsavedChanges: Boolean,
+	disconnectsOnSave: Boolean = false,
 	onSave: (CustomWatchModel) -> Unit,
 	onDismiss: () -> Unit,
 ) {
@@ -103,6 +106,12 @@ fun CustomWatchModelDialog(
 						"If time sync starts failing, turn it back off.",
 					style = MaterialTheme.typography.bodySmall,
 				)
+				if (disconnectsOnSave) {
+					ErrorText(
+						text = "The watch returned an error, saving disconnects it so it can " +
+							"recover. Reconnect it from the watch afterwards."
+					)
+				}
 				if (hasUnsavedChanges) {
 					ErrorText(text = "Unsaved changes on other tabs will be discarded.")
 				}

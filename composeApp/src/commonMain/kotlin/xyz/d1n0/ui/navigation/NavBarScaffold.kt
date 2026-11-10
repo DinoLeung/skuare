@@ -24,6 +24,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import xyz.d1n0.ui.component.CustomWatchModelDialog
 import xyz.d1n0.ui.component.CustomWatchModelIntroDialog
 import xyz.d1n0.ui.component.SaveFab
+import xyz.d1n0.ui.component.WatchErrorDialog
 import xyz.d1n0.ui.screen.alarms.AlarmsScreenViewModel
 import xyz.d1n0.ui.screen.timezones.TimezonesScreenViewModel
 import xyz.d1n0.ui.screen.reminders.RemindersScreenViewModel
@@ -86,15 +87,39 @@ fun NavBarScaffold(
 	val customModel by viewModel.customModel.collectAsState()
 	val showCustomModelIntro by viewModel.showCustomModelIntro.collectAsState()
 	var showCustomModelDialog by remember { mutableStateOf(false) }
+	// only when opened from the watch error dialog, see NavBarViewModel.saveCustomModel
+	var customModelDisconnectsOnSave by remember { mutableStateOf(false) }
+	val openCustomModelDialog = { disconnectsOnSave: Boolean ->
+		customModelDisconnectsOnSave = disconnectsOnSave
+		showCustomModelDialog = true
+	}
 
 	if (showCustomModelIntro) {
 		CustomWatchModelIntroDialog(
 			watchName = viewModel.watchName,
 			onAdjust = {
 				viewModel.dismissCustomModelIntro()
-				showCustomModelDialog = true
+				openCustomModelDialog(false)
 			},
 			onLater = viewModel::dismissCustomModelIntro,
+		)
+	}
+
+	val watchError by viewModel.watchError.collectAsState()
+	watchError?.let { error ->
+		WatchErrorDialog(
+			error = error,
+			onAdjustFeatures = customModel?.let {
+				{
+					viewModel.dismissWatchError()
+					openCustomModelDialog(true)
+				}
+			},
+			onDisconnect = {
+				viewModel.dismissWatchError()
+				viewModel.disconnect()
+			},
+			onDismiss = viewModel::dismissWatchError,
 		)
 	}
 
@@ -103,9 +128,10 @@ fun NavBarScaffold(
 			watchName = viewModel.watchName,
 			initial = model,
 			hasUnsavedChanges = saveStates.values.any { it.hasUpdates },
+			disconnectsOnSave = customModelDisconnectsOnSave,
 			onSave = {
 				showCustomModelDialog = false
-				viewModel.saveCustomModel(it)
+				viewModel.saveCustomModel(it, disconnect = customModelDisconnectsOnSave)
 			},
 			onDismiss = { showCustomModelDialog = false },
 		)
@@ -118,7 +144,7 @@ fun NavBarScaffold(
 				actions = {
 					if (customModel != null) {
 						IconButton(
-							onClick = { showCustomModelDialog = true },
+							onClick = { openCustomModelDialog(false) },
 							enabled = !isSaving && watchConnectionState.value is PeripheralState.Connected,
 						) {
 							Icon(Icons.Sharp.Build, contentDescription = "Adjust watch features")
