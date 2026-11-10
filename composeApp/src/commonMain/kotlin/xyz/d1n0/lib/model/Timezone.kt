@@ -1,5 +1,7 @@
 package xyz.d1n0.lib.model
 
+import kotlinx.datetime.FixedOffsetTimeZone
+import kotlinx.datetime.UtcOffset
 import kotlinx.datetime.TimeZone as KotlinTimeZone
 import kotlinx.datetime.offsetAt
 import xyz.d1n0.lib.constant.timezoneRadioIdData
@@ -98,7 +100,17 @@ abstract class Timezone {
 	 * saving time, e.g. `630` for Adelaide during daylight saving time.
 	 */
 	fun currentOffsetMinutes(instant: Instant = KotlinClock.System.now()): Int =
-		KotlinTimeZone.of(timeZone).offsetAt(instant).totalSeconds / 60
+		ianaTimeZone.offsetAt(instant).totalSeconds / 60
+
+	/**
+	 * The IANA time zone for [timeZone], or a fixed one at [offset] if the phone doesn't know it.
+	 * Which ids a phone knows depends on its time zone database, e.g. Android dropped the
+	 * Asia/Hanoi alias, and an unknown id would crash the picker.
+	 */
+	private val ianaTimeZone: KotlinTimeZone
+		get() = runCatching { KotlinTimeZone.of(timeZone) }.getOrElse {
+			FixedOffsetTimeZone(UtcOffset(seconds = (offset * 60 * 60).roundToInt()))
+		}
 
 	/**
 	 * Returns this timezone's effective UTC offset at [instant], including daylight saving time,
@@ -131,7 +143,7 @@ abstract class Timezone {
 	 * default [offset].
 	 */
 	fun isExpectedDst(instant: Instant = KotlinClock.System.now()): Boolean {
-		val currentOffsetSeconds = KotlinTimeZone.of(timeZone).offsetAt(instant).totalSeconds
+		val currentOffsetSeconds = ianaTimeZone.offsetAt(instant).totalSeconds
 		val defaultOffsetSeconds = (offset * 60 * 60).roundToInt()
 
 		return currentOffsetSeconds != defaultOffsetSeconds
