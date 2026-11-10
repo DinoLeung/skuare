@@ -25,14 +25,25 @@ assistance from
 
 ## Compatibility
 
-Skuare is currently supported and has been tested on the following Casio modules:
+Skuare supports the following watch models and Casio modules:
 
-- [Module 3539](https://shockbase.org/watches/modules_dyn.php?module=3539)
-- [Module 3540](https://shockbase.org/watches/modules_dyn.php?module=3540)
-- [Module 3461](https://shockbase.org/watches/modules_dyn.php?module=3461)
-- [Module 3459](https://shockbase.org/watches/modules_dyn.php?module=3459)
-- [Module 3575](https://shockbase.org/watches/modules_dyn.php?module=3575)
-- [Module 3578](https://shockbase.org/watches/modules_dyn.php?module=3578)
+- GMW-B5000
+    - [Module 3459](https://shockbase.org/watches/modules_dyn.php?module=3459)
+    - [Module 3539](https://shockbase.org/watches/modules_dyn.php?module=3539)
+- GW-B5600
+    - [Module 3461](https://shockbase.org/watches/modules_dyn.php?module=3461)
+    - [Module 3540](https://shockbase.org/watches/modules_dyn.php?module=3540)
+- MRG-B5000
+    - [Module 3501](https://shockbase.org/watches/modules_dyn.php?module=3501) (untested)
+- GW-BX5600
+    - [Module 3578](https://shockbase.org/watches/modules_dyn.php?module=3578)
+- GMW-BZ5000
+    - [Module 3575](https://shockbase.org/watches/modules_dyn.php?module=3575)
+- DW-B5600
+    - [Module 3509](https://shockbase.org/watches/modules_dyn.php?module=3509) (untested)
+
+Other watches can be paired too. They start with only a home clock and one world clock; adjust
+the watch features from the wrench button in the title bar to match the watch.
 
 ## Why rebuild everything when [GShockAPI](https://github.com/izivkov/GShockAPI/tree/main) already exists?
 
