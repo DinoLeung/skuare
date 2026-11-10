@@ -1,0 +1,10 @@
+- Pick DST next to the time zone search
+- Show a dialog when the watch replies with an error
+- Expose error packets the watch replies with
+- Let users adjust custom watch models
+- Connect unrecognised watches with their custom model
+- Store custom watch models with paired watches
+- Let unrecognised watches switch to a custom model
+- Add resolveWatchModel to pick a watch's features
+- Add WatchFeatures and CustomWatchModel for unsupported watches
+- Add DW_SQUARE model for DW-B5600
