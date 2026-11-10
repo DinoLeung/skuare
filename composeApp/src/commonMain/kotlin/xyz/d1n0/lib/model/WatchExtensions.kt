@@ -179,8 +179,9 @@ suspend fun Watch.writeReminderConfigs(remindersSettings: RemindersSettings) =
  * Writes clocks and their time zone data to the watch, then reads the clocks back.
  *
  * Clock and time zone writes must be wrapped in a clocks update session (`21 00 01` … `21 01 01`),
- * as the official app does, otherwise requesting clocks afterwards errors. The end packet also
- * persists the changes on the watch, so no separate time write is needed.
+ * as the official app does, otherwise requesting clocks afterwards errors. The end packet
+ * persists the changes on the watch, but doesn't adjust its time, e.g. turning DST off on the
+ * home clock leaves the time as it was, so the time is written last.
  *
  * This function:
  * 1. Starts the clocks update session.
@@ -188,6 +189,7 @@ suspend fun Watch.writeReminderConfigs(remindersSettings: RemindersSettings) =
  * 3. Ends the clocks update session.
  * 4. Reads the clocks back, see [readClocks], so [Watch.clocks] holds what the watch saved.
  *    That can differ from [clocksSettings], e.g. the watch ignores clocks it doesn't have.
+ * 5. Writes the current time for the saved pinned clock, see [writeTime].
  *
  * Packets are built by each write as it runs, so if one cannot be built (e.g. an uninitialized
  * clock) the update session has already started and is left open.
@@ -205,6 +207,7 @@ suspend fun Watch.writeClocksTimezones(clocksSettings: ClocksSettings): Result<C
 		writeTimeZoneCoordinatesAndRadioId(clocksSettings)
 		endClockUpdateSession()
 
+		writeTime()
 		readClocks().getOrThrow()
 //		requestTimeZoneConfigs()
 //		requestTimeZoneNames()
