@@ -313,6 +313,13 @@ suspend fun Watch.handlePacket(packet: ByteArray) = when (OpCode.fromByte(packet
 		}.onFailure { log.e { "Failed to parse reminder config packet: ${it.message}" } }
 	}
 
-	OpCode.ERROR -> log.e { "Error: ${packet.toHexString(HexFormat.UpperCase)}" }
+	OpCode.ERROR -> {
+		log.e { "Error: ${packet.toHexString(HexFormat.UpperCase)}" }
+		// so waits for the clocks, e.g. adjustTime, fail fast instead of timing out
+		runCatching { WatchErrorPacket(packet) }
+			.getOrNull()
+			?.takeIf { it.failedOpCode == OpCode.CLOCK }
+			?.let { _clocksError.value = it }
+	}
 	else -> log.e { "Unsupported packet: ${packet.toHexString(HexFormat.UpperCase)}" }
 }
