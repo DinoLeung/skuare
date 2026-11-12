@@ -231,7 +231,9 @@ class WatchSessionHandler(
 		val stored = pairedWatchRepository.find(address)
 			?: return BackgroundSessionResult.Skipped("$address is not paired")
 
-		clearCustomModelIfKnown(watch, stored)
+		// the watch may have become known or unrecognised since it was stored, e.g. after an update
+		if (watch.model is CustomWatchModel) storeDefaultCustomModelIfMissing(stored)
+		else clearStoredCustomModel(watch, stored)
 
 		// the user may have renamed the watch since it was paired
 		watch.queryName()
@@ -322,13 +324,25 @@ class WatchSessionHandler(
 	}
 
 	/**
-	 * Clears the custom model stored while the watch wasn't recognised, and its intro flag, once it
-	 * connects as a known [xyz.d1n0.lib.model.WatchModel], e.g. after an update added it. Nothing
-	 * can edit it then, the Adjust button only shows for custom watches. [pair] does the same when
+	 * Stores the default [CustomWatchModel] for an unrecognised watch stored without one, e.g. one
+	 * paired while its model was known. The watch already uses it, see [xyz.d1n0.lib.model.resolveWatchModel], and
+	 * the Adjust button and intro only show once it is stored. [pair] does the same when
 	 * connecting from the app.
 	 */
-	private suspend fun clearCustomModelIfKnown(watch: ConnectedWatch, stored: PairedWatch) {
-		if (watch.model is CustomWatchModel || stored.customModel == null) return
+	private suspend fun storeDefaultCustomModelIfMissing(stored: PairedWatch) {
+		if (stored.customModel != null) return
+		log.i { "Storing the default custom model of ${stored.address}, it isn't recognised now" }
+		pairedWatchRepository.upsert(stored.copy(customModel = CustomWatchModel(), customModelIntroShown = false))
+	}
+
+	/**
+	 * Clears the custom model stored while the watch wasn't recognised, and its intro flag, for a
+	 * watch that is a known [xyz.d1n0.lib.model.WatchModel] now, e.g. after an update added it.
+	 * Nothing can edit it then, the Adjust button only shows for custom watches. [pair] does the
+	 * same when connecting from the app.
+	 */
+	private suspend fun clearStoredCustomModel(watch: ConnectedWatch, stored: PairedWatch) {
+		if (stored.customModel == null) return
 		logClearingCustomModel(stored.address, watch)
 		pairedWatchRepository.clearCustomModel(stored.address)
 	}

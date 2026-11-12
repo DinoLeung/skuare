@@ -368,6 +368,25 @@ class WatchSessionHandlerTest {
 	}
 
 	@Test
+	fun watchButtonSessionGivesWatchThatIsNowUnknownTheDefaultCustomModel() = runTest {
+		val fixture = Fixture()
+		// stored while the watch advertised a known name
+		fixture.pair(advertisedName = "CASIO GW-BX5600")
+		val watch = FakeConnectedWatch(advertisedName = UNKNOWN_NAME, connectReason = ConnectReason.DEFAULT)
+
+		val result = fixture.handler.runBackground(ADDRESS) { watch }
+
+		// the app takes this watch over without running the foreground session
+		assertIs<BackgroundSessionResult.OpenAppRequested>(result)
+		val stored = assertNotNull(fixture.repository.find(ADDRESS))
+		assertEquals(CustomWatchModel(), stored.customModel)
+		assertFalse(stored.customModelIntroShown)
+		// the Adjust button can store changes now
+		assertTrue(fixture.repository.updateCustomModel(ADDRESS, ADJUSTED_MODEL))
+		fixture.handler.dropPendingForegroundWatch()
+	}
+
+	@Test
 	fun backgroundKeepsCustomModelOfUnknownWatch() = runTest {
 		val fixture = Fixture()
 		fixture.pair(advertisedName = UNKNOWN_NAME, customModel = ADJUSTED_MODEL)
