@@ -56,12 +56,21 @@ suspend fun Watch.writeTimer(timer: Timer) = write(timer.packet).also { requestT
 /**
  * Requests the clocks, one request per pair of clocks. The watch walks the pairs itself, a
  * request past the last pair gets an error.
+ *
+ * On watches with [Watch.hasBatchCharacteristics] the requests go in one batch, as the official
+ * app does, e.g. 02 1D00 1D00, and this returns once the reply is processed. A failed batch is
+ * stored in [Watch._clocksError], so waits for the clocks fail fast.
  */
 suspend fun Watch.requestClocks() {
 	_clocksError.value = null
-	repeat((model.clockCount + 1) / 2) {
-		log.d { "requestClocks" }
-		request(OpCode.CLOCK)
+	val pairs = (model.clockCount + 1) / 2
+	if (hasBatchCharacteristics) {
+		requestBatch(List(pairs) { OpCode.CLOCK to 0 }).onFailure { _clocksError.value = it }
+	} else {
+		repeat(pairs) {
+			log.d { "requestClocks" }
+			request(OpCode.CLOCK)
+		}
 	}
 }
 
@@ -87,6 +96,8 @@ suspend fun Watch.readClocks(timeout: Duration = 5.seconds): Result<ClocksSettin
 						.collect()
 				}
 				requestClocks()
+				// a failed batch request sends no packets, see requestClocks
+				_clocksError.value?.let { throw it }
 				received.await()
 			}
 		}
@@ -137,14 +148,17 @@ suspend fun Watch.requestTimeZoneNames() {
  * name, the same order as the official app: 1F 00, 1F 06, 1F 01, 1F 07, …
  */
 suspend fun Watch.writeTimeZoneNames(clocksSettings: ClocksSettings) =
+	timeZoneNamePackets(clocksSettings).forEach { write(it) }
+//        .also { requestTimeZoneNames() }
+
+private fun Watch.timeZoneNamePackets(clocksSettings: ClocksSettings): List<ByteArray> =
 	if (model.hasShortCityNames) {
 		clocksSettings.timeZoneNamePackets
 			.zip(clocksSettings.timeZoneShortNamePackets) { name, shortName -> listOf(name, shortName) }
 			.flatten()
 	} else {
 		clocksSettings.timeZoneNamePackets
-	}.forEach { write(it) }
-//        .also { requestTimeZoneNames() }
+	}
 
 suspend fun Watch.requestTimeZoneCoordinatesAndRadioId() {
 	for (i in 0 until model.clockCount) {
@@ -176,6 +190,31 @@ suspend fun Watch.writeReminderConfigs(remindersSettings: RemindersSettings) =
 	remindersSettings.reminderConfigPackets.forEach { write(it) }.also { requestReminderConfigs() }
 
 /**
+ * Writes the clocks, then their time zone configs, names, coordinates and radio IDs.
+ *
+ * On watches with [Watch.hasBatchCharacteristics] they go in three batches, in the official app's
+ * order: clocks, configs with coordinates and radio IDs, then names. Otherwise each packet is
+ * written to the IO characteristic.
+ *
+ * @throws IllegalArgumentException if a clock isn't initialized.
+ */
+private suspend fun Watch.writeClocksAndTimeZoneData(clocksSettings: ClocksSettings) {
+	if (hasBatchCharacteristics) {
+		val batches = listOf(
+			clocksSettings.clocksPackets,
+			clocksSettings.timeZoneConfigPackets + clocksSettings.coordinatesRadioIdPackets,
+			timeZoneNamePackets(clocksSettings),
+		)
+		batches.forEach { writeBatch(it) }
+	} else {
+		writeClocks(clocksSettings)
+		writeTimeZoneConfigs(clocksSettings)
+		writeTimeZoneNames(clocksSettings)
+		writeTimeZoneCoordinatesAndRadioId(clocksSettings)
+	}
+}
+
+/**
  * Writes clocks and their time zone data to the watch, then reads the clocks back.
  *
  * Clock and time zone writes must be wrapped in a clocks update session (`21 00 01` … `21 01 01`),
@@ -185,7 +224,7 @@ suspend fun Watch.writeReminderConfigs(remindersSettings: RemindersSettings) =
  *
  * This function:
  * 1. Starts the clocks update session.
- * 2. Writes clocks, time zone configs, time zone names, then coordinates and radio IDs.
+ * 2. Writes clocks and their time zone data, see [writeClocksAndTimeZoneData].
  * 3. Ends the clocks update session.
  * 4. Reads the clocks back, see [readClocks], so [Watch.clocks] holds what the watch saved.
  *    That can differ from [clocksSettings], e.g. the watch ignores clocks it doesn't have.
@@ -201,10 +240,7 @@ suspend fun Watch.writeReminderConfigs(remindersSettings: RemindersSettings) =
 suspend fun Watch.writeClocksTimezones(clocksSettings: ClocksSettings): Result<ClocksSettings> =
 	runCatching {
 		startClockUpdateSession()
-		writeClocks(clocksSettings)
-		writeTimeZoneConfigs(clocksSettings)
-		writeTimeZoneNames(clocksSettings)
-		writeTimeZoneCoordinatesAndRadioId(clocksSettings)
+		writeClocksAndTimeZoneData(clocksSettings)
 		endClockUpdateSession()
 
 		writeTime()
@@ -240,10 +276,7 @@ suspend fun Watch.adjustTime(delay: Duration = 0.seconds) =
 				}
 			} ?: throw IllegalStateException("Timeout waiting for clocks initialization")
 		}
-		writeClocks(clocks.value)
-		writeTimeZoneConfigs(clocks.value)
-		writeTimeZoneNames(clocks.value)
-		writeTimeZoneCoordinatesAndRadioId(clocks.value)
+		writeClocksAndTimeZoneData(clocks.value)
 		writeTime(delay = delay)
 	}.onSuccess {
 		log.d { "Time sync completed" }
