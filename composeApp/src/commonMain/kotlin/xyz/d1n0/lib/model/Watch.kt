@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -70,6 +71,14 @@ class Watch @OptIn(ExperimentalKableApi::class) constructor(
 		private val dataTransferCharacteristic = characteristicOf(
 			service = BleUuid.ALL_FEATURES_CHARACTERISTIC_UUID,
 			characteristic = BleUuid.DATA_TRANSFER_CHARACTERISTIC_UUID
+		)
+		private val batchRequestCharacteristic = characteristicOf(
+			service = BleUuid.ALL_FEATURES_CHARACTERISTIC_UUID,
+			characteristic = BleUuid.BATCH_REQUEST_CHARACTERISTIC_UUID
+		)
+		private val batchTransferCharacteristic = characteristicOf(
+			service = BleUuid.ALL_FEATURES_CHARACTERISTIC_UUID,
+			characteristic = BleUuid.BATCH_TRANSFER_CHARACTERISTIC_UUID
 		)
 
 		val scanner by lazy {
@@ -279,6 +288,71 @@ class Watch @OptIn(ExperimentalKableApi::class) constructor(
 			)
 		}.onFailure { log.e { "Failed to write ${data.toHexString(HexFormat.UpperCase)}: ${it.message}" } }
 
+	}
+
+	/**
+	 * Whether the connected watch has the batched characteristics, see [BatchPacket], e.g. the
+	 * GW-BX5600. Decided from the discovered services rather than the [model], so it holds for
+	 * custom models too. False while not connected.
+	 */
+	@OptIn(ExperimentalUuidApi::class)
+	val hasBatchCharacteristics: Boolean
+		get() = peripheral.services.value.orEmpty()
+			.flatMap { it.characteristics }
+			.map { it.characteristicUuid }
+			.containsAll(listOf(BleUuid.BATCH_REQUEST_CHARACTERISTIC_UUID, BleUuid.BATCH_TRANSFER_CHARACTERISTIC_UUID))
+
+	/**
+	 * Requests several records at once on the batched characteristics and waits for the reply,
+	 * see [BatchPacket]. Like the official app, notifications on the batch transfer characteristic are
+	 * enabled for the request, but only while it waits, so watches without it are never affected.
+	 *
+	 * Each record of the reply is processed by [handlePacket] and emitted to [packets], the same as
+	 * a reply on the IO characteristic, so waits on [packets] work either way.
+	 *
+	 * @param requests Opcode and index of each record, e.g. [OpCode.CLOCK] to 0.
+	 * @param timeout How long to wait for the reply.
+	 * @return A [Result] with the records the watch sent. Fails if the reply times out or can't be
+	 *         decoded, or with a [WatchErrorPacket] if the watch replied to one of the requested
+	 *         opcodes with an error on the IO characteristic.
+	 */
+	@OptIn(ExperimentalStdlibApi::class)
+	suspend fun requestBatch(
+		requests: List<Pair<OpCode, Int>>,
+		timeout: Duration = 5.seconds,
+	): Result<List<ByteArray>> = runCatching {
+		val request = BatchPacket.request(requests)
+		val opCodes = requests.map { it.first }.toSet()
+		log.d { "Requesting batch: ${request.toHexString(HexFormat.UpperCase)}" }
+		val batch = withTimeout(timeout) {
+			merge(
+				peripheral.observe(batchTransferCharacteristic) {
+					peripheral.write(batchRequestCharacteristic, request, WriteType.WithoutResponse)
+				},
+				errors.filter { it.failedOpCode in opCodes }.map<WatchErrorPacket, ByteArray> { throw it },
+			).first()
+		}
+		log.d { "Received batch: ${batch.toHexString(HexFormat.UpperCase)}" }
+		BatchPacket.decode(batch).onEach {
+			handlePacket(it)
+			_packets.emit(it)
+		}
+	}.onFailure { log.e { "Failed to request batch: ${it.message}" } }
+
+	/**
+	 * Writes several records at once to the batch transfer characteristic, see [BatchPacket]. The watch
+	 * doesn't reply. Like [write], failures are logged, not thrown.
+	 *
+	 * @param records The packets to write, e.g. [ClocksSettings.clocksPackets].
+	 */
+	@OptIn(ExperimentalStdlibApi::class)
+	@Throws(CancellationException::class, IOException::class, NotConnectedException::class)
+	suspend fun writeBatch(records: List<ByteArray>) {
+		val batch = BatchPacket.encode(records)
+		log.d { "Writing batch: ${batch.toHexString(HexFormat.UpperCase)}" }
+		runCatching {
+			peripheral.write(batchTransferCharacteristic, batch, WriteType.WithResponse)
+		}.onFailure { log.e { "Failed to write batch ${batch.toHexString(HexFormat.UpperCase)}: ${it.message}" } }
 	}
 
 	/**

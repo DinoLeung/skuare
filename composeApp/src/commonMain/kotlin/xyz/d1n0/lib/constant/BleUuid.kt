@@ -13,4 +13,8 @@ object BleUuid {
 	val IO_CHARACTERISTIC_UUID = Uuid.parse("26eb002d-b012-49a8-b1f8-394fb2032b0f")
 	val DATA_REQUEST_CHARACTERISTIC_UUID = Uuid.parse("26eb0023-b012-49a8-b1f8-394fb2032b0f")
 	val DATA_TRANSFER_CHARACTERISTIC_UUID = Uuid.parse("26eb0024-b012-49a8-b1f8-394fb2032b0f")
+
+	// GW-BX5600 only so far: batched world time requests and replies / writes, see BatchPacket
+	val BATCH_REQUEST_CHARACTERISTIC_UUID = Uuid.parse("26eb002e-b012-49a8-b1f8-394fb2032b0f")
+	val BATCH_TRANSFER_CHARACTERISTIC_UUID = Uuid.parse("26eb002f-b012-49a8-b1f8-394fb2032b0f")
 }
