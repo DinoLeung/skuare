@@ -15,10 +15,9 @@ Battery values are hex as sent, with decimal in brackets where it helps.
 
   | Raw | Bars | Seen on |
   |---|---|---|
-  | `0e` (14) | none: watch at L, Bluetooth off | GA-B2100 (battery list) |
-  | `0f` (15) | 1/5 | GA-B2100 |
+  | `0f` (15) | 1/5 (lowest level) | GA-B2100 |
   | `10` (16) | 1/5 | |
-  | `11` (17) | 2/5 | 3539 |
+  | `11` (17) | 2/5 | 3539, GA-B2100 |
   | `12` (18) | 3/5 | 3459 |
   | `13` (19) | 4/5 | 3540 |
   | `14` (20) | 5/5, top | |
@@ -50,6 +49,7 @@ All captures are in `~/Documents`.
 | `connect_time_sync_bat4_green.pcapng` | 11-12 16:20 | `CASIO GW-B5600#` (green) | 3540 | 01.01 | 4/5 | |
 | `connect_time_sync_bat1_2100.pcapng` | 11-13 16:30 | `CASIO GA-B2100` | 5594 | 03.01 | 1/5 | dial M |
 | `connect_time_sync_bat1_2100_1.pcapng` | 11-13 17:19 | `CASIO GA-B2100` | 5594 | 03.01 | 1/5 | dial M, L right after |
+| `connect_time_sync_bat2_charging_2100.pcapng` | 11-13 19:04 | `CASIO GA-B2100` | 5594 | 03.01 | 2/5 | dial M, charging under a lamp |
 
 Firmware update details are in `firmware-update-research.md`.
 
@@ -70,9 +70,10 @@ Watch status battery byte: [7] on the 171-byte layout (3459/3539/3540), [158] on
 | BX 3578 | 11-12 15:54 | H1 (menu) | 5/5 | `18` (24) | `18` (24) | `28 18 1f 00 00 00 02 00 00` |
 | BX 3578 | 11-12 16:04 | H2 (menu) | 5/5 | `ff` (wiped) | `17` (23) | `28 17 1f 23 00 00 02 00 00` |
 | GA-B2100 5594 | 11-13 16:30 | M (dial) | 1/5 | `0f` (15) | `0f` (15) | `28 0f 19 01 00 00 02 00 00` |
-| GA-B2100 5594 | 11-13 ~16:45 | L (dial), no Bluetooth | | `0e` (14)? from the battery list | | |
+| GA-B2100 5594 | 11-13 ~16:45 | L (dial), no Bluetooth | | | | |
 | GA-B2100 5594 | 11-13 17:19 | M (dial) | 1/5 | `0f` (15) | `0f` (15) | `28 0f 19 00 00 00 02 00 00` |
 | GA-B2100 5594 | 11-13 ~17:20 | L (dial), disconnected | | | | |
+| GA-B2100 5594 | 11-13 19:04 | M (dial), charging | 2/5 | `11` (17) | `0f` (15) | `28 0f 19 00 00 00 02 00 00` |
 
 Every 0x28 read within a capture returned the same reply (2–3 reads per capture).
 
@@ -95,13 +96,17 @@ Every 0x28 read within a capture returned the same reply (2–3 reads per captur
 - After two hand-adjust sessions (16:40 and 16:41, lots of hand movement) the dial showed
   **L** and the watch **refused to enter Bluetooth mode**. So `0f` at M is its last connectable
   level, and the app can't read the value at L.
-- At 17:19 the battery list (byte 114) had its first entry, **`0e` (14)**, one below M's `0f`.
-  Probably the L value, sampled around 17:00 (the list was empty at 16:30). Not confirmed: the
-  third list (byte 150) also got `0e`, and on the BX that list holds unrelated values.
+- At 17:19 the battery list (byte 114) had one entry, `0e` (14). Not treated as a battery
+  level: the third list (byte 150) got the same `0e`, on the BX that list holds unrelated
+  values, and by 19:04 all three lists were empty again, probably wiped by the second drop to
+  L. What `0e` means there is unknown.
 - At 17:19 it was back at M and 1/5, and shortly after the sync **the watch disconnected
   itself and the dial dropped to L** again. Both drops came right after load (hand movement,
   Bluetooth sync), so the watch sits on the M/L boundary (`0f`/`0e`), the level reacts to load
   at least near that boundary, and reaching L ends the connection from the watch's side.
+- At 19:04, charging under the lamp during the capture: dial still M, app **2/5**, watch status
+  **`11` (17)**, 0x28 byte 1 still `0f`. 1/5 → 2/5 went `0f` → `11`, so `10` (16) still hasn't
+  been seen. The charge current may lift the reading the way load lowered it near L.
 
 ## 0x28 watch condition
 
@@ -122,6 +127,7 @@ Byte 1 vs the watch status battery byte:
 |---|---|---|---|
 | 1/5 | GA-B2100 | `0f` (15) | `0f` (15) |
 | 2/5 | 3539 | `11` (17) | `0f` (15) |
+| 2/5 | GA-B2100 | `11` (17) | `0f` (15) |
 | 3/5 | 3459 | `12` (18) | `0f` (15) |
 | 4/5 | 3540 | `13` (19) | `13` (19) |
 | 5/5 | BX | `18` (24) | `18` (24) |
@@ -129,8 +135,9 @@ Byte 1 vs the watch status battery byte:
 - Byte 1 equals the watch status from `13` up and reads `0f` below that, so it looks like a
   **floor**, not an offset (the gap is 2 on the 3539 and 3 on the 3459). Three watches at
   three levels all landing on exactly `0f` argues against a voltage sag under radio load.
-- Tests: the GA-B2100 at 2/5 (floor: 0x28 `0f` with watch status `11`), and the silver 3539 at
-  1/5 (floor: `0f` with `10`; sag: below `0f`).
+- **Confirmed on the GA-B2100** at 2/5: `0f` in 0x28 with `11` in the watch status, the same
+  as the 3539. Its 9-byte 0x28 behaves like the B5000 family's 4-byte one.
+- Remaining test: the silver 3539 at 1/5 (floor: `0f` with `10`; sag: below `0f`).
 
 ## Watch status transfer
 
@@ -203,16 +210,17 @@ matches the BX's from the battery byte on.
 |---|---|
 | 0–1 | `00 05` (same as the request's first two bytes; maybe a header, maybe log data) |
 | 2–109 | all `00`, probably an empty log |
-| 110 | **battery** (`0f`, same as 0x28 byte 1) |
+| 110 | **battery**: `0f` = 1/5, `11` = 2/5 |
 | 111 | temperature in °C (`19` = 25 °C, same as 0x28 byte 2) |
-| 112–113 | unknown: `0f 00` at 16:30, `03 00` at 17:19 |
+| 112–113 | unknown: `0f 00` at 16:30, `03 00` at 17:19, `13 00` at 19:04 |
 | 114–131 | battery list (BX: 160–177), empty `ff`. 17:19: first entry `0e` |
 | 132–149 | temperature list in °C (BX: 178–195), empty `7f`. 17:19: first entry `1d` (29 °C) |
 | 150–167 | unknown list (BX: 196–213), empty `ff`. 17:19: first entry `0e` |
 | 168–171 | `00 00 00 00` |
 
-The lists fill from the front, one entry per sample (probably hourly). Bytes 0–109 were still
-all `00` at 17:19. A capture after a few days of wear should show whether they are hourly slots
+The lists fill from the front. They were empty at 16:30, had one entry at 17:19 and were empty
+again at 19:04, after the watch dropped to L at ~17:20, so L probably clears them. Bytes 0–109
+were still all `00` at 19:04. A capture after a few days of wear should show whether they are hourly slots
 like the BX's.
 
 ## Levels
@@ -222,8 +230,8 @@ like the BX's.
 - **BX diagnostic menu:** level, voltage and temperature. Photos of other MIP watches' menus
   show M1 at 2.40 V, so the levels are probably H1, H2, M1, M2, L1, L2. Seen: H1 (2.52 V) =
   `18`, H2 (2.435 V) = `17`, both 5/5 in the app.
-- **GA-B2100 dial:** the second hand points at H, M or L. M = `0f`, 1/5 in the app; L =
-  probably `0e`, Bluetooth off.
+- **GA-B2100 dial:** the second hand points at H, M or L. M = `0f` (1/5) and `11` (2/5,
+  charging); at L Bluetooth is off, so no value can be read.
 
 The app's bars don't follow these directly: the GA-B2100 at M shows 1/5. The battery byte held
 for weeks on every watch and moved one step with H1 → H2 on the BX, so it's most likely the
@@ -232,9 +240,10 @@ watch's level index rather than a voltage (see [Battery cell](#battery-cell)).
 ### Working model (user, 2026-11-13)
 
 The GMW-B5000, GW-B5600 and GA-B2100 share one range: `0f`/`10` (15/16) = 1/5, `11` (17) = 2/5,
-`12` (18) = 3/5, `13` (19) = 4/5, `14` (20) = 5/5, nothing above. `0e` (14) is L, Bluetooth
-off. Six connectable values, with the doubled bar at the bottom. 15, 17, 18 and 19 are seen;
-16 and 20 aren't.
+`12` (18) = 3/5, `13` (19) = 4/5, `14` (20) = 5/5. Six internal levels, `0f`–`14`, with the
+first bar covering two of them (`0f` and `10`). Nothing below `0f` is on the scale: at L the
+watch turns Bluetooth off, so the app never reads a lower value. 15, 17, 18 and 19 are seen; 16
+and 20 aren't.
 
 The **MIP models** (BX) use a different range: two values at 5/5 (`17`/`18`, 23/24), so a
 different shape, not just an offset. The rest of it is unknown.
@@ -252,7 +261,7 @@ GA-B2100 predictions:
 |---|---|---|
 | `0f` (15) | 1/5 ✓ | 1/5 ✓ |
 | `10` (16) | 1/5 | 1/5 |
-| `11` (17) | 2/5 | 2/5 |
+| `11` (17) | 2/5 ✓ | 2/5 ✓ |
 | `12` (18) | 3/5 | 2/5 |
 | `13` (19) | 4/5 | 3/5 |
 | `14` (20) | 5/5 | 3/5 |
@@ -334,8 +343,8 @@ cut-off. Discharge curve (20 kΩ, 20 °C), read off the chart:
 
 - Silver 3539 (2/5, `11`) kept in the dark to reach 1/5. Expected `10` (16).
 - Green 3540 (4/5, `13`) worn and in light to reach 5/5. Expected `14` (20).
-- GA-B2100: charging without connecting until it's well above the M/L boundary, then a capture
-  at each bar change, noting the dial.
+- GA-B2100: 2/5 (`11`) at 19:04 while charging. Next capture at 3/5, ideally a few minutes
+  away from the lamp, noting the dial.
 
 The battery history (B5000: bytes 12–23, GA-B2100: 114–131) shows a change even if the capture
 is taken later. Note the app's bars, any [LOW]/[CHG] indicator, and the watch's own level
