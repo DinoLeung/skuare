@@ -10,6 +10,35 @@ Branch `feat/casioak`. A new `WatchModel.CASIOAK` for:
 
 Hand adjustment comes with it.
 
+Only the GA-B2100 has been captured or tested. The GBM-2100 and GM-B2100 are assumed to use
+the same protocol, and the README must say they're untested.
+
+## To do
+
+Captures from the official app on the GA-B2100, one file each (user):
+
+- [ ] `0x13` watch settings: open the settings screen, change each setting once (light
+      duration, 12/24 h, button tone, power saving, and any others), then save
+- [ ] `0x15`/`0x16` alarms: open the alarms screen, change alarm 5 and the hourly signal,
+      then save
+- [ ] `0x18` timer: open the timer screen, set a time, then save
+- [ ] Note any official app screens for the B2100 that skuare doesn't have
+- [ ] Ongoing, not blocking: battery capture at 3/5 (see `research/battery-research.md`)
+
+Once the captures are in:
+
+- [ ] Decode them and update the features table and Phase 4 below. Any new feature goes into
+      the same v3 migration
+- [ ] Phase 1: `WatchFeatures` (`hasSnoozeAlarm`, `hasTimeZoneLocation`, `canAdjustHands`,
+      plus anything from the captures), `CustomWatchModel` + dialog switches, DB v3
+      migration, `WatchModel.CASIOAK`, tests
+- [ ] Phase 2: skip `0x24`, alarm 5 label, watch status layout by reply length
+- [ ] Device round on the GA-B2100 (user): connect, time sync, world time edit (batched
+      path), alarms, background sync, a custom watch keeping or dropping its model. One
+      square as a regression check
+- [ ] Phase 3: hand adjust library, device experiments (user), then the UI
+- [ ] Phase 5: docs, README with GBM-2100 / GM-B2100 marked untested
+
 What we know about the GA-B2100 comes from `connect_time_sync_bat*_2100.pcapng` (connect
 sync), `world_time_nyc_2100.pcapng` (world clock write), `research/hand-adjust-research.md`,
 and the watch itself: 5 alarms plus the hourly signal, no snooze alarm.
@@ -153,8 +182,9 @@ feature.
 
 ## Phase 5: docs
 
-- README: supported models and modules, and hand adjustment in the features list. fastlane
-  full description.
+- README: supported models and modules, and hand adjustment in the features list. Mark the
+  GBM-2100 (5729) and GM-B2100 (5691) as untested: assumed to use the same protocol as the
+  GA-B2100, but never connected. Same for the fastlane full description.
 - `research/hand-adjust-research.md`: experiment results. `research/battery-research.md`: the
   watch status layout picked by reply length.
 - The world time findings above (the connect sequence and `world_time_nyc_2100.pcapng`) go into
