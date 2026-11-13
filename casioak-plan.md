@@ -52,7 +52,7 @@ Differences 1, 3, 5 and 6 become features, so screens and writes are decided by
 | `hasShortCityNames` | no | yes | no | no | no |
 | `hasWeekdayLanguage` | yes | no | yes | no (until a `0x13` capture) | no |
 | **`hasSnoozeAlarm`** (new) | yes | yes (today's behaviour) | yes (today's behaviour) | no | yes |
-| **`hasTimeZoneLocation`** (new, `0x24`) | yes | yes | yes | no | yes |
+| **`hasTimeZoneLocation`** (new, `0x24`) | yes | yes | yes | no | no |
 | **`canAdjustHands`** (new) | no | no | no | yes | no |
 
 - **`hasSnoozeAlarm`:** the alarm packets probably stay the same (`0x15` = signal + alarm 1,
@@ -70,14 +70,16 @@ Differences 1, 3, 5 and 6 become features, so screens and writes are decided by
   replies with its own fixed size, so the parser picks the layout from the reply length
   (171 → [7], 172 → [110], 216 → [158]). Custom models get this for free.
 
-Custom models (DB v2 → v3, a Room auto migration with column defaults, so watches already
-paired keep today's behaviour):
+Custom models (DB v2 → v3, a Room auto migration with column defaults):
 
-- `hasSnoozeAlarm` and `hasTimeZoneLocation` are stored (`defaultValue = 1`).
-  `CustomWatchModel.from(features)` copies them.
-- `CustomWatchModelDialog` gets a "Snooze alarm" switch. `hasTimeZoneLocation` is stored but
-  not shown, since users can't tell from the watch whether it has it (it can go into the
-  dialog later if needed).
+- `hasSnoozeAlarm` is stored with `defaultValue = 1`, so custom watches that are already paired
+  keep their snooze alarm.
+- `hasTimeZoneLocation` is stored with `defaultValue = 0`, and `CustomWatchModel()` defaults to
+  false, in line with the minimal default profile. Custom watches that are already paired stop
+  sending `0x24` after the update, until the user turns it on.
+- `CustomWatchModel.from(features)` copies both, so a watch kept on the CLASSIC_SQUARE features
+  keeps `0x24`.
+- `CustomWatchModelDialog` gets two switches: "Snooze alarm" and "Time zone location".
 - `canAdjustHands` isn't stored (always false).
 - Export the v3 schema and extend `CustomWatchModelMigrationTest`.
 
