@@ -47,9 +47,9 @@ All captures are in `~/Documents`.
 | `connect_time_sync_bat2_silver.pcapng` | 11-12 16:12 | `CASIO GMW-B5000#` (silver) | 3539 | 01.01 | 2/5 | |
 | `connect_time_sync_bat3_gold.pcapng` | 11-12 16:17 | `CASIO GMW-B5000` (gold) | 3459 | 01.01 | 3/5 | |
 | `connect_time_sync_bat4_green.pcapng` | 11-12 16:20 | `CASIO GW-B5600#` (green) | 3540 | 01.01 | 4/5 | |
-| `connect_time_sync_bat1_2100.pcapng` | 11-13 16:30 | `CASIO GA-B2100` | 5594 | 03.01 | 1/5 | dial M |
-| `connect_time_sync_bat1_2100_1.pcapng` | 11-13 17:19 | `CASIO GA-B2100` | 5594 | 03.01 | 1/5 | dial M, L right after |
-| `connect_time_sync_bat2_charging_2100.pcapng` | 11-13 19:04 | `CASIO GA-B2100` | 5594 | 03.01 | 2/5 | dial M, charging under a lamp |
+| `connect_time_sync_bat1_2100.pcapng` | 11-13 16:30 | `CASIO GA-B2100` | 5689 | 03.01 | 1/5 | dial M |
+| `connect_time_sync_bat1_2100_1.pcapng` | 11-13 17:19 | `CASIO GA-B2100` | 5689 | 03.01 | 1/5 | dial M, L right after |
+| `connect_time_sync_bat2_charging_2100.pcapng` | 11-13 19:04 | `CASIO GA-B2100` | 5689 | 03.01 | 2/5 | dial M, charging under a lamp |
 
 Firmware update details are in `firmware-update-research.md`.
 
@@ -69,11 +69,11 @@ Watch status battery byte: [7] on the 171-byte layout (3459/3539/3540), [158] on
 | BX 3578 | 10-17 | | 5/5 | `18` (24) | `18` (24) | `28 18 1b 00 00 00 02 00 00` |
 | BX 3578 | 11-12 15:54 | H1 (menu) | 5/5 | `18` (24) | `18` (24) | `28 18 1f 00 00 00 02 00 00` |
 | BX 3578 | 11-12 16:04 | H2 (menu) | 5/5 | `ff` (wiped) | `17` (23) | `28 17 1f 23 00 00 02 00 00` |
-| GA-B2100 5594 | 11-13 16:30 | M (dial) | 1/5 | `0f` (15) | `0f` (15) | `28 0f 19 01 00 00 02 00 00` |
-| GA-B2100 5594 | 11-13 ~16:45 | L (dial), no Bluetooth | | | | |
-| GA-B2100 5594 | 11-13 17:19 | M (dial) | 1/5 | `0f` (15) | `0f` (15) | `28 0f 19 00 00 00 02 00 00` |
-| GA-B2100 5594 | 11-13 ~17:20 | L (dial), disconnected | | | | |
-| GA-B2100 5594 | 11-13 19:04 | M (dial), charging | 2/5 | `11` (17) | `0f` (15) | `28 0f 19 00 00 00 02 00 00` |
+| GA-B2100 5689 | 11-13 16:30 | M (dial) | 1/5 | `0f` (15) | `0f` (15) | `28 0f 19 01 00 00 02 00 00` |
+| GA-B2100 5689 | 11-13 ~16:45 | L (dial), no Bluetooth | | | | |
+| GA-B2100 5689 | 11-13 17:19 | M (dial) | 1/5 | `0f` (15) | `0f` (15) | `28 0f 19 00 00 00 02 00 00` |
+| GA-B2100 5689 | 11-13 ~17:20 | L (dial), disconnected | | | | |
+| GA-B2100 5689 | 11-13 19:04 | M (dial), charging | 2/5 | `11` (17) | `0f` (15) | `28 0f 19 00 00 00 02 00 00` |
 
 Every 0x28 read within a capture returned the same reply (2–3 reads per capture).
 
