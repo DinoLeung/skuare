@@ -91,6 +91,11 @@ So the 01.01 → 01.02 update is a ~0.5 KB patch in a 24 KB region, not a full f
 Real zeros, not snoop filtering: the zero blocks carry CRC `0000` and the CRC tail packets are
 intact.
 
+**Probably XOR'd with 0xFF.** Gadgetbridge's GBD-200 driver (`FetchSportDataOperation.java`)
+decodes the same convoy channel as: packet[0] = `05`, packet[1:] XOR `0xFF`. If that applies here,
+the zero region is really `ff` (erased flash, which is far more likely than zeros) and the footer
+is `a5 a5 5a 5a 5a a5 a5 5a 02 00 00 00` (magic + `2`). The block CRCs are over the bytes as sent.
+
 The header's `fa f5` isn't a CRC-16 (XMODEM, CCITT-FALSE, ARC, MODBUS, KERMIT) of the whole
 image, nor a byte or word sum. Unknown.
 
