@@ -22,23 +22,22 @@ Captures from the official app on the GA-B2100, one file each (user):
 - [x] Reminders, read only (`reminder_2100.pcapng`): the watch has 5
 - [x] Settings, read only (`settings_2100.pcapng`)
 - [x] Decoded into `research/casioak-research.md`, features table updated
-- [ ] `0x13` settings **with changes**: change key sounds, light, watch display and power
-      saving one at a time, saving after each, and note the order
-- [ ] Summer time in settings: toggle it and save
-- [ ] Reminders: save one reminder (title, date and repeat)
+- [x] `0x13` settings with changes (`settings_set_2100.pcapng`): B5000 layout
+- [x] Summer time on/off/auto (`summer_time_2100.pcapng`): `DstBitMask`, but session byte `03`
+- [x] All 5 reminders (`reminders_2100.pcapng`): B5000 layout
+- [x] Decoded into `research/casioak-research.md`. No new features: settings, reminders and
+      DST all use skuare's existing layouts
 - [ ] Ongoing, not blocking: battery capture at 3/5 (see `research/battery-research.md`)
 
-Once the captures are in:
+Implementation:
 
-- [ ] Decode them into `research/casioak-research.md`. Any new feature goes into the same v3
-      migration
-- [ ] Phase 1: `WatchFeatures` (`hasSnoozeAlarm`, `hasTimeZoneLocation`, `canAdjustHands`,
-      plus anything from the captures), `CustomWatchModel` + dialog switches, DB v3
-      migration, `WatchModel.CASIOAK`, tests
+- [ ] Phase 1: `WatchFeatures` (`hasSnoozeAlarm`, `hasTimeZoneLocation`, `canAdjustHands`),
+      `CustomWatchModel` + dialog switches, DB v3 migration, `WatchModel.CASIOAK`, tests
 - [ ] Phase 2: skip `0x24`, alarm 5 label, watch status layout by reply length, timer write
       size matching the reply
 - [ ] Device round on the GA-B2100 (user): connect, time sync, world time edit (batched
-      path), alarms (does it accept skuare's `00` in alarm byte 1?), timer, reminders,
+      path), summer time on/off/auto (does it accept skuare's `21 00 01` session?), alarms
+      (does it accept skuare's `00` in alarm byte 1?), timer, reminders, settings,
       background sync, a custom watch keeping or dropping its model. One square as a
       regression check
 - [ ] Phase 3: hand adjust library, device experiments (user), then the UI
@@ -172,17 +171,17 @@ Device experiments, before the UI is final (the results go into `hand-adjust-res
 4. Disconnect mid-adjustment: what state are the hands left in?
 5. A large step (e.g. +60) to check byte 5 and the ack timing.
 
-## Phase 4: captures still needed
+## Phase 4: leftovers from the captures
 
-Alarms and timer are settled (B5000 layout, 15-byte timer). Still needed from the GA-B2100:
+All captures are in. Alarms, settings, reminders and DST use the B5000 layouts, and the timer
+is handled in Phase 2. What's left depends on the device round:
 
-- **watch settings (`0x13`):** which bits key sounds, light, watch display and power saving
-  use. The 12-byte reply parses with the B5000 layout, but no write has been captured.
-- **summer time:** what toggling it in settings writes.
-- **reminders:** a saved reminder, to confirm the B5000 write layout.
-
-Until then CASIOAK uses the B5000 layouts. If a capture shows a different layout, it becomes a
-feature.
+- **Clocks session byte:** the official app sends `21 00 03` … `21 01 03` for a summer time
+  change and `01` for a world clock change. skuare always sends `01`. If the watch rejects or
+  ignores a DST change sent with `01`, the session byte is chosen by what changed (home clock
+  → `03`), for every model.
+- **Alarm byte 1:** if the watch doesn't accept `00`, write `0x40` like the official app (the
+  BX already gets `0x40` from the official app, so probably for every model).
 
 ## Phase 5: docs
 
@@ -196,5 +195,5 @@ feature.
 
 ## Order
 
-Phase 1 → 2 (one device test round) → 3 library + experiments → 3 UI → 4 when captures
-arrive → 5. One commit per step, `feat:`/`docs:`/`test:` style.
+Phase 1 → 2 (one device test round) → 4 if the device round needs it → 3 library +
+experiments → 3 UI → 5. One commit per step, `feat:`/`docs:`/`test:` style.
