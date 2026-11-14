@@ -292,6 +292,17 @@ suspend fun Watch.adjustTime(delay: Duration = 0.seconds) =
 		log.e { "Error syncing time: ${error.message}" }
 	}
 
+/**
+ * Hand adjustment on this watch, see [HandAdjuster]. Only for watches with
+ * [WatchFeatures.canAdjustHands].
+ *
+ * @throws IllegalStateException if the watch can't adjust hands.
+ */
+fun Watch.handAdjuster(): HandAdjuster {
+	check(model.canAdjustHands) { "$model can't adjust hands" }
+	return HandAdjuster(write = ::write, packets = packets)
+}
+
 suspend fun Watch.startClockUpdateSession() = write(ClocksSettings.clocksUpdateSessionStartPacket)
 
 suspend fun Watch.endClockUpdateSession() = write(ClocksSettings.clocksUpdateSessionEndPacket)
