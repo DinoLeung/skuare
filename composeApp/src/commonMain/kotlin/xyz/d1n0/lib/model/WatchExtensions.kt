@@ -400,6 +400,11 @@ suspend fun Watch.handlePacket(packet: ByteArray) = when (OpCode.fromByte(packet
 		}.onFailure { log.e { "Failed to parse reminder config packet: ${it.message}" } }
 	}
 
+	OpCode.HAND_ADJUST -> {
+		// a reply to a command, waited on by HandAdjuster
+		log.d { packet.toHexString(HexFormat.UpperCase) }
+	}
+
 	OpCode.ERROR -> {
 		log.e { "Error: ${packet.toHexString(HexFormat.UpperCase)}" }
 		// so waits for the clocks, e.g. adjustTime, fail fast instead of timing out
