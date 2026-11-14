@@ -53,10 +53,11 @@ anticlockwise moves are sent as `total - n`:
 | −2 | `6e 08` (2158) | `b2 00` (178) |
 | −1 | `6f 08` (2159) | `b3 00` (179) |
 
-- Hour and minute hands: 1 step = 1 minute (user-confirmed), wrap at 2160. 2160 minutes is
-  36 hours, a whole number of turns of the 12-hour dial (3 hour-hand turns), so `2160 − n`
-  lands on the same spot as −n. Why 2160 and not 720 is unknown: nothing in the captures
-  explains it.
+- Clock hands: the official app's adjustment only moves the minute hand, and it takes
+  **15 steps from 12 to 1** (user, 2026-11-14). So 1 step is 2° of the minute hand, 20 seconds
+  of time, and a full turn of the minute hand is 180 steps. The wrap at 2160 is 12 × 180:
+  12 hours, one full turn of the hour hand, so `2160 − n` lands on the same spot as −n.
+  (An earlier note had 1 step = 1 minute, which was wrong.)
 - Function hand: wraps at 180. Its dial is a half circle (user), so 1 step is 1°.
 
 They're relative, not absolute: as absolute positions the user's moves would have been 3, then
