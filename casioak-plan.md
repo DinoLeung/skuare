@@ -35,11 +35,10 @@ Implementation:
       `CustomWatchModel` + dialog switches, DB v3 migration, `WatchModel.CASIOAK`, tests
 - [x] Phase 2: skip `0x24`, alarm 5 label, watch status layout by reply length, timer write
       size matching the reply
-- [ ] Device round on the GA-B2100 (user): connect, time sync, world time edit (batched
-      path), summer time on/off/auto (does it accept skuare's `21 00 01` session?), alarms
-      (does it accept skuare's `00` in alarm byte 1?), timer, reminders, settings,
-      background sync, a custom watch keeping or dropping its model. One square as a
-      regression check
+- [x] Device round on the GA-B2100 (user, 2026-11-14): connect, time sync, world time edit
+      (batched path), summer time on/off/auto with skuare's `21 00 01` session, alarms with
+      `00` in alarm byte 1, timer (15-byte write), reminders, settings, background sync, a
+      custom watch dropping its model. Regression on the squares passed. All worked
 - [ ] Phase 3: hand adjust library, device experiments (user), then the UI
 - [ ] Phase 5: docs, README with GBM-2100 / GM-B2100 marked untested
 
@@ -173,15 +172,11 @@ Device experiments, before the UI is final (the results go into `hand-adjust-res
 
 ## Phase 4: leftovers from the captures
 
-All captures are in. Alarms, settings, reminders and DST use the B5000 layouts, and the timer
-is handled in Phase 2. What's left depends on the device round:
+**Nothing to do:** the device round showed the GA-B2100 accepts skuare's existing choices.
 
-- **Clocks session byte:** the official app sends `21 00 03` … `21 01 03` for a summer time
-  change and `01` for a world clock change. skuare always sends `01`. If the watch rejects or
-  ignores a DST change sent with `01`, the session byte is chosen by what changed (home clock
-  → `03`), for every model.
-- **Alarm byte 1:** if the watch doesn't accept `00`, write `0x40` like the official app (the
-  BX already gets `0x40` from the official app, so probably for every model).
+- **Clocks session byte:** a summer time change sent in a `21 00 01` … `21 01 01` session works,
+  so skuare keeps sending `01` whatever changed (the official app sends `03` for summer time).
+- **Alarm byte 1:** the watch accepts `00`, so skuare doesn't need the official app's `0x40`.
 
 ## Phase 5: docs
 
@@ -195,5 +190,5 @@ is handled in Phase 2. What's left depends on the device round:
 
 ## Order
 
-Phase 1 → 2 (one device test round) → 4 if the device round needs it → 3 library +
+Phase 1 → 2 (one device test round) → 4 (nothing needed) → 3 library +
 experiments → 3 UI → 5. One commit per step, `feat:`/`docs:`/`test:` style.

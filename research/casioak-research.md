@@ -136,9 +136,20 @@ full clocks write (read/write `1d`, `1e` ×2, `1f` ×2), and only the home clock
   change to compare with.
 - No `09` time write after any of the three changes, so the watch shifts its own time.
 
+## Tested with skuare (2026-11-14)
+
+Device round on the GA-B2100, all working: connect, time sync, world clock edit, summer time
+on/off/auto, alarms, timer, reminders, settings, background sync.
+
+- **Batched characteristics work** for clocks and time zones, though the official app never
+  uses them on this watch.
+- **`21 00 01` works for a summer time change.** The watch doesn't need the official app's
+  `03` session byte.
+- **Alarm byte 1 `00` works.** The official app's `0x40` isn't needed.
+- **15-byte timer writes work** (skuare now matches the reply size). Whether an 8-byte write
+  would also work wasn't tested.
+
 ## Open questions
 
-- The clocks session's third byte (`01` vs `03`): what it means, and whether the watch
-  accepts `01` for a DST change (skuare's current behaviour).
-- Alarm byte 1 (`0x40`): does the watch accept skuare's `00`?
-- Timer write: does the watch accept skuare's 8-byte packet, or does it need 15?
+- What the clocks session's third byte (`01` vs `03`) means. Both work for a summer time change.
+- What alarm byte 1 (`0x40` from the official app) means.
