@@ -31,9 +31,9 @@ Captures from the official app on the GA-B2100, one file each (user):
 
 Implementation:
 
-- [ ] Phase 1: `WatchFeatures` (`hasSnoozeAlarm`, `hasTimeZoneLocation`, `canAdjustHands`),
+- [x] Phase 1: `WatchFeatures` (`hasSnoozeAlarm`, `hasTimeZoneLocation`, `canAdjustHands`),
       `CustomWatchModel` + dialog switches, DB v3 migration, `WatchModel.CASIOAK`, tests
-- [ ] Phase 2: skip `0x24`, alarm 5 label, watch status layout by reply length, timer write
+- [x] Phase 2: skip `0x24`, alarm 5 label, watch status layout by reply length, timer write
       size matching the reply
 - [ ] Device round on the GA-B2100 (user): connect, time sync, world time edit (batched
       path), summer time on/off/auto (does it accept skuare's `21 00 01` session?), alarms
