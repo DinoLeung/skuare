@@ -193,7 +193,7 @@ fun CustomWatchModelIntroDialog(
 	)
 }
 
-@Preview
+@Preview(showBackground = true, widthDp = 420, heightDp = 720)
 @Composable
 private fun CustomWatchModelDialogPreview() {
 	SkuareTheme {
@@ -207,7 +207,7 @@ private fun CustomWatchModelDialogPreview() {
 	}
 }
 
-@Preview
+@Preview(showBackground = true, widthDp = 420, heightDp = 720)
 @Composable
 private fun CustomWatchModelIntroDialogPreview() {
 	SkuareTheme {

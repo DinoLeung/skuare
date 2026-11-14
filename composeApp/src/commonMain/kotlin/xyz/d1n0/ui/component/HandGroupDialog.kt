@@ -45,7 +45,7 @@ fun HandGroupDialog(
 	)
 }
 
-@Preview
+@Preview(showBackground = true, widthDp = 420, heightDp = 720)
 @Composable
 private fun HandGroupDialogPreview() {
 	SkuareTheme {
