@@ -39,7 +39,11 @@ Implementation:
       (batched path), summer time on/off/auto with skuare's `21 00 01` session, alarms with
       `00` in alarm byte 1, timer (15-byte write), reminders, settings, background sync, a
       custom watch dropping its model. Regression on the squares passed. All worked
-- [ ] Phase 3: hand adjust library, device experiments (user), then the UI
+- [x] Phase 3: hand adjust library (`HandAdjust`, `HandAdjuster`), `HandAdjustSession`, the
+      Adjust Hands button and dialogs, custom models (DB v4). Device test on the GA-B2100
+      (user, 2026-11-14): works
+- [ ] Optional: hand adjust device experiments 1–3 (need a build that leaves out a command),
+      see Phase 3
 - [ ] Phase 5: docs, README with GBM-2100 / GM-B2100 marked untested
 
 The captures are decoded in `research/casioak-research.md` (protocol) and

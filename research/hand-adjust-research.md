@@ -125,6 +125,19 @@ one move, `29`, then `04`, `06`, `07`), with two differences:
 - **`07` was sent twice**, at 73.2 s and again at 75.6 s right after the first one's write
   response (which took 2.4 s). The clock capture sent it once. Maybe a retry, or a second tap.
 
+## Tested with skuare (2026-11-14)
+
+Hand adjustment from skuare works on the GA-B2100 (user's device test). skuare sends the official
+app's sequence, but **without the `0x11` reads** in between, so those are only the official app
+refreshing its screen:
+
+```
+06 (wait for reply) → x2 → x8 0 (wait for reply) → [x8 n (wait for reply) → x9]… → 04 → 06 (wait for reply) → 07
+```
+
+Experiments 1–3 of the plan (is `04` needed, is `x9` needed after every move, is `x2` needed)
+weren't run: they need a build that leaves out a command, and the full sequence works.
+
 ## Hand groups come from the model
 
 The watch never says which hand groups it has or what their step moduli are, so the official app
