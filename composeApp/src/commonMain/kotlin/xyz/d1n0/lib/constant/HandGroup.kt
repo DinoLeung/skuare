@@ -13,7 +13,7 @@ enum class HandGroup(val id: Int, val stepModulus: Int) {
 	/** Hour and minute hands, 1 step is 1 minute. */
 	CLOCK(id = 1, stepModulus = 2160),
 
-	/** The function hand. */
+	/** The function hand, its dial is a half circle, 1 step is 1°. */
 	FUNCTION(id = 2, stepModulus = 180);
 
 	override fun toString(): String = when (this) {

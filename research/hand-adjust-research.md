@@ -57,7 +57,7 @@ anticlockwise moves are sent as `total - n`:
   36 hours, a whole number of turns of the 12-hour dial (3 hour-hand turns), so `2160 − n`
   lands on the same spot as −n. Why 2160 and not 720 is unknown: nothing in the captures
   explains it.
-- Function hand: wraps at 180. Its angle per step isn't confirmed (2° if 180 is one turn).
+- Function hand: wraps at 180. Its dial is a half circle (user), so 1 step is 1°.
 
 They're relative, not absolute: as absolute positions the user's moves would have been 3, then
 −2 (2158), then −3 (2157), but the last write was 2159.
