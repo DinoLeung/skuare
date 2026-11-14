@@ -51,7 +51,9 @@ suspend fun Watch.requestName() = request(OpCode.WATCH_NAME)
 suspend fun Watch.writeName(watchName: WatchName) = write(watchName.packet).also { requestName() }
 
 suspend fun Watch.requestTimer() = request(OpCode.TIMER)
-suspend fun Watch.writeTimer(timer: Timer) = write(timer.packet).also { requestTimer() }
+/** Writes [timer] with the size of the watch's last timer reply, see [TimerSettings.packetSize]. */
+suspend fun Watch.writeTimer(timer: Timer) =
+	write(timer.packet(size = this.timer.value.packetSize)).also { requestTimer() }
 
 /**
  * Requests the clocks, one request per pair of clocks. The watch walks the pairs itself, a

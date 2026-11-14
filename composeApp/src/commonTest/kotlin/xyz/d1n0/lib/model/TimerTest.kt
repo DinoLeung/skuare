@@ -25,7 +25,35 @@ class TimerTest {
 
 	@Test
 	fun roundTripsClassicPacket() {
-		assertContentEquals(classicPacket, Timer.fromPacket(classicPacket).packet)
+		assertContentEquals(classicPacket, Timer.fromPacket(classicPacket).packet())
+	}
+
+	@Test
+	fun roundTripsPaddedPacket() {
+		assertContentEquals(paddedPacket, Timer.fromPacket(paddedPacket).packet(Timer.PADDED_PACKET_SIZE))
+	}
+
+	@Test
+	fun buildsCapturedCasioakWrite() {
+		// timer_2100.pcapng: the official app sets the GA-B2100's timer to 3 minutes
+		val timer = Timer(duration = 3.minutes, status = TimerStatus.NOT_STARTED)
+		assertContentEquals(
+			"180003000000000000000000000000".hexToByteArray(),
+			timer.packet(Timer.PADDED_PACKET_SIZE),
+		)
+	}
+
+	@Test
+	fun rejectsOtherPacketSizes() {
+		val timer = Timer(duration = 3.minutes, status = TimerStatus.NOT_STARTED)
+		assertFailsWith<IllegalArgumentException> { timer.packet(9) }
+	}
+
+	@Test
+	fun timerSettingsStoresReplySize() {
+		assertEquals(Timer.CLASSIC_PACKET_SIZE, TimerSettings().packetSize)
+		assertEquals(Timer.CLASSIC_PACKET_SIZE, TimerSettings().parseTimerPacket(classicPacket).packetSize)
+		assertEquals(Timer.PADDED_PACKET_SIZE, TimerSettings().parseTimerPacket(paddedPacket).packetSize)
 	}
 
 	@Test
