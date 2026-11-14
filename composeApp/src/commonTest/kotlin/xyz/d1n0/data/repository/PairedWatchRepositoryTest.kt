@@ -36,6 +36,7 @@ class PairedWatchRepositoryTest {
 			hasWeekdayLanguage = true,
 			hasSnoozeAlarm = false,
 			hasTimeZoneLocation = true,
+			canAdjustHands = true,
 		)
 
 		assertTrue(repository.updateCustomModel(ADDRESS, adjusted))

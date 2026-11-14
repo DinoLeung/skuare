@@ -34,6 +34,14 @@ class CustomWatchModelMigrationTest {
 	}
 
 	@Test
+	fun version4FillsHandAdjustmentOfCustomWatchesOnly() {
+		val sql = HandAdjustFeatureMigration.FILL_CAN_ADJUST_HANDS_SQL
+		// custom watches start without hand adjustment
+		assertContains(sql, "model_canAdjustHands = 0")
+		assertContains(sql, "WHERE model_clockCount IS NOT NULL")
+	}
+
+	@Test
 	fun unknownWatchGetsDefaultCustomModel() {
 		assertEquals(CustomWatchModel(), migratedCustomModel("CASIO GBD-H2000"))
 		assertEquals(CustomWatchModel(), migratedCustomModel("CASIO GW-B5600BC"))

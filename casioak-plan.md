@@ -95,7 +95,7 @@ Differences 1, 3, 5, 6 and 7 become features, so screens and writes are decided 
 - **`canAdjustHands`:** whether the hand adjustment screen is shown. The hand groups and
   their step moduli (clock `1`/2160, mode `2`/180) are a `HandGroup` enum, because
   CASIOAK is the only analog profile so far. If a later model has other groups or moduli,
-  they move into the profile. Custom models stay off, because the moduli can't be guessed.
+  they move into the profile. Custom models can turn it on and use the same groups (DB v4).
 - **Watch status layout** isn't a feature: the watch ignores the requested size and always
   replies with its own fixed size, so the parser picks the layout from the reply length
   (171 → [7], 172 → [110], 216 → [158]). Custom models get this for free.
@@ -112,7 +112,8 @@ Custom models (DB v2 → v3, a Room auto migration with column defaults):
 - `CustomWatchModel.from(features)` copies both, so a watch kept on the CLASSIC_SQUARE features
   keeps `0x24`.
 - `CustomWatchModelDialog` gets two switches: "Snooze alarm" and "Time zone location".
-- `canAdjustHands` isn't stored (always false).
+- `canAdjustHands` is stored too (DB v3 → v4, `HandAdjustFeatureMigration`), off by default,
+  with a "Hand adjustment" switch. Custom watches use the GA-B2100's hand groups.
 - Export the v3 schema and extend `CustomWatchModelMigrationTest`.
 
 ## Phase 1: features and profile

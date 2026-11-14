@@ -22,8 +22,8 @@ class CustomWatchModelTest {
 	}
 
 	@Test
-	fun neverAdjustsHands() {
-		assertFalse(CustomWatchModel.from(WatchModel.CASIOAK).canAdjustHands)
+	fun keepsHandAdjustmentOfCasioak() {
+		assertTrue(CustomWatchModel.from(WatchModel.CASIOAK).canAdjustHands)
 	}
 
 	@Test
@@ -57,6 +57,7 @@ class CustomWatchModelTest {
 			assertEquals(known.hasWeekdayLanguage, custom.hasWeekdayLanguage, "$known hasWeekdayLanguage")
 			assertEquals(known.hasSnoozeAlarm, custom.hasSnoozeAlarm, "$known hasSnoozeAlarm")
 			assertEquals(known.hasTimeZoneLocation, custom.hasTimeZoneLocation, "$known hasTimeZoneLocation")
+			assertEquals(known.canAdjustHands, custom.canAdjustHands, "$known canAdjustHands")
 		}
 	}
 

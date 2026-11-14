@@ -44,6 +44,7 @@ class PairedWatchRepository(private val dao: PairedWatchDao) {
 			hasWeekdayLanguage = model.hasWeekdayLanguage,
 			hasSnoozeAlarm = model.hasSnoozeAlarm,
 			hasTimeZoneLocation = model.hasTimeZoneLocation,
+			canAdjustHands = model.canAdjustHands,
 		) > 0
 
 	suspend fun markCustomModelIntroShown(address: String) = dao.markCustomModelIntroShown(address)
