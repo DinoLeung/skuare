@@ -1,0 +1,130 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 3,
+    "identityHash": "d8957139698f2f349a5c14ac3b113b4a",
+    "entities": [
+      {
+        "tableName": "paired_watch",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`address` TEXT NOT NULL, `advertisedName` TEXT NOT NULL, `displayName` TEXT NOT NULL, `pairedAt` INTEGER NOT NULL, `lastSyncAt` INTEGER, `lastSyncError` TEXT, `platformAssociationId` INTEGER, `customModelIntroShown` INTEGER NOT NULL DEFAULT 0, `model_clockCount` INTEGER, `model_reminderCount` INTEGER, `model_hasFontStyle` INTEGER, `model_hasShortCityNames` INTEGER, `model_hasWeekdayLanguage` INTEGER, `model_hasSnoozeAlarm` INTEGER, `model_hasTimeZoneLocation` INTEGER, PRIMARY KEY(`address`))",
+        "fields": [
+          {
+            "fieldPath": "address",
+            "columnName": "address",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "advertisedName",
+            "columnName": "advertisedName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pairedAt",
+            "columnName": "pairedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastSyncAt",
+            "columnName": "lastSyncAt",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "lastSyncError",
+            "columnName": "lastSyncError",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "platformAssociationId",
+            "columnName": "platformAssociationId",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "customModelIntroShown",
+            "columnName": "customModelIntroShown",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "customModel.clockCount",
+            "columnName": "model_clockCount",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "customModel.reminderCount",
+            "columnName": "model_reminderCount",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "customModel.hasFontStyle",
+            "columnName": "model_hasFontStyle",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "customModel.hasShortCityNames",
+            "columnName": "model_hasShortCityNames",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "customModel.hasWeekdayLanguage",
+            "columnName": "model_hasWeekdayLanguage",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "customModel.hasSnoozeAlarm",
+            "columnName": "model_hasSnoozeAlarm",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "customModel.hasTimeZoneLocation",
+            "columnName": "model_hasTimeZoneLocation",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "address"
+          ]
+        }
+      },
+      {
+        "tableName": "app_config",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `installationId` BLOB NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "installationId",
+            "columnName": "installationId",
+            "affinity": "BLOB",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd8957139698f2f349a5c14ac3b113b4a')"
+    ]
+  }
+}

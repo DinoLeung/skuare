@@ -101,6 +101,24 @@ fun CustomWatchModelDialog(
 					)
 					Hint("The weekday can be shown in other languages.")
 				}
+				FeatureHint {
+					SwitchField(
+						modifier = Modifier.fillMaxWidth(),
+						title = "Snooze alarm",
+						check = draft.hasSnoozeAlarm,
+						onCheckedChange = { draft = draft.copy(hasSnoozeAlarm = it) },
+					)
+					Hint("Your watch's fifth alarm is a snooze alarm, off if it's a normal alarm.")
+				}
+				FeatureHint {
+					SwitchField(
+						modifier = Modifier.fillMaxWidth(),
+						title = "Time zone location",
+						check = draft.hasTimeZoneLocation,
+						onCheckedChange = { draft = draft.copy(hasTimeZoneLocation = it) },
+					)
+					Hint("Also sends each city's location and radio station with its time zone.")
+				}
 				Text(
 					text = "Turning on something your watch doesn't have can make syncing fail. " +
 						"If time sync starts failing, turn it back off.",

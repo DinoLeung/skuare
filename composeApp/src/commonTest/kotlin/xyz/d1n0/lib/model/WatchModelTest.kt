@@ -41,9 +41,18 @@ class WatchModelTest {
 	}
 
 	@Test
+	fun squaresKeepSnoozeAlarmAndTimeZoneLocation() {
+		listOf(WatchModel.CLASSIC_SQUARE, WatchModel.MIP_SQUARE, WatchModel.DW_SQUARE).forEach { model ->
+			assertTrue(model.hasSnoozeAlarm, "$model hasSnoozeAlarm")
+			assertTrue(model.hasTimeZoneLocation, "$model hasTimeZoneLocation")
+			assertFalse(model.canAdjustHands, "$model canAdjustHands")
+		}
+	}
+
+	@Test
 	fun returnsNullForUnknownNames() {
 		assertNull(WatchModel.fromAdvertisedName(null))
-		assertNull(WatchModel.fromAdvertisedName("CASIO GA-B2100"))
+		assertNull(WatchModel.fromAdvertisedName("CASIO GBD-H2000"))
 		// exact match only, a longer name isn't a prefix match
 		assertNull(WatchModel.fromAdvertisedName("CASIO GW-B5600BC"))
 		// the address is stored as the name when the watch didn't advertise one

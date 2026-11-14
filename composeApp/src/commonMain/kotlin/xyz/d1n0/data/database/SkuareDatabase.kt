@@ -20,8 +20,11 @@ const val DATABASE_NAME = "skuare.db"
  */
 @Database(
 	entities = [PairedWatch::class, AppConfig::class],
-	version = 2,
-	autoMigrations = [AutoMigration(from = 1, to = 2, spec = CustomWatchModelMigration::class)],
+	version = 3,
+	autoMigrations = [
+		AutoMigration(from = 1, to = 2, spec = CustomWatchModelMigration::class),
+		AutoMigration(from = 2, to = 3, spec = AlarmAndLocationFeaturesMigration::class),
+	],
 )
 @TypeConverters(Converters::class)
 @ConstructedBy(SkuareDatabaseConstructor::class)

@@ -15,6 +15,10 @@ class CustomWatchModelTest {
 		assertFalse(model.hasFontStyle)
 		assertFalse(model.hasShortCityNames)
 		assertFalse(model.hasWeekdayLanguage)
+		assertFalse(model.hasTimeZoneLocation)
+		assertFalse(model.canAdjustHands)
+		// the fifth alarm stays a snooze alarm, as before custom models had the switch
+		assertTrue(model.hasSnoozeAlarm)
 	}
 
 	@Test
@@ -46,6 +50,8 @@ class CustomWatchModelTest {
 			assertEquals(known.hasFontStyle, custom.hasFontStyle, "$known hasFontStyle")
 			assertEquals(known.hasShortCityNames, custom.hasShortCityNames, "$known hasShortCityNames")
 			assertEquals(known.hasWeekdayLanguage, custom.hasWeekdayLanguage, "$known hasWeekdayLanguage")
+			assertEquals(known.hasSnoozeAlarm, custom.hasSnoozeAlarm, "$known hasSnoozeAlarm")
+			assertEquals(known.hasTimeZoneLocation, custom.hasTimeZoneLocation, "$known hasTimeZoneLocation")
 		}
 	}
 
@@ -59,13 +65,13 @@ class CustomWatchModelTest {
 	@Test
 	fun resolvesStoredCustomModel() {
 		val custom = CustomWatchModel(clockCount = 4, hasWeekdayLanguage = true)
-		assertEquals(custom, resolveWatchModel("CASIO GA-B2100", custom))
+		assertEquals(custom, resolveWatchModel("CASIO GBD-H2000", custom))
 	}
 
 	@Test
 	fun resolvesUnknownWatchWithoutCustomModelToDefault() {
 		// not paired yet, or paired before custom models existed
-		assertEquals(CustomWatchModel(), resolveWatchModel("CASIO GA-B2100", null))
+		assertEquals(CustomWatchModel(), resolveWatchModel("CASIO GBD-H2000", null))
 		// the address is stored as the name when the watch didn't advertise one
 		assertEquals(CustomWatchModel(), resolveWatchModel("ED:A1:AF:D5:A2:40", null))
 		assertEquals(CustomWatchModel(), resolveWatchModel(null, null))

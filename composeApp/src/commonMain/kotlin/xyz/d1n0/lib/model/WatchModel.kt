@@ -13,6 +13,9 @@ enum class WatchModel(
 	override val hasFontStyle: Boolean,
 	override val hasShortCityNames: Boolean,
 	override val hasWeekdayLanguage: Boolean,
+	override val hasSnoozeAlarm: Boolean,
+	override val hasTimeZoneLocation: Boolean,
+	override val canAdjustHands: Boolean,
 ) : WatchFeatures {
 	CLASSIC_SQUARE( // MRG-5000, GMW-B5000, GW-B5600
 		clockCount = 6,
@@ -20,6 +23,9 @@ enum class WatchModel(
 		hasFontStyle = false,
 		hasShortCityNames = false,
 		hasWeekdayLanguage = true,
+		hasSnoozeAlarm = true,
+		hasTimeZoneLocation = true,
+		canAdjustHands = false,
 	),
 	MIP_SQUARE( // GW-BX5600, GMW-BZ5000
 		clockCount = 3,
@@ -27,6 +33,9 @@ enum class WatchModel(
 		hasFontStyle = true,
 		hasShortCityNames = true,
 		hasWeekdayLanguage = false,
+		hasSnoozeAlarm = true,
+		hasTimeZoneLocation = true,
+		canAdjustHands = false,
 	),
 	DW_SQUARE( // DW-B5600
 		clockCount = 2,
@@ -34,6 +43,9 @@ enum class WatchModel(
 		hasFontStyle = false,
 		hasShortCityNames = false,
 		hasWeekdayLanguage = true,
+		hasSnoozeAlarm = true,
+		hasTimeZoneLocation = true,
+		canAdjustHands = false,
 	);
 
 	companion object {

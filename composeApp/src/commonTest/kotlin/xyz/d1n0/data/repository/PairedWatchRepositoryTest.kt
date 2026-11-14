@@ -21,7 +21,7 @@ class PairedWatchRepositoryTest {
 
 	private fun pairedWatch(customModel: CustomWatchModel?) = PairedWatch(
 		address = ADDRESS,
-		advertisedName = "CASIO GA-B2100",
+		advertisedName = "CASIO GBD-H2000",
 		displayName = "My watch",
 		pairedAt = Instant.parse("2026-01-01T00:00:00Z"),
 		customModel = customModel,
@@ -30,7 +30,13 @@ class PairedWatchRepositoryTest {
 	@Test
 	fun updatesCustomModelOfCustomWatch() = runTest {
 		repository.upsert(pairedWatch(customModel = CustomWatchModel()))
-		val adjusted = CustomWatchModel(clockCount = 4, reminderCount = 5, hasWeekdayLanguage = true)
+		val adjusted = CustomWatchModel(
+			clockCount = 4,
+			reminderCount = 5,
+			hasWeekdayLanguage = true,
+			hasSnoozeAlarm = false,
+			hasTimeZoneLocation = true,
+		)
 
 		assertTrue(repository.updateCustomModel(ADDRESS, adjusted))
 		assertEquals(adjusted, repository.find(ADDRESS)?.customModel)

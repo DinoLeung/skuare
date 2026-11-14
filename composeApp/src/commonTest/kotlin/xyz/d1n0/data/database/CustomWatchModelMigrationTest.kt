@@ -2,6 +2,7 @@ package xyz.d1n0.data.database
 
 import xyz.d1n0.lib.model.CustomWatchModel
 import kotlin.test.Test
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
@@ -20,8 +21,18 @@ class CustomWatchModelMigrationTest {
 	}
 
 	@Test
+	fun version3FillsNewFeaturesOfCustomWatchesOnly() {
+		val sql = AlarmAndLocationFeaturesMigration.FILL_NEW_FEATURES_SQL
+		// custom watches keep their snooze alarm and start without the time zone location
+		assertContains(sql, "model_hasSnoozeAlarm = 1")
+		assertContains(sql, "model_hasTimeZoneLocation = 0")
+		// a watch without a custom model must keep all its model columns NULL
+		assertContains(sql, "WHERE model_clockCount IS NOT NULL")
+	}
+
+	@Test
 	fun unknownWatchGetsDefaultCustomModel() {
-		assertEquals(CustomWatchModel(), migratedCustomModel("CASIO GA-B2100"))
+		assertEquals(CustomWatchModel(), migratedCustomModel("CASIO GBD-H2000"))
 		assertEquals(CustomWatchModel(), migratedCustomModel("CASIO GW-B5600BC"))
 	}
 
