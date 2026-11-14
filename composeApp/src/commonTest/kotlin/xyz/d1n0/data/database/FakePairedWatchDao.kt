@@ -38,6 +38,9 @@ internal class FakePairedWatchDao : PairedWatchDao {
 		hasFontStyle: Boolean,
 		hasShortCityNames: Boolean,
 		hasWeekdayLanguage: Boolean,
+		hasSnoozeAlarm: Boolean,
+		hasTimeZoneLocation: Boolean,
+		canAdjustHands: Boolean,
 	): Int {
 		// like the query, only a watch that already has a custom model is updated
 		val target = find(address)?.takeIf { it.customModel != null } ?: return 0
@@ -49,6 +52,9 @@ internal class FakePairedWatchDao : PairedWatchDao {
 					hasFontStyle = hasFontStyle,
 					hasShortCityNames = hasShortCityNames,
 					hasWeekdayLanguage = hasWeekdayLanguage,
+					hasSnoozeAlarm = hasSnoozeAlarm,
+					hasTimeZoneLocation = hasTimeZoneLocation,
+					canAdjustHands = canAdjustHands,
 				)
 			)
 		)

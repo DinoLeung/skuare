@@ -23,7 +23,7 @@ import xyz.d1n0.ui.theme.SkuareTheme
 /**
  * Edits the features of a watch skuare doesn't recognise.
  *
- * @param watchName Advertised name of the watch, e.g. CASIO GA-B2100.
+ * @param watchName Advertised name of the watch, e.g. CASIO GBD-H2000.
  * @param initial The watch's current custom model.
  * @param hasUnsavedChanges Whether any tab has unsaved changes, saving rebuilds the tabs and
  *        discards them.
@@ -101,6 +101,33 @@ fun CustomWatchModelDialog(
 					)
 					Hint("The weekday can be shown in other languages.")
 				}
+				FeatureHint {
+					SwitchField(
+						modifier = Modifier.fillMaxWidth(),
+						title = "Snooze alarm",
+						check = draft.hasSnoozeAlarm,
+						onCheckedChange = { draft = draft.copy(hasSnoozeAlarm = it) },
+					)
+					Hint("Your watch's fifth alarm is a snooze alarm, off if it's a normal alarm.")
+				}
+				FeatureHint {
+					SwitchField(
+						modifier = Modifier.fillMaxWidth(),
+						title = "Time zone location",
+						check = draft.hasTimeZoneLocation,
+						onCheckedChange = { draft = draft.copy(hasTimeZoneLocation = it) },
+					)
+					Hint("Also sends each city's location and radio station with its time zone.")
+				}
+				FeatureHint {
+					SwitchField(
+						modifier = Modifier.fillMaxWidth(),
+						title = "Hand adjustment",
+						check = draft.canAdjustHands,
+						onCheckedChange = { draft = draft.copy(canAdjustHands = it) },
+					)
+					Hint("Your watch has hands to adjust, a clock hand and a mode hand like the GA-B2100.")
+				}
 				Text(
 					text = "Turning on something your watch doesn't have can make syncing fail. " +
 						"If time sync starts failing, turn it back off.",
@@ -147,7 +174,7 @@ private fun Hint(text: String) {
  * Explains, the first time a watch skuare doesn't recognise is connected, that only the basics
  * are on and where to adjust them.
  *
- * @param watchName Advertised name of the watch, e.g. CASIO GA-B2100.
+ * @param watchName Advertised name of the watch, e.g. CASIO GBD-H2000.
  * @param onAdjust Opens [CustomWatchModelDialog].
  * @param onLater Closes the dialog, it isn't shown again either way.
  */
@@ -175,12 +202,12 @@ fun CustomWatchModelIntroDialog(
 	)
 }
 
-@Preview
+@Preview(showBackground = true, widthDp = 420, heightDp = 720)
 @Composable
 private fun CustomWatchModelDialogPreview() {
 	SkuareTheme {
 		CustomWatchModelDialog(
-			watchName = "CASIO GA-B2100",
+			watchName = "CASIO GBD-H2000",
 			initial = CustomWatchModel(),
 			hasUnsavedChanges = true,
 			onSave = {},
@@ -189,10 +216,10 @@ private fun CustomWatchModelDialogPreview() {
 	}
 }
 
-@Preview
+@Preview(showBackground = true, widthDp = 420, heightDp = 720)
 @Composable
 private fun CustomWatchModelIntroDialogPreview() {
 	SkuareTheme {
-		CustomWatchModelIntroDialog(watchName = "CASIO GA-B2100", onAdjust = {}, onLater = {})
+		CustomWatchModelIntroDialog(watchName = "CASIO GBD-H2000", onAdjust = {}, onLater = {})
 	}
 }

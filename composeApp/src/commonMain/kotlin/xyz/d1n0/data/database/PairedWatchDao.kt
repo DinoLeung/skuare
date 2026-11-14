@@ -38,7 +38,8 @@ interface PairedWatchDao {
 		UPDATE paired_watch SET
 			model_clockCount = :clockCount, model_reminderCount = :reminderCount,
 			model_hasFontStyle = :hasFontStyle, model_hasShortCityNames = :hasShortCityNames,
-			model_hasWeekdayLanguage = :hasWeekdayLanguage
+			model_hasWeekdayLanguage = :hasWeekdayLanguage, model_hasSnoozeAlarm = :hasSnoozeAlarm,
+			model_hasTimeZoneLocation = :hasTimeZoneLocation, model_canAdjustHands = :canAdjustHands
 		WHERE address = :address AND model_clockCount IS NOT NULL
 		"""
 	)
@@ -49,6 +50,9 @@ interface PairedWatchDao {
 		hasFontStyle: Boolean,
 		hasShortCityNames: Boolean,
 		hasWeekdayLanguage: Boolean,
+		hasSnoozeAlarm: Boolean,
+		hasTimeZoneLocation: Boolean,
+		canAdjustHands: Boolean,
 	): Int
 
 	/**
@@ -59,7 +63,8 @@ interface PairedWatchDao {
 		"""
 		UPDATE paired_watch SET
 			model_clockCount = NULL, model_reminderCount = NULL, model_hasFontStyle = NULL,
-			model_hasShortCityNames = NULL, model_hasWeekdayLanguage = NULL,
+			model_hasShortCityNames = NULL, model_hasWeekdayLanguage = NULL, model_hasSnoozeAlarm = NULL,
+			model_hasTimeZoneLocation = NULL, model_canAdjustHands = NULL,
 			customModelIntroShown = 0
 		WHERE address = :address
 		"""

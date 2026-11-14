@@ -25,6 +25,9 @@ import xyz.d1n0.ui.navigation.SaveState
 import xyz.d1n0.ui.navigation.SaveableScreen
 
 data class AlarmsUiState(
+	// Without it the fifth alarm is shown with the others, see [xyz.d1n0.lib.model.WatchFeatures.hasSnoozeAlarm]
+	val hasSnoozeAlarm: Boolean = true,
+
 	val isHourlySignalInitialized: Boolean = false,
 	val isHourlySignalLoading: Boolean = false,
 	val savedHourlySignal: HourlySignal = defaultHourlySignal,
@@ -81,7 +84,7 @@ class AlarmsScreenViewModel : ViewModel(), KoinComponent, SaveableScreen {
 	private val watch: Watch by inject()
 	private val alarmsSettings: StateFlow<AlarmsSettings> = watch.alarms
 
-	private val _uiState = MutableStateFlow(AlarmsUiState())
+	private val _uiState = MutableStateFlow(AlarmsUiState(hasSnoozeAlarm = watch.model.hasSnoozeAlarm))
 	val uiState: StateFlow<AlarmsUiState> = _uiState.asStateFlow()
 
 	override val saveState: StateFlow<SaveState> = _uiState

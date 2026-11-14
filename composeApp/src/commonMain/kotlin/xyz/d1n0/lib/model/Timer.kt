@@ -13,6 +13,14 @@ data class Timer(
 	val status: TimerStatus,
 ) {
 	companion object {
+		/** Timer packet of the GMW-B5000 family. */
+		const val CLASSIC_PACKET_SIZE = 8
+
+		/**
+		 * Timer packet of the GW-BX5600 and GA-B2100: the same fields followed by seven zero
+		 * bytes. The official app writes this size to the GA-B2100 too.
+		 */
+		const val PADDED_PACKET_SIZE = 15
 
 		@OptIn(ExperimentalStdlibApi::class)
 		fun fromPacket(packet: ByteArray): Timer {
@@ -23,8 +31,7 @@ data class Timer(
 					)
 				}"
 			}
-			// The GW-BX5600 replies with 15 bytes: the same fields followed by zero padding
-			require(packet.size == 8 || packet.size == 15) {
+			require(packet.size == CLASSIC_PACKET_SIZE || packet.size == PADDED_PACKET_SIZE) {
 				"Timer packet bytes must be 8 or 15 bytes long, e.g. 18 17 0F 1E 00 00 00 00"
 			}
 			return packet.drop(1).toByteArray().let {
@@ -42,18 +49,25 @@ data class Timer(
 		require(duration < 1.days) { "Timer must not exceed 24 hours" }
 	}
 
-	val packet: ByteArray
-		get() {
-			val durationBytes = duration.toByteArray()
-			return ByteArray(8) {
-				when (it) {
-					0 -> OpCode.TIMER.byte
-					1 -> durationBytes[0]
-					2 -> durationBytes[1]
-					3 -> durationBytes[2]
-					7 -> status.byte
-					else -> 0
-				}
+	/**
+	 * @param size [CLASSIC_PACKET_SIZE], or [PADDED_PACKET_SIZE] for watches that reply with it,
+	 *        see [TimerSettings.packetSize]. The extra bytes are zero.
+	 * @throws IllegalArgumentException if [size] is neither.
+	 */
+	fun packet(size: Int = CLASSIC_PACKET_SIZE): ByteArray {
+		require(size == CLASSIC_PACKET_SIZE || size == PADDED_PACKET_SIZE) {
+			"Timer packet size must be $CLASSIC_PACKET_SIZE or $PADDED_PACKET_SIZE, got $size"
+		}
+		val durationBytes = duration.toByteArray()
+		return ByteArray(size) {
+			when (it) {
+				0 -> OpCode.TIMER.byte
+				1 -> durationBytes[0]
+				2 -> durationBytes[1]
+				3 -> durationBytes[2]
+				7 -> status.byte
+				else -> 0
 			}
 		}
+	}
 }

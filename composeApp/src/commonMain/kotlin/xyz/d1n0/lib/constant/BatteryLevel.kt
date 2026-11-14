@@ -2,6 +2,9 @@ package xyz.d1n0.lib.constant
 
 /**
  * Battery level byte of the watch status, [bars] as shown in the official app.
+ *
+ * Not the whole scale yet, see research/battery-research.md, so unknown bytes give null instead of
+ * an error.
  */
 enum class BatteryLevel(val byte: Byte, val bars: Int) {
 	LEVEL_1(0x10, 1), // Not observed yet, extrapolated
@@ -11,9 +14,7 @@ enum class BatteryLevel(val byte: Byte, val bars: Int) {
 	LEVEL_5(0x14, 5); // Not observed yet, extrapolated
 
 	companion object {
-		@OptIn(ExperimentalStdlibApi::class)
-		fun fromByte(byte: Byte) =
-			BatteryLevel.entries.firstOrNull { it.byte == byte }
-				?: error("Unknown battery level value: ${byte.toHexString(HexFormat.UpperCase)}")
+		/** The level for [byte], null if it isn't known yet. */
+		fun fromByte(byte: Byte): BatteryLevel? = BatteryLevel.entries.firstOrNull { it.byte == byte }
 	}
 }

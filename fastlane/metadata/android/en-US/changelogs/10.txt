@@ -1,0 +1,9 @@
+- Add a hand adjustment switch to the custom model dialog
+- Store hand adjustment for custom models (database v4)
+- Run hand adjustment from the settings screen
+- Add HandAdjustDialog for adjusting a hand group
+- Add an Adjust Hands button to the settings screen
+- Add HandAdjuster to run the captured hand adjust sequence
+- Add hand adjust packets (opcode 0x1A)
+- Show the fifth alarm as a normal alarm without a snooze alarm
+- Skip time zone location writes on watches without it

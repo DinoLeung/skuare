@@ -41,7 +41,7 @@ class WatchSessionHandlerTest {
 		val OUR_APP_INFO = AppInfo(byteArrayOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
 		val OTHER_APP_INFO = AppInfo(byteArrayOf(10, 9, 8, 7, 6, 5, 4, 3, 2, 1))
 		val PAIRED_AT = Instant.parse("2026-01-01T00:00:00Z")
-		const val UNKNOWN_NAME = "CASIO GA-B2100"
+		const val UNKNOWN_NAME = "CASIO GBD-H2000"
 		val ADJUSTED_MODEL = CustomWatchModel(clockCount = 4, reminderCount = 5, hasWeekdayLanguage = true)
 	}
 

@@ -2,7 +2,11 @@ package xyz.d1n0.lib.model
 
 /**
  * Features the user set for a watch skuare doesn't recognise, see [WatchModel.fromAdvertisedName].
- * The defaults are the minimal profile: a home clock and one world clock, nothing optional.
+ * The defaults are the minimal profile: a home clock and one world clock, nothing optional. The
+ * fifth alarm stays a snooze alarm ([hasSnoozeAlarm]), as on every watch before custom models.
+ *
+ * A custom watch that adjusts hands ([canAdjustHands]) uses the GA-B2100's hand groups, see
+ * [xyz.d1n0.lib.constant.HandGroup], the watch doesn't say which hands it has.
  *
  * @throws IllegalArgumentException if [clockCount] is not in 1..6 or [reminderCount] is not in 0..5.
  */
@@ -12,6 +16,9 @@ data class CustomWatchModel(
 	override val hasFontStyle: Boolean = false,
 	override val hasShortCityNames: Boolean = false,
 	override val hasWeekdayLanguage: Boolean = false,
+	override val hasSnoozeAlarm: Boolean = true,
+	override val hasTimeZoneLocation: Boolean = false,
+	override val canAdjustHands: Boolean = false,
 ) : WatchFeatures {
 	init {
 		// clock positions are 0..5, see ClocksSettings
@@ -33,6 +40,9 @@ data class CustomWatchModel(
 			hasFontStyle = features.hasFontStyle,
 			hasShortCityNames = features.hasShortCityNames,
 			hasWeekdayLanguage = features.hasWeekdayLanguage,
+			hasSnoozeAlarm = features.hasSnoozeAlarm,
+			hasTimeZoneLocation = features.hasTimeZoneLocation,
+			canAdjustHands = features.canAdjustHands,
 		)
 	}
 }

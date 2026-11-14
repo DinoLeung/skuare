@@ -28,6 +28,9 @@ enum class OpCode(val byte: Byte) {
 	REMINDER_TITLE(0x30),
 	REMINDER_CONFIG(0x31),
 
+	// Hand adjustment (home position correction) on analog watches, see HandAdjust
+	HAND_ADJUST(0x1A),
+
 	ERROR(0xFF.toByte());
 //    currentTimeManager(0x39),????
 
