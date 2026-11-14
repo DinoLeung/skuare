@@ -81,7 +81,7 @@ Differences 1, 3, 5, 6 and 7 become features, so screens and writes are decided 
 | `reminderCount` | 5 | 0 | 0 | 5 | 0 |
 | `hasFontStyle` | no | yes | no | no | no |
 | `hasShortCityNames` | no | yes | no | no | no |
-| `hasWeekdayLanguage` | yes | no | yes | no (not in the official settings menu) | no |
+| `hasWeekdayLanguage` | yes | no | yes | yes | no |
 | **`hasSnoozeAlarm`** (new) | yes | yes (today's behaviour) | yes (today's behaviour) | no | yes |
 | **`hasTimeZoneLocation`** (new, `0x24`) | yes | yes | yes | no | no |
 | **`canAdjustHands`** (new) | no | no | no | yes | no |

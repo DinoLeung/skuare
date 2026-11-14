@@ -110,7 +110,9 @@ is written on its own:
 | power saving off | `13 10 01 00 00 …` | byte 1: `POWER_SAVING_OFF` (0x10) set |
 
 - **Same layout as the B5000.** 12 bytes. Byte 5 (weekday language) and byte 8 (font) stay
-  `00`, and the settings menu has neither.
+  `00` throughout.
+- **Weekday language: yes, font style: no** (user, 2026-11-14). Language wasn't changed in the
+  captures; skuare's existing byte 5 handling is expected to work as on the B5000.
 - The "watch display" screen sets 12/24 h and the date order together in one write.
 - The auto light bit (0x04) never changed, and the menu has no auto light setting.
 
