@@ -17,31 +17,35 @@ the same protocol, and the README must say they're untested.
 
 Captures from the official app on the GA-B2100, one file each (user):
 
-- [ ] `0x13` watch settings: open the settings screen, change each setting once (light
-      duration, 12/24 h, button tone, power saving, and any others), then save
-- [ ] `0x15`/`0x16` alarms: open the alarms screen, change alarm 5 and the hourly signal,
-      then save
-- [ ] `0x18` timer: open the timer screen, set a time, then save
-- [ ] Note any official app screens for the B2100 that skuare doesn't have
+- [x] `0x15`/`0x16` alarms (`alarm_set_5_2100.pcapng`)
+- [x] `0x18` timer (`timer_2100.pcapng`)
+- [x] Reminders, read only (`reminder_2100.pcapng`): the watch has 5
+- [x] Settings, read only (`settings_2100.pcapng`)
+- [x] Decoded into `research/casioak-research.md`, features table updated
+- [ ] `0x13` settings **with changes**: change key sounds, light, watch display and power
+      saving one at a time, saving after each, and note the order
+- [ ] Summer time in settings: toggle it and save
+- [ ] Reminders: save one reminder (title, date and repeat)
 - [ ] Ongoing, not blocking: battery capture at 3/5 (see `research/battery-research.md`)
 
 Once the captures are in:
 
-- [ ] Decode them and update the features table and Phase 4 below. Any new feature goes into
-      the same v3 migration
+- [ ] Decode them into `research/casioak-research.md`. Any new feature goes into the same v3
+      migration
 - [ ] Phase 1: `WatchFeatures` (`hasSnoozeAlarm`, `hasTimeZoneLocation`, `canAdjustHands`,
       plus anything from the captures), `CustomWatchModel` + dialog switches, DB v3
       migration, `WatchModel.CASIOAK`, tests
-- [ ] Phase 2: skip `0x24`, alarm 5 label, watch status layout by reply length
+- [ ] Phase 2: skip `0x24`, alarm 5 label, watch status layout by reply length, timer write
+      size matching the reply
 - [ ] Device round on the GA-B2100 (user): connect, time sync, world time edit (batched
-      path), alarms, background sync, a custom watch keeping or dropping its model. One
-      square as a regression check
+      path), alarms (does it accept skuare's `00` in alarm byte 1?), timer, reminders,
+      background sync, a custom watch keeping or dropping its model. One square as a
+      regression check
 - [ ] Phase 3: hand adjust library, device experiments (user), then the UI
 - [ ] Phase 5: docs, README with GBM-2100 / GM-B2100 marked untested
 
-What we know about the GA-B2100 comes from `connect_time_sync_bat*_2100.pcapng` (connect
-sync), `world_time_nyc_2100.pcapng` (world clock write), `research/hand-adjust-research.md`,
-and the watch itself: 5 alarms plus the hourly signal, no snooze alarm.
+The captures are decoded in `research/casioak-research.md` (protocol) and
+`research/hand-adjust-research.md` (hands). This plan only keeps what they mean for the code.
 
 ## What the official app does on connect (GA-B2100)
 
@@ -56,30 +60,29 @@ Differences from what skuare does today:
    so `Watch.hasBatchCharacteristics` is true and skuare takes the batched path, which the
    official app never uses on this watch. That stays as it is (decided by the services, not a
    feature). The Phase 2 device check confirms the batched path works on the GA-B2100.
-3. **No `0x24`** (coordinates / radio ID) is read or written, but skuare writes it on every
-   time sync. Confirmed for a user-initiated write too: `world_time_nyc_2100.pcapng` (world
-   clock set to New York) is `21 00 01`, then read/write `1d`, `1e` ×2, `1f` ×2, then
-   `21 01 01`. No `0x24`, and everything on 0x000c/0x000e (no batched characteristics).
-   The capture ends 0.8 s after `21 01 01` with no `09` time write, while skuare writes the
-   time after every clock write. It's unclear whether the capture was cut short.
+3. **No `0x24`** (coordinates / radio ID) is read or written, on connect or on a world clock
+   write, but skuare writes it on every time sync.
 4. **Watch status is 172 bytes, with battery at [110].** `WatchStatus.fromPacket` requires
    171 bytes, so it fails on every connect (logged, not fatal). The BX has the same problem.
-5. **No snooze alarm:** the fifth alarm is a normal alarm.
+5. **No snooze alarm:** alarm 5 sits in the B5000's snooze slot as a normal alarm, with the
+   same packets.
 6. **Hands:** hand adjustment (opcode `0x1A`).
+7. **5 reminders**, the same packet sizes as the B5000.
+8. **The timer is written with 15 bytes**, the same size as the reply. skuare always writes 8.
 
 ## WatchFeatures changes
 
-Differences 1, 3, 5 and 6 become features, so screens and writes are decided by
+Differences 1, 3, 5, 6 and 7 become features, so screens and writes are decided by
 `WatchFeatures` and never by checking for a particular model. 2 stays with
-`Watch.hasBatchCharacteristics`, and 4 is decided by the reply (below).
+`Watch.hasBatchCharacteristics`, and 4 and 8 are decided by the reply (below).
 
 | Feature | CLASSIC_SQUARE | MIP_SQUARE | DW_SQUARE | CASIOAK | Custom default |
 |---|---|---|---|---|---|
 | `clockCount` | 6 | 3 | 2 | 2 | 2 |
-| `reminderCount` | 5 | 0 | 0 | 0 | 0 |
+| `reminderCount` | 5 | 0 | 0 | 5 | 0 |
 | `hasFontStyle` | no | yes | no | no | no |
 | `hasShortCityNames` | no | yes | no | no | no |
-| `hasWeekdayLanguage` | yes | no | yes | no (until a `0x13` capture) | no |
+| `hasWeekdayLanguage` | yes | no | yes | no (not in the official settings menu) | no |
 | **`hasSnoozeAlarm`** (new) | yes | yes (today's behaviour) | yes (today's behaviour) | no | yes |
 | **`hasTimeZoneLocation`** (new, `0x24`) | yes | yes | yes | no | no |
 | **`canAdjustHands`** (new) | no | no | no | yes | no |
@@ -98,6 +101,8 @@ Differences 1, 3, 5 and 6 become features, so screens and writes are decided by
 - **Watch status layout** isn't a feature: the watch ignores the requested size and always
   replies with its own fixed size, so the parser picks the layout from the reply length
   (171 → [7], 172 → [110], 216 → [158]). Custom models get this for free.
+- **Timer write size** isn't a feature either: the write uses the size of the last timer reply
+  (8 or 15 bytes), padded with zeros. The BX gets the same fix.
 
 Custom models (DB v2 → v3, a Room auto migration with column defaults):
 
@@ -169,13 +174,12 @@ Device experiments, before the UI is final (the results go into `hand-adjust-res
 
 ## Phase 4: captures still needed
 
-From the GA-B2100, opening and saving each screen in the official app:
+Alarms and timer are settled (B5000 layout, 15-byte timer). Still needed from the GA-B2100:
 
-- **alarms:** confirm `0x15`/`0x16` match the B5000 layout, with alarm 5 in the snooze slot
-  and no extra flag bit
-- **watch settings (`0x13`):** whether the layout is the same, and the weekday language /
-  light duration settings
-- **timer (`0x18`):** whether it has one, 8 or 15 bytes
+- **watch settings (`0x13`):** which bits key sounds, light, watch display and power saving
+  use. The 12-byte reply parses with the B5000 layout, but no write has been captured.
+- **summer time:** what toggling it in settings writes.
+- **reminders:** a saved reminder, to confirm the B5000 write layout.
 
 Until then CASIOAK uses the B5000 layouts. If a capture shows a different layout, it becomes a
 feature.
@@ -187,8 +191,7 @@ feature.
   GA-B2100, but never connected. Same for the fastlane full description.
 - `research/hand-adjust-research.md`: experiment results. `research/battery-research.md`: the
   watch status layout picked by reply length.
-- The world time findings above (the connect sequence and `world_time_nyc_2100.pcapng`) go into
-  a research note before this plan is deleted.
+- Check `research/casioak-research.md` is up to date before this plan is deleted.
 - Delete this plan when the branch merges (as with earlier plans).
 
 ## Order
