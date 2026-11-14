@@ -7,10 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Alarm
-import androidx.compose.material.icons.outlined.Snooze
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,9 +19,9 @@ import androidx.compose.ui.unit.dp
 import kotlinx.datetime.LocalTime
 import xyz.d1n0.lib.model.Alarm
 import xyz.d1n0.lib.model.HourlySignal
+import xyz.d1n0.ui.component.AlarmField
 import xyz.d1n0.ui.component.CardView
 import xyz.d1n0.ui.component.SwitchField
-import xyz.d1n0.ui.component.TimePickerField
 import xyz.d1n0.ui.theme.SkuareTheme
 
 @Composable
@@ -62,75 +58,30 @@ private fun AlarmsScreenContent(
 					modifier = Modifier.fillMaxWidth(),
 					verticalArrangement = Arrangement.spacedBy(8.dp)
 				) {
-					state.pendingAlarms.zip(state.pendingAlarmsErrors)
-						.forEachIndexed { index, (alarm, _) ->
-							SwitchField(
-								title = {
-									TimePickerField(
-										value = alarm.time,
-										onValueChange = {
-											onEvent(
-												AlarmsUiEvent.AlarmTimeChange(
-													index = index,
-													time = it
-												)
-											)
-										},
-										leadingIcon = {
-											Icon(
-												imageVector = Icons.Outlined.Alarm,
-												contentDescription = "Alarm"
-											)
-										},
-										enabled = state.isAlarmsInitialized && state.isLoading == false,
-										modifier = Modifier.fillMaxWidth()
-									)
-								},
-								check = alarm.enable,
-								onCheckedChange = {
-									onEvent(
-										AlarmsUiEvent.AlarmToggle(
-											index = index,
-											enable = it
-										)
-									)
-								},
-								enabled = state.isAlarmsInitialized && state.isLoading == false,
-								modifier = Modifier.fillMaxWidth()
-							)
-						}
+					state.pendingAlarms.forEachIndexed { index, alarm ->
+						AlarmField(
+							alarm = alarm,
+							label = "Alarm ${index + 1}",
+							enabled = state.isAlarmsInitialized && state.isLoading == false,
+							onTimeChange = { onEvent(AlarmsUiEvent.AlarmTimeChange(index = index, time = it)) },
+							onToggle = { onEvent(AlarmsUiEvent.AlarmToggle(index = index, enable = it)) },
+						)
+					}
+					// without a snooze alarm, the fifth slot is a normal alarm
+					if (state.hasSnoozeAlarm == false) {
+						FifthAlarmField(state = state, onEvent = onEvent)
+					}
 				}
 			}
 		}
-		item {
-			CardView(
-				modifier = Modifier.fillMaxWidth(),
-				title = { Text("Snooze Alarm") }
-			) {
-				SwitchField(
-					title = {
-						TimePickerField(
-							value = state.pendingSnoozeAlarm.time,
-							onValueChange = {
-								onEvent(AlarmsUiEvent.SnoozeAlarmTimeChange(time = it))
-							},
-							leadingIcon = {
-								Icon(
-									imageVector = Icons.Outlined.Snooze,
-									contentDescription = "Snooze Alarm"
-								)
-							},
-							enabled = state.isSnoozeAlarmInitialized && state.isLoading == false,
-							modifier = Modifier.fillMaxWidth()
-						)
-					},
-					check = state.pendingSnoozeAlarm.enable,
-					onCheckedChange = {
-						onEvent(AlarmsUiEvent.SnoozeAlarmToggle(enable = it))
-					},
-					enabled = state.isSnoozeAlarmInitialized && state.isLoading == false,
-					modifier = Modifier.fillMaxWidth()
-				)
+		if (state.hasSnoozeAlarm) {
+			item {
+				CardView(
+					modifier = Modifier.fillMaxWidth(),
+					title = { Text("Snooze Alarm") }
+				) {
+					FifthAlarmField(state = state, onEvent = onEvent)
+				}
 			}
 		}
 		item {
@@ -148,6 +99,47 @@ private fun AlarmsScreenContent(
 					modifier = Modifier.fillMaxWidth()
 				)
 			}
+		}
+	}
+}
+
+/**
+ * The fifth alarm slot, the snooze alarm on watches with one, see [AlarmsUiState.hasSnoozeAlarm].
+ * It keeps its own state and events either way, the packets are the same.
+ */
+@Composable
+private fun FifthAlarmField(
+	state: AlarmsUiState,
+	onEvent: (AlarmsUiEvent) -> Unit,
+) = AlarmField(
+	alarm = state.pendingSnoozeAlarm,
+	label = if (state.hasSnoozeAlarm) "Snooze Alarm" else "Alarm ${state.pendingAlarms.size + 1}",
+	isSnooze = state.hasSnoozeAlarm,
+	enabled = state.isSnoozeAlarmInitialized && state.isLoading == false,
+	onTimeChange = { onEvent(AlarmsUiEvent.SnoozeAlarmTimeChange(time = it)) },
+	onToggle = { onEvent(AlarmsUiEvent.SnoozeAlarmToggle(enable = it)) },
+)
+
+@Preview(showBackground = true)
+@Composable
+private fun AlarmsScreenWithoutSnoozePreview() {
+	SkuareTheme {
+		val alarm = Alarm(enable = false, time = LocalTime(hour = 0, minute = 0))
+		val fifthAlarm = Alarm(enable = true, time = LocalTime(hour = 13, minute = 0))
+		MaterialTheme {
+			AlarmsScreenContent(
+				state = AlarmsUiState(
+					hasSnoozeAlarm = false,
+					isHourlySignalInitialized = true,
+					isAlarmsInitialized = true,
+					savedAlarms = List(4) { alarm },
+					pendingAlarms = List(4) { alarm },
+					isSnoozeAlarmInitialized = true,
+					savedSnoozeAlarm = fifthAlarm,
+					pendingSnoozeAlarm = fifthAlarm,
+				),
+				onEvent = {},
+			)
 		}
 	}
 }
