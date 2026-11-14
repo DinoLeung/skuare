@@ -247,7 +247,7 @@ private fun SettingsScreenContent(
 					if (state.canAdjustHands) {
 						OutlinedButton(
 							onClick = { showHandGroupDialog = true },
-							enabled = state.isLoading == false,
+							enabled = state.isLoading == false && state.handAdjust == null,
 							modifier = Modifier.fillMaxWidth(),
 						) { Text("Adjust Hands") }
 					}
@@ -263,6 +263,17 @@ private fun SettingsScreenContent(
 				onEvent(SettingsUiEvent.HandGroupSelected(it))
 			},
 			onDismiss = { showHandGroupDialog = false },
+		)
+	}
+
+	state.handAdjust?.let { session ->
+		HandAdjustDialog(
+			group = session.group,
+			isReady = session.isReady,
+			isMoving = session.isMoving,
+			error = session.error,
+			onSet = { onEvent(SettingsUiEvent.HandAdjustSet(it)) },
+			onFinish = { onEvent(SettingsUiEvent.HandAdjustFinish) },
 		)
 	}
 }
