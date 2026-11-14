@@ -1,8 +1,10 @@
 package xyz.d1n0.lib.model
 
+import xyz.d1n0.lib.constant.HandAction
 import xyz.d1n0.lib.constant.HandGroup
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
+import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 @OptIn(ExperimentalStdlibApi::class)
@@ -47,5 +49,12 @@ class HandAdjustTest {
 	fun acceptsMovesUpToOneStepShortOfARevolution() {
 		assertContentEquals(hex("1a04186f0800"), HandAdjust.movePacket(HandGroup.CLOCK, 2159))
 		assertContentEquals(hex("1a0418010000"), HandAdjust.movePacket(HandGroup.CLOCK, -2159))
+	}
+
+	@Test
+	fun buildsCommandBytesFromGroupAndAction() {
+		assertEquals(0x12.toByte(), HandAction.SELECT.commandFor(HandGroup.CLOCK))
+		assertEquals(0x28.toByte(), HandAction.MOVE.commandFor(HandGroup.FUNCTION))
+		assertEquals(0x29.toByte(), HandAction.CONFIRM.commandFor(HandGroup.FUNCTION))
 	}
 }
