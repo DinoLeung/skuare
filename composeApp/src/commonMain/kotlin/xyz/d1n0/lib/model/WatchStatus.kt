@@ -13,22 +13,41 @@ import xyz.d1n0.lib.helper.fromBcdByteArray
  * [requestPacket] is written to the data request characteristic. The official app requests it
  * on every connect.
  *
- * Known layout, e.g. 26 10 16 22 41 01 01 12 86 00 00 00 12 12 12 ... (171 bytes):
- * [0..4] timestamp, BCD yy mm dd hh mm (2026-10-16 22:41)
- * [5..6] unknown, 01 01
- * [7] battery level, matches the bars shown in the official app, see [batteryLevel]
- * [12..23] repeats the battery level, probably a battery history
- * rest unknown, ends with log entries of BCD yy mm dd hh mm followed by a flag byte
+ * Each watch replies with its own fixed size, whatever size is requested, so the layout is picked
+ * from the reply's size, see [Layout]. Layouts in research/battery-research.md.
  *
  * Battery level is NOT the battery byte of WATCH_CONDITION (0x28), two watches reporting 0x0F
  * there were shown as 2/5 and 3/5 in the official app.
+ *
+ * @property timestamp When the status was taken, only in the 171-byte layout.
+ * @property batteryLevel Null if the byte isn't a known level yet, see [BatteryLevel].
  */
 data class WatchStatus(
-	val timestamp: LocalDateTime,
-	val batteryLevel: BatteryLevel,
+	val timestamp: LocalDateTime?,
+	val batteryLevel: BatteryLevel?,
 ) {
+	/**
+	 * @property size Reply size in bytes.
+	 * @property batteryIndex Index of the battery level byte, the bars shown in the official app.
+	 * @property hasTimestamp Whether the reply starts with a BCD yy mm dd hh mm timestamp.
+	 */
+	private enum class Layout(val size: Int, val batteryIndex: Int, val hasTimestamp: Boolean) {
+		/** GMW-B5000, GW-B5600, e.g. 26 10 16 22 41 01 01 12 … (2026-10-16 22:41, battery 12). */
+		CLASSIC(size = 0xAB, batteryIndex = 7, hasTimestamp = true),
+
+		/** GA-B2100, starts 00 05 then an empty log, the tail matches the MIP layout's. */
+		CASIOAK(size = 0xAC, batteryIndex = 110, hasTimestamp = false),
+
+		/** GW-BX5600, hourly slots, then battery and temperature. */
+		MIP(size = 0xD8, batteryIndex = 158, hasTimestamp = false),
+	}
+
 	companion object {
-		const val SIZE = 0xAB
+		/**
+		 * Size sent in the request. The official app sends each watch its own size, but the watch
+		 * ignores it, the GW-BX5600 replied with 216 bytes to this one.
+		 */
+		private const val REQUEST_SIZE = 0xAB
 		private const val DATA_TYPE: Byte = 0x05
 
 		/**
@@ -36,25 +55,32 @@ data class WatchStatus(
 		 * E.g. 00 05 AB 00 00
 		 */
 		val requestPacket: ByteArray
-			get() = byteArrayOf(WatchStatusSession.START.byte, DATA_TYPE, SIZE.toByte(), 0x00, 0x00)
+			get() = byteArrayOf(WatchStatusSession.START.byte, DATA_TYPE, REQUEST_SIZE.toByte(), 0x00, 0x00)
 
 		/**
 		 * Sent by the official app after receiving the watch status.
 		 * E.g. 04 05 AB 00 00
 		 */
 		val endPacket: ByteArray
-			get() = byteArrayOf(WatchStatusSession.END.byte, DATA_TYPE, SIZE.toByte(), 0x00, 0x00)
+			get() = byteArrayOf(WatchStatusSession.END.byte, DATA_TYPE, REQUEST_SIZE.toByte(), 0x00, 0x00)
 
+		/**
+		 * @throws IllegalArgumentException if the size matches no known [Layout], e.g. a truncated
+		 *         reply.
+		 */
 		fun fromPacket(packet: ByteArray): WatchStatus {
-			require(packet.size == SIZE) {
-				"Watch status packet must be exactly $SIZE bytes long, got ${packet.size}, is the MTU too small?"
+			val layout = requireNotNull(Layout.entries.firstOrNull { it.size == packet.size }) {
+				"Unknown watch status size ${packet.size}, expected one of " +
+					"${Layout.entries.map { it.size }}, is the MTU too small?"
 			}
 			return WatchStatus(
-				timestamp = LocalDateTime(
-					date = LocalDate.fromBcdByteArray(packet.copyOfRange(0, 3)),
-					time = LocalTime(Int.fromBcdByte(packet[3]), Int.fromBcdByte(packet[4])),
-				),
-				batteryLevel = BatteryLevel.fromByte(packet[7]),
+				timestamp = if (layout.hasTimestamp) {
+					LocalDateTime(
+						date = LocalDate.fromBcdByteArray(packet.copyOfRange(0, 3)),
+						time = LocalTime(Int.fromBcdByte(packet[3]), Int.fromBcdByte(packet[4])),
+					)
+				} else null,
+				batteryLevel = BatteryLevel.fromByte(packet[layout.batteryIndex]),
 			)
 		}
 	}

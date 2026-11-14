@@ -34,7 +34,7 @@ suspend fun Watch.requestWatchStatus() =
 		val packet = requestData(WatchStatus.requestPacket, WatchStatus.endPacket)
 		_info.update { it.parseWatchStatusPacket(packet) }
 	}.onSuccess {
-		log.d { "Watch status: ${info.value.watchStatus}, battery level: ${info.value.watchStatus?.batteryLevel?.bars}/5" }
+		log.d { "Watch status: ${info.value.watchStatus}, battery level: ${info.value.watchStatus?.batteryLevel?.let { "${it.bars}/5" } ?: "unknown"}" }
 	}.onFailure { error ->
 		log.e { "Error requesting watch status: ${error.message}" }
 	}
