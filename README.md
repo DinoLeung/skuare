@@ -98,6 +98,7 @@ excellent opportunity to learn JetBrains Compose Multiplatform and core BLE comm
 ## To be fixed
 
 - [x] Handle multiple peripheral found when scanning for watches
+- [ ] Handle multiple paired watches are connect
 - [ ] Default data when invalid data received from watch, including timezone
 
 ## Disclaimer
