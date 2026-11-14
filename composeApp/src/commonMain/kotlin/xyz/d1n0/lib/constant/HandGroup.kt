@@ -10,10 +10,10 @@ package xyz.d1n0.lib.constant
  *           [stepModulus] − n. Not necessarily one turn of a hand: the clock hands' 2160 is 36 hours.
  */
 enum class HandGroup(val id: Int, val stepModulus: Int) {
-	/** Hour and minute hands. One step is one minute, 2160 is 36 hours (3 hour-hand turns). */
+	/** Hour and minute hands, 1 step is 1 minute. */
 	CLOCK(id = 1, stepModulus = 2160),
 
-	/** The function hand. 2° per step if 180 is one turn (unconfirmed). */
+	/** The function hand. */
 	FUNCTION(id = 2, stepModulus = 180);
 
 	override fun toString(): String = when (this) {
