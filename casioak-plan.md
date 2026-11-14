@@ -93,9 +93,9 @@ Differences 1, 3, 5, 6 and 7 become features, so screens and writes are decided 
   takes `0x24` today. A device test shows whether the GA-B2100 errors on `0x24` or just
   ignores it. Either way we follow the official app.
 - **`canAdjustHands`:** whether the hand adjustment screen is shown. The hand groups and
-  their revolution sizes (clock `1`/2160, function `2`/180) are a `HandGroup` enum, because
-  CASIOAK is the only analog profile so far. If a later model has other groups or sizes,
-  they move into the profile. Custom models stay off, because the sizes can't be guessed.
+  their step moduli (clock `1`/2160, function `2`/180) are a `HandGroup` enum, because
+  CASIOAK is the only analog profile so far. If a later model has other groups or moduli,
+  they move into the profile. Custom models stay off, because the moduli can't be guessed.
 - **Watch status layout** isn't a feature: the watch ignores the requested size and always
   replies with its own fixed size, so the parser picks the layout from the reply length
   (171 → [7], 172 → [110], 216 → [158]). Custom models get this for free.

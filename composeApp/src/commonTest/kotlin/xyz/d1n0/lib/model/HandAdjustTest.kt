@@ -38,7 +38,7 @@ class HandAdjustTest {
 
 	@Test
 	fun rejectsMovesSentAsZero() {
-		// 0 and whole revolutions would be the move to the adjusting position
+		// 0 and multiples of the modulus would be the move to the adjusting position
 		listOf(0, 2160, -2160, 2200).forEach { steps ->
 			assertFailsWith<IllegalArgumentException>("$steps") { HandAdjust.movePacket(HandGroup.CLOCK, steps) }
 		}
@@ -46,7 +46,7 @@ class HandAdjustTest {
 	}
 
 	@Test
-	fun acceptsMovesUpToOneStepShortOfARevolution() {
+	fun acceptsMovesUpToOneStepShortOfTheModulus() {
 		assertContentEquals(hex("1a04186f0800"), HandAdjust.movePacket(HandGroup.CLOCK, 2159))
 		assertContentEquals(hex("1a0418010000"), HandAdjust.movePacket(HandGroup.CLOCK, -2159))
 	}

@@ -33,16 +33,16 @@ object HandAdjust {
 
 	/**
 	 * Moves [group]'s hands [steps] from where they are, clockwise if positive. Anticlockwise is
-	 * sent as [HandGroup.stepsPerRevolution] − n, e.g. −2 on the clock hands is 2158.
+	 * sent as [HandGroup.stepModulus] − n, e.g. −2 on the clock hands is 2158.
 	 *
-	 * @throws IllegalArgumentException if [steps] is 0 or a whole revolution or more, both of which
-	 *         would be sent as 0, the move to the adjusting position.
+	 * @throws IllegalArgumentException if [steps] is 0, or the modulus or more either way, which
+	 *         could be sent as 0, the move to the adjusting position.
 	 */
 	fun movePacket(group: HandGroup, steps: Int): ByteArray {
-		require(steps != 0 && steps.absoluteValue < group.stepsPerRevolution) {
-			"Steps must be non-zero and less than a revolution (${group.stepsPerRevolution}), got $steps"
+		require(steps != 0 && steps.absoluteValue < group.stepModulus) {
+			"Steps must be non-zero and within ±${group.stepModulus - 1}, got $steps"
 		}
-		return packet(HandAction.MOVE.commandFor(group), steps.mod(group.stepsPerRevolution))
+		return packet(HandAction.MOVE.commandFor(group), steps.mod(group.stepModulus))
 	}
 
 	/** Sent right after each move's [ACK], maybe confirms it. */

@@ -5,8 +5,8 @@ package xyz.d1n0.lib.model
  * The defaults are the minimal profile: a home clock and one world clock, nothing optional. The
  * fifth alarm stays a snooze alarm ([hasSnoozeAlarm]), as on every watch before custom models.
  *
- * A custom watch never adjusts hands ([canAdjustHands]), the hand groups and their revolution
- * sizes can't be guessed. It isn't stored.
+ * A custom watch never adjusts hands ([canAdjustHands]), the hand groups and their step moduli
+ * can't be guessed. It isn't stored.
  *
  * @throws IllegalArgumentException if [clockCount] is not in 1..6 or [reminderCount] is not in 0..5.
  */
