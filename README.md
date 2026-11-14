@@ -41,6 +41,12 @@ Skuare supports the following watch models and Casio modules:
     - [Module 3575](https://shockbase.org/watches/modules_dyn.php?module=3575)
 - DW-B5600
     - [Module 3509](https://shockbase.org/watches/modules_dyn.php?module=3509) (untested)
+- GA-B2100
+    - [Module 5689](https://shockbase.org/watches/modules_dyn.php?module=5689)
+- GBM-2100
+    - [Module 5729](https://shockbase.org/watches/modules_dyn.php?module=5729) (untested)
+- GM-B2100
+    - [Module 5691](https://shockbase.org/watches/modules_dyn.php?module=5691) (untested)
 
 Other watches can be paired too. They start with only a home clock and one world clock; adjust
 the watch features from the wrench button in the title bar to match the watch.
@@ -75,6 +81,8 @@ excellent opportunity to learn JetBrains Compose Multiplatform and core BLE comm
     - [x] Hourly Signal
 - [x] Timer
 - [x] Reminders title and config
+- [x] Hand adjustment (home position correction) on analog watches
+    - [x] Clock hands and mode hand
 
 ## Roadmap
 
