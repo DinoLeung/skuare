@@ -23,7 +23,7 @@ enum class HandGroup(val id: Int, val stepModulus: Int) {
 	MODE(id = 2, stepModulus = 180);
 
 	override fun toString(): String = when (this) {
-		CLOCK -> "Hour and minute hands"
+		CLOCK -> "Clock hands"
 		MODE -> "Mode hand"
 	}
 }

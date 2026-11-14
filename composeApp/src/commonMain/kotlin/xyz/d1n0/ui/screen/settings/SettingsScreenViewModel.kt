@@ -19,6 +19,7 @@ import xyz.d1n0.lib.constant.DateFormat
 import xyz.d1n0.Log
 import xyz.d1n0.data.repository.PairedWatchRepository
 import xyz.d1n0.lib.constant.FontStyle
+import xyz.d1n0.lib.constant.HandGroup
 import xyz.d1n0.lib.constant.OpCode
 import xyz.d1n0.lib.constant.WeekdayLanguage
 import xyz.d1n0.lib.model.ConnectionSettings
@@ -53,6 +54,8 @@ data class SettingsUiState(
 	val hasFontStyle: Boolean = false,
 	// Only watches that can change it, see [xyz.d1n0.lib.model.WatchFeatures.hasWeekdayLanguage]
 	val hasWeekdayLanguage: Boolean = true,
+	// Only analog watches, see [xyz.d1n0.lib.model.WatchFeatures.canAdjustHands]
+	val canAdjustHands: Boolean = false,
 
 	val isConnectionSettingsInitialized: Boolean = false,
 	val isConnectionSettingsLoading: Boolean = false,
@@ -98,6 +101,7 @@ sealed interface SettingsUiEvent {
 	data class AutoSyncChange(val enable: Boolean) : SettingsUiEvent
 	data class AutoSyncDelayChange(val minutes: Int) : SettingsUiEvent
 	data class ConnectionTimeoutChange(val connectionTimeout: ConnectionTimeout) : SettingsUiEvent
+	data class HandGroupSelected(val group: HandGroup) : SettingsUiEvent
 }
 
 class SettingsScreenViewModel : ViewModel(), KoinComponent, SaveableScreen {
@@ -110,6 +114,7 @@ class SettingsScreenViewModel : ViewModel(), KoinComponent, SaveableScreen {
 		SettingsUiState(
 			hasFontStyle = watch.model.hasFontStyle,
 			hasWeekdayLanguage = watch.model.hasWeekdayLanguage,
+			canAdjustHands = watch.model.canAdjustHands,
 		)
 	)
 	val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
@@ -181,6 +186,12 @@ class SettingsScreenViewModel : ViewModel(), KoinComponent, SaveableScreen {
 		is SettingsUiEvent.AutoSyncChange -> onAutoSyncChange(enable = event.enable)
 		is SettingsUiEvent.AutoSyncDelayChange -> onAutoSyncDelayChange(minutes = event.minutes)
 		is SettingsUiEvent.ConnectionTimeoutChange -> onConnectionTimeoutChange(connectionTimeout = event.connectionTimeout)
+		is SettingsUiEvent.HandGroupSelected -> onHandGroupSelected(group = event.group)
+	}
+
+	// TODO: start hand adjustment for the group, see xyz.d1n0.lib.model.HandAdjuster
+	private fun onHandGroupSelected(group: HandGroup) {
+		log.d { "Hand group selected: $group" }
 	}
 
 	private fun requestName() = watch.scope.launch {

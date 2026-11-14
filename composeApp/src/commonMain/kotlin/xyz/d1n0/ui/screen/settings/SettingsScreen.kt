@@ -3,6 +3,7 @@ package xyz.d1n0.ui.screen.settings
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -45,6 +46,7 @@ private fun SettingsScreenContent(
 		if (nameFieldValue.text != state.pendingName.value)
 			nameFieldValue = nameFieldValue.copy(state.pendingName.value)
 	}
+	var showHandGroupDialog by remember { mutableStateOf(false) }
 
 	LazyColumn(
 		state = rememberLazyListState(),
@@ -242,9 +244,26 @@ private fun SettingsScreenContent(
 						options = ConnectionTimeout.values().toSet(),
 						modifier = Modifier.fillMaxWidth()
 					)
+					if (state.canAdjustHands) {
+						OutlinedButton(
+							onClick = { showHandGroupDialog = true },
+							enabled = state.isLoading == false,
+							modifier = Modifier.fillMaxWidth(),
+						) { Text("Adjust Hands") }
+					}
 				}
 			}
 		}
+	}
+
+	if (showHandGroupDialog) {
+		HandGroupDialog(
+			onSelect = {
+				showHandGroupDialog = false
+				onEvent(SettingsUiEvent.HandGroupSelected(it))
+			},
+			onDismiss = { showHandGroupDialog = false },
+		)
 	}
 }
 
@@ -260,6 +279,7 @@ private fun SettingsScreenPreview() {
 				isWatchSettingsLoading = false,
 				isConnectionSettingsInitialized = true,
 				isConnectionSettingsLoading = false,
+				canAdjustHands = true,
 			),
 			onEvent = {},
 		)
