@@ -162,14 +162,18 @@ private fun Watch.timeZoneNamePackets(clocksSettings: ClocksSettings): List<Byte
 		clocksSettings.timeZoneNamePackets
 	}
 
+private fun Watch.timeZoneLocationPackets(clocksSettings: ClocksSettings): List<ByteArray> =
+	if (model.hasTimeZoneLocation) clocksSettings.coordinatesRadioIdPackets else emptyList()
+
 suspend fun Watch.requestTimeZoneCoordinatesAndRadioId() {
 	for (i in 0 until model.clockCount) {
 		request(OpCode.TIMEZONE_LOCATION_RADIO_ID, i)
 	}
 }
 
+/** Writes nothing on watches without [WatchFeatures.hasTimeZoneLocation]. */
 suspend fun Watch.writeTimeZoneCoordinatesAndRadioId(clocksSettings: ClocksSettings) =
-	clocksSettings.coordinatesRadioIdPackets.forEach { write(it) }
+	timeZoneLocationPackets(clocksSettings).forEach { write(it) }
 //        .also { requestTimeZoneNames() }
 
 suspend fun Watch.requestReminderTitles() {
@@ -192,7 +196,9 @@ suspend fun Watch.writeReminderConfigs(remindersSettings: RemindersSettings) =
 	remindersSettings.reminderConfigPackets.forEach { write(it) }.also { requestReminderConfigs() }
 
 /**
- * Writes the clocks, then their time zone configs, names, coordinates and radio IDs.
+ * Writes the clocks, then their time zone configs, names, coordinates and radio IDs. Coordinates
+ * and radio IDs are left out on watches without [WatchFeatures.hasTimeZoneLocation], as the
+ * official app does.
  *
  * On watches with [Watch.hasBatchCharacteristics] they go in three batches, in the official app's
  * order: clocks, configs with coordinates and radio IDs, then names. Otherwise each packet is
@@ -204,7 +210,7 @@ private suspend fun Watch.writeClocksAndTimeZoneData(clocksSettings: ClocksSetti
 	if (hasBatchCharacteristics) {
 		val batches = listOf(
 			clocksSettings.clocksPackets,
-			clocksSettings.timeZoneConfigPackets + clocksSettings.coordinatesRadioIdPackets,
+			clocksSettings.timeZoneConfigPackets + timeZoneLocationPackets(clocksSettings),
 			timeZoneNamePackets(clocksSettings),
 		)
 		batches.forEach { writeBatch(it) }
