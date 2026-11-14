@@ -16,11 +16,14 @@ enum class HandGroup(val id: Int, val stepModulus: Int) {
 	 */
 	CLOCK(id = 1, stepModulus = 2160),
 
-	/** The function hand, its dial is a half circle, 1 step is 1°. */
-	FUNCTION(id = 2, stepModulus = 180);
+	/**
+	 * The mode hand, 1 step is 2°, so 180 is a full turn. Its dial is a half circle, but it can be
+	 * adjusted all the way round. The adjusting position is 3 o'clock, 9 o'clock is 90 steps away.
+	 */
+	MODE(id = 2, stepModulus = 180);
 
 	override fun toString(): String = when (this) {
 		CLOCK -> "Hour and minute hands"
-		FUNCTION -> "Function hand"
+		MODE -> "Mode hand"
 	}
 }

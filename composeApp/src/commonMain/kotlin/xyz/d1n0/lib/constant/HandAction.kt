@@ -2,7 +2,7 @@ package xyz.d1n0.lib.constant
 
 /**
  * What a per-group hand adjust command does, the low nibble of its command byte. The high nibble is
- * the [HandGroup.id], e.g. [MOVE] on [HandGroup.FUNCTION] is 0x28. Commands for the whole session
+ * the [HandGroup.id], e.g. [MOVE] on [HandGroup.MODE] is 0x28. Commands for the whole session
  * are [HandAdjustSession]. Names are inferred from the official app, the real ones are unknown.
  */
 enum class HandAction(val nibble: Int) {

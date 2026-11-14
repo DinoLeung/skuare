@@ -93,7 +93,7 @@ Differences 1, 3, 5, 6 and 7 become features, so screens and writes are decided 
   takes `0x24` today. A device test shows whether the GA-B2100 errors on `0x24` or just
   ignores it. Either way we follow the official app.
 - **`canAdjustHands`:** whether the hand adjustment screen is shown. The hand groups and
-  their step moduli (clock `1`/2160, function `2`/180) are a `HandGroup` enum, because
+  their step moduli (clock `1`/2160, mode `2`/180) are a `HandGroup` enum, because
   CASIOAK is the only analog profile so far. If a later model has other groups or moduli,
   they move into the profile. Custom models stay off, because the moduli can't be guessed.
 - **Watch status layout** isn't a feature: the watch ignores the requested size and always
@@ -144,9 +144,9 @@ Library:
 
 - `OpCode.HAND_ADJUST(0x1A)`. The `1a 04 00 00 00 00` acks go through `handlePacket`, so
   waits on `packets` work.
-- `HandGroup` enum (`CLOCK(1, 2160)`, `FUNCTION(2, 180)`) and a packet builder for
+- `HandGroup` enum (`CLOCK(1, 2160)`, `MODE(2, 180)`) and a packet builder for
   `1a 04 <cmd> <steps LE16> 00`, where a negative n becomes `total − n`. Unit tests use the captured values: clock −2 →
-  `6e 08`, function −2 → `b2 00`.
+  `6e 08`, mode −2 → `b2 00`.
 - Watch extensions, following the captured sequence:
   - `startHandAdjust()`: `06`, wait for the ack
   - `selectHandGroup(g)`: `x2`

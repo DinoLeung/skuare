@@ -26,14 +26,14 @@ class HandAdjustTest {
 	}
 
 	@Test
-	fun buildsCapturedFunctionPackets() {
+	fun buildsCapturedModePackets() {
 		// hand_adjust_function_2100.pcapng
-		assertContentEquals(hex("1a0422000000"), HandAdjust.selectPacket(HandGroup.FUNCTION))
-		assertContentEquals(hex("1a0428000000"), HandAdjust.adjustPositionPacket(HandGroup.FUNCTION))
-		assertContentEquals(hex("1a0428030000"), HandAdjust.movePacket(HandGroup.FUNCTION, 3))
-		assertContentEquals(hex("1a0428b20000"), HandAdjust.movePacket(HandGroup.FUNCTION, -2))
-		assertContentEquals(hex("1a0428b30000"), HandAdjust.movePacket(HandGroup.FUNCTION, -1))
-		assertContentEquals(hex("1a0429000000"), HandAdjust.confirmPacket(HandGroup.FUNCTION))
+		assertContentEquals(hex("1a0422000000"), HandAdjust.selectPacket(HandGroup.MODE))
+		assertContentEquals(hex("1a0428000000"), HandAdjust.adjustPositionPacket(HandGroup.MODE))
+		assertContentEquals(hex("1a0428030000"), HandAdjust.movePacket(HandGroup.MODE, 3))
+		assertContentEquals(hex("1a0428b20000"), HandAdjust.movePacket(HandGroup.MODE, -2))
+		assertContentEquals(hex("1a0428b30000"), HandAdjust.movePacket(HandGroup.MODE, -1))
+		assertContentEquals(hex("1a0429000000"), HandAdjust.confirmPacket(HandGroup.MODE))
 	}
 
 	@Test
@@ -42,7 +42,7 @@ class HandAdjustTest {
 		listOf(0, 2160, -2160, 2200).forEach { steps ->
 			assertFailsWith<IllegalArgumentException>("$steps") { HandAdjust.movePacket(HandGroup.CLOCK, steps) }
 		}
-		assertFailsWith<IllegalArgumentException> { HandAdjust.movePacket(HandGroup.FUNCTION, 180) }
+		assertFailsWith<IllegalArgumentException> { HandAdjust.movePacket(HandGroup.MODE, 180) }
 	}
 
 	@Test
@@ -54,7 +54,7 @@ class HandAdjustTest {
 	@Test
 	fun buildsCommandBytesFromGroupAndAction() {
 		assertEquals(0x12.toByte(), HandAction.SELECT.commandFor(HandGroup.CLOCK))
-		assertEquals(0x28.toByte(), HandAction.MOVE.commandFor(HandGroup.FUNCTION))
-		assertEquals(0x29.toByte(), HandAction.CONFIRM.commandFor(HandGroup.FUNCTION))
+		assertEquals(0x28.toByte(), HandAction.MOVE.commandFor(HandGroup.MODE))
+		assertEquals(0x29.toByte(), HandAction.CONFIRM.commandFor(HandGroup.MODE))
 	}
 }
