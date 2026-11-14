@@ -107,6 +107,23 @@ The reply never changed (`11 0f 0f 0f 06 00 00 00 00 00 01 00 00 26 03`, the sam
 before its update). It's probably the official app refreshing its screen state, not part of
 the protocol.
 
+## Hand groups come from the model
+
+The watch never says which hand groups it has or what their step moduli are, so the official app
+must know them from the model (it picks the watch status size from the advertised name the
+same way, see `battery-research.md`).
+
+- During hand adjustment the watch only sends the `0x11` reply (identical every time) and
+  `1a 04 00 00 00 00`, the same for both groups.
+- On connect, `0x20` can't tell analog from digital: bytes 13–14 are `03 17` on both the
+  GA-B2100 and the GW-BX5600, and bytes 3–4 are the firmware version (`03 01`).
+- `0x26` differs between watches of the same module family (silver 3539 and green 3540 share
+  only the first 6 bytes), so it looks like a per-watch ID rather than a feature list. It isn't
+  decoded.
+
+A second analog model whose `0x20` or `0x26` changes in line with its hands would be the only
+thing to show otherwise.
+
 ## Open questions
 
 - What `04`, `06` and `07` really are, and which one sends the hands back to normal. Is `04`
@@ -116,6 +133,7 @@ the protocol.
 - Whether `x9` is needed after every move, or only before switching group / finishing.
 - Whether `x2` (select) is needed before `x8`, and whether both groups can be adjusted in one
   session (each capture adjusted only one group).
-- Hand groups and revolution sizes on other analog models (G-Squad, other GA-B2100 variants).
-  The revolution size per group probably has to come from the model.
+- Hand groups and step moduli on other analog models (G-Squad, other GA-B2100 variants).
+  The watch never sends them (see "Hand groups come from the model"), so they come from the
+  model.
 - Whether byte 5 is part of the step count.
