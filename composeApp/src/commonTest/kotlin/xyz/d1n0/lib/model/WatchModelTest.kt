@@ -34,10 +34,34 @@ class WatchModelTest {
 	}
 
 	@Test
+	fun matchesCasioakNames() {
+		listOf("GA-B2100", "GBM-2100", "GM-B2100").forEach { model ->
+			assertEquals(WatchModel.CASIOAK, WatchModel.fromAdvertisedName("CASIO $model"), model)
+			assertEquals(WatchModel.CASIOAK, WatchModel.fromAdvertisedName("CASIO $model#"), "$model#")
+		}
+		// exact match only, the GBM-2100 isn't a GMB-2100
+		assertNull(WatchModel.fromAdvertisedName("CASIO GMB-2100"))
+	}
+
+	@Test
 	fun weekdayLanguage() {
 		assertTrue(WatchModel.CLASSIC_SQUARE.hasWeekdayLanguage)
 		assertTrue(WatchModel.DW_SQUARE.hasWeekdayLanguage)
+		assertTrue(WatchModel.CASIOAK.hasWeekdayLanguage)
 		assertFalse(WatchModel.MIP_SQUARE.hasWeekdayLanguage)
+	}
+
+	@Test
+	fun casioakFeatures() {
+		// GA-B2100 captures, see research/casioak-research.md
+		val model = WatchModel.CASIOAK
+		assertEquals(2, model.clockCount)
+		assertEquals(5, model.reminderCount)
+		assertFalse(model.hasFontStyle)
+		assertFalse(model.hasShortCityNames)
+		assertFalse(model.hasSnoozeAlarm)
+		assertFalse(model.hasTimeZoneLocation)
+		assertTrue(model.canAdjustHands)
 	}
 
 	@Test

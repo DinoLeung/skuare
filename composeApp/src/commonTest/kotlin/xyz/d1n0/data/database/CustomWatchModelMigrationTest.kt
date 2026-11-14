@@ -17,6 +17,9 @@ class CustomWatchModelMigrationTest {
 			"CASIO GW-BX5600#",
 			"CASIO GMW-BZ5000",
 			"CASIO DW-B5600",
+			"CASIO GA-B2100",
+			"CASIO GBM-2100",
+			"CASIO GM-B2100",
 		).forEach { assertNull(migratedCustomModel(it), it) }
 	}
 

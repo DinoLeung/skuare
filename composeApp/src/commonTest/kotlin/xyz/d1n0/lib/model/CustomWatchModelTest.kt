@@ -22,6 +22,11 @@ class CustomWatchModelTest {
 	}
 
 	@Test
+	fun neverAdjustsHands() {
+		assertFalse(CustomWatchModel.from(WatchModel.CASIOAK).canAdjustHands)
+	}
+
+	@Test
 	fun acceptsCountsWithinRange() {
 		CustomWatchModel.CLOCK_COUNT_RANGE.forEach { CustomWatchModel(clockCount = it) }
 		CustomWatchModel.REMINDER_COUNT_RANGE.forEach { CustomWatchModel(reminderCount = it) }

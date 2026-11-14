@@ -46,6 +46,16 @@ enum class WatchModel(
 		hasSnoozeAlarm = true,
 		hasTimeZoneLocation = true,
 		canAdjustHands = false,
+	),
+	CASIOAK( // GA-B2100, GBM-2100, GM-B2100
+		clockCount = 2,
+		reminderCount = 5,
+		hasFontStyle = false,
+		hasShortCityNames = false,
+		hasWeekdayLanguage = true,
+		hasSnoozeAlarm = false,
+		hasTimeZoneLocation = false,
+		canAdjustHands = true,
 	);
 
 	companion object {
@@ -56,6 +66,9 @@ enum class WatchModel(
 			"GW-BX5600" to MIP_SQUARE,      // module 3578
 			"GMW-BZ5000" to MIP_SQUARE,     // module 3575
 			"DW-B5600" to DW_SQUARE,        // module 3509
+			"GA-B2100" to CASIOAK,          // module 5689
+			"GBM-2100" to CASIOAK,          // module 5729, untested, assumed to match the GA-B2100
+			"GM-B2100" to CASIOAK,          // module 5691, untested, assumed to match the GA-B2100
 		)
 
 		/**
