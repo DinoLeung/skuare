@@ -1,6 +1,5 @@
 package xyz.d1n0.lib.model
 
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.test.runTest
 import xyz.d1n0.lib.constant.HandGroup
 import kotlin.test.Test
@@ -11,29 +10,9 @@ import kotlin.test.assertFailsWith
 class HandAdjusterTest {
 	private fun hex(value: String) = value.hexToByteArray()
 
-	/** Records writes and replies like the GA-B2100: an ack for open and for every move. */
-	private class FakeWatch(private val reply: (ByteArray) -> ByteArray? = ::ackLikeGaB2100) {
-		val packets = MutableSharedFlow<ByteArray>(extraBufferCapacity = 16)
-		val written = mutableListOf<String>()
-
-		suspend fun write(packet: ByteArray) {
-			written += packet.toHexString()
-			reply(packet)?.let { packets.emit(it) }
-		}
-
-		companion object {
-			fun ackLikeGaB2100(packet: ByteArray): ByteArray? {
-				val command = packet[2].toInt()
-				return if (command == 0x06 || command and 0x0F == 0x08) HandAdjust.ACK else null
-			}
-		}
-	}
-
-	private fun FakeWatch.adjuster() = HandAdjuster(write = { write(it) }, packets = packets)
-
 	@Test
 	fun runsCapturedClockSequence() = runTest {
-		val watch = FakeWatch()
+		val watch = FakeHandAdjustWatch()
 		watch.adjuster().run {
 			start()
 			select(HandGroup.CLOCK)
@@ -59,13 +38,13 @@ class HandAdjusterTest {
 
 	@Test
 	fun failsWhenTheWatchDoesNotReply() = runTest {
-		val watch = FakeWatch(reply = { null })
+		val watch = FakeHandAdjustWatch(reply = { null })
 		assertFailsWith<IllegalStateException> { watch.adjuster().start() }
 	}
 
 	@Test
 	fun failsOnErrorReply() = runTest {
-		val watch = FakeWatch(reply = { hex("ff811a") })
+		val watch = FakeHandAdjustWatch(reply = { hex("ff811a") })
 		assertFailsWith<WatchErrorPacket> { watch.adjuster().select(HandGroup.CLOCK) }
 	}
 
@@ -73,7 +52,7 @@ class HandAdjusterTest {
 	fun ignoresRepliesToOtherOpcodes() = runTest {
 		// a clocks reply arriving mid-move isn't the hands stopping
 		var moves = 0
-		val watch = FakeWatch(reply = {
+		val watch = FakeHandAdjustWatch(reply = {
 			if (it[2].toInt() and 0x0F == 0x08 && moves++ == 0) hex("1d000103027f760000ffffffffffff") else null
 		})
 		assertFailsWith<IllegalStateException> { watch.adjuster().move(HandGroup.CLOCK, 1) }
