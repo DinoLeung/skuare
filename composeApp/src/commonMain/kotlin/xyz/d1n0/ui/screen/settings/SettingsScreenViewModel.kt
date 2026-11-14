@@ -11,8 +11,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancelAndJoin
-import kotlin.coroutines.cancellation.CancellationException
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import xyz.d1n0.lib.constant.AutoSyncDelay
@@ -26,8 +24,8 @@ import xyz.d1n0.lib.constant.HandGroup
 import xyz.d1n0.lib.constant.OpCode
 import xyz.d1n0.lib.constant.WeekdayLanguage
 import xyz.d1n0.lib.model.ConnectionSettings
-import xyz.d1n0.lib.model.HandAdjuster
 import xyz.d1n0.lib.model.handAdjuster
+import xyz.d1n0.ui.component.HandAdjustUiState
 import xyz.d1n0.lib.model.Watch
 import xyz.d1n0.lib.model.WatchInfo
 import xyz.d1n0.lib.model.WatchName
@@ -92,20 +90,6 @@ data class SettingsUiState(
 		get() = savedConnectionSettings != pendingConnectionSettings
 }
 
-/**
- * A hand adjust session, see [xyz.d1n0.lib.model.HandAdjuster].
- *
- * @property isReady Whether the hands have reached the adjusting position.
- * @property isMoving Whether the hands are moving, to the adjusting position or after a set.
- * @property error Why the last command failed, null if it didn't.
- */
-data class HandAdjustUiState(
-	val group: HandGroup,
-	val isReady: Boolean = false,
-	val isMoving: Boolean = true,
-	val error: String? = null,
-)
-
 sealed interface SettingsUiEvent {
 	object RequestName : SettingsUiEvent
 	object RequestWatchSettings : SettingsUiEvent
@@ -123,7 +107,10 @@ sealed interface SettingsUiEvent {
 	data class AutoSyncDelayChange(val minutes: Int) : SettingsUiEvent
 	data class ConnectionTimeoutChange(val connectionTimeout: ConnectionTimeout) : SettingsUiEvent
 	data class HandGroupSelected(val group: HandGroup) : SettingsUiEvent
-	data class HandAdjustSet(val steps: Int) : SettingsUiEvent
+	data class HandAdjustStepsChange(val steps: Int) : SettingsUiEvent
+	object HandAdjustStepAnticlockwise : SettingsUiEvent
+	object HandAdjustStepClockwise : SettingsUiEvent
+	object HandAdjustSet : SettingsUiEvent
 	object HandAdjustFinish : SettingsUiEvent
 }
 
@@ -142,8 +129,8 @@ class SettingsScreenViewModel : ViewModel(), KoinComponent, SaveableScreen {
 	)
 	val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
 
-	private var handAdjuster: HandAdjuster? = null
-	private var handAdjustJob: Job? = null
+	private var handAdjustSession: HandAdjustSession? = null
+	private var handAdjustStateJob: Job? = null
 
 	override val saveState: StateFlow<SaveState> = _uiState
 		.map { SaveState(hasUpdates = it.hasUpdates, isLoading = it.isLoading, hasErrors = it.hasErrors) }
@@ -213,77 +200,41 @@ class SettingsScreenViewModel : ViewModel(), KoinComponent, SaveableScreen {
 		is SettingsUiEvent.AutoSyncDelayChange -> onAutoSyncDelayChange(minutes = event.minutes)
 		is SettingsUiEvent.ConnectionTimeoutChange -> onConnectionTimeoutChange(connectionTimeout = event.connectionTimeout)
 		is SettingsUiEvent.HandGroupSelected -> onHandGroupSelected(group = event.group)
-		is SettingsUiEvent.HandAdjustSet -> onHandAdjustSet(steps = event.steps)
-		SettingsUiEvent.HandAdjustFinish -> onHandAdjustFinish()
+		is SettingsUiEvent.HandAdjustStepsChange -> handAdjustSession?.setSteps(event.steps)
+		SettingsUiEvent.HandAdjustStepAnticlockwise -> handAdjustSession?.stepAnticlockwise()
+		SettingsUiEvent.HandAdjustStepClockwise -> handAdjustSession?.stepClockwise()
+		SettingsUiEvent.HandAdjustSet -> handAdjustSession?.set()
+		SettingsUiEvent.HandAdjustFinish -> finishHandAdjust()
 	}
 
-	/** Starts adjusting [group], the dialog's options unlock once its hands reach the adjusting position. */
+	/**
+	 * Starts a [HandAdjustSession] for [group] on the watch's scope, so its commands aren't
+	 * cancelled with this view model. Its state is mirrored in [SettingsUiState.handAdjust].
+	 */
 	private fun onHandGroupSelected(group: HandGroup) {
+		if (handAdjustSession != null) return
 		val adjuster = runCatching { watch.handAdjuster() }
 			.getOrElse { log.e { "Can't adjust hands: ${it.message}" }; return }
-		handAdjuster = adjuster
-		_uiState.update { it.copy(handAdjust = HandAdjustUiState(group = group)) }
-		runHandAdjust(onSuccess = { copy(isReady = true) }) {
-			adjuster.start()
-			adjuster.select(group)
+		val session = HandAdjustSession(group = group, adjuster = adjuster, scope = watch.scope, log = log)
+		handAdjustSession = session
+		handAdjustStateJob = viewModelScope.launch {
+			session.state.collect { state -> _uiState.update { it.copy(handAdjust = state) } }
 		}
-	}
-
-	private fun onHandAdjustSet(steps: Int) {
-		val adjuster = handAdjuster ?: return
-		val group = _uiState.value.handAdjust?.group ?: return
-		_uiState.update { it.copy(handAdjust = it.handAdjust?.copy(isMoving = true, error = null)) }
-		runHandAdjust { adjuster.move(group, steps) }
+		session.start()
 	}
 
 	/** Closes the dialog straight away, the watch is told the session has finished in the background. */
-	private fun onHandAdjustFinish() {
-		_uiState.update { it.copy(handAdjust = null) }
-		finishHandAdjust()
-	}
-
-	/**
-	 * Runs [block] on the watch's scope, so it isn't cancelled with this view model, and records
-	 * the result in [SettingsUiState.handAdjust].
-	 */
-	private fun runHandAdjust(
-		onSuccess: HandAdjustUiState.() -> HandAdjustUiState = { this },
-		block: suspend () -> Unit,
-	) {
-		handAdjustJob = watch.scope.launch {
-			val result = runCatching { block() }
-			result.exceptionOrNull()?.let { if (it is CancellationException) throw it }
-			result.exceptionOrNull()?.let { log.e { "Hand adjustment failed: ${it.message}" } }
-			_uiState.update { state ->
-				state.copy(handAdjust = state.handAdjust?.let { current ->
-					result.fold(
-						onSuccess = { current.onSuccess().copy(isMoving = false) },
-						onFailure = { current.copy(isMoving = false, error = it.message ?: "Unknown error") },
-					)
-				})
-			}
-		}
-	}
-
-	/**
-	 * Ends the session if one is running: stops waiting for the hands, then sends the exit
-	 * sequence, see [HandAdjuster.finish].
-	 */
 	private fun finishHandAdjust() {
-		val adjuster = handAdjuster ?: return
-		val pending = handAdjustJob
-		handAdjuster = null
-		handAdjustJob = null
-		watch.scope.launch {
-			pending?.cancelAndJoin()
-			runCatching { adjuster.finish() }
-				.onFailure { log.e { "Failed to finish hand adjustment: ${it.message}" } }
-		}
+		handAdjustStateJob?.cancel()
+		handAdjustStateJob = null
+		handAdjustSession?.finish()
+		handAdjustSession = null
+		_uiState.update { it.copy(handAdjust = null) }
 	}
 
 	override fun onCleared() {
 		// e.g. the watch screens were rebuilt mid-session, don't leave the watch in adjust mode
-		finishHandAdjust()
+		handAdjustSession?.finish()
 		super.onCleared()
 	}
 

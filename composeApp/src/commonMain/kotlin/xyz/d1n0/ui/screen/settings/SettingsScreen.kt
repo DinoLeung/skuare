@@ -268,11 +268,11 @@ private fun SettingsScreenContent(
 
 	state.handAdjust?.let { session ->
 		HandAdjustDialog(
-			group = session.group,
-			isReady = session.isReady,
-			isMoving = session.isMoving,
-			error = session.error,
-			onSet = { onEvent(SettingsUiEvent.HandAdjustSet(it)) },
+			state = session,
+			onStepsChange = { onEvent(SettingsUiEvent.HandAdjustStepsChange(it)) },
+			onStepAnticlockwise = { onEvent(SettingsUiEvent.HandAdjustStepAnticlockwise) },
+			onStepClockwise = { onEvent(SettingsUiEvent.HandAdjustStepClockwise) },
+			onSet = { onEvent(SettingsUiEvent.HandAdjustSet) },
 			onFinish = { onEvent(SettingsUiEvent.HandAdjustFinish) },
 		)
 	}
