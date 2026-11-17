@@ -58,10 +58,8 @@ class ClockTimezoneTest {
 		val winter = Instant.parse("2026-07-15T00:00:00Z")
 
 		assertEquals(630, adelaideHome.currentOffsetMinutes(summer))
-		assertEquals("+10:30", adelaideHome.ianaOffsetString(summer))
 		assertTrue(adelaideHome.isExpectedDst(summer))
 		assertEquals(570, adelaideHome.currentOffsetMinutes(winter))
-		assertEquals("+9:30", adelaideHome.ianaOffsetString(winter))
 		assertFalse(adelaideHome.isExpectedDst(winter))
 	}
 
@@ -70,15 +68,6 @@ class ClockTimezoneTest {
 		val worldAdelaide = WorldTimezoneData.values.first { it.cityName == adelaideHome.cityName }
 
 		assertContentEquals(worldAdelaide.coordinatesBytes, adelaideHome.coordinatesBytes)
-	}
-
-	@Test
-	fun searchesWorldAndHomeTimezonesCaseInsensitively() {
-		assertTrue(WorldTimezone.fuzzySearch("hong kong").any { it.identifier == hongKong.identifier })
-		assertTrue(WorldTimezone.fuzzySearch("australia").any { it.city == "Adelaide" })
-		assertTrue(HomeTimezone.fuzzySearch("adelaide").any { it.identifier == adelaideHome.identifier })
-		assertEquals(WorldTimezoneData.size, WorldTimezone.fuzzySearch("  ").size)
-		assertEquals(HomeTimezoneData.size, HomeTimezone.fuzzySearch("").size)
 	}
 
 	@Test

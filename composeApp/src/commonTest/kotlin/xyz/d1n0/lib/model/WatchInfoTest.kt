@@ -6,7 +6,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-@OptIn(ExperimentalStdlibApi::class)
 class WatchInfoTest {
 	// captured from the official app, with the address the phone connected to
 	private val connectReasons = mapOf(

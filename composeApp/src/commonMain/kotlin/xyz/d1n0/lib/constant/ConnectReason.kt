@@ -8,7 +8,6 @@ enum class ConnectReason(val byte: Byte) {
 	MANUAL_SYNC(4); // Lower right button short
 
 	companion object {
-		@OptIn(ExperimentalStdlibApi::class)
 		fun fromByte(byte: Byte) =
 			ConnectReason.entries.firstOrNull { it.byte == byte }
 				?: error("Unknown connect reason value: ${byte.toHexString(HexFormat.UpperCase)}")

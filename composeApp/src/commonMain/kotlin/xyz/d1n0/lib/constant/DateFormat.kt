@@ -5,7 +5,6 @@ enum class DateFormat(val byte: Byte) {
 	DDMM(1);
 
 	companion object {
-		@OptIn(ExperimentalStdlibApi::class)
 		fun fromByte(byte: Byte) =
 			DateFormat.entries.firstOrNull { it.byte == byte }
 				?: error("Unknown date format value: ${byte.toHexString(HexFormat.UpperCase)}")

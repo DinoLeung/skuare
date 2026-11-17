@@ -5,7 +5,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-@OptIn(ExperimentalStdlibApi::class)
 class BatchPacketTest {
 	// GW-BX5600 connect sync (connect_time_sync_bx.pcapng), frames 208, 213 and 214
 

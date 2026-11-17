@@ -1,6 +1,5 @@
 package xyz.d1n0.lib.model
 
-import xyz.d1n0.lib.constant.HomeTimezoneData
 import xyz.d1n0.lib.constant.WorldTimezoneData
 
 data class HomeTimezone(
@@ -12,21 +11,6 @@ data class HomeTimezone(
 	override val dstDiff: Double,
 	override val dstRules: Byte,
 ) : Timezone() {
-	companion object {
-		/**
-		 * Perform a fuzzy search on the list of HomeTimeZones by matching the keyword with the `timeZone` field.
-		 * @param keyword The search keyword.
-		 * @return A list of HomeTimeZone objects matching the search keyword.
-		 */
-		fun fuzzySearch(keyword: String): List<HomeTimezone> {
-			val keywordLowerCase = keyword.trim().lowercase()
-			if (keywordLowerCase.isEmpty()) return HomeTimezoneData.values.toList()
-			return HomeTimezoneData.values.filter {
-				it.timeZone.lowercase().contains(keywordLowerCase)
-			}
-		}
-	}
-
 	private fun getEquivalentWorldTimezone() =
 		WorldTimezoneData.values.find { it.cityName == this.cityName }
 
@@ -38,5 +22,5 @@ data class HomeTimezone(
 	 *         otherwise, a 16-byte array filled with zeros.
 	 */
 	override val coordinatesBytes: ByteArray
-		get() = getEquivalentWorldTimezone()?.let { it.coordinatesBytes } ?: ByteArray(16) { 0 }
+		get() = getEquivalentWorldTimezone()?.coordinatesBytes ?: ByteArray(16) { 0 }
 }

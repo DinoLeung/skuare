@@ -113,13 +113,6 @@ abstract class Timezone {
 		}
 
 	/**
-	 * Returns this timezone's effective UTC offset at [instant], including daylight saving time,
-	 * in signed hours and minutes such as `+8:00` or `-12:45`.
-	 */
-	fun ianaOffsetString(instant: Instant = KotlinClock.System.now()): String =
-		formatOffsetMinutes(currentOffsetMinutes(instant))
-
-	/**
 	 * The UTC offset a clock showing this timezone with [dstSettings] has at [instant], in whole
 	 * minutes.
 	 *

@@ -5,6 +5,7 @@ import xyz.d1n0.lib.constant.OpCode
 import xyz.d1n0.lib.helper.fromLittleEndianByteArray
 import xyz.d1n0.lib.helper.replaceAt
 import xyz.d1n0.lib.helper.requireIn
+import xyz.d1n0.lib.helper.requireOpCode
 
 /**
  * The clocks on the watch, sized by [clocks]: [empty] makes one for a [WatchFeatures.clockCount].
@@ -129,11 +130,8 @@ data class ClocksSettings(
 	 * @throws IllegalArgumentException if the packet does not start with the expected command code
 	 * or if its length is not exactly 15 bytes as required by the protocol.
 	 */
-	@OptIn(ExperimentalStdlibApi::class)
 	fun parseClocksPacket(clocksPacket: ByteArray): ClocksSettings {
-		require(clocksPacket.first() == OpCode.CLOCK.byte) {
-			"Clocks packet must start with command code ${OpCode.CLOCK.byte.toHexString(HexFormat.UpperCase)}"
-		}
+		clocksPacket.requireOpCode(OpCode.CLOCK, "Clocks")
 		require(clocksPacket.size == 15) {
 			"Clocks packet must be exactly 15 bytes long, e.g. 1D 00 01 03 02 7F 76 00 00 FF FF FF FF FF FF"
 		}

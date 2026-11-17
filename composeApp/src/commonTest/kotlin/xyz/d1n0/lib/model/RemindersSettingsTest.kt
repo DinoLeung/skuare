@@ -8,7 +8,6 @@ import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-@OptIn(ExperimentalStdlibApi::class)
 class RemindersSettingsTest {
 	private val titlePacket = "30014D454554494E470000000000000000000000".hexToByteArray()
 	private val configPacket = "3101052503252503252200".hexToByteArray()
@@ -42,12 +41,6 @@ class RemindersSettingsTest {
 
 		val parsed = ReminderConfig.fromBytes(config.bytes)
 		assertEquals(config, parsed)
-		assertEquals("Mon, Fri", parsed.daysOfWeekDisplayString)
-	}
-
-	@Test
-	fun emptyDaysDisplayNever() {
-		assertEquals("Never", config.copy(daysOfWeek = emptySet()).daysOfWeekDisplayString)
 	}
 
 	@Test

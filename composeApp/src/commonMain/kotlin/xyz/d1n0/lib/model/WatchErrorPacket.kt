@@ -11,7 +11,6 @@ import xyz.d1n0.lib.constant.OpCode
  * [1] unknown
  * [2] opcode of the request that failed, probably
  */
-@OptIn(ExperimentalStdlibApi::class)
 class WatchErrorPacket(val packet: ByteArray) :
 	Exception("Watch replied with error ${packet.toHexString(HexFormat.UpperCase)}") {
 

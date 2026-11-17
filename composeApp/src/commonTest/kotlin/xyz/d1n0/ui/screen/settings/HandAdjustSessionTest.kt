@@ -1,5 +1,6 @@
 package xyz.d1n0.ui.screen.settings
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -16,7 +17,7 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.seconds
 
-@OptIn(ExperimentalStdlibApi::class)
+@OptIn(ExperimentalCoroutinesApi::class)
 class HandAdjustSessionTest {
 	private val exit = listOf("1a0404000000", "1a0406000000", "1a0407000000")
 

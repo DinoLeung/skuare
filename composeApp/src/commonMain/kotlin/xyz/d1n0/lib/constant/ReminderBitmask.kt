@@ -1,9 +1,9 @@
 package xyz.d1n0.lib.constant
 
 object ReminderBitmask {
-	val ENABLE = 0b00000001
-	val MULTIPLE_DAYS = 0b00001010
-	val WEEKLY = 0b00000100
-	val YEARLY = 0b00001000
-	val MONTHLY = 0b00010000
+	const val ENABLE = 0b00000001
+	const val MULTIPLE_DAYS = 0b00001010
+	const val WEEKLY = 0b00000100
+	const val YEARLY = 0b00001000
+	const val MONTHLY = 0b00010000
 }

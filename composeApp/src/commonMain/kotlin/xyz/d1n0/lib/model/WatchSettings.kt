@@ -5,6 +5,7 @@ import xyz.d1n0.lib.constant.DateFormat
 import xyz.d1n0.lib.constant.FontStyle
 import xyz.d1n0.lib.constant.OpCode
 import xyz.d1n0.lib.constant.WeekdayLanguage
+import xyz.d1n0.lib.helper.requireOpCode
 
 data class WatchSettings(
 	val preferences: WatchPreferences,
@@ -14,17 +15,10 @@ data class WatchSettings(
 	val fontStyle: FontStyle = FontStyle.STANDARD,
 ) {
 	companion object {
-		@OptIn(ExperimentalStdlibApi::class)
 		fun fromPacket(packet: ByteArray): WatchSettings {
-			require(packet.first() == OpCode.WATCH_SETTINGS.byte) {
-				"Settings packet must start with command code ${
-					OpCode.WATCH_SETTINGS.byte.toHexString(
-						HexFormat.UpperCase
-					)
-				}"
-			}
+			packet.requireOpCode(OpCode.WATCH_SETTINGS, "Settings")
 			require(packet.size == 12) {
-				"Settings packet must be exactly 15 bytes long, e.g. 13 07 00 00 01 00 00 00 00 00 00 00"
+				"Settings packet must be exactly 12 bytes long, e.g. 13 07 00 00 01 00 00 00 00 00 00 00"
 			}
 			return WatchSettings(
 				preferences = WatchPreferences.fromByte(packet[1]),

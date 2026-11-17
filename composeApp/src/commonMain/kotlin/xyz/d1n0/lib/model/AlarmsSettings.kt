@@ -1,6 +1,7 @@
 package xyz.d1n0.lib.model
 
 import xyz.d1n0.lib.constant.OpCode
+import xyz.d1n0.lib.helper.requireOpCode
 import kotlin.experimental.or
 
 data class AlarmsSettings(
@@ -16,15 +17,8 @@ data class AlarmsSettings(
 
 	val isInitialized: Boolean get() = hourlySignal != null && allAlarms.size == 5
 
-	@OptIn(ExperimentalStdlibApi::class)
 	fun parseAlarmAPacket(packet: ByteArray): AlarmsSettings {
-		require(packet.first() == OpCode.ALARM_A.byte) {
-			"Alarm A packet must start with command code ${
-				OpCode.ALARM_A.byte.toHexString(
-					HexFormat.UpperCase
-				)
-			}"
-		}
+		packet.requireOpCode(OpCode.ALARM_A, "Alarm A")
 		require(packet.size == 5) {
 			"Alarm A packet must be exactly 5 bytes long, e.g. 15 C0 00 0C 1E"
 		}
@@ -34,15 +28,8 @@ data class AlarmsSettings(
 				.also { it[0] = Alarm.fromBytes(packet.sliceArray(1..packet.lastIndex)) })
 	}
 
-	@OptIn(ExperimentalStdlibApi::class)
 	fun parseAlarmBPacket(packet: ByteArray): AlarmsSettings {
-		require(packet.first() == OpCode.ALARM_B.byte) {
-			"Alarm B packet must start with command code ${
-				OpCode.ALARM_B.byte.toHexString(
-					HexFormat.UpperCase
-				)
-			}"
-		}
+		packet.requireOpCode(OpCode.ALARM_B, "Alarm B")
 		require(packet.size == 17) {
 			"Alarm B packet must be exactly 17 bytes long, e.g. 16 00 00 01 1E 00 00 0E 0F 00 00 0F 2D 40 00 17 3B"
 		}
@@ -60,7 +47,6 @@ data class AlarmsSettings(
 			val signal = requireNotNull(hourlySignal) { "HourlySignal must be initialized" }
 			val firstAlarm =
 				requireNotNull(alarms.first()) { "Alarm at position 0 must be initialized" }
-			val signalBytes = signal.byte
 			val alarmBytes = firstAlarm.bytes.apply {
 				this[0] = this[0] or signal.byte
 			}

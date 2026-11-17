@@ -8,7 +8,6 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
-@OptIn(ExperimentalStdlibApi::class)
 class ClocksSettingsTest {
 	// pinned holds Hong Kong as a world id (122 = 7A 00), clock 1 holds Adelaide as a home id (30335 = 7F 76)
 	private val swappedPacket = "1D000103027A007F76FFFFFFFFFFFF".hexToByteArray()

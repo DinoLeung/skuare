@@ -10,7 +10,6 @@ import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
-@OptIn(ExperimentalStdlibApi::class)
 class TimerTest {
 	private val classicPacket = "18170F1E00000002".hexToByteArray()
 	private val paddedPacket = "18170F1E0000000200000000000000".hexToByteArray()

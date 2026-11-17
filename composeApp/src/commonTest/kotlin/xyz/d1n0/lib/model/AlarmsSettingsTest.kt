@@ -8,7 +8,6 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-@OptIn(ExperimentalStdlibApi::class)
 class AlarmsSettingsTest {
 	private val alarmAPacket = "15C0000C1E".hexToByteArray()
 	private val alarmBPacket = "160000011E40000E0F00000F2D4000173B".hexToByteArray()

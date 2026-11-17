@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
  * Records hand adjust writes and replies like the GA-B2100 by default: an ack for open and for
  * every move. [reply] returns the packet to send back for a write, null for none.
  */
-@OptIn(ExperimentalStdlibApi::class)
 internal class FakeHandAdjustWatch(private val reply: (ByteArray) -> ByteArray? = ::ackLikeGaB2100) {
 	val packets = MutableSharedFlow<ByteArray>(extraBufferCapacity = 16)
 	val written = mutableListOf<String>()

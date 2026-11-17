@@ -5,7 +5,6 @@ import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-@OptIn(ExperimentalStdlibApi::class)
 class WatchNameTest {
 	private val packet = "23434153494F2047572D42353630302300000000".hexToByteArray()
 

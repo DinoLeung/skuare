@@ -7,9 +7,14 @@ data class WorldClock(
 	override val dstSettings: DstSettings,
 ) : Clock() {
 	companion object {
+		/**
+		 * @param timeZoneId Identifier of a time zone in [WorldTimezoneData].
+		 * @param dstSettings The DST settings of the clock.
+		 * @throws IllegalArgumentException if [timeZoneId] is not in [WorldTimezoneData].
+		 */
 		fun fromTimeZoneId(timeZoneId: Short, dstSettings: DstSettings): WorldClock {
-			require(WorldTimezoneData.containsKey(timeZoneId.toInt())) { "Time Zone ID $timeZoneId not found" }
-			return WorldClock(WorldTimezoneData.getValue(timeZoneId.toInt()), dstSettings)
+			val timeZone = requireNotNull(WorldTimezoneData[timeZoneId.toInt()]) { "Time Zone ID $timeZoneId not found" }
+			return WorldClock(timeZone, dstSettings)
 		}
 	}
 }

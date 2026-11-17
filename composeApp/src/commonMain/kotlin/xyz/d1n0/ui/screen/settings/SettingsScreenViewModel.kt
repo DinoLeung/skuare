@@ -288,7 +288,7 @@ class SettingsScreenViewModel : ViewModel(), KoinComponent, SaveableScreen {
 	}
 
 	private fun onNameInputChange(name: String) = _uiState.updateCatching(
-		transform = { it.pendingName.copy(_value = name) },
+		transform = { it.pendingName.copy(value = name) },
 		onSuccess = { copy(pendingName = it, pendingNameError = null) },
 		onFailure = { copy(pendingNameError = it) },
 	)
