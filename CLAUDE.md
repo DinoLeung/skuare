@@ -1,0 +1,67 @@
+# Skuare
+
+Companion app for Casio G-Shock watches over BLE, built with Kotlin Multiplatform and Compose
+Multiplatform for Android and iOS. The app is offline by design: there are no networking
+dependencies, and none should be added.
+
+## Commands
+
+- `./gradlew check` runs the lint and build checks, `./gradlew allTests` runs the tests. CI runs
+  both on every push and pull request.
+- iOS targets only build on macOS. Elsewhere Gradle skips them with a warning.
+
+## Layout
+
+One Gradle module, `composeApp`, holds everything, UI included.
+
+- `commonMain/.../lib/constant`: protocol constants (opcodes, bitmasks, lookup tables)
+- `commonMain/.../lib/model`: packet models and the watch model definitions
+- `commonMain/.../lib/connection`, `commonMain/.../sync`: connection handling and background sync
+- `commonMain/.../data`: Room database, DAOs, migrations and repositories
+- `commonMain/.../ui`: shared Compose UI
+- `androidMain`, `iosMain`: platform actuals only. Android background sync (Companion Device
+  Manager) lives in `androidMain/.../sync`
+- `composeApp/schemas`: Room schema exports, generated, never edited by hand
+- `research/`: notes from reading BLE captures of the official app
+- `data/`: Go scripts and CSVs that generate the timezone lookup tables
+
+## The protocol is reverse-engineered
+
+- Opcodes, byte offsets, bitmasks and packet layouts come from captures of the official app and
+  from GShockAPI. They are facts about the watch, not style choices. Don't rename, reorder,
+  "simplify" or deduplicate raw bytes unless a capture or a test supports the change.
+- Unknown bytes are kept as they were captured and commented as unknown. Don't guess a meaning.
+- The watch model is decided only by the advertised BLE name (`WatchModel.fromAdvertisedName`).
+  The name from opcode `0x23` is set by the user and can be anything.
+- Round and analog watches (GA-B2100 and its siblings) are supported, not only squares.
+- A change to a packet model needs a test in `commonTest` using bytes from a real capture, and a
+  note in `research/` when it records a new finding.
+
+## Kotlin Multiplatform conventions
+
+- Put code in `commonMain` unless it needs a platform API. Keep actuals thin.
+- Prefer an interface implemented per platform, wired through Koin, over `expect class`.
+  `-Xexpect-actual-classes` is enabled only because Room generates the actual for
+  `SkuareDatabaseConstructor`.
+- UI is shared with Compose Multiplatform. Don't write a separate native UI per platform.
+- Libraries in use: Kable for BLE, Room with the bundled SQLite driver, Koin for injection, Kermit
+  for logging, moko-permissions, kotlinx-datetime, coroutines and Flow. Don't suggest swapping
+  them (for example Room for SQLDelight).
+- Check the standard library before adding a dependency or an expect declaration: `kotlin.time`
+  has `Clock` and `Instant`, and kotlinx-datetime 0.8 no longer ships them.
+- Tests go in `commonTest` with `kotlin.test` and `kotlinx-coroutines-test`, so they run without a
+  device.
+- The build is a single module with `androidTarget()` and the Android application plugin. Moving
+  to the AGP 9 module split is a known, deliberately postponed task, not a bug to flag.
+
+## Database
+
+- Every schema change needs a version bump, a migration next to the existing ones in
+  `data/database`, the new exported schema JSON in `composeApp/schemas`, and a migration test.
+
+## Style
+
+- Tabs for indentation, official Kotlin code style.
+- Conventional commit subjects (`feat:`, `fix:`, `refactor:`, `docs:`, `test:`, `build:`,
+  `chore:`). `scripts/changelog.sh` builds the store changelog from `feat` and `fix` subjects, so
+  those must read as user-facing notes.

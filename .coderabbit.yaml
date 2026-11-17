@@ -1,0 +1,42 @@
+language: en-US
+
+reviews:
+  profile: chill
+
+  path_filters:
+    # Generated or non-code files
+    - "!composeApp/schemas/**"
+    - "!fastlane/metadata/**"
+    - "!data/*.csv"
+    - "!**/*.pbxproj"
+    - "!.agents/**"
+
+  path_instructions:
+    - path: "composeApp/src/commonMain/kotlin/xyz/d1n0/lib/**"
+      instructions: |
+        This is a reverse-engineered BLE protocol for Casio G-Shock watches. Opcodes, byte
+        offsets, bitmasks and packet layouts come from captures of the official app. Do not
+        suggest renaming, reordering or simplifying raw byte values, and do not flag them as
+        magic numbers. Unknown bytes are kept as captured on purpose.
+        Do check: off-by-one errors in byte offsets and lengths, signed Byte handling
+        (0x80 and above), endianness, bounds checks on packets received from the watch, and
+        that a changed packet model has a matching test in commonTest.
+        The watch model must be decided from the advertised BLE name only, never from the
+        user-set name read with opcode 0x23.
+    - path: "composeApp/src/commonMain/kotlin/xyz/d1n0/data/database/**"
+      instructions: |
+        Room database. A schema change needs a version bump, a migration, the exported schema
+        JSON under composeApp/schemas, and a migration test. Flag any that are missing.
+    - path: "composeApp/src/{androidMain,iosMain}/**"
+      instructions: |
+        Platform source sets should hold thin actuals only. Flag logic that could live in
+        commonMain.
+    - path: "research/**"
+      instructions: |
+        Research notes from reading BLE captures. Review only for factual consistency with
+        the code (opcodes, byte values). Do not review prose style, grammar or formatting.
+
+knowledge_base:
+  code_guidelines:
+    # CLAUDE.md at the repo root is picked up automatically
+    enabled: true
