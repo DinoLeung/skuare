@@ -2,6 +2,7 @@ package xyz.d1n0.lib.model
 
 import xyz.d1n0.lib.constant.OpCode
 import xyz.d1n0.lib.helper.requireIn
+import xyz.d1n0.lib.helper.requireOpCode
 
 /**
  * The reminders on the watch, sized by the lists: [empty] makes one for a
@@ -30,15 +31,8 @@ data class RemindersSettings(
 		reminderConfigs = List(reminderCount) { reminderConfigs.getOrNull(it) },
 	)
 
-	@OptIn(ExperimentalStdlibApi::class)
 	fun parseReminderTitlePacket(packet: ByteArray): RemindersSettings {
-		require(packet.first() == OpCode.REMINDER_TITLE.byte) {
-			"Reminder title packet must start with command code ${
-				OpCode.REMINDER_TITLE.byte.toHexString(
-					HexFormat.UpperCase
-				)
-			}"
-		}
+		packet.requireOpCode(OpCode.REMINDER_TITLE, "Reminder title")
 		require(packet.size == 20) {
 			"Reminder title packet must be exactly 20 bytes long, e.g. 30 01 8D 8C 90 91 92 93 80 87 82 8B 2D 2C 00 00 00 00 00 00"
 		}
@@ -51,15 +45,8 @@ data class RemindersSettings(
 				})
 	}
 
-	@OptIn(ExperimentalStdlibApi::class)
 	fun parseReminderConfigPacket(packet: ByteArray): RemindersSettings {
-		require(packet.first() == OpCode.REMINDER_CONFIG.byte) {
-			"Reminder config packet must start with command code ${
-				OpCode.REMINDER_CONFIG.byte.toHexString(
-					HexFormat.UpperCase
-				)
-			}"
-		}
+		packet.requireOpCode(OpCode.REMINDER_CONFIG, "Reminder config")
 		require(packet.size == 11) {
 			"Reminder config packet must be exactly 11 bytes long, e.g. 31 01 11 25 03 25 25 03 25 12 00"
 		}
@@ -69,7 +56,7 @@ data class RemindersSettings(
 		return this.copy(
 			reminderConfigs = reminderConfigs.toMutableList()
 				.also {
-					it[index] = ReminderConfig.fromBytes(packet.sliceArray(2..packet.lastIndex))
+					it[index] = config
 				})
 	}
 

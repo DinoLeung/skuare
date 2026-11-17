@@ -3,6 +3,7 @@ package xyz.d1n0.lib.model
 import xyz.d1n0.lib.constant.OpCode
 import xyz.d1n0.lib.constant.TimerStatus
 import xyz.d1n0.lib.helper.fromByteArray
+import xyz.d1n0.lib.helper.requireOpCode
 import xyz.d1n0.lib.helper.toByteArray
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
@@ -22,15 +23,8 @@ data class Timer(
 		 */
 		const val PADDED_PACKET_SIZE = 15
 
-		@OptIn(ExperimentalStdlibApi::class)
 		fun fromPacket(packet: ByteArray): Timer {
-			require(packet.first() == OpCode.TIMER.byte) {
-				"Timer packet must start with command code ${
-					OpCode.TIMER.byte.toHexString(
-						HexFormat.UpperCase
-					)
-				}"
-			}
+			packet.requireOpCode(OpCode.TIMER, "Timer")
 			require(packet.size == CLASSIC_PACKET_SIZE || packet.size == PADDED_PACKET_SIZE) {
 				"Timer packet bytes must be 8 or 15 bytes long, e.g. 18 17 0F 1E 00 00 00 00"
 			}

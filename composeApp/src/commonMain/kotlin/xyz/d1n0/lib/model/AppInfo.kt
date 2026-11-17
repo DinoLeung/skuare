@@ -1,6 +1,7 @@
 package xyz.d1n0.lib.model
 
 import xyz.d1n0.lib.constant.OpCode
+import xyz.d1n0.lib.helper.requireOpCode
 
 /**
  * App info (0x22), a token the app writes to the watch. It is how a watch is "paired", there is no
@@ -36,15 +37,8 @@ class AppInfo(id: ByteArray, val flag: Byte = PAIRED_FLAG) {
 		const val ID_SIZE = 10
 		const val PAIRED_FLAG: Byte = 0x02
 
-		@OptIn(ExperimentalStdlibApi::class)
 		fun fromPacket(packet: ByteArray): AppInfo {
-			require(packet.first() == OpCode.APP_INFO.byte) {
-				"App info packet must start with command code ${
-					OpCode.APP_INFO.byte.toHexString(
-						HexFormat.UpperCase
-					)
-				}"
-			}
+			packet.requireOpCode(OpCode.APP_INFO, "App info")
 			require(packet.size == ID_SIZE + 2) {
 				"App info packet must be exactly ${ID_SIZE + 2} bytes long, e.g. 22 F3 3E B0 AB 22 54 D9 DC 03 C4 02"
 			}
@@ -63,7 +57,6 @@ class AppInfo(id: ByteArray, val flag: Byte = PAIRED_FLAG) {
 
 	override fun hashCode(): Int = 31 * _id.contentHashCode() + flag
 
-	@OptIn(ExperimentalStdlibApi::class)
 	override fun toString(): String =
 		"AppInfo(id=${_id.toHexString(HexFormat.UpperCase)}, flag=${flag.toHexString(HexFormat.UpperCase)})"
 }

@@ -4,6 +4,7 @@ import xyz.d1n0.lib.constant.AutoSyncBitmask
 import xyz.d1n0.lib.constant.AutoSyncDelay
 import xyz.d1n0.lib.constant.ConnectionTimeout
 import xyz.d1n0.lib.constant.OpCode
+import xyz.d1n0.lib.helper.requireOpCode
 
 data class ConnectionSettings(
 	val autoSyncEnable: Boolean,
@@ -15,15 +16,8 @@ data class ConnectionSettings(
 		val packetPrefix =
 			byteArrayOf(0x0F, 0x0F, 0x0F, 0x06, 0x00, 0x50, 0x00, 0x04, 0x00, 0x01, 0x00)
 
-		@OptIn(ExperimentalStdlibApi::class)
 		fun fromPacket(packet: ByteArray): ConnectionSettings {
-			require(packet.first() == OpCode.CONNECTION_SETTINGS.byte) {
-				"Auto Sync Settings packet must start with command code ${
-					OpCode.CONNECTION_SETTINGS.byte.toHexString(
-						HexFormat.UpperCase
-					)
-				}"
-			}
+			packet.requireOpCode(OpCode.CONNECTION_SETTINGS, "Auto Sync Settings")
 			require(packet.size == 15) {
 				"Auto Sync Settings packet must be exactly 15 bytes long, e.g. 11 0F 0F 0F 06 00 50 00 04 00 01 00 00 20 03"
 			}

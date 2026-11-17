@@ -2,6 +2,7 @@ package xyz.d1n0.lib.model
 
 import xyz.d1n0.lib.constant.ConnectReason
 import xyz.d1n0.lib.constant.OpCode
+import xyz.d1n0.lib.helper.requireOpCode
 
 data class WatchInfo(
 	val name: WatchName? = null,
@@ -20,15 +21,8 @@ data class WatchInfo(
 	 * [8] connect reason, see [ConnectReason]
 	 * rest unknown
 	 */
-	@OptIn(ExperimentalStdlibApi::class)
 	fun parseConnectReasonPacket(packet: ByteArray): WatchInfo {
-		require(packet.first() == OpCode.CONNECT_REASON.byte) {
-			"Connect reason packet must start with command code ${
-				OpCode.CONNECT_REASON.byte.toHexString(
-					HexFormat.UpperCase
-				)
-			}"
-		}
+		packet.requireOpCode(OpCode.CONNECT_REASON, "Connect reason")
 		require(packet.size == 19) {
 			"Connect reason packet must be exactly 19 bytes long, e.g. 10 26 94 50 90 70 D8 7F 01 03 0F FF FF FF FF 24 00 00 00"
 		}
