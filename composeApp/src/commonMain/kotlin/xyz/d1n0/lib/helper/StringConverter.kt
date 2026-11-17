@@ -8,20 +8,6 @@ import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
-fun Int.toOrdinalString(): String = when {
-	this % 100 in 11..13 -> "${this}th"
-	this % 10 == 1 -> "${this}st"
-	this % 10 == 2 -> "${this}nd"
-	this % 10 == 3 -> "${this}rd"
-	else -> "${this}th"
-}
-
-fun Double.toSignedString(): String = when {
-	this == 0.0 -> "±${this.toString()}"
-	this > 0.0 -> "+${this.toString()}"
-	else -> this.toString()
-}
-
 fun Duration.toHHMMSSString(): String {
 	require(this <= 99.hours + 99.minutes + 99.seconds) { "Duration must not exceed 99:99:99" }
 	val totalSeconds = this.inWholeSeconds
@@ -78,6 +64,5 @@ fun Month.fullName(): String = when (this) {
 }
 
 fun LocalDate.toMonthYear() = "${this.month.fullName()} ${this.year}"
-fun LocalDate.toDayMonth() = "${this.day} ${this.month.fullName()}"
 fun LocalDate.toDayMonthYear() =
 	"${this.day} ${this.month.abbreviatedName()} ${(this.year - 2000).toString().padStart(2, '0')}"

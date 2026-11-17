@@ -190,7 +190,7 @@ class Watch @OptIn(ExperimentalKableApi::class) constructor(
 	}
 
 	/**
-	 * Connects to q peripheral watch.
+	 * Connects to the watch.
 	 */
 	suspend fun connect() = peripheral.connect()
 
@@ -211,7 +211,6 @@ class Watch @OptIn(ExperimentalKableApi::class) constructor(
 	 * @param opCode The command to be sent to the peripheral.
 	 * @return A [Unit] that completes when the command and position are written successfully.
 	 */
-	@OptIn(ExperimentalStdlibApi::class)
 	@Throws(CancellationException::class, IOException::class, NotConnectedException::class)
 	suspend fun request(opCode: OpCode) {
 		log.d { "Requesting: ${opCode.byte.toHexString(HexFormat.UpperCase)}" }
@@ -221,7 +220,6 @@ class Watch @OptIn(ExperimentalKableApi::class) constructor(
 				byteArrayOf(opCode.byte)
 			)
 		}.onFailure { log.e { "Failed to request ${opCode.name}: ${it.message}" } }
-
 	}
 
 	/**
@@ -232,7 +230,6 @@ class Watch @OptIn(ExperimentalKableApi::class) constructor(
 	 * @param position The position value accompanying the command.
 	 * @return A [Unit] that completes when the command and position are written successfully.
 	 */
-	@OptIn(ExperimentalStdlibApi::class)
 	@Throws(CancellationException::class, IOException::class, NotConnectedException::class)
 	suspend fun request(opCode: OpCode, position: Int) {
 		log.d { "Requesting: ${opCode.byte.toHexString(HexFormat.UpperCase)} position: $position" }
@@ -276,7 +273,6 @@ class Watch @OptIn(ExperimentalKableApi::class) constructor(
 	 *
 	 * Usage of this function requires an established connection to the peripheral.
 	 */
-	@OptIn(ExperimentalStdlibApi::class)
 	@Throws(CancellationException::class, IOException::class, NotConnectedException::class)
 	suspend fun write(data: ByteArray) {
 		log.d { "Writing: ${data.toHexString(HexFormat.UpperCase)}" }
@@ -287,7 +283,6 @@ class Watch @OptIn(ExperimentalKableApi::class) constructor(
 				WriteType.WithResponse
 			)
 		}.onFailure { log.e { "Failed to write ${data.toHexString(HexFormat.UpperCase)}: ${it.message}" } }
-
 	}
 
 	/**
@@ -316,7 +311,6 @@ class Watch @OptIn(ExperimentalKableApi::class) constructor(
 	 *         decoded, or with a [WatchErrorPacket] if the watch replied to one of the requested
 	 *         opcodes with an error on the IO characteristic.
 	 */
-	@OptIn(ExperimentalStdlibApi::class)
 	suspend fun requestBatch(
 		requests: List<Pair<OpCode, Int>>,
 		timeout: Duration = 5.seconds,
@@ -345,7 +339,6 @@ class Watch @OptIn(ExperimentalKableApi::class) constructor(
 	 *
 	 * @param records The packets to write, e.g. [ClocksSettings.clocksPackets].
 	 */
-	@OptIn(ExperimentalStdlibApi::class)
 	@Throws(CancellationException::class, IOException::class, NotConnectedException::class)
 	suspend fun writeBatch(records: List<ByteArray>) {
 		val batch = BatchPacket.encode(records)
@@ -369,7 +362,6 @@ class Watch @OptIn(ExperimentalKableApi::class) constructor(
 	 * @param timeout How long to wait for the reply.
 	 * @return The received data.
 	 */
-	@OptIn(ExperimentalStdlibApi::class)
 	@Throws(CancellationException::class, IOException::class, NotConnectedException::class)
 	suspend fun requestData(request: ByteArray, end: ByteArray, timeout: Duration = 5.seconds): ByteArray {
 		log.d { "Requesting data: ${request.toHexString(HexFormat.UpperCase)}" }
@@ -383,5 +375,3 @@ class Watch @OptIn(ExperimentalKableApi::class) constructor(
 		}.also { log.d { "Received data: ${it.toHexString(HexFormat.UpperCase)}" } }
 	}
 }
-
-//class WatchException (message: String, cause: Throwable) : Exception(message, cause)

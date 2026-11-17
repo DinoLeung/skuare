@@ -51,6 +51,7 @@ suspend fun Watch.requestName() = request(OpCode.WATCH_NAME)
 suspend fun Watch.writeName(watchName: WatchName) = write(watchName.packet).also { requestName() }
 
 suspend fun Watch.requestTimer() = request(OpCode.TIMER)
+
 /** Writes [timer] with the size of the watch's last timer reply, see [TimerSettings.packetSize]. */
 suspend fun Watch.writeTimer(timer: Timer) =
 	write(timer.packet(size = this.timer.value.packetSize)).also { requestTimer() }
@@ -137,7 +138,6 @@ suspend fun Watch.requestTimeZoneConfigs() {
 
 suspend fun Watch.writeTimeZoneConfigs(clocksSettings: ClocksSettings) =
 	clocksSettings.timeZoneConfigPackets.forEach { write(it) }
-//        .also { requestTimeZoneConfigs() }
 
 suspend fun Watch.requestTimeZoneNames() {
 	for (i in 0 until model.clockCount) {
@@ -151,7 +151,6 @@ suspend fun Watch.requestTimeZoneNames() {
  */
 suspend fun Watch.writeTimeZoneNames(clocksSettings: ClocksSettings) =
 	timeZoneNamePackets(clocksSettings).forEach { write(it) }
-//        .also { requestTimeZoneNames() }
 
 private fun Watch.timeZoneNamePackets(clocksSettings: ClocksSettings): List<ByteArray> =
 	if (model.hasShortCityNames) {
@@ -174,7 +173,6 @@ suspend fun Watch.requestTimeZoneCoordinatesAndRadioId() {
 /** Writes nothing on watches without [WatchFeatures.hasTimeZoneLocation]. */
 suspend fun Watch.writeTimeZoneCoordinatesAndRadioId(clocksSettings: ClocksSettings) =
 	timeZoneLocationPackets(clocksSettings).forEach { write(it) }
-//        .also { requestTimeZoneNames() }
 
 suspend fun Watch.requestReminderTitles() {
 	for (i in 1..model.reminderCount) {
@@ -184,7 +182,6 @@ suspend fun Watch.requestReminderTitles() {
 
 suspend fun Watch.writeReminderTitles(remindersSettings: RemindersSettings) =
 	remindersSettings.reminderTitlePackets.forEach { write(it) }.also { requestReminderTitles() }
-
 
 suspend fun Watch.requestReminderConfigs() {
 	for (i in 1..model.reminderCount) {
@@ -253,9 +250,6 @@ suspend fun Watch.writeClocksTimezones(clocksSettings: ClocksSettings): Result<C
 
 		writeTime()
 		readClocks().getOrThrow()
-//		requestTimeZoneConfigs()
-//		requestTimeZoneNames()
-//		requestTimeZoneCoordinatesAndRadioId()
 	}.onSuccess {
 		log.d { "Clocks and time zones written" }
 	}.onFailure { error ->
@@ -321,7 +315,6 @@ suspend fun Watch.endClockUpdateSession() = write(ClocksSettings.clocksUpdateSes
  *
  * @param packet A [ByteArray] containing the raw BLE packet data received from the peripheral.
  */
-@OptIn(ExperimentalStdlibApi::class)
 suspend fun Watch.handlePacket(packet: ByteArray) = when (OpCode.fromByte(packet.first())) {
 	OpCode.CONNECT_REASON -> {
 		runCatching {
