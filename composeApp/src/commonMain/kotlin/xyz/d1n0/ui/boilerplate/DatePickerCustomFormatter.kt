@@ -7,12 +7,10 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import xyz.d1n0.lib.helper.toDayMonthYear
 import xyz.d1n0.lib.helper.toMonthYear
-import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
 @OptIn(ExperimentalMaterial3Api::class)
-class DatePickerCustomerFormatter : DatePickerFormatter {
-	@OptIn(ExperimentalMaterial3Api::class, ExperimentalTime::class)
+class DatePickerCustomFormatter : DatePickerFormatter {
 	override fun formatMonthYear(
 		monthMillis: Long?,
 		locale: CalendarLocale,
@@ -24,7 +22,6 @@ class DatePickerCustomerFormatter : DatePickerFormatter {
 			.toMonthYear()
 	}
 
-	@OptIn(ExperimentalMaterial3Api::class)
 	override fun formatDate(
 		dateMillis: Long?,
 		locale: CalendarLocale,

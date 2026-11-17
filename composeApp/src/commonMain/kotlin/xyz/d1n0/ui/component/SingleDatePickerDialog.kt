@@ -8,7 +8,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.datetime.LocalDate
 import xyz.d1n0.lib.helper.fromMillis
 import xyz.d1n0.lib.helper.toMillis
-import xyz.d1n0.ui.boilerplate.DatePickerCustomerFormatter
+import xyz.d1n0.ui.boilerplate.DatePickerCustomFormatter
 import xyz.d1n0.ui.theme.SkuareTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,7 +41,7 @@ fun SingleDatePickerDialog(
 				DatePicker(
 					state = state,
 					showModeToggle = false,
-					dateFormatter = DatePickerCustomerFormatter(),
+					dateFormatter = DatePickerCustomFormatter(),
 				)
 			}
 		)

@@ -123,7 +123,7 @@ private fun <T> BaseEnumDropdown(
 			trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
 			colors = ExposedDropdownMenuDefaults.textFieldColors(),
 			modifier = Modifier
-				.menuAnchor(MenuAnchorType.PrimaryNotEditable)
+				.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
 				.fillMaxWidth()
 		)
 		ExposedDropdownMenu(
