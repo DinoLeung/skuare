@@ -1,5 +1,6 @@
 package xyz.d1n0.sync
 
+import com.juul.kable.State
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import xyz.d1n0.lib.constant.OpCode
@@ -49,6 +50,6 @@ internal class KableConnectedWatch(private val watch: Watch) : ConnectedWatch {
 	override suspend fun adjustTime(): Result<Unit> = watch.adjustTime().map { }
 	override suspend fun disconnect() = watch.disconnect()
 	override suspend fun awaitDisconnected() {
-		watch.state.first { it is com.juul.kable.State.Disconnected }
+		watch.state.first { it is State.Disconnected }
 	}
 }
