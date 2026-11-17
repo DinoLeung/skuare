@@ -6,7 +6,6 @@ enum class ConnectionTimeout(val byte: Byte) {
 	MINUTES_10(10);
 
 	companion object {
-		@OptIn(ExperimentalStdlibApi::class)
 		fun fromByte(byte: Byte) =
 			ConnectionTimeout.entries.firstOrNull { it.byte == byte }
 				?: error("Unknown connection timeout value: ${byte.toHexString(HexFormat.UpperCase)}")

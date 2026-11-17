@@ -59,7 +59,6 @@ class HandAdjuster(
 	 * @throws WatchErrorPacket if the watch replies with an error.
 	 * @throws IllegalStateException if it doesn't reply within [timeout].
 	 */
-	@OptIn(ExperimentalStdlibApi::class)
 	private suspend fun writeAndAwaitAck(packet: ByteArray, timeout: Duration) {
 		val reply = withTimeoutOrNull(timeout) {
 			coroutineScope {

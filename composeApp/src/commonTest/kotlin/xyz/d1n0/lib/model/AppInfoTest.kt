@@ -9,7 +9,6 @@ import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
-@OptIn(ExperimentalStdlibApi::class)
 class AppInfoTest {
 	// captured from the official app, same value on all 4 watches paired from one phone
 	private val officialApp = "22f33eb0ab2254d9dc03c402".hexToByteArray()

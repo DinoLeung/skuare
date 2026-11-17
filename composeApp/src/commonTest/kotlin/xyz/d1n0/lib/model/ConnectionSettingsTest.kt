@@ -9,7 +9,6 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-@OptIn(ExperimentalStdlibApi::class)
 class ConnectionSettingsTest {
 	private val enabledPacket = "110F0F0F0600500004000100002003".hexToByteArray()
 

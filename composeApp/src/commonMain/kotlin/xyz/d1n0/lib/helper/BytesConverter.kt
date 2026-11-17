@@ -108,7 +108,6 @@ fun Int.toBcdByte(): Byte {
  * @return the integer value (0 to 99) represented by the BCD byte.
  * @throws IllegalArgumentException if either nibble is greater than 9, indicating an invalid BCD value.
  */
-@OptIn(ExperimentalStdlibApi::class)
 fun Int.Companion.fromBcdByte(bcd: Byte): Int {
 	val highNibble = (bcd.toInt() ushr 4) and 0x0F
 	val lowNibble = bcd.toInt() and 0x0F
