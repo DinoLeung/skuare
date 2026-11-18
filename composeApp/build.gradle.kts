@@ -158,3 +158,5 @@ compose.resources {
 room {
 	schemaDirectory("$projectDir/schemas")
 }
+
+apply(from = rootProject.file("gradle/i18n-checks.gradle.kts"))
