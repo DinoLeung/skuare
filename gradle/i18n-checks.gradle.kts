@@ -10,7 +10,8 @@ import org.w3c.dom.Element
 /*
  * checkUiStrings fails on text written straight into the UI instead of coming from a string
  * resource: Text("…"), ErrorText("…"), Hint("…") and text, label, title, … = "…" with a letter in
- * it. Previews are exempt, as is a line ending in `// i18n-ignore` (e.g. a brand name).
+ * it, also when the call spans lines. Comments and previews are exempt, as is a literal on a line
+ * ending in `// i18n-ignore` (e.g. a brand name).
  */
 tasks.register("checkUiStrings") {
 	group = "verification"
@@ -20,42 +21,119 @@ tasks.register("checkUiStrings") {
 	inputs.files(sources)
 
 	doLast {
-		val literalArgument = Regex("""\b(Text|ErrorText|Hint)\(\s*"[^"]*\p{L}""")
-		val literalNamed = Regex(
-			"""\b(text|label|title|contentDescription|placeholder|supportingText|allSelectedText|noneSelectedText)\s*=\s*"[^"]*\p{L}"""
+		val hardCoded = Regex(
+			"""\b(?:Text|ErrorText|Hint)\(\s*"[^"]*\p{L}""" +
+				"""|\b(?:text|label|title|contentDescription|placeholder|supportingText|allSelectedText|noneSelectedText)\s*=\s*"[^"]*\p{L}"""
 		)
-		val problems = sources.files.sorted().flatMap { file ->
-			var depth = 0
-			var previewPending = false
-			// the depth a preview's body closes at, null outside previews
-			var previewEndDepth: Int? = null
-			file.readLines().mapIndexedNotNull { index, line ->
-				val code = line.trim()
-				if (code.startsWith("@Preview")) previewPending = true
-				val exempt = previewPending || previewEndDepth != null ||
-					code.startsWith("//") || code.startsWith("*") || line.trimEnd().endsWith("// i18n-ignore")
-				val hardCoded = literalArgument.containsMatchIn(line) || literalNamed.containsMatchIn(line)
-				val problem = if (!exempt && hardCoded) {
-					"${file.relativeTo(projectDir)}:${index + 1}: hard-coded UI text, use a string resource: $code"
-				} else null
-				line.forEach { char ->
-					when (char) {
-						'{' -> {
-							if (previewPending) {
-								previewEndDepth = depth
-								previewPending = false
-							}
-							depth++
-						}
 
-						'}' -> {
-							depth--
-							if (depth == previewEndDepth) previewEndDepth = null
+		// The source with comments blanked out (line breaks kept), and the ranges of preview
+		// functions, whose braces are counted outside strings and character literals. String
+		// templates with quotes of their own aren't followed, which is close enough for UI code.
+		fun scan(source: String): Pair<String, List<IntRange>> {
+			val code = StringBuilder(source.length)
+			val previews = mutableListOf<IntRange>()
+			var depth = 0
+			var inString = false
+			var inRawString = false
+			var previewStart = -1
+			var previewDepth: Int? = null
+			var i = 0
+			while (i < source.length) {
+				val char = source[i]
+				when {
+					inRawString -> {
+						if (source.startsWith("\"\"\"", i)) {
+							code.append("\"\"\"")
+							i += 3
+							inRawString = false
+							continue
+						}
+						code.append(char)
+					}
+
+					inString -> {
+						if (char == '\\' && i + 1 < source.length) {
+							code.append(char).append(source[i + 1])
+							i += 2
+							continue
+						}
+						if (char == '"' || char == '\n') inString = false
+						code.append(char)
+					}
+
+					source.startsWith("//", i) -> {
+						val end = source.indexOf('\n', i).let { if (it < 0) source.length else it }
+						repeat(end - i) { code.append(' ') }
+						i = end
+						continue
+					}
+
+					source.startsWith("/*", i) -> {
+						val end = source.indexOf("*/", i + 2).let { if (it < 0) source.length else it + 2 }
+						for (k in i until end) code.append(if (source[k] == '\n') '\n' else ' ')
+						i = end
+						continue
+					}
+
+					source.startsWith("\"\"\"", i) -> {
+						code.append("\"\"\"")
+						i += 3
+						inRawString = true
+						continue
+					}
+
+					char == '"' -> {
+						inString = true
+						code.append(char)
+					}
+
+					char == '\'' -> {
+						// a character literal, e.g. '{' or '\''
+						val end = source.indexOf('\'', if (source.getOrNull(i + 1) == '\\') i + 3 else i + 2)
+						val last = if (end < 0) i else end
+						code.append(source, i, last + 1)
+						i = last + 1
+						continue
+					}
+
+					char == '{' -> {
+						if (previewStart >= 0 && previewDepth == null) previewDepth = depth
+						depth++
+						code.append(char)
+					}
+
+					char == '}' -> {
+						depth--
+						code.append(char)
+						if (previewDepth != null && depth == previewDepth) {
+							previews += previewStart..i
+							previewStart = -1
+							previewDepth = null
 						}
 					}
+
+					else -> {
+						if (previewStart < 0 && source.startsWith("@Preview", i)) previewStart = i
+						code.append(char)
+					}
 				}
-				problem
+				i++
 			}
+			return code.toString() to previews
+		}
+
+		val problems = sources.files.sorted().flatMap { file ->
+			val source = file.readText()
+			val lines = source.lines()
+			val (code, previews) = scan(source)
+			hardCoded.findAll(code).mapNotNull { match ->
+				// the line of the literal's opening quote, the call may start on an earlier one
+				val quote = match.range.first + match.value.indexOf('"')
+				val line = code.substring(0, quote).count { it == '\n' }
+				val exempt = previews.any { quote in it } || lines[line].trimEnd().endsWith("// i18n-ignore")
+				if (exempt) null
+				else "${file.relativeTo(projectDir)}:${line + 1}: hard-coded UI text, use a string resource: ${lines[line].trim()}"
+			}.toList()
 		}
 		if (problems.isNotEmpty()) {
 			throw GradleException(
@@ -70,10 +148,13 @@ tasks.register("checkUiStrings") {
  * checkTranslations fails on translations that would break at runtime or show the wrong thing,
  * and on language lists that disagree:
  * - a translated key that isn't in values/, or that values/ marks translatable="false"
- * - a placeholder that isn't positional (%1$s, %1$d), the only kind Compose resources fill in
- * - a translated string whose placeholders differ from the English one, or a plural item with a
- *   placeholder the English plural doesn't have
+ * - a placeholder that isn't positional from 1 (%1$s, %1$d), the only kind Compose resources fill in
+ * - a translated string whose placeholders differ from the English one
+ * - a translated plural without an "other" item, an "other" item without the English one's
+ *   placeholders (e.g. the count), or any item with a placeholder the English plural doesn't have
  * - \' in a composeResources string, which Compose resources show as is
+ * - an Android res/values-<lang>/strings.xml that misses a translatable string of the English one
+ *   (the notification), or has different placeholders
  * - a language with composeResources but missing from res/xml/locales_config.xml, from
  *   CFBundleLocalizations in iosApp/iosApp/Info.plist or from Android's res/values-<lang>, or the
  *   other way round
@@ -90,28 +171,33 @@ tasks.register("checkTranslations") {
 
 	doLast {
 		val problems = mutableListOf<String>()
-		val positional = Regex("""%\d+\$[ds]""")
+		val positional = Regex("""%[1-9]\d*\$[ds]""")
 		// values-de, values-pt-rBR
 		val languageFolder = Regex("""values-([a-z]{2,3}(?:-r[A-Z]{2})?)""")
 
-		fun parse(file: File): Element =
-			DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file).documentElement
+		// Translation files come from pull requests, so no external entities or DTDs are read. The
+		// DOCTYPE of Info.plist is still allowed, it just isn't fetched.
+		fun parse(file: File): Element = DocumentBuilderFactory.newInstance().apply {
+			setFeature("http://xml.org/sax/features/external-general-entities", false)
+			setFeature("http://xml.org/sax/features/external-parameter-entities", false)
+			setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false)
+			isXIncludeAware = false
+			isExpandEntityReferences = false
+		}.newDocumentBuilder().parse(file).documentElement
 
 		fun Element.children(tag: String): List<Element> {
 			val nodes = getElementsByTagName(tag)
 			return (0 until nodes.length).map { nodes.item(it) as Element }
 		}
 
-		// key to its text, or its items' texts for a plural
-		fun texts(file: File): Map<String, List<String>> {
-			val root = parse(file)
-			return root.children("string").associate { it.getAttribute("name") to listOf(it.textContent) } +
-				root.children("plurals").associate { plural ->
-					plural.getAttribute("name") to plural.children("item").map { it.textContent }
-				}
-		}
+		fun strings(file: File): Map<String, String> =
+			parse(file).children("string").associate { it.getAttribute("name") to it.textContent }
 
-		fun pluralKeys(file: File) = parse(file).children("plurals").map { it.getAttribute("name") }.toSet()
+		// plural key to its items' texts by quantity
+		fun plurals(file: File): Map<String, Map<String, String>> =
+			parse(file).children("plurals").associate { plural ->
+				plural.getAttribute("name") to plural.children("item").associate { it.getAttribute("quantity") to it.textContent }
+			}
 
 		fun untranslatableKeys(file: File) =
 			parse(file).children("string").filter { it.getAttribute("translatable") == "false" }
@@ -119,12 +205,17 @@ tasks.register("checkTranslations") {
 
 		fun placeholders(text: String) = positional.findAll(text).map { it.value }.toSet()
 
-		fun checkStyle(file: File) = texts(file).forEach { (key, values) ->
-			values.forEach { text ->
-				if (text.count { it == '%' } != positional.findAll(text).count()) {
-					problems += "$file: $key: use positional placeholders (%1\$s, %1\$d), got \"$text\""
+		fun checkStyle(file: File, apostrophes: Boolean) {
+			val texts = strings(file).mapValues { listOf(it.value) } + plurals(file).mapValues { it.value.values.toList() }
+			texts.forEach { (key, values) ->
+				values.forEach { text ->
+					if (text.count { it == '%' } != positional.findAll(text).count()) {
+						problems += "$file: $key: use positional placeholders numbered from 1 (%1\$s, %1\$d), got \"$text\""
+					}
+					if (apostrophes && text.contains("\\'")) {
+						problems += "$file: $key: write apostrophes as ', Compose resources show \\' as is"
+					}
 				}
-				if (text.contains("\\'")) problems += "$file: $key: write apostrophes as ', Compose resources show \\' as is"
 			}
 		}
 
@@ -134,7 +225,7 @@ tasks.register("checkTranslations") {
 
 		// Compose resources: every values-<lang> file against the values/ file of the same name
 		val baseDir = composeResources.dir("values").asFile
-		baseDir.listFiles { file -> file.extension == "xml" }.orEmpty().forEach(::checkStyle)
+		baseDir.listFiles { file -> file.extension == "xml" }.orEmpty().forEach { checkStyle(it, apostrophes = true) }
 		composeResources.asFile.listFiles().orEmpty().filter { languageFolder.matches(it.name) }.forEach { dir ->
 			dir.listFiles { file -> file.extension == "xml" }.orEmpty().forEach translations@{ file ->
 				val baseFile = File(baseDir, file.name)
@@ -142,31 +233,60 @@ tasks.register("checkTranslations") {
 					problems += "$file: no values/${file.name} to translate"
 					return@translations
 				}
-				checkStyle(file)
-				val english = texts(baseFile)
-				val englishPlurals = pluralKeys(baseFile)
+				checkStyle(file, apostrophes = true)
+				val englishStrings = strings(baseFile)
+				val englishPlurals = plurals(baseFile)
 				val untranslatable = untranslatableKeys(baseFile)
-				val plurals = pluralKeys(file)
-				texts(file).forEach { (key, values) ->
-					val englishValues = english[key]
+				strings(file).forEach { (key, text) ->
+					val english = englishStrings[key]
 					when {
-						englishValues == null -> problems += "$file: $key isn't in values/${file.name}"
+						key in englishPlurals -> problems += "$file: $key must be a plural"
+						english == null -> problems += "$file: $key isn't in values/${file.name}"
 						key in untranslatable -> problems += "$file: $key is translatable=\"false\""
-						(key in plurals) != (key in englishPlurals) ->
-							problems += "$file: $key must be a ${if (key in englishPlurals) "plural" else "string"}"
-
-						key in englishPlurals -> {
-							val allowed = englishValues.flatMap(::placeholders).toSet()
-							values.forEach { text ->
+						placeholders(text) != placeholders(english) ->
+							problems += "$file: $key has placeholders ${placeholders(text)}, English has ${placeholders(english)}"
+					}
+				}
+				plurals(file).forEach { (key, items) ->
+					val english = englishPlurals[key]
+					when {
+						key in englishStrings -> problems += "$file: $key must be a string"
+						english == null -> problems += "$file: $key isn't in values/${file.name}"
+						else -> {
+							val other = items["other"]
+							if (other == null) {
+								problems += "$file: $key needs an item quantity=\"other\""
+							} else {
+								val englishOther = placeholders(english["other"].orEmpty())
+								if (!placeholders(other).containsAll(englishOther)) {
+									problems += "$file: $key's \"other\" item misses ${englishOther - placeholders(other)}"
+								}
+							}
+							val allowed = english.values.flatMap(::placeholders).toSet()
+							items.forEach { (quantity, text) ->
 								val extra = placeholders(text) - allowed
-								if (extra.isNotEmpty()) problems += "$file: $key has $extra the English plural doesn't"
+								if (extra.isNotEmpty()) problems += "$file: $key \"$quantity\" has $extra the English plural doesn't"
 							}
 						}
-
-						placeholders(values.single()) != placeholders(englishValues.single()) ->
-							problems += "$file: $key has placeholders ${placeholders(values.single())}, " +
-								"English has ${placeholders(englishValues.single())}"
 					}
+				}
+			}
+		}
+
+		// Android's own strings: the notification must be translated in full in every language
+		val androidBase = androidResources.file("values/strings.xml").asFile
+		checkStyle(androidBase, apostrophes = false)
+		val androidEnglish = strings(androidBase) - untranslatableKeys(androidBase)
+		languagesOf(androidResources.asFile).forEach { language ->
+			val file = androidResources.file("values-${language.replace("-", "-r")}/strings.xml").asFile
+			val translated = if (file.exists()) strings(file).also { checkStyle(file, apostrophes = false) } else emptyMap()
+			(androidEnglish.keys - translated.keys).forEach { problems += "$file: $it isn't translated" }
+			translated.forEach { (key, text) ->
+				val english = androidEnglish[key]
+				when {
+					english == null -> problems += "$file: $key isn't a translatable string of values/strings.xml"
+					placeholders(text) != placeholders(english) ->
+						problems += "$file: $key has placeholders ${placeholders(text)}, English has ${placeholders(english)}"
 				}
 			}
 		}
