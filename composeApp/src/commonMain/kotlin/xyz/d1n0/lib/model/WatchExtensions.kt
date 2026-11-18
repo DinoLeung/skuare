@@ -1,5 +1,7 @@
 package xyz.d1n0.lib.model
 
+import com.juul.kable.NotConnectedException
+import com.juul.kable.State
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -274,17 +276,30 @@ suspend fun Watch.adjustTime(delay: Duration = 0.seconds) =
 			withTimeoutOrNull(10.seconds) {
 				while (clocks.value.isInitialized == false) {
 					_clocksError.value?.let { throw it }
+					// a request the watch never got isn't a timeout
+					requireConnected()
 					delay(100.milliseconds)
 				}
 			} ?: throw WatchTimeoutException("Timeout waiting for clocks initialization")
 		}
 		writeClocksAndTimeZoneData(clocks.value)
 		writeTime(delay = delay)
+		// the writes only log their failures, a disconnect during them must not count as a sync
+		requireConnected()
 	}.onSuccess {
 		log.d { "Time sync completed" }
 	}.onFailure { error ->
 		log.e { "Error syncing time: ${error.message}" }
 	}
+
+/**
+ * Throws [NotConnectedException] if the watch is no longer connected. [Watch.write] and
+ * [Watch.request] log a failure instead of throwing, so a sequence of them checks the connection
+ * after, e.g. to not record a time sync the watch never received.
+ */
+private fun Watch.requireConnected() {
+	if (state.value !is State.Connected) throw NotConnectedException("Watch disconnected")
+}
 
 /**
  * Hand adjustment on this watch, see [HandAdjuster]. Only for watches with
