@@ -40,8 +40,8 @@
 	<string name="timezones_select_world">選擇世界時區</string>
 	<string name="clock_home_time">本地時間</string>
 	<string name="clock_world_time">世界時間</string>
-	<string name="clock_dst">夏令時間</string>
-	<string name="clock_pin">固定</string>
+	<string name="clock_dst">夏令</string>
+	<string name="clock_pin">置頂</string>
 	<string name="timezone_picker_title">選擇時區</string>
 	<string name="timezone_picker_search">時區</string>
 	<string name="timezone_picker_clear_search">清除搜尋</string>
