@@ -19,6 +19,7 @@ import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -49,6 +50,7 @@ import xyz.d1n0.lib.model.Timezone
 import xyz.d1n0.lib.model.WorldTimezone
 import xyz.d1n0.ui.text.loadDisplayCity
 import xyz.d1n0.ui.theme.SkuareTheme
+import org.jetbrains.compose.resources.rememberResourceEnvironment
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import xyz.d1n0.resources.*
@@ -90,15 +92,18 @@ fun <T : Timezone> TimeZonePickerDialog(
 		selectedDstSettings.copy(enable = true, auto = false),
 		selectedDstSettings.copy(enable = false, auto = false),
 	).map(dstSettingsFor)
-	// the names the rows show, in the user's language, so they can be searched for too. Until they
-	// are loaded the search only knows the English and watch names.
-	val cityNames by produceState(emptyMap<Short, String>(), timeZones) {
-		value = timeZones.associate { it.identifier to it.loadDisplayCity() }
+	// the names the rows show, in the language they render in, so they can be searched for too.
+	// Null while loading, also again after the language changed: until then the search only knows
+	// the English and watch names.
+	val environment = rememberResourceEnvironment()
+	val cityNames by produceState<Map<Short, String>?>(null, timeZones, environment) {
+		value = null
+		value = timeZones.associate { it.identifier to it.loadDisplayCity(environment) }
 	}
 	// offsets are matched as the rows show them, with the picked DST settings
 	val results = remember(query, timeZones, timeZone.identifier, selectedDstSettings, cityNames) {
 		searchTimeZones(
-			timeZones, query, dstSettings = selectedDstSettings, localizedNames = cityNames,
+			timeZones, query, dstSettings = selectedDstSettings, localizedNames = cityNames.orEmpty(),
 		).let { matches ->
 			if (query.isBlank()) matches.withTimeZoneFirst(timeZone.identifier) else matches
 		}
@@ -185,10 +190,15 @@ fun <T : Timezone> TimeZonePickerDialog(
 							verticalArrangement = Arrangement.Center,
 							horizontalAlignment = Alignment.CenterHorizontally,
 						) {
-							Text(
-								text = stringResource(Res.string.timezone_picker_no_results),
-								style = MaterialTheme.typography.bodyLarge,
-							)
+							// a translated name may still match once the names have loaded
+							if (cityNames == null) {
+								CircularProgressIndicator()
+							} else {
+								Text(
+									text = stringResource(Res.string.timezone_picker_no_results),
+									style = MaterialTheme.typography.bodyLarge,
+								)
+							}
 						}
 					} else {
 						LazyColumn(

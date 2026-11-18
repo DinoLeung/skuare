@@ -1,6 +1,7 @@
 package xyz.d1n0.ui.text
 
 import androidx.compose.runtime.Composable
+import org.jetbrains.compose.resources.ResourceEnvironment
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
@@ -38,5 +39,9 @@ private val Timezone.fallbackCity: String
 val Timezone.displayCity: String
 	@Composable get() = cityNameResource?.let { stringResource(it) } ?: fallbackCity
 
-/** [displayCity] outside composition, e.g. to search all time zones. */
-suspend fun Timezone.loadDisplayCity(): String = cityNameResource?.let { getString(it) } ?: fallbackCity
+/**
+ * [displayCity] outside composition, e.g. to search all time zones, in [environment], the one
+ * the UI renders with (`rememberResourceEnvironment()`), so both use the same language.
+ */
+suspend fun Timezone.loadDisplayCity(environment: ResourceEnvironment): String =
+	cityNameResource?.let { getString(environment, it) } ?: fallbackCity
