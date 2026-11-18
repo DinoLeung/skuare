@@ -23,6 +23,8 @@ import kotlin.time.Instant
  * @param query the timezone name, location, or UTC offset to find.
  * @param instant the moment whose offsets are used for UTC offset queries.
  * @param dstSettings the DST settings the offsets are worked out with, auto DST by default.
+ * @param localizedNames city names in the user's language by [Timezone.identifier], matched as well,
+ * so a city can be found by the name the app shows.
  * @return the matching timezone entries in relevance order.
  */
 fun <T : Timezone> searchTimeZones(
@@ -30,6 +32,7 @@ fun <T : Timezone> searchTimeZones(
 	query: String,
 	instant: Instant = Clock.System.now(),
 	dstSettings: DstSettings = DstSettings(enable = false, auto = true),
+	localizedNames: Map<Short, String> = emptyMap(),
 ): List<T> {
 	query.toUtcOffsetQuery()?.let { offsetQuery ->
 		return timeZones.filter { offsetQuery.matches(it.currentOffsetMinutes(dstSettings, instant)) }
@@ -40,7 +43,7 @@ fun <T : Timezone> searchTimeZones(
 
 	val queryTokens = normalizedQuery.split(' ')
 	return timeZones.mapIndexedNotNull { index, timeZone ->
-		val terms = timeZone.searchTerms
+		val terms = timeZone.searchTerms(localizedNames[timeZone.identifier])
 		val words = terms.flatMap { it.split(' ') }.distinct()
 		val tokenScores = queryTokens.map { token ->
 			bestTokenScore(token, terms, words) ?: return@mapIndexedNotNull null
@@ -116,18 +119,18 @@ private data class ScoredTimeZone<T : Timezone>(
 	val originalIndex: Int,
 )
 
-private val Timezone.searchTerms: List<String>
-	get() = buildList {
-		add(cityName.normalizeForSearch())
-		when (this@searchTerms) {
-			is HomeTimezone -> add(timeZone.normalizeForSearch())
-			is WorldTimezone -> {
-				add(city.normalizeForSearch())
-				add(country.normalizeForSearch())
-				add(timeZone.normalizeForSearch())
-			}
+private fun Timezone.searchTerms(localizedName: String?): List<String> = buildList {
+	add(cityName.normalizeForSearch())
+	localizedName?.let { add(it.normalizeForSearch()) }
+	when (this@searchTerms) {
+		is HomeTimezone -> add(timeZone.normalizeForSearch())
+		is WorldTimezone -> {
+			add(city.normalizeForSearch())
+			add(country.normalizeForSearch())
+			add(timeZone.normalizeForSearch())
 		}
-	}.filter { it.isNotEmpty() }.distinct()
+	}
+}.filter { it.isNotEmpty() }.distinct()
 
 /**
  * Scores how closely [token] matches the available timezone [terms] and their individual [words].

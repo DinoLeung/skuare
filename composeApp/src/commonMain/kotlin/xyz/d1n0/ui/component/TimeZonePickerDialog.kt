@@ -32,6 +32,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -46,6 +47,7 @@ import xyz.d1n0.lib.model.DstSettings
 import xyz.d1n0.lib.model.HomeTimezone
 import xyz.d1n0.lib.model.Timezone
 import xyz.d1n0.lib.model.WorldTimezone
+import xyz.d1n0.ui.text.loadDisplayCity
 import xyz.d1n0.ui.theme.SkuareTheme
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -88,9 +90,16 @@ fun <T : Timezone> TimeZonePickerDialog(
 		selectedDstSettings.copy(enable = true, auto = false),
 		selectedDstSettings.copy(enable = false, auto = false),
 	).map(dstSettingsFor)
+	// the names the rows show, in the user's language, so they can be searched for too. Until they
+	// are loaded the search only knows the English and watch names.
+	val cityNames by produceState(emptyMap<Short, String>(), timeZones) {
+		value = timeZones.associate { it.identifier to it.loadDisplayCity() }
+	}
 	// offsets are matched as the rows show them, with the picked DST settings
-	val results = remember(query, timeZones, timeZone.identifier, selectedDstSettings) {
-		searchTimeZones(timeZones, query, dstSettings = selectedDstSettings).let { matches ->
+	val results = remember(query, timeZones, timeZone.identifier, selectedDstSettings, cityNames) {
+		searchTimeZones(
+			timeZones, query, dstSettings = selectedDstSettings, localizedNames = cityNames,
+		).let { matches ->
 			if (query.isBlank()) matches.withTimeZoneFirst(timeZone.identifier) else matches
 		}
 	}
