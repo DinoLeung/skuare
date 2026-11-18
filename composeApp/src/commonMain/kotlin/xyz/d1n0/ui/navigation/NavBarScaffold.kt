@@ -8,6 +8,7 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.Build
+import androidx.compose.material.icons.sharp.LinkOff
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -23,6 +24,7 @@ import androidx.navigation.compose.rememberNavController
 import org.koin.compose.viewmodel.koinViewModel
 import xyz.d1n0.ui.component.CustomWatchModelDialog
 import xyz.d1n0.ui.component.CustomWatchModelIntroDialog
+import xyz.d1n0.ui.component.DisconnectDialog
 import xyz.d1n0.ui.component.SaveFab
 import xyz.d1n0.ui.component.WatchErrorDialog
 import xyz.d1n0.ui.screen.alarms.AlarmsScreenViewModel
@@ -148,11 +150,39 @@ fun NavBarScaffold(
 		)
 	}
 
+	// in tab order, for the disconnect dialog
+	val unsavedTabs = navBarItems
+		.map { it.route }
+		.filter { saveStates[it]?.hasUpdates == true }
+		.map { it.route }
+	var showDisconnectDialog by remember { mutableStateOf(false) }
+
+	if (showDisconnectDialog) {
+		DisconnectDialog(
+			unsavedTabs = unsavedTabs,
+			onDisconnect = {
+				showDisconnectDialog = false
+				viewModel.disconnect()
+			},
+			onDismiss = { showDisconnectDialog = false },
+		)
+	}
+
 	Scaffold(
 		topBar = {
 			TopAppBar(
 				title = { Text(currentBottomNavBarRoute?.route ?: "Skuare") },
 				actions = {
+					IconButton(
+						onClick = {
+							if (unsavedTabs.isEmpty()) viewModel.disconnect()
+							else showDisconnectDialog = true
+						},
+						// disconnecting mid-save could leave a write session half done
+						enabled = !isSaving && watchConnectionState.value is PeripheralState.Connected,
+					) {
+						Icon(Icons.Sharp.LinkOff, contentDescription = "Disconnect")
+					}
 					if (customModel != null) {
 						IconButton(
 							onClick = { openCustomModelDialog(false) },
