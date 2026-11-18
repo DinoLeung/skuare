@@ -75,7 +75,7 @@ fun <T : Enum<T>> EnumDropdown(
 fun <T> Dropdown(
 	selectedOption: T,
 	options: List<T>,
-	optionLabel: (T) -> String,
+	optionLabel: @Composable (T) -> String,
 	onOptionSelected: (T) -> Unit,
 	label: String,
 	enabled: Boolean = true,
@@ -101,7 +101,7 @@ private fun <T> BaseEnumDropdown(
 	selectedChecker: (T) -> Boolean,
 	onItemClick: (T) -> Unit,
 	label: String,
-	optionLabel: (T) -> String = { it.toString() },
+	optionLabel: @Composable (T) -> String = { it.toString() },
 	isMultiSelect: Boolean = false,
 	enabled: Boolean = true,
 	modifier: Modifier = Modifier,
