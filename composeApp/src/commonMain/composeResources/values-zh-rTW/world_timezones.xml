@@ -273,7 +273,7 @@
 	<string name="world_tz_265">新加坡</string>
 	<string name="world_tz_266">史高比耶</string>
 	<string name="world_tz_267">索菲亞</string>
-	<string name="world_tz_268">聖約翰</string>
+	<string name="world_tz_268">聖約翰斯</string>
 	<string name="world_tz_269">斯德哥爾摩</string>
 	<string name="world_tz_270">蘇瓦</string>
 	<string name="world_tz_271">雪梨</string>
@@ -319,5 +319,5 @@
 	<string name="world_tz_311">豪勳爵島</string>
 	<string name="world_tz_312">諾福克</string>
 	<string name="world_tz_313">貝克島</string>
-	<string name="world_tz_314">馬可薩斯島</string>
+	<string name="world_tz_314">馬克薩斯群島</string>
 </resources>
