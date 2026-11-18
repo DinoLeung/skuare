@@ -78,16 +78,6 @@ func run() error {
 	if err != nil {
 		return err
 	}
-	names := make([]cityDisplayName, 0, len(cities))
-	for _, city := range cities {
-		names = append(names, cityDisplayName{id: city.id, name: city.city})
-	}
-	if err := writeCityNames(
-		"world_timezones.xml", worldCityKeyPrefix, "generateWorldCitymap.go", "world_time_city.csv", names,
-	); err != nil {
-		return err
-	}
-
 	ianaData, err := download(ianaDataURL)
 	if err != nil {
 		return fmt.Errorf("download latest IANA timezone data: %w", err)
@@ -153,7 +143,15 @@ func run() error {
 		len(cities),
 		ianaVersion,
 	)
-	return nil
+
+	// last, so a failed download or boundary check leaves the app's city names as they were
+	names := make([]cityDisplayName, 0, len(cities))
+	for _, city := range cities {
+		names = append(names, cityDisplayName{id: city.id, name: city.city})
+	}
+	return writeCityNames(
+		"world_timezones.xml", worldCityKeyPrefix, "generateWorldCitymap.go", "world_time_city.csv", names,
+	)
 }
 
 func readCities(path string) ([]*cityRecord, error) {

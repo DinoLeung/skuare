@@ -1,5 +1,5 @@
 // Shared by the city map generators, writes the English city names the app shows as string
-// resources. Translations go in values-<lang>/ next to them, a city missing there falls back to
+// resources, after the rest of the generation succeeded. Translations go in values-<lang>/ next to them, a city missing there falls back to
 // the English name.
 package main
 
@@ -33,7 +33,13 @@ func writeCityNames(fileName, keyPrefix, generator, source string, cities []city
 		fileName,
 	)
 	xml.WriteString("<resources>\n")
+	seen := make(map[int]bool, len(cities))
 	for _, city := range cities {
+		// Compose resources reject a key that appears twice
+		if seen[city.id] {
+			return fmt.Errorf("%s: city %d appears more than once", source, city.id)
+		}
+		seen[city.id] = true
 		if strings.TrimSpace(city.name) == "" {
 			return fmt.Errorf("%s: city %d has no display name", source, city.id)
 		}
