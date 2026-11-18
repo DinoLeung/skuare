@@ -175,8 +175,7 @@ fun NavBarScaffold(
 			TopAppBar(
 				title = {
 					val tab = navBarItems.find { it.route == currentBottomNavBarRoute }
-					// the app's name isn't translated
-					Text(tab?.let { stringResource(it.title) } ?: "Skuare")
+					Text(stringResource(tab?.title ?: Res.string.app_name))
 				},
 				actions = {
 					IconButton(

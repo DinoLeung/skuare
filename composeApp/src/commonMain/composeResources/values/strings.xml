@@ -5,6 +5,8 @@
 -->
 <resources>
 	<!-- Shared -->
+	<!-- The app's name, the title bar shows it when no tab is open -->
+	<string name="app_name" translatable="false">Skuare</string>
 	<string name="common_cancel">Cancel</string>
 	<string name="common_close">Close</string>
 	<string name="common_confirm">Confirm</string>

@@ -35,7 +35,8 @@ fun DurationTextInput(
 	duration: Duration,
 	onDurationChange: (Duration) -> Unit,
 	label: @Composable (() -> Unit)? = null,
-	// the unit symbols of MaskVisualTransformation's mask, which the cursor mapping depends on
+	// shows the field's format, so it uses the unit letters of MaskVisualTransformation's mask, which
+	// aren't translated
 	placeholder: @Composable () -> Unit = { Text("00h 00m 00s") }, // i18n-ignore
 	supportingText: @Composable (() -> Unit)? = null,
 	enabled: Boolean = true,
