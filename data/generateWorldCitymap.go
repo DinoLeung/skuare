@@ -17,7 +17,7 @@ import (
 	"strings"
 )
 
-// Run together with iataCityCodes.go: go run generateWorldCitymap.go iataCityCodes.go
+// Run together with the shared files: go run generateWorldCitymap.go iataCityCodes.go timezoneNames.go
 
 const (
 	boundaryReleaseURL = "https://api.github.com/repos/evansiroky/timezone-boundary-builder/releases/latest"
@@ -76,6 +76,15 @@ func main() {
 func run() error {
 	cities, err := readCities("world_time_city.csv")
 	if err != nil {
+		return err
+	}
+	names := make([]cityDisplayName, 0, len(cities))
+	for _, city := range cities {
+		names = append(names, cityDisplayName{id: city.id, name: city.city})
+	}
+	if err := writeCityNames(
+		"world_timezones.xml", worldCityKeyPrefix, "generateWorldCitymap.go", "world_time_city.csv", names,
+	); err != nil {
 		return err
 	}
 

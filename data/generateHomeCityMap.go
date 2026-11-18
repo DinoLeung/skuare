@@ -1,6 +1,6 @@
 package main
 
-// Run together with iataCityCodes.go: go run generateHomeCityMap.go iataCityCodes.go
+// Run together with the shared files: go run generateHomeCityMap.go iataCityCodes.go timezoneNames.go
 
 import (
 	"bufio"
@@ -20,6 +20,8 @@ type homeCity struct {
 	cityName string
 	cityCode string
 	timeZone string
+	// the name the app shows, e.g. Addis Ababa for ADDIS ABABA
+	displayName string
 }
 
 func main() {
@@ -32,6 +34,15 @@ func main() {
 func run() error {
 	cities, err := readCities("home_time_city.csv")
 	if err != nil {
+		return err
+	}
+	names := make([]cityDisplayName, 0, len(cities))
+	for _, city := range cities {
+		names = append(names, cityDisplayName{id: city.id, name: city.displayName})
+	}
+	if err := writeCityNames(
+		"home_timezones.xml", homeCityKeyPrefix, "generateHomeCityMap.go", "home_time_city.csv", names,
+	); err != nil {
 		return err
 	}
 
@@ -69,18 +80,22 @@ func readCities(path string) ([]*homeCity, error) {
 		if i == 0 {
 			continue // Skip the header
 		}
+		if len(record) != 7 {
+			return nil, fmt.Errorf("%s:%d: expected 7 columns, got %d", path, i+1, len(record))
+		}
 
 		id, _ := strconv.Atoi(record[0])                // ID
 		offset, _ := strconv.ParseFloat(record[1], 64)  // Offset
 		dstDiff, _ := strconv.ParseFloat(record[2], 64) // DST Diff
 		dstRule, _ := strconv.Atoi(record[3])           // DST Rule
 		cities = append(cities, &homeCity{
-			id:       id,
-			offset:   offset,
-			dstDiff:  dstDiff,
-			dstRule:  dstRule,
-			cityName: record[4], // Name
-			timeZone: record[5], // Timezone
+			id:          id,
+			offset:      offset,
+			dstDiff:     dstDiff,
+			dstRule:     dstRule,
+			cityName:    record[4], // Name
+			timeZone:    record[5], // Timezone
+			displayName: record[6], // City
 		})
 	}
 	return cities, nil

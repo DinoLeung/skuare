@@ -1,7 +1,7 @@
 // Shared by the city map generators, run each one together with this file:
 //
-//	go run generateHomeCityMap.go iataCityCodes.go
-//	go run generateWorldCitymap.go iataCityCodes.go
+//	go run generateHomeCityMap.go iataCityCodes.go timezoneNames.go
+//	go run generateWorldCitymap.go iataCityCodes.go timezoneNames.go
 package main
 
 import (
