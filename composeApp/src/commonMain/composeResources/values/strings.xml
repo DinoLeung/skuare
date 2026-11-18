@@ -185,14 +185,6 @@
 	<string name="weekday_language_german">German</string>
 	<string name="weekday_language_italian">Italian</string>
 	<string name="weekday_language_russian">Russian</string>
-	<!-- Abbreviated weekdays, for the days a weekly reminder repeats on -->
-	<string name="day_sunday_short">Sun</string>
-	<string name="day_monday_short">Mon</string>
-	<string name="day_tuesday_short">Tue</string>
-	<string name="day_wednesday_short">Wed</string>
-	<string name="day_thursday_short">Thu</string>
-	<string name="day_friday_short">Fri</string>
-	<string name="day_saturday_short">Sat</string>
 	<!-- Errors -->
 	<!-- %1$d: the most characters the watch stores, e.g. 18 for a reminder title -->
 	<plurals name="error_text_too_long">

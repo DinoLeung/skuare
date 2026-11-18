@@ -1,6 +1,7 @@
 package xyz.d1n0.ui.text
 
 import androidx.compose.runtime.Composable
+import kotlinx.datetime.DayOfWeek
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.pluralStringResource
 import xyz.d1n0.lib.constant.BacklightDuration
@@ -61,16 +62,19 @@ val WeekdayLanguage.label: StringResource
 		WeekdayLanguage.RU -> Res.string.weekday_language_russian
 	}
 
-/** Abbreviated name, e.g. Mon. */
-val ReminderDayOfWeek.label: StringResource
+/** Abbreviated name in the user's language, e.g. Mon, from the platform's locale data. */
+val ReminderDayOfWeek.label: String
+	@Composable get() = LocalLocaleFormatter.current.shortWeekdayName(dayOfWeek)
+
+internal val ReminderDayOfWeek.dayOfWeek: DayOfWeek
 	get() = when (this) {
-		ReminderDayOfWeek.SUNDAY -> Res.string.day_sunday_short
-		ReminderDayOfWeek.MONDAY -> Res.string.day_monday_short
-		ReminderDayOfWeek.TUESDAY -> Res.string.day_tuesday_short
-		ReminderDayOfWeek.WEDNESDAY -> Res.string.day_wednesday_short
-		ReminderDayOfWeek.THURSDAY -> Res.string.day_thursday_short
-		ReminderDayOfWeek.FRIDAY -> Res.string.day_friday_short
-		ReminderDayOfWeek.SATURDAY -> Res.string.day_saturday_short
+		ReminderDayOfWeek.SUNDAY -> DayOfWeek.SUNDAY
+		ReminderDayOfWeek.MONDAY -> DayOfWeek.MONDAY
+		ReminderDayOfWeek.TUESDAY -> DayOfWeek.TUESDAY
+		ReminderDayOfWeek.WEDNESDAY -> DayOfWeek.WEDNESDAY
+		ReminderDayOfWeek.THURSDAY -> DayOfWeek.THURSDAY
+		ReminderDayOfWeek.FRIDAY -> DayOfWeek.FRIDAY
+		ReminderDayOfWeek.SATURDAY -> DayOfWeek.SATURDAY
 	}
 
 /** The watch's own date patterns, not translated. */

@@ -3,6 +3,7 @@ package xyz.d1n0.ui.text
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
+import xyz.d1n0.lib.constant.ReminderDayOfWeek
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -36,6 +37,11 @@ class LocaleFormatterTest {
 			),
 			formatter.calls,
 		)
+	}
+
+	@Test
+	fun reminderDaysAreTheSameWeekdays() {
+		ReminderDayOfWeek.entries.forEach { assertEquals(it.name, it.dayOfWeek.name) }
 	}
 
 	@Test

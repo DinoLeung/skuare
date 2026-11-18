@@ -117,7 +117,7 @@ fun ReminderCard(
 						ReminderRecurrence.REPEAT_WEEKLY -> {
 							EnumDropdown(
 								selectedOptions = reminder.config.daysOfWeek,
-								optionLabel = { stringResource(it.label) },
+								optionLabel = { it.label },
 								options = ReminderDayOfWeek.values().toSet(),
 								onOptionSelected = { daysOfWeekChange(it) },
 								allSelectedText = stringResource(Res.string.reminder_every_day),

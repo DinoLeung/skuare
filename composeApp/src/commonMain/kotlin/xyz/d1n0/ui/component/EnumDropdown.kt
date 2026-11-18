@@ -243,7 +243,7 @@ private fun EnumSingleDropdownPreview() {
 						)
 						EnumDropdown(
 							selectedOptions = selectedWeekDays,
-							optionLabel = { stringResource(it.label) },
+							optionLabel = { it.label },
 							onOptionSelected = { selectedWeekDays = it },
 							label = "On",
 							options = ReminderDayOfWeek.values().toSet(),
