@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Traditional Chinese (Hong Kong). See values/strings.xml for what each string is. -->
+<resources>
+	<!-- Shared -->
+	<string name="common_cancel">取消</string>
+	<string name="common_close">關閉</string>
+	<string name="common_confirm">確定</string>
+	<string name="common_disconnect">中斷連接</string>
+	<string name="common_others">其他</string>
+	<string name="common_save">儲存</string>
+	<string name="common_selected">已選取</string>
+	<string name="common_unknown_error">未知錯誤</string>
+	<string name="common_list_join">%1$s、%2$s</string>
+
+	<!-- Tabs and title bar -->
+	<string name="nav_timezones">時區</string>
+	<string name="nav_alarms">鬧鐘</string>
+	<string name="nav_timer">計時器</string>
+	<string name="nav_reminders">提醒</string>
+	<string name="nav_settings">設定</string>
+	<string name="nav_adjust_watch_features">調整手錶功能</string>
+	<string name="nav_this_watch">此手錶</string>
+
+	<!-- Pairing -->
+	<string name="pairing_stop_searching">停止搜尋</string>
+	<string name="pairing_pair_new_watch">配對新手錶</string>
+	<string name="pairing_grant_permissions">請在應用程式設定中授予權限</string>
+	<string name="pairing_no_watches">沒有已配對的手錶</string>
+	<string name="pairing_no_watches_hint">按住手錶左下方的 MODE 按鈕，然後點按 + 進行配對。</string>
+	<string name="paired_watch_forget_button">忘記手錶</string>
+	<string name="paired_watch_forget_title">要忘記 %1$s 嗎？</string>
+	<string name="paired_watch_forget_text">重新配對前，此手錶不會在背景校正時間。</string>
+	<string name="paired_watch_forget_confirm">忘記</string>
+	<string name="paired_watch_never_synced">從未同步</string>
+	<string name="paired_watch_last_synced">上次同步：%1$s</string>
+	<string name="paired_watch_last_sync_failed">上次同步失敗：%1$s</string>
+
+	<!-- Timezones -->
+	<string name="timezones_select_home">選擇本地時區</string>
+	<string name="timezones_select_world">選擇世界時區</string>
+	<string name="clock_home_time">本地時間</string>
+	<string name="clock_world_time">世界時間</string>
+	<string name="clock_dst">夏令</string>
+	<string name="clock_pin">置頂</string>
+	<string name="timezone_picker_title">選擇時區</string>
+	<string name="timezone_picker_search">時區</string>
+	<string name="timezone_picker_clear_search">清除搜尋</string>
+	<string name="timezone_picker_dst">夏令時間</string>
+	<string name="timezone_picker_no_results">沒有相符的時區</string>
+	<string name="dst_auto">自動</string>
+	<string name="dst_on">開</string>
+	<string name="dst_off">關</string>
+
+	<!-- Alarms -->
+	<string name="alarms_title">鬧鐘</string>
+	<string name="alarms_alarm">鬧鐘 %1$d</string>
+	<string name="alarms_snooze_alarm">重響鬧鐘</string>
+	<string name="alarms_hourly_signal">整點報時</string>
+
+	<!-- Timer -->
+	<string name="timer_title">計時器</string>
+
+	<!-- Reminders -->
+	<string name="reminder_title">標題</string>
+	<string name="reminder_recurrence">重複</string>
+	<string name="reminder_date_on">日期</string>
+	<string name="reminder_from">由</string>
+	<string name="reminder_to">至</string>
+	<string name="reminder_days_on">星期</string>
+	<string name="reminder_every_day">每天</string>
+	<string name="reminder_never">從不</string>
+	<string name="reminder_starts_on">開始日期</string>
+
+	<!-- Settings -->
+	<string name="settings_display">顯示</string>
+	<string name="settings_24_hour_format">24 小時制</string>
+	<string name="settings_date_format">日期格式</string>
+	<string name="settings_weekday_language">星期語言</string>
+	<string name="settings_font_style">字體樣式</string>
+	<string name="settings_backlight">背光</string>
+	<string name="settings_auto_backlight">自動背光</string>
+	<string name="settings_backlight_duration">背光時間</string>
+	<string name="settings_time_adjustment">時間校正</string>
+	<string name="settings_auto_time_adjustment">自動時間校正</string>
+	<string name="settings_minutes_past_hour">整點後分鐘</string>
+	<string name="settings_auto_time_adjustment_schedule">手錶會在 00:%1$s、06:%1$s、12:%1$s 和 18:%1$s 校正時間</string>
+	<string name="settings_auto_time_adjustment_off">手錶不會自動校正時間</string>
+	<string name="settings_watch_name">手錶名稱</string>
+	<string name="settings_power_saving_mode">省電模式</string>
+	<string name="settings_mute_button_tone">按鍵音靜音</string>
+	<string name="settings_connection_timeout">連接逾時</string>
+	<string name="settings_adjust_hands">調校指針</string>
+
+	<!-- Hand adjustment -->
+	<string name="hand_adjust_title">調校指針</string>
+	<string name="hand_adjust_moving">指針移動中…</string>
+	<string name="hand_adjust_moving_to_position">指針正移至調校位置…</string>
+	<string name="hand_adjust_steps">步數</string>
+	<string name="hand_adjust_anticlockwise">逆時針</string>
+	<string name="hand_adjust_clockwise">順時針</string>
+	<string name="hand_adjust_set">移動</string>
+	<string name="hand_adjust_finish">完成</string>
+	<string name="hand_adjust_clock_step_hint">3 步為 1 分鐘</string>
+	<string name="hand_adjust_mode_step_hint">90 步為半圈</string>
+
+	<!-- Watch error dialog -->
+	<string name="watch_error_title">手錶錯誤</string>
+	<string name="watch_error_clocks">手錶無法傳送時鐘資料。手錶只會在連接後傳送一次，之後再次要求（例如更改手錶功能後）會傳回此錯誤，直至重新連接為止。要求的時鐘數目多於手錶所有的，亦會傳回此錯誤。</string>
+	<string name="watch_error_clocks_check_features">請在手錶功能中檢查手錶的時鐘數目，儲存後手錶會中斷連接。如數目已正確，請中斷連接，然後從手錶重新連接。</string>
+	<string name="watch_error_clocks_reconnect">請中斷連接，然後從手錶重新連接。</string>
+	<string name="watch_error_request">手錶無法完成要求，未能載入的項目會保持停用。</string>
+	<string name="watch_error_keeps_happening">如問題持續，請中斷連接，然後從手錶重新連接。</string>
+	<string name="watch_error_adjust_features">調整功能</string>
+
+	<!-- Disconnect dialog -->
+	<string name="disconnect_title">要中斷與手錶的連接嗎？</string>
+	<string name="disconnect_unsaved_changes">%1$s未儲存的變更將會捨棄。請先儲存以保留變更。</string>
+
+	<!-- Watch features dialog, for watches the app doesn't know yet -->
+	<string name="custom_model_title">%1$s 的功能</string>
+	<string name="custom_model_clocks">時鐘</string>
+	<string name="custom_model_clocks_hint">本地時間加上手錶顯示的世界時間。</string>
+	<string name="custom_model_reminders">提醒</string>
+	<string name="custom_model_reminders_hint">如手錶沒有提醒功能請設為 0，大於 0 會加入「提醒」分頁。</string>
+	<string name="custom_model_font_style">字體樣式</string>
+	<string name="custom_model_font_style_hint">手錶設有顯示字體設定。</string>
+	<string name="custom_model_short_city_names">簡短城市名稱</string>
+	<string name="custom_model_short_city_names_hint">手錶顯示三個字母的城市代碼，例如 TYO。</string>
+	<string name="custom_model_weekday_language">星期語言</string>
+	<string name="custom_model_weekday_language_hint">星期可以用其他語言顯示。</string>
+	<string name="custom_model_snooze_alarm">重響鬧鐘</string>
+	<string name="custom_model_snooze_alarm_hint">手錶的第五個鬧鐘是重響鬧鐘，如是普通鬧鐘請關閉。</string>
+	<string name="custom_model_time_zone_location">時區位置</string>
+	<string name="custom_model_time_zone_location_hint">連同時區一併傳送每個城市的位置和電波發射站。</string>
+	<string name="custom_model_hand_adjustment">指針調校</string>
+	<string name="custom_model_hand_adjustment_hint">手錶設有可調校的指針，即時鐘指針和模式指針，例如 GA-B2100。</string>
+	<string name="custom_model_warning">開啟手錶沒有的功能可能令同步失敗。如時間同步開始失敗，請將其關閉。</string>
+	<string name="custom_model_disconnects_on_save">手錶傳回錯誤，儲存後會中斷連接以便恢復。之後請從手錶重新連接。</string>
+	<string name="custom_model_unsaved_other_tabs">其他分頁未儲存的變更將會捨棄。</string>
+	<string name="custom_model_intro_title">尚未完全支援 %1$s</string>
+	<string name="custom_model_intro_text">目前只開啟基本功能：一個本地時鐘和一個世界時鐘。請使用標題列的扳手按鈕，開啟手錶具備的功能。</string>
+	<string name="custom_model_intro_adjust">調整</string>
+	<string name="custom_model_intro_later">稍後</string>
+
+	<!-- Watch setting values -->
+	<string name="timer_status_not_started">未開始</string>
+	<string name="timer_status_active">倒數中</string>
+	<string name="timer_status_suspended">已暫停</string>
+	<string name="hand_group_clock">時鐘指針</string>
+	<string name="hand_group_mode">模式指針</string>
+	<string name="font_style_standard">標準</string>
+	<string name="font_style_classic">經典</string>
+	<string name="backlight_duration_short">短</string>
+	<string name="backlight_duration_long">長</string>
+	<string name="reminder_recurrence_once">一次</string>
+	<string name="reminder_recurrence_daily">每天</string>
+	<string name="reminder_recurrence_weekly">每週</string>
+	<string name="reminder_recurrence_monthly">每月</string>
+	<string name="reminder_recurrence_yearly">每年</string>
+	<string name="weekday_language_english">英文</string>
+	<string name="weekday_language_spanish">西班牙文</string>
+	<string name="weekday_language_french">法文</string>
+	<string name="weekday_language_german">德文</string>
+	<string name="weekday_language_italian">意大利文</string>
+	<string name="weekday_language_russian">俄文</string>
+
+	<!-- Errors, Chinese has no plural forms so the plurals only have "other" -->
+	<plurals name="error_text_too_long">
+		<item quantity="other">最多 %1$d 個字元</item>
+	</plurals>
+	<plurals name="error_duration_too_long_hours">
+		<item quantity="other">必須少於 %1$d 小時</item>
+	</plurals>
+	<string name="error_value_out_of_range">必須介乎 %1$d 至 %2$d</string>
+	<string name="error_watch_replied">手錶傳回錯誤：%1$s</string>
+	<string name="error_watch_timeout">手錶未能及時回應</string>
+	<string name="error_connection_lost">與手錶的連接已中斷</string>
+	<string name="error_unexpected">發生錯誤：%1$s</string>
+
+	<plurals name="settings_connection_timeout_minutes">
+		<item quantity="other">%1$d 分鐘</item>
+	</plurals>
+</resources>

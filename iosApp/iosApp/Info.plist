@@ -12,6 +12,7 @@
 	<key>CFBundleLocalizations</key>
 	<array>
 		<string>en</string>
+		<string>zh-HK</string>
 	</array>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
