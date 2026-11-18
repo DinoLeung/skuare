@@ -145,7 +145,7 @@ fun HandAdjustDialog(
 						onClick = onStepAnticlockwise,
 						shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2),
 						enabled = state.canStepAnticlockwise,
-						icon = { Icon(Icons.Outlined.RotateLeft, contentDescription = null) },
+						icon = { Icon(anticlockwiseIcon, contentDescription = null) },
 						label = { Text(stringResource(Res.string.hand_adjust_anticlockwise)) },
 					)
 					SegmentedButton(
@@ -153,7 +153,7 @@ fun HandAdjustDialog(
 						onClick = onStepClockwise,
 						shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2),
 						enabled = state.canStepClockwise,
-						icon = { Icon(Icons.Outlined.RotateRight, contentDescription = null) },
+						icon = { Icon(clockwiseIcon, contentDescription = null) },
 						label = { Text(stringResource(Res.string.hand_adjust_clockwise)) },
 					)
 				}
@@ -170,6 +170,14 @@ fun HandAdjustDialog(
 		},
 	)
 }
+
+// A turn is clockwise or anticlockwise whatever the layout direction, so these must not mirror in
+// right-to-left languages like their AutoMirrored replacements do.
+@Suppress("DEPRECATION")
+private val anticlockwiseIcon = Icons.Outlined.RotateLeft
+
+@Suppress("DEPRECATION")
+private val clockwiseIcon = Icons.Outlined.RotateRight
 
 /** How far a step moves the hands, for the steps field. */
 private val HandGroup.stepHint: StringResource
