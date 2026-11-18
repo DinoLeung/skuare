@@ -3,12 +3,15 @@ package xyz.d1n0.ui.boilerplate
 import androidx.compose.material3.CalendarLocale
 import androidx.compose.material3.DatePickerFormatter
 import androidx.compose.material3.ExperimentalMaterial3Api
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.LocalDate
+import xyz.d1n0.lib.helper.fromMillis
 import xyz.d1n0.lib.helper.toDayMonthYear
 import xyz.d1n0.lib.helper.toMonthYear
-import kotlin.time.Instant
 
+/**
+ * The picker's millis are UTC midnights, read as UTC so the date can't shift a day in the device's
+ * time zone.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 class DatePickerCustomFormatter : DatePickerFormatter {
 	override fun formatMonthYear(
@@ -16,10 +19,7 @@ class DatePickerCustomFormatter : DatePickerFormatter {
 		locale: CalendarLocale,
 	): String? {
 		if (monthMillis == null) return null
-		return Instant.fromEpochMilliseconds(monthMillis)
-			.toLocalDateTime(TimeZone.currentSystemDefault())
-			.date
-			.toMonthYear()
+		return LocalDate.fromMillis(monthMillis).toMonthYear()
 	}
 
 	override fun formatDate(
@@ -28,9 +28,6 @@ class DatePickerCustomFormatter : DatePickerFormatter {
 		forContentDescription: Boolean,
 	): String? {
 		if (dateMillis == null) return null
-		return Instant.fromEpochMilliseconds(dateMillis)
-			.toLocalDateTime(TimeZone.currentSystemDefault())
-			.date
-			.toDayMonthYear()
+		return LocalDate.fromMillis(dateMillis).toDayMonthYear()
 	}
 }
