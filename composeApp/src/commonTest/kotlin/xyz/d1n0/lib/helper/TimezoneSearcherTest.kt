@@ -159,13 +159,13 @@ class TimezoneSearcherTest {
 		val tokyo = WorldTimezoneData.values.single { it.city == "Tokyo" }
 		val localizedNames = mapOf(tokyo.identifier to "東京")
 
-		val results = searchTimeZones(
-			WorldTimezoneData.values.toList(), "東京", duringDaylightSaving, localizedNames = localizedNames,
+		fun searchLocalized(query: String) = searchTimeZones(
+			WorldTimezoneData.values.toList(), query, duringDaylightSaving, localizedNames = localizedNames,
 		)
 
-		assertEquals(tokyo, results.first())
-		// the English and watch names still find it
-		assertEquals(tokyo, search("Tokyo").first())
-		assertEquals(tokyo, search("TOKYO").first())
+		assertEquals(tokyo, searchLocalized("東京").first())
+		// the localized name is added, the English and watch names still find it
+		assertEquals(tokyo, searchLocalized("Tokyo").first())
+		assertEquals(tokyo, searchLocalized("TOKYO").first())
 	}
 }

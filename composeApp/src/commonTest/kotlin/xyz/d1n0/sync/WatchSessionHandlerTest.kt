@@ -502,6 +502,8 @@ class WatchSessionHandlerTest {
 	fun automaticSyncUpdatesNameRecordsSuccessAndDisconnects() = runTest {
 		val fixture = Fixture()
 		fixture.pair(displayName = "Old name")
+		// the last sync failed, a successful one must clear it
+		fixture.repository.recordSync(ADDRESS, failure = SyncFailure.TIMEOUT, errorDetail = "Timed out")
 		val watch = FakeConnectedWatch(reportedName = "New name")
 		var receivedStored: PairedWatch? = null
 
@@ -519,6 +521,7 @@ class WatchSessionHandlerTest {
 		assertEquals("New name", stored.displayName)
 		assertNotNull(stored.lastSyncAt)
 		assertNull(stored.lastSyncFailure)
+		assertNull(stored.lastSyncErrorDetail)
 		assertEquals(
 			listOf("connected:New name", "syncing", "connected:New name"),
 			fixture.connectionNotifier.events,
