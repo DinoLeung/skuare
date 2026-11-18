@@ -17,6 +17,8 @@ class IosLocaleFormatter : LocaleFormatter {
 	override fun format(dateTime: LocalDateTime, skeleton: String): String {
 		val formatter = NSDateFormatter()
 		formatter.locale = NSLocale.currentLocale
+		// Gregorian like the date picker's grid and the watch, whatever the locale's own calendar
+		formatter.calendar = NSCalendar(calendarIdentifier = NSCalendarIdentifierGregorian)
 		// dateTime is formatted as if it were UTC, so no time zone or DST gap can shift it
 		formatter.timeZone = NSTimeZone.timeZoneForSecondsFromGMT(0)
 		formatter.setLocalizedDateFormatFromTemplate(skeleton)

@@ -2,6 +2,7 @@ package xyz.d1n0.ui.text
 
 import android.content.Context
 import android.icu.text.DateFormat
+import android.icu.util.GregorianCalendar
 import android.icu.util.TimeZone as IcuTimeZone
 import java.time.format.TextStyle
 import java.util.Date
@@ -24,7 +25,10 @@ class AndroidLocaleFormatter(private val context: Context) : LocaleFormatter {
 	override fun format(dateTime: LocalDateTime, skeleton: String): String {
 		// ICU's j follows the locale, the user may have picked the other clock in the settings
 		val hour = if (AndroidDateFormat.is24HourFormat(context)) "H" else "h"
-		val formatter = DateFormat.getInstanceForSkeleton(skeleton.replace("j", hour), locale)
+		// Gregorian like the date picker's grid and the watch, whatever the locale's own calendar
+		// (e.g. Buddhist in Thai)
+		val calendar = GregorianCalendar(IcuTimeZone.GMT_ZONE, locale)
+		val formatter = DateFormat.getInstanceForSkeleton(calendar, skeleton.replace("j", hour), locale)
 		// dateTime is formatted as if it were UTC, so no time zone or DST gap can shift it
 		formatter.timeZone = IcuTimeZone.GMT_ZONE
 		return formatter.format(Date(dateTime.toInstant(TimeZone.UTC).toEpochMilliseconds()))
