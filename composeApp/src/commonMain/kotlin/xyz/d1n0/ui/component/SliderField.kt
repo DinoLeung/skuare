@@ -61,6 +61,7 @@ fun SliderField(
 					// e.g. a lone "-" isn't a number yet
 					it.text.toIntOrNull()?.let(onValueChange)
 				},
+				enabled = enabled,
 				keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
 				isError = error != null,
 				modifier = modifier.weight(1f),
