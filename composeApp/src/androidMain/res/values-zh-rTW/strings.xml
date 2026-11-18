@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Traditional Chinese (Taiwan). See values/strings.xml for what each string is. -->
+<resources>
+    <string name="notification_channel_watch_connection">手錶連線</string>
+    <string name="notification_connected">已連線到 %1$s</string>
+    <string name="notification_connected_unnamed">已連線到手錶</string>
+    <string name="notification_syncing">正在同步時間</string>
+</resources>
