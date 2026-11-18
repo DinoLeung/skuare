@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
 	Traditional Chinese (Hong Kong) names of the cities in values/world_timezones.xml.
-	Seeded from the Unicode CLDR 49 exemplar cities (zh-Hant-HK, Unicode License v3) where the city
-	is its time zone's city, translated by hand otherwise. A city missing here, e.g. GMT+5, shows its
-	English name.
+	Seeded from the Unicode CLDR 49 exemplar cities (zh-Hant-HK, Unicode License v3, see
+	THIRD_PARTY_NOTICES.md) where the city is its time zone's city, translated by hand otherwise.
+	A city missing here, e.g. GMT+5, shows its English name.
 -->
 <resources>
 	<string name="world_tz_1">阿比贊</string>

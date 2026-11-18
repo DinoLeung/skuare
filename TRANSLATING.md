@@ -29,8 +29,9 @@ The folder name is `values-` plus the language code:
 - A language for every region, e.g. German: `values-de`.
 - A language for one region, e.g. Brazilian Portuguese: `values-pt-rBR`, with an `r` before the
   region. Use this when the wording differs between regions, as with Hong Kong and Taiwan.
-  Note that a region folder is only used in that region: Macau (`zh-MO`) doesn't get `zh-rHK`
-  and falls back to English.
+  The app's screens only use a region folder in that region, e.g. a phone set to Macau (`zh-MO`)
+  doesn't get `zh-rHK` there. If one translation suits every region, use the language-only
+  folder instead.
 
 The language code you declare in the files below is the same code without the `r`: `de`,
 `pt-BR`, `zh-HK`.
@@ -80,7 +81,8 @@ languages, so those files can be short. Languages in another script need every c
 Leave technical zones in English, such as `GMT+5`, `UTC`, `EST` or `CET`. Some home "cities" are
 regions from the time zone database, e.g. `Eastern` (US Eastern Time) or `NSW` (New South Wales),
 and are best translated as the region. The Chinese files are an example of all of this: they were
-seeded from the [Unicode CLDR](https://cldr.unicode.org/) city names and completed by hand.
+seeded from the [Unicode CLDR](https://cldr.unicode.org/) city names and completed by hand. If
+you seed names from CLDR too, list your files in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 ### 4. Declare the language (required)
 
