@@ -27,6 +27,7 @@ import xyz.d1n0.lib.model.Clock
 import xyz.d1n0.lib.model.DstSettings
 import xyz.d1n0.lib.model.HomeClock
 import xyz.d1n0.lib.model.WorldClock
+import xyz.d1n0.ui.text.displayCity
 import xyz.d1n0.ui.theme.SkuareTheme
 import org.jetbrains.compose.resources.stringResource
 import xyz.d1n0.resources.*
@@ -67,7 +68,7 @@ fun ClockCard(
 			},
 			title = {
 				Text(
-					text = clock.timeZone.cityName.lowercase().replaceFirstChar { it.uppercase() },
+					text = clock.timeZone.displayCity,
 					style = MaterialTheme.typography.headlineSmall,
 				)
 			},

@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import xyz.d1n0.lib.model.HomeTimezone
 import xyz.d1n0.lib.model.Timezone
 import xyz.d1n0.lib.model.WorldTimezone
+import xyz.d1n0.ui.text.displayCity
 
 /**
  * @param offset The offset to show, e.g. from [Timezone.offsetString] with the picked DST settings.
@@ -45,7 +46,7 @@ internal fun TimeZoneResultRow(
 				.padding(horizontal = 8.dp),
 		) {
 			Text(
-				text = timeZone.primaryLabel,
+				text = timeZone.displayCity,
 				style = MaterialTheme.typography.bodyLarge,
 			)
 			timeZone.secondaryLabel?.let { label ->
@@ -63,12 +64,6 @@ internal fun TimeZoneResultRow(
 		)
 	}
 }
-
-private val Timezone.primaryLabel: String
-	get() = when (this) {
-		is WorldTimezone -> city
-		else -> cityName.lowercase().replaceFirstChar { it.uppercase() }
-	}
 
 private val Timezone.secondaryLabel: String?
 	get() = when (this) {
