@@ -13,6 +13,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import xyz.d1n0.lib.constant.HandGroup
 import xyz.d1n0.ui.theme.SkuareTheme
+import org.jetbrains.compose.resources.stringResource
+import xyz.d1n0.resources.*
 
 /**
  * Asks which hands to adjust, one option per [HandGroup].
@@ -27,7 +29,7 @@ fun HandGroupDialog(
 ) {
 	AlertDialog(
 		onDismissRequest = onDismiss,
-		title = { Text("Adjust Hands") },
+		title = { Text(stringResource(Res.string.hand_adjust_title)) },
 		text = {
 			Column {
 				groups.forEach { group ->
@@ -40,7 +42,7 @@ fun HandGroupDialog(
 			}
 		},
 		confirmButton = {
-			TextButton(onClick = onDismiss) { Text("Cancel") }
+			TextButton(onClick = onDismiss) { Text(stringResource(Res.string.common_cancel)) }
 		},
 	)
 }

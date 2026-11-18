@@ -23,6 +23,8 @@ import xyz.d1n0.ui.component.AlarmField
 import xyz.d1n0.ui.component.CardView
 import xyz.d1n0.ui.component.SwitchField
 import xyz.d1n0.ui.theme.SkuareTheme
+import org.jetbrains.compose.resources.stringResource
+import xyz.d1n0.resources.*
 
 @Composable
 fun AlarmsScreen(viewModel: AlarmsScreenViewModel) {
@@ -52,7 +54,7 @@ private fun AlarmsScreenContent(
 		item {
 			CardView(
 				modifier = Modifier.fillMaxWidth(),
-				title = { Text("Alarms") }
+				title = { Text(stringResource(Res.string.alarms_title)) }
 			) {
 				Column(
 					modifier = Modifier.fillMaxWidth(),
@@ -61,7 +63,7 @@ private fun AlarmsScreenContent(
 					state.pendingAlarms.forEachIndexed { index, alarm ->
 						AlarmField(
 							alarm = alarm,
-							label = "Alarm ${index + 1}",
+							label = stringResource(Res.string.alarms_alarm, index + 1),
 							enabled = state.isAlarmsInitialized && state.isLoading == false,
 							onTimeChange = { onEvent(AlarmsUiEvent.AlarmTimeChange(index = index, time = it)) },
 							onToggle = { onEvent(AlarmsUiEvent.AlarmToggle(index = index, enable = it)) },
@@ -78,7 +80,7 @@ private fun AlarmsScreenContent(
 			item {
 				CardView(
 					modifier = Modifier.fillMaxWidth(),
-					title = { Text("Snooze Alarm") }
+					title = { Text(stringResource(Res.string.alarms_snooze_alarm)) }
 				) {
 					FifthAlarmField(state = state, onEvent = onEvent)
 				}
@@ -87,10 +89,10 @@ private fun AlarmsScreenContent(
 		item {
 			CardView(
 				modifier = Modifier.fillMaxWidth(),
-				title = { Text("Others") }
+				title = { Text(stringResource(Res.string.common_others)) }
 			) {
 				SwitchField(
-					title = "Hourly Signal",
+					title = stringResource(Res.string.alarms_hourly_signal),
 					check = state.pendingHourlySignal.enable,
 					onCheckedChange = {
 						onEvent(AlarmsUiEvent.HourlySignalToggle(enable = it))
@@ -113,7 +115,11 @@ private fun FifthAlarmField(
 	onEvent: (AlarmsUiEvent) -> Unit,
 ) = AlarmField(
 	alarm = state.pendingSnoozeAlarm,
-	label = if (state.hasSnoozeAlarm) "Snooze Alarm" else "Alarm ${state.pendingAlarms.size + 1}",
+	label = if (state.hasSnoozeAlarm) {
+		stringResource(Res.string.alarms_snooze_alarm)
+	} else {
+		stringResource(Res.string.alarms_alarm, state.pendingAlarms.size + 1)
+	},
 	isSnooze = state.hasSnoozeAlarm,
 	enabled = state.isSnoozeAlarmInitialized && state.isLoading == false,
 	onTimeChange = { onEvent(AlarmsUiEvent.SnoozeAlarmTimeChange(time = it)) },

@@ -28,6 +28,8 @@ import xyz.d1n0.lib.model.DstSettings
 import xyz.d1n0.lib.model.HomeClock
 import xyz.d1n0.lib.model.WorldClock
 import xyz.d1n0.ui.theme.SkuareTheme
+import org.jetbrains.compose.resources.stringResource
+import xyz.d1n0.resources.*
 
 /**
  * Shows a clock. If [onPin] is set, pressing and holding the card opens a menu with a "Pin" option.
@@ -54,12 +56,12 @@ fun ClockCard(
 				if (clock is HomeClock) {
 					Icon(
 						imageVector = Icons.Sharp.Home,
-						contentDescription = "Home Time",
+						contentDescription = stringResource(Res.string.clock_home_time),
 					)
 				} else {
 					Icon(
 						imageVector = Icons.Sharp.Public,
-						contentDescription = "World Time",
+						contentDescription = stringResource(Res.string.clock_world_time),
 					)
 				}
 			},
@@ -73,7 +75,7 @@ fun ClockCard(
 				AssistChip(
 					// what the watch uses, auto DST turns it on when the city's DST starts
 					enabled = clock.dstSettings.enable,
-					label = { Text("DST") },
+					label = { Text(stringResource(Res.string.clock_dst)) },
 					onClick = onClick,
 				)
 			},
@@ -93,7 +95,7 @@ fun ClockCard(
 				onDismissRequest = { menuExpanded = false },
 			) {
 				DropdownMenuItem(
-					text = { Text("Pin") },
+					text = { Text(stringResource(Res.string.clock_pin)) },
 					leadingIcon = { Icon(imageVector = Icons.Outlined.PushPin, contentDescription = null) },
 					onClick = {
 						menuExpanded = false

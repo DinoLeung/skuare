@@ -14,6 +14,8 @@ import xyz.d1n0.lib.constant.ReminderDayOfWeek
 import xyz.d1n0.lib.constant.ReminderRecurrence
 import xyz.d1n0.lib.constant.WeekdayLanguage
 import xyz.d1n0.ui.theme.SkuareTheme
+import org.jetbrains.compose.resources.stringResource
+import xyz.d1n0.resources.*
 
 @Composable
 fun <T : Enum<T>> EnumDropdown(
@@ -139,7 +141,7 @@ private fun <T> BaseEnumDropdown(
 							if (isSelected)
 								Icon(
 									imageVector = Icons.Filled.Check,
-									contentDescription = "Selected",
+									contentDescription = stringResource(Res.string.common_selected),
 									modifier = Modifier.size(20.dp)
 								)
 						}

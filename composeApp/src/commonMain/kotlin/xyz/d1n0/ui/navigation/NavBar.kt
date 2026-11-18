@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import org.jetbrains.compose.resources.stringResource
 import xyz.d1n0.ui.theme.SkuareTheme
 
 @Composable
@@ -24,6 +25,7 @@ fun NavBar(
 		modifier = Modifier.fillMaxWidth(),
 	) {
 		items.forEach {
+			val title = stringResource(it.title)
 			NavigationBarItem(
 				selected = currentRoute == it.route,
 				onClick = { onItemClick(it) },
@@ -33,13 +35,13 @@ fun NavBar(
 					) {
 						Icon(
 							imageVector = it.icon,
-							contentDescription = it.title,
+							contentDescription = title,
 						)
 					}
 				},
 				label = {
 					Text(
-						text = it.title, maxLines = 1, overflow = TextOverflow.Ellipsis
+						text = title, maxLines = 1, overflow = TextOverflow.Ellipsis
 					)
 				},
 			)

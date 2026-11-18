@@ -24,6 +24,8 @@ import kotlinx.datetime.toLocalDateTime
 import xyz.d1n0.data.database.PairedWatch
 import kotlin.time.Instant
 import xyz.d1n0.ui.theme.SkuareTheme
+import org.jetbrains.compose.resources.stringResource
+import xyz.d1n0.resources.*
 
 /**
  * A paired watch with its last background sync, and a button to forget it after confirming.
@@ -50,7 +52,7 @@ fun PairedWatchCard(
 			)
 			watch.lastSyncError?.let { ErrorText(it) }
 			TextButton(onClick = { showForgetDialog = true }) {
-				Text("Forget watch")
+				Text(stringResource(Res.string.paired_watch_forget_button))
 			}
 		}
 	}
@@ -58,16 +60,16 @@ fun PairedWatchCard(
 	if (showForgetDialog) {
 		AlertDialog(
 			onDismissRequest = { showForgetDialog = false },
-			title = { Text("Forget ${watch.displayName}?") },
-			text = { Text("It won't adjust its time in the background until you pair it again.") },
+			title = { Text(stringResource(Res.string.paired_watch_forget_title, watch.displayName)) },
+			text = { Text(stringResource(Res.string.paired_watch_forget_text)) },
 			confirmButton = {
 				TextButton(onClick = {
 					showForgetDialog = false
 					onForget()
-				}) { Text("Forget") }
+				}) { Text(stringResource(Res.string.paired_watch_forget_confirm)) }
 			},
 			dismissButton = {
-				TextButton(onClick = { showForgetDialog = false }) { Text("Cancel") }
+				TextButton(onClick = { showForgetDialog = false }) { Text(stringResource(Res.string.common_cancel)) }
 			},
 		)
 	}
@@ -82,10 +84,10 @@ private val lastSyncFormat = LocalDateTime.Format {
 }
 
 private val PairedWatch.lastSyncText: String
-	get() = when {
-		lastSyncAt == null -> "Never synced"
-		lastSyncError == null -> "Last synced ${lastSyncAt.format()}"
-		else -> "Last sync failed ${lastSyncAt.format()}"
+	@Composable get() = when {
+		lastSyncAt == null -> stringResource(Res.string.paired_watch_never_synced)
+		lastSyncError == null -> stringResource(Res.string.paired_watch_last_synced, lastSyncAt.format())
+		else -> stringResource(Res.string.paired_watch_last_sync_failed, lastSyncAt.format())
 	}
 
 private fun Instant.format(): String =

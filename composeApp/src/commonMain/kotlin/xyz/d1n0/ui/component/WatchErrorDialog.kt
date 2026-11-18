@@ -17,6 +17,8 @@ import androidx.compose.ui.unit.dp
 import xyz.d1n0.lib.constant.OpCode
 import xyz.d1n0.lib.model.WatchErrorPacket
 import xyz.d1n0.ui.theme.SkuareTheme
+import org.jetbrains.compose.resources.stringResource
+import xyz.d1n0.resources.*
 
 /**
  * Tells the user the watch replied with [error] instead of the data that was asked for, showing
@@ -42,31 +44,20 @@ fun WatchErrorDialog(
 
 	AlertDialog(
 		onDismissRequest = onDismiss,
-		title = { Text("Watch error") },
+		title = { Text(stringResource(Res.string.watch_error_title)) },
 		text = {
 			Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
 				if (isClocksError) {
+					Text(stringResource(Res.string.watch_error_clocks))
 					Text(
-						"The watch couldn't send its clocks. It only sends them once after " +
-							"connecting, asking again, e.g. after changing the watch features, " +
-							"returns this error until it reconnects. Asking for more clocks " +
-							"than it has returns it too."
-					)
-					Text(
-						if (adjustFeatures != null) {
-							"Check the number of clocks your watch has in its features, saving " +
-								"disconnects the watch. If it is already right, disconnect. " +
-								"Then reconnect it from the watch."
-						} else {
-							"Disconnect, then reconnect it from the watch."
-						}
+						stringResource(
+							if (adjustFeatures != null) Res.string.watch_error_clocks_check_features
+							else Res.string.watch_error_clocks_reconnect
+						)
 					)
 				} else {
-					Text(
-						"The watch couldn't complete the request, anything that didn't load " +
-							"stays disabled."
-					)
-					Text("If it keeps happening, disconnect and reconnect it from the watch.")
+					Text(stringResource(Res.string.watch_error_request))
+					Text(stringResource(Res.string.watch_error_keeps_happening))
 				}
 				SelectionContainer {
 					Text(
@@ -77,15 +68,15 @@ fun WatchErrorDialog(
 				}
 				adjustFeatures?.let {
 					TextButton(onClick = it, modifier = Modifier.align(Alignment.End)) {
-						Text("Adjust features")
+						Text(stringResource(Res.string.watch_error_adjust_features))
 					}
 				}
 			}
 		},
 		confirmButton = {
 			Row {
-				TextButton(onClick = onDisconnect) { Text("Disconnect") }
-				TextButton(onClick = onDismiss) { Text("Close") }
+				TextButton(onClick = onDisconnect) { Text(stringResource(Res.string.common_disconnect)) }
+				TextButton(onClick = onDismiss) { Text(stringResource(Res.string.common_close)) }
 			}
 		},
 	)

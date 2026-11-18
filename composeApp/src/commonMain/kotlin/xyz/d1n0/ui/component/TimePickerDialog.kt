@@ -10,6 +10,8 @@ import androidx.compose.ui.window.DialogProperties
 import kotlinx.datetime.LocalTime
 import androidx.compose.ui.tooling.preview.Preview
 import xyz.d1n0.ui.theme.SkuareTheme
+import org.jetbrains.compose.resources.stringResource
+import xyz.d1n0.resources.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,7 +47,7 @@ fun TimePickerDialog(
 							onConfirm(LocalTime(hour = state.hour, minute = state.minute))
 						},
 						modifier = Modifier.align(Alignment.End)
-					) { Text("Confirm") }
+					) { Text(stringResource(Res.string.common_confirm)) }
 				}
 			}
 		}

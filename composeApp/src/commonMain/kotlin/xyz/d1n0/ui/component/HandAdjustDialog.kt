@@ -34,6 +34,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import xyz.d1n0.lib.constant.HandGroup
 import xyz.d1n0.ui.theme.SkuareTheme
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
+import xyz.d1n0.resources.*
 
 /**
  * What [HandAdjustDialog] shows for a hand adjust session, see
@@ -112,13 +115,15 @@ fun HandAdjustDialog(
 					) {
 						CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
 						Text(
-							text = if (state.isReady) "Moving the hands…" else "Moving the hands to the adjusting position…",
+							text = stringResource(
+								if (state.isReady) Res.string.hand_adjust_moving else Res.string.hand_adjust_moving_to_position
+							),
 							style = MaterialTheme.typography.bodyMedium,
 						)
 					}
 				}
 				OutlinedTextField(
-					label = { Text("Steps") },
+					label = { Text(stringResource(Res.string.hand_adjust_steps)) },
 					value = stepsText,
 					onValueChange = { input ->
 						// digits, with an optional leading minus for anticlockwise
@@ -129,7 +134,7 @@ fun HandAdjustDialog(
 					singleLine = true,
 					enabled = state.canEditSteps,
 					isError = state.isStepsValid == false,
-					supportingText = { Text(state.group.stepHint) },
+					supportingText = { Text(stringResource(state.group.stepHint)) },
 					modifier = Modifier.fillMaxWidth(),
 				)
 				// a segmented group for the look, never selected: both buttons are actions, not a choice
@@ -140,7 +145,7 @@ fun HandAdjustDialog(
 						shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2),
 						enabled = state.canStepAnticlockwise,
 						icon = { Icon(Icons.Outlined.RotateLeft, contentDescription = null) },
-						label = { Text("Anticlockwise") },
+						label = { Text(stringResource(Res.string.hand_adjust_anticlockwise)) },
 					)
 					SegmentedButton(
 						selected = false,
@@ -148,28 +153,28 @@ fun HandAdjustDialog(
 						shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2),
 						enabled = state.canStepClockwise,
 						icon = { Icon(Icons.Outlined.RotateRight, contentDescription = null) },
-						label = { Text("Clockwise") },
+						label = { Text(stringResource(Res.string.hand_adjust_clockwise)) },
 					)
 				}
 				Button(
 					onClick = onSet,
 					enabled = state.canSet,
 					modifier = Modifier.fillMaxWidth(),
-				) { Text("Set") }
+				) { Text(stringResource(Res.string.hand_adjust_set)) }
 				state.error?.let { ErrorText(it) }
 			}
 		},
 		confirmButton = {
-			TextButton(onClick = onFinish, enabled = state.canFinish) { Text("Finish") }
+			TextButton(onClick = onFinish, enabled = state.canFinish) { Text(stringResource(Res.string.hand_adjust_finish)) }
 		},
 	)
 }
 
 /** How far a step moves the hands, for the steps field. */
-private val HandGroup.stepHint: String
+private val HandGroup.stepHint: StringResource
 	get() = when (this) {
-		HandGroup.CLOCK -> "3 steps is 1 minute"
-		HandGroup.MODE -> "90 steps is half a turn"
+		HandGroup.CLOCK -> Res.string.hand_adjust_clock_step_hint
+		HandGroup.MODE -> Res.string.hand_adjust_mode_step_hint
 	}
 
 @Preview(showBackground = true, widthDp = 420, heightDp = 720)

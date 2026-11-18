@@ -39,6 +39,8 @@ import xyz.d1n0.ui.component.PairedWatchCard
 import xyz.d1n0.ui.component.appVersion
 import kotlin.time.Instant
 import xyz.d1n0.ui.theme.SkuareTheme
+import org.jetbrains.compose.resources.stringResource
+import xyz.d1n0.resources.*
 
 @Composable
 fun PairingScreen(
@@ -93,11 +95,11 @@ private fun PairingScreenContent(
 			when {
 				!state.isPermissionGranted -> Unit
 				state.isSearching -> FloatingActionButton(onClick = { onEvent(PairingUiEvent.StopSearching) }) {
-					Icon(Icons.Default.Close, contentDescription = "Stop searching")
+					Icon(Icons.Default.Close, contentDescription = stringResource(Res.string.pairing_stop_searching))
 				}
 
 				else -> FloatingActionButton(onClick = { onEvent(PairingUiEvent.Search) }) {
-					Icon(Icons.Default.Add, contentDescription = "Pair a new watch")
+					Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.pairing_pair_new_watch))
 				}
 			}
 		},
@@ -111,7 +113,7 @@ private fun PairingScreenContent(
 				verticalArrangement = Arrangement.Center,
 			) {
 				Button(onClick = onOpenSettings) {
-					Text("Grant permissions from app settings")
+					Text(stringResource(Res.string.pairing_grant_permissions))
 				}
 			}
 		} else if (state.pairedWatches.isEmpty()) {
@@ -123,9 +125,9 @@ private fun PairingScreenContent(
 				horizontalAlignment = Alignment.CenterHorizontally,
 				verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
 			) {
-				Text(text = "No paired watches", style = MaterialTheme.typography.titleMedium)
+				Text(text = stringResource(Res.string.pairing_no_watches), style = MaterialTheme.typography.titleMedium)
 				Text(
-					text = "Press and hold the MODE button (lower-left) on your watch, then tap + to pair it.",
+					text = stringResource(Res.string.pairing_no_watches_hint),
 					style = MaterialTheme.typography.bodyMedium,
 					textAlign = TextAlign.Center,
 				)

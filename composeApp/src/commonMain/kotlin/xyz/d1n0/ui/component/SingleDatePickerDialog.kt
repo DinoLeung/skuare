@@ -10,6 +10,8 @@ import xyz.d1n0.lib.helper.fromMillis
 import xyz.d1n0.lib.helper.toMillis
 import xyz.d1n0.ui.boilerplate.DatePickerCustomFormatter
 import xyz.d1n0.ui.theme.SkuareTheme
+import org.jetbrains.compose.resources.stringResource
+import xyz.d1n0.resources.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,9 +36,9 @@ fun SingleDatePickerDialog(
 					state.selectedDateMillis?.let {
 						onConfirm(LocalDate.fromMillis(it))
 					}
-				}) { Text("Confirm") }
+				}) { Text(stringResource(Res.string.common_confirm)) }
 			},
-			dismissButton = { TextButton(onClick = { onDismiss() }) { Text("Cancel") } },
+			dismissButton = { TextButton(onClick = { onDismiss() }) { Text(stringResource(Res.string.common_cancel)) } },
 			content = {
 				DatePicker(
 					state = state,
