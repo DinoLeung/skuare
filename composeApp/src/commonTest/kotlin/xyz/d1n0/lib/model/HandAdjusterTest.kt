@@ -38,7 +38,7 @@ class HandAdjusterTest {
 	@Test
 	fun failsWhenTheWatchDoesNotReply() = runTest {
 		val watch = FakeHandAdjustWatch(reply = { null })
-		assertFailsWith<IllegalStateException> { watch.adjuster().start() }
+		assertFailsWith<WatchTimeoutException> { watch.adjuster().start() }
 	}
 
 	@Test
@@ -54,7 +54,7 @@ class HandAdjusterTest {
 		val watch = FakeHandAdjustWatch(reply = {
 			if (it[2].toInt() and 0x0F == 0x08 && moves++ == 0) hex("1d000103027f760000ffffffffffff") else null
 		})
-		assertFailsWith<IllegalStateException> { watch.adjuster().move(HandGroup.CLOCK, 1) }
+		assertFailsWith<WatchTimeoutException> { watch.adjuster().move(HandGroup.CLOCK, 1) }
 		// no confirm without the watch's ack
 		assertEquals(listOf("1a0418010000"), watch.written)
 	}

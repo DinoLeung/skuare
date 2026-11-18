@@ -276,7 +276,7 @@ suspend fun Watch.adjustTime(delay: Duration = 0.seconds) =
 					_clocksError.value?.let { throw it }
 					delay(100.milliseconds)
 				}
-			} ?: throw IllegalStateException("Timeout waiting for clocks initialization")
+			} ?: throw WatchTimeoutException("Timeout waiting for clocks initialization")
 		}
 		writeClocksAndTimeZoneData(clocks.value)
 		writeTime(delay = delay)
