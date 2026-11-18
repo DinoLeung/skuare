@@ -9,6 +9,7 @@ import kotlinx.datetime.LocalDate
 import xyz.d1n0.lib.helper.fromMillis
 import xyz.d1n0.lib.helper.toMillis
 import xyz.d1n0.ui.boilerplate.DatePickerCustomFormatter
+import xyz.d1n0.ui.text.LocalLocaleFormatter
 import xyz.d1n0.ui.theme.SkuareTheme
 import org.jetbrains.compose.resources.stringResource
 import xyz.d1n0.resources.*
@@ -43,7 +44,7 @@ fun SingleDatePickerDialog(
 				DatePicker(
 					state = state,
 					showModeToggle = false,
-					dateFormatter = DatePickerCustomFormatter(),
+					dateFormatter = DatePickerCustomFormatter(LocalLocaleFormatter.current),
 				)
 			}
 		)
