@@ -193,6 +193,24 @@
 	<string name="day_thursday_short">Thu</string>
 	<string name="day_friday_short">Fri</string>
 	<string name="day_saturday_short">Sat</string>
+	<!-- Errors -->
+	<!-- %1$d: the most characters the watch stores, e.g. 18 for a reminder title -->
+	<plurals name="error_text_too_long">
+		<item quantity="one">At most %1$d character</item>
+		<item quantity="other">At most %1$d characters</item>
+	</plurals>
+	<!-- %1$d: hours the duration must be shorter than, e.g. a timer under 24 hours -->
+	<plurals name="error_duration_too_long_hours">
+		<item quantity="one">Must be shorter than %1$d hour</item>
+		<item quantity="other">Must be shorter than %1$d hours</item>
+	</plurals>
+	<!-- %1$d and %2$d: the smallest and largest allowed number -->
+	<string name="error_value_out_of_range">Must be between %1$d and %2$d</string>
+	<!-- %1$s: the error packet's bytes in hex, e.g. FF 81 1A -->
+	<string name="error_watch_replied">The watch returned an error: %1$s</string>
+	<!-- %1$s: a technical description in English, kept for bug reports -->
+	<string name="error_unexpected">Something went wrong: %1$s</string>
+
 	<!-- %1$d: minutes the watch stays connected without activity -->
 	<plurals name="settings_connection_timeout_minutes">
 		<item quantity="one">%1$d minute</item>

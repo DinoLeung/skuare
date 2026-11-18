@@ -33,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import xyz.d1n0.lib.constant.HandGroup
+import xyz.d1n0.ui.text.userMessage
 import xyz.d1n0.ui.theme.SkuareTheme
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -53,7 +54,7 @@ data class HandAdjustUiState(
 	val steps: Int = 0,
 	val isReady: Boolean = false,
 	val isMoving: Boolean = true,
-	val error: String? = null,
+	val error: Throwable? = null,
 ) {
 	/**
 	 * The largest move either way. A whole turn or more would be sent as 0, the move to the
@@ -161,7 +162,7 @@ fun HandAdjustDialog(
 					enabled = state.canSet,
 					modifier = Modifier.fillMaxWidth(),
 				) { Text(stringResource(Res.string.hand_adjust_set)) }
-				state.error?.let { ErrorText(it) }
+				state.error?.let { ErrorText(it.userMessage) }
 			}
 		},
 		confirmButton = {

@@ -14,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import xyz.d1n0.lib.constant.TimerStatus
 import xyz.d1n0.lib.model.Timer
 import xyz.d1n0.ui.component.TimerCard
+import xyz.d1n0.ui.text.userMessage
 import xyz.d1n0.ui.theme.SkuareTheme
 import kotlin.time.Duration.Companion.minutes
 import org.jetbrains.compose.resources.stringResource
@@ -50,7 +51,7 @@ private fun TimerScreenContent(
 			enabled = state.isInitialized && state.isLoading == false,
 			isError = state.hasErrors,
 			supportingText = {
-				state.pendingTimerError?.let { Text(it.message ?: stringResource(Res.string.common_unknown_error)) }
+				state.pendingTimerError?.let { Text(it.userMessage) }
 			}
 		)
 	}

@@ -23,6 +23,9 @@ data class Timer(
 		 */
 		const val PADDED_PACKET_SIZE = 15
 
+		/** Timers must be shorter than this. */
+		val MAX_DURATION = 1.days
+
 		fun fromPacket(packet: ByteArray): Timer {
 			packet.requireOpCode(OpCode.TIMER, "Timer")
 			require(packet.size == CLASSIC_PACKET_SIZE || packet.size == PADDED_PACKET_SIZE) {
@@ -40,7 +43,9 @@ data class Timer(
 	}
 
 	init {
-		require(duration < 1.days) { "Timer must not exceed 24 hours" }
+		if (duration >= MAX_DURATION) {
+			throw DurationTooLongException(MAX_DURATION, "Timer must be shorter than 24 hours")
+		}
 	}
 
 	/**

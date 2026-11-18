@@ -104,7 +104,7 @@ class HandAdjustSession(
 			_state.update { current ->
 				result.fold(
 					onSuccess = { current.onSuccess().copy(isMoving = false) },
-					onFailure = { current.copy(isMoving = false, error = it.message ?: "Unknown error") },
+					onFailure = { current.copy(isMoving = false, error = it) },
 				)
 			}
 		}

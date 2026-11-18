@@ -18,6 +18,7 @@ import xyz.d1n0.lib.constant.FontStyle
 import xyz.d1n0.lib.constant.WeekdayLanguage
 import xyz.d1n0.ui.component.*
 import xyz.d1n0.ui.text.label
+import xyz.d1n0.ui.text.userMessage
 import xyz.d1n0.ui.theme.SkuareTheme
 import org.jetbrains.compose.resources.stringResource
 import xyz.d1n0.resources.*
@@ -218,7 +219,7 @@ private fun SettingsScreenContent(
 						isError = state.pendingNameError != null,
 						supportingText = {
 							state.pendingNameError?.let {
-								Text(it.message ?: stringResource(Res.string.common_unknown_error))
+								Text(it.userMessage)
 							}
 						},
 						onValueChange = {

@@ -15,6 +15,7 @@ import xyz.d1n0.lib.model.Reminder
 import xyz.d1n0.lib.model.ReminderConfig
 import xyz.d1n0.lib.model.ReminderTitle
 import xyz.d1n0.ui.text.label
+import xyz.d1n0.ui.text.userMessage
 import xyz.d1n0.ui.theme.SkuareTheme
 import org.jetbrains.compose.resources.stringResource
 import xyz.d1n0.resources.*
@@ -141,7 +142,7 @@ fun ReminderCard(
 					}
 				}
 			}
-			configError?.message?.let { ErrorText(text = it) }
+			configError?.let { ErrorText(text = it.userMessage) }
 		}
 	}
 }

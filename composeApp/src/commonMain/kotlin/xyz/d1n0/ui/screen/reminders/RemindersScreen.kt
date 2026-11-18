@@ -16,6 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import xyz.d1n0.lib.model.ReminderTitle
 import xyz.d1n0.ui.component.ReminderCard
+import xyz.d1n0.ui.text.userMessage
 import xyz.d1n0.ui.theme.SkuareTheme
 
 @Composable
@@ -50,7 +51,7 @@ private fun RemindersScreenContent(
 					reminder = reminder,
 					titleEnabled = state.isTitlesInitialized && state.isLoading == false,
 					titleIsError = state.pendingTitleErrors[index] != null,
-					titleSupportingText = { state.pendingTitleErrors[index]?.message?.let { Text(it) } },
+					titleSupportingText = { state.pendingTitleErrors[index]?.let { Text(it.userMessage) } },
 					configEnabled = state.isConfigsInitialized && state.isLoading == false,
 					configError = state.pendingConfigErrors[index],
 					onTitleChange = {

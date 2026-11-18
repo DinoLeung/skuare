@@ -12,6 +12,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import xyz.d1n0.lib.constant.AutoSyncDelay
+import xyz.d1n0.ui.text.userMessage
 import xyz.d1n0.ui.theme.SkuareTheme
 import kotlin.math.roundToInt
 
@@ -77,7 +78,7 @@ fun SliderField(
 			onValueChange = { onValueChange(it.roundToInt()) },
 			modifier = modifier,
 		)
-		val errorMessage = error?.message
+		val errorMessage = error?.userMessage
 		if (errorMessage != null) {
 			ErrorText(text = errorMessage)
 		} else if (supportingText != null) {
