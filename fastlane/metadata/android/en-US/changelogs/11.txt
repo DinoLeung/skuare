@@ -1,0 +1,4 @@
+- Add a disconnect button to the title bar
+- Show when the watch adjusts its time in Time Adjustment settings
+- Disable the number box next to a disabled slider
+- Typos, wrong error messages and a deprecated name
