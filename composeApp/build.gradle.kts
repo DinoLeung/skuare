@@ -40,6 +40,7 @@ kotlin {
 			implementation(libs.material.icons.extended)
 			implementation(libs.compose.ui)
 			implementation(libs.compose.ui.tooling.preview)
+			implementation(libs.compose.components.resources)
 			implementation(libs.androidx.lifecycle.viewmodel)
 			implementation(libs.androidx.lifecycle.runtime.compose)
 			implementation(libs.androidx.lifecycle.viewmodel.compose)
@@ -148,6 +149,10 @@ dependencies {
 	listOf("kspAndroid", "kspIosArm64", "kspIosSimulatorArm64").forEach {
 		add(it, libs.room.compiler)
 	}
+}
+
+compose.resources {
+	packageOfResClass = "xyz.d1n0.resources"
 }
 
 room {
