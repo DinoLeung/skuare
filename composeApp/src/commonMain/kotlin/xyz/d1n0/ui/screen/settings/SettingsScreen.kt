@@ -166,10 +166,19 @@ private fun SettingsScreenContent(
 						enabled = state.isConnectionSettingsInitialized && state.isLoading == false,
 						modifier = Modifier.fillMaxWidth()
 					)
+					val autoSyncEnabled = state.pendingConnectionSettings.autoSyncEnable
+					val adjustmentTimes = state.pendingConnectionSettings.autoSyncDelay.adjustmentTimes
+						.map { it.toString() }
+					val schedule = "${adjustmentTimes.dropLast(1).joinToString(", ")} and ${adjustmentTimes.last()}"
 					SliderField(
-						label = "Auto time Adjustment Delay",
+						label = "Minutes past the hour",
+						supportingText = if (autoSyncEnabled) {
+							"The watch adjusts its time at $schedule"
+						} else {
+							"The watch won't adjust its time automatically"
+						},
 						value = state.pendingConnectionSettings.autoSyncDelay.minutes,
-						enabled = state.isConnectionSettingsInitialized && state.isLoading == false,
+						enabled = autoSyncEnabled && state.isConnectionSettingsInitialized && state.isLoading == false,
 						range = 0..59,
 						onValueChange = {
 							onEvent(

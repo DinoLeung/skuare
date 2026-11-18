@@ -25,6 +25,7 @@ fun SliderField(
 	range: IntRange,
 	onValueChange: (Int) -> Unit,
 	error: Throwable?,
+	supportingText: String? = null,
 ) {
 	var textFieldValue by remember {
 		mutableStateOf(
@@ -76,7 +77,17 @@ fun SliderField(
 			onValueChange = { onValueChange(it.roundToInt()) },
 			modifier = modifier,
 		)
-		error?.message?.let { ErrorText(text = it) }
+		val errorMessage = error?.message
+		if (errorMessage != null) {
+			ErrorText(text = errorMessage)
+		} else if (supportingText != null) {
+			Text(
+				text = supportingText,
+				style = MaterialTheme.typography.bodySmall,
+				color = MaterialTheme.colorScheme.onSurfaceVariant,
+				modifier = Modifier.fillMaxWidth(),
+			)
+		}
 	}
 
 }
