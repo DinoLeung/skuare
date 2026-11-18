@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
+import xyz.d1n0.R
 
 object WatchNotifications {
 	private const val CHANNEL_ID = "watch_connection"
@@ -15,9 +16,14 @@ object WatchNotifications {
 	 * Android from deferring its display during a short connection.
 	 */
 	fun connected(context: Context, name: String?): Notification =
-		connectionNotification(context, "Connected to ${name ?: "watch"}")
+		connectionNotification(
+			context,
+			name?.let { context.getString(R.string.notification_connected, it) }
+				?: context.getString(R.string.notification_connected_unnamed),
+		)
 
-	fun syncing(context: Context): Notification = connectionNotification(context, "Syncing time")
+	fun syncing(context: Context): Notification =
+		connectionNotification(context, context.getString(R.string.notification_syncing))
 
 	fun updateConnected(context: Context, name: String?) {
 		context.getSystemService(NotificationManager::class.java)
@@ -50,7 +56,11 @@ object WatchNotifications {
 
 	private fun createChannel(context: Context) {
 		context.getSystemService(NotificationManager::class.java).createNotificationChannel(
-			NotificationChannel(CHANNEL_ID, "Watch connection", NotificationManager.IMPORTANCE_LOW)
+			NotificationChannel(
+				CHANNEL_ID,
+				context.getString(R.string.notification_channel_watch_connection),
+				NotificationManager.IMPORTANCE_LOW,
+			)
 		)
 	}
 }
