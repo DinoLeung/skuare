@@ -8,13 +8,4 @@ enum class WeekdayLanguage(val byte: Byte) {
 			"Unknown language value: ${byte.toHexString(HexFormat.UpperCase)}"
 		)
 	}
-
-	override fun toString(): String = when (this) {
-		EN -> "English"
-		ES -> "Spanish"
-		FR -> "French"
-		DE -> "German"
-		IT -> "Italian"
-		RU -> "Russian"
-	}
 }

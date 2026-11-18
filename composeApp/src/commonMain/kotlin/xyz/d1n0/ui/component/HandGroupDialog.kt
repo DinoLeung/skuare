@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import xyz.d1n0.lib.constant.HandGroup
+import xyz.d1n0.ui.text.label
 import xyz.d1n0.ui.theme.SkuareTheme
 import org.jetbrains.compose.resources.stringResource
 import xyz.d1n0.resources.*
@@ -34,7 +35,7 @@ fun HandGroupDialog(
 			Column {
 				groups.forEach { group ->
 					ListItem(
-						headlineContent = { Text(group.toString()) },
+						headlineContent = { Text(stringResource(group.label)) },
 						colors = ListItemDefaults.colors(containerColor = Color.Transparent),
 						modifier = Modifier.clickable { onSelect(group) },
 					)

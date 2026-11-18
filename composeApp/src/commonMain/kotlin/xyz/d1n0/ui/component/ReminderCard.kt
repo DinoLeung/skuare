@@ -14,6 +14,7 @@ import xyz.d1n0.lib.constant.ReminderRecurrence
 import xyz.d1n0.lib.model.Reminder
 import xyz.d1n0.lib.model.ReminderConfig
 import xyz.d1n0.lib.model.ReminderTitle
+import xyz.d1n0.ui.text.label
 import xyz.d1n0.ui.theme.SkuareTheme
 import org.jetbrains.compose.resources.stringResource
 import xyz.d1n0.resources.*
@@ -69,6 +70,7 @@ fun ReminderCard(
 				Box(modifier = Modifier.weight(1f)) {
 					EnumDropdown(
 						selectedOption = reminder.config.recurrence,
+						optionLabel = { stringResource(it.label) },
 						options = ReminderRecurrence.values().toSet(),
 						label = stringResource(Res.string.reminder_recurrence),
 						onOptionSelected = recurrenceChange,
@@ -114,6 +116,7 @@ fun ReminderCard(
 						ReminderRecurrence.REPEAT_WEEKLY -> {
 							EnumDropdown(
 								selectedOptions = reminder.config.daysOfWeek,
+								optionLabel = { stringResource(it.label) },
 								options = ReminderDayOfWeek.values().toSet(),
 								onOptionSelected = { daysOfWeekChange(it) },
 								allSelectedText = stringResource(Res.string.reminder_every_day),

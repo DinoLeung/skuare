@@ -13,22 +13,30 @@ import xyz.d1n0.lib.constant.ConnectionTimeout
 import xyz.d1n0.lib.constant.ReminderDayOfWeek
 import xyz.d1n0.lib.constant.ReminderRecurrence
 import xyz.d1n0.lib.constant.WeekdayLanguage
+import xyz.d1n0.ui.text.joinLocalized
+import xyz.d1n0.ui.text.label
 import xyz.d1n0.ui.theme.SkuareTheme
 import org.jetbrains.compose.resources.stringResource
 import xyz.d1n0.resources.*
 
+/**
+ * Picks one of [options]. [optionLabel] names each option, in the menu and in the field, e.g. a
+ * label from `xyz.d1n0.ui.text`.
+ */
 @Composable
 fun <T : Enum<T>> EnumDropdown(
 	selectedOption: T,
 	options: Set<T>,
+	optionLabel: @Composable (T) -> String,
 	onOptionSelected: (T) -> Unit,
 	label: String,
 	enabled: Boolean = true,
 	modifier: Modifier = Modifier,
 ) {
 	BaseEnumDropdown(
-		value = selectedOption.toString(),
+		value = optionLabel(selectedOption),
 		options = options,
+		optionLabel = optionLabel,
 		selectedChecker = { it == selectedOption },
 		onItemClick = onOptionSelected,
 		label = label,
@@ -37,10 +45,15 @@ fun <T : Enum<T>> EnumDropdown(
 	)
 }
 
+/**
+ * Picks any of [options]. The field lists the selected ones in enum order, or shows
+ * [allSelectedText] / [noneSelectedText].
+ */
 @Composable
 fun <T : Enum<T>> EnumDropdown(
 	selectedOptions: Set<T>,
 	options: Set<T>,
+	optionLabel: @Composable (T) -> String,
 	onOptionSelected: (Set<T>) -> Unit,
 	allSelectedText: String = "",
 	noneSelectedText: String = "",
@@ -52,9 +65,10 @@ fun <T : Enum<T>> EnumDropdown(
 		value = when (selectedOptions.size) {
 			0 -> noneSelectedText
 			options.size -> allSelectedText
-			else -> selectedOptions.sorted().joinToString()
+			else -> selectedOptions.sorted().map { optionLabel(it) }.joinLocalized()
 		},
 		options = options,
+		optionLabel = optionLabel,
 		selectedChecker = { it in selectedOptions },
 		onItemClick = { option ->
 			onOptionSelected(
@@ -103,7 +117,7 @@ private fun <T> BaseEnumDropdown(
 	selectedChecker: (T) -> Boolean,
 	onItemClick: (T) -> Unit,
 	label: String,
-	optionLabel: @Composable (T) -> String = { it.toString() },
+	optionLabel: @Composable (T) -> String,
 	isMultiSelect: Boolean = false,
 	enabled: Boolean = true,
 	modifier: Modifier = Modifier,
@@ -183,6 +197,7 @@ private fun EnumSingleDropdownPreview() {
 			CardView(modifier = Modifier.fillMaxWidth()) {
 				EnumDropdown(
 					selectedOption = connectionTimeout,
+					optionLabel = { it.label },
 					onOptionSelected = { connectionTimeout = it },
 					label = "Select delay",
 					options = ConnectionTimeout.values().toSet(),
@@ -193,6 +208,7 @@ private fun EnumSingleDropdownPreview() {
 			CardView(modifier = Modifier.fillMaxWidth()) {
 				EnumDropdown(
 					selectedOption = selectedLanguage,
+					optionLabel = { stringResource(it.label) },
 					onOptionSelected = { selectedLanguage = it },
 					label = "Select language",
 					options = WeekdayLanguage.values().toSet(),
@@ -219,6 +235,7 @@ private fun EnumSingleDropdownPreview() {
 					) {
 						EnumDropdown(
 							selectedOption = selectedRecurrence,
+							optionLabel = { stringResource(it.label) },
 							onOptionSelected = { selectedRecurrence = it },
 							label = "Recurrence",
 							options = ReminderRecurrence.values().toSet(),
@@ -226,6 +243,7 @@ private fun EnumSingleDropdownPreview() {
 						)
 						EnumDropdown(
 							selectedOptions = selectedWeekDays,
+							optionLabel = { stringResource(it.label) },
 							onOptionSelected = { selectedWeekDays = it },
 							label = "On",
 							options = ReminderDayOfWeek.values().toSet(),

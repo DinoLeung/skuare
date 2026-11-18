@@ -9,9 +9,4 @@ enum class DateFormat(val byte: Byte) {
 			DateFormat.entries.firstOrNull { it.byte == byte }
 				?: error("Unknown date format value: ${byte.toHexString(HexFormat.UpperCase)}")
 	}
-
-	override fun toString(): String = when (this) {
-		MMDD -> "MM.DD"
-		DDMM -> "DD.MM"
-	}
 }

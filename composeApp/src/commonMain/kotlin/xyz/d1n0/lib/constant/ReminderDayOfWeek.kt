@@ -19,17 +19,4 @@ enum class ReminderDayOfWeek(val mask: Int) {
 		fun byteFromDays(days: Set<ReminderDayOfWeek>): Byte =
 			days.fold(0) { acc, day -> acc or day.mask }.toByte()
 	}
-
-	val abbreviatedName: String
-		get() = when (this) {
-			SUNDAY -> "Sun"
-			MONDAY -> "Mon"
-			TUESDAY -> "Tue"
-			WEDNESDAY -> "Wed"
-			THURSDAY -> "Thu"
-			FRIDAY -> "Fri"
-			SATURDAY -> "Sat"
-		}
-
-	override fun toString() = abbreviatedName
 }

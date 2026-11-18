@@ -17,6 +17,7 @@ import xyz.d1n0.lib.constant.DateFormat
 import xyz.d1n0.lib.constant.FontStyle
 import xyz.d1n0.lib.constant.WeekdayLanguage
 import xyz.d1n0.ui.component.*
+import xyz.d1n0.ui.text.label
 import xyz.d1n0.ui.theme.SkuareTheme
 import org.jetbrains.compose.resources.stringResource
 import xyz.d1n0.resources.*
@@ -79,6 +80,7 @@ private fun SettingsScreenContent(
 						EnumDropdown(
 							label = stringResource(Res.string.settings_date_format),
 							selectedOption = state.pendingWatchSettings.dateFormat,
+							optionLabel = { it.label },
 							onOptionSelected = {
 								onEvent(SettingsUiEvent.DateFormatChange(it))
 							},
@@ -90,6 +92,7 @@ private fun SettingsScreenContent(
 							EnumDropdown(
 								label = stringResource(Res.string.settings_weekday_language),
 								selectedOption = state.pendingWatchSettings.weekdayLanguage,
+								optionLabel = { stringResource(it.label) },
 								onOptionSelected = {
 									onEvent(SettingsUiEvent.WeekdayLanguageChange(it))
 								},
@@ -103,6 +106,7 @@ private fun SettingsScreenContent(
 						EnumDropdown(
 							label = stringResource(Res.string.settings_font_style),
 							selectedOption = state.pendingWatchSettings.fontStyle,
+							optionLabel = { stringResource(it.label) },
 							onOptionSelected = {
 								onEvent(SettingsUiEvent.FontStyleChange(it))
 							},
@@ -140,6 +144,7 @@ private fun SettingsScreenContent(
 					EnumDropdown(
 						label = stringResource(Res.string.settings_backlight_duration),
 						selectedOption = state.pendingWatchSettings.backlightDuration,
+						optionLabel = { stringResource(it.label) },
 						onOptionSelected = {
 							onEvent(
 								SettingsUiEvent.BacklightDurationChange(
@@ -245,6 +250,7 @@ private fun SettingsScreenContent(
 					EnumDropdown(
 						label = stringResource(Res.string.settings_connection_timeout),
 						selectedOption = state.pendingConnectionSettings.connectionTimeout,
+						optionLabel = { it.label },
 						onOptionSelected = {
 							onEvent(
 								SettingsUiEvent.ConnectionTimeoutChange(

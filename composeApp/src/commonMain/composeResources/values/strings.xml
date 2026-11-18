@@ -13,6 +13,8 @@
 	<string name="common_save">Save</string>
 	<string name="common_selected">Selected</string>
 	<string name="common_unknown_error">Unknown error</string>
+	<!-- Joins two items of a list, applied repeatedly for longer ones: "Alarms, Timer, Settings" -->
+	<string name="common_list_join">%1$s, %2$s</string>
 
 	<!-- Tabs and title bar -->
 	<string name="nav_timezones">Timezones</string>
@@ -157,4 +159,43 @@
 	<string name="custom_model_intro_text">Only the basics are on: a home clock and one world clock. Use the wrench button in the title bar to turn on the features your watch has.</string>
 	<string name="custom_model_intro_adjust">Adjust</string>
 	<string name="custom_model_intro_later">Later</string>
+
+	<!-- Watch setting values -->
+	<string name="timer_status_not_started">Not Started</string>
+	<string name="timer_status_active">Active</string>
+	<string name="timer_status_suspended">Suspended</string>
+	<!-- Hands of an analog watch: the hour and minute hands, adjusted together -->
+	<string name="hand_group_clock">Clock hands</string>
+	<!-- Hand of an analog watch that points at the current mode -->
+	<string name="hand_group_mode">Mode hand</string>
+	<!-- Display font of the watch -->
+	<string name="font_style_standard">Standard</string>
+	<string name="font_style_classic">Classic</string>
+	<string name="backlight_duration_short">Short</string>
+	<string name="backlight_duration_long">Long</string>
+	<string name="reminder_recurrence_once">Once</string>
+	<string name="reminder_recurrence_daily">Daily</string>
+	<string name="reminder_recurrence_weekly">Weekly</string>
+	<string name="reminder_recurrence_monthly">Monthly</string>
+	<string name="reminder_recurrence_yearly">Yearly</string>
+	<!-- Languages the watch can show the weekday in -->
+	<string name="weekday_language_english">English</string>
+	<string name="weekday_language_spanish">Spanish</string>
+	<string name="weekday_language_french">French</string>
+	<string name="weekday_language_german">German</string>
+	<string name="weekday_language_italian">Italian</string>
+	<string name="weekday_language_russian">Russian</string>
+	<!-- Abbreviated weekdays, for the days a weekly reminder repeats on -->
+	<string name="day_sunday_short">Sun</string>
+	<string name="day_monday_short">Mon</string>
+	<string name="day_tuesday_short">Tue</string>
+	<string name="day_wednesday_short">Wed</string>
+	<string name="day_thursday_short">Thu</string>
+	<string name="day_friday_short">Fri</string>
+	<string name="day_saturday_short">Sat</string>
+	<!-- %1$d: minutes the watch stays connected without activity -->
+	<plurals name="settings_connection_timeout_minutes">
+		<item quantity="one">%1$d minute</item>
+		<item quantity="other">%1$d minutes</item>
+	</plurals>
 </resources>
