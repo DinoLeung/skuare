@@ -20,8 +20,11 @@ interface PairedWatchDao {
 	@Upsert
 	suspend fun upsert(watch: PairedWatch)
 
-	@Query("UPDATE paired_watch SET lastSyncAt = :at, lastSyncError = :error WHERE address = :address")
-	suspend fun updateLastSync(address: String, at: Instant, error: String?)
+	@Query(
+		"UPDATE paired_watch SET lastSyncAt = :at, lastSyncFailure = :failure, lastSyncErrorDetail = :errorDetail " +
+			"WHERE address = :address"
+	)
+	suspend fun updateLastSync(address: String, at: Instant, failure: SyncFailure?, errorDetail: String?)
 
 	@Query("UPDATE paired_watch SET displayName = :displayName WHERE address = :address")
 	suspend fun updateDisplayName(address: String, displayName: String)

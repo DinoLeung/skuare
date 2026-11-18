@@ -208,6 +208,8 @@
 	<string name="error_value_out_of_range">Must be between %1$d and %2$d</string>
 	<!-- %1$s: the error packet's bytes in hex, e.g. FF 81 1A -->
 	<string name="error_watch_replied">The watch returned an error: %1$s</string>
+	<string name="error_watch_timeout">The watch didn't respond in time</string>
+	<string name="error_connection_lost">The connection to the watch was lost</string>
 	<!-- %1$s: a technical description in English, kept for bug reports -->
 	<string name="error_unexpected">Something went wrong: %1$s</string>
 

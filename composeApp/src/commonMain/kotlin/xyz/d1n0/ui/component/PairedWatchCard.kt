@@ -23,6 +23,7 @@ import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
 import xyz.d1n0.data.database.PairedWatch
 import kotlin.time.Instant
+import xyz.d1n0.ui.text.lastSyncFailureMessage
 import xyz.d1n0.ui.theme.SkuareTheme
 import org.jetbrains.compose.resources.stringResource
 import xyz.d1n0.resources.*
@@ -50,7 +51,7 @@ fun PairedWatchCard(
 				text = watch.lastSyncText,
 				style = MaterialTheme.typography.bodyMedium,
 			)
-			watch.lastSyncError?.let { ErrorText(it) }
+			watch.lastSyncFailureMessage?.let { ErrorText(it) }
 			TextButton(onClick = { showForgetDialog = true }) {
 				Text(stringResource(Res.string.paired_watch_forget_button))
 			}
@@ -86,7 +87,7 @@ private val lastSyncFormat = LocalDateTime.Format {
 private val PairedWatch.lastSyncText: String
 	@Composable get() = when {
 		lastSyncAt == null -> stringResource(Res.string.paired_watch_never_synced)
-		lastSyncError == null -> stringResource(Res.string.paired_watch_last_synced, lastSyncAt.format())
+		lastSyncFailure == null -> stringResource(Res.string.paired_watch_last_synced, lastSyncAt.format())
 		else -> stringResource(Res.string.paired_watch_last_sync_failed, lastSyncAt.format())
 	}
 

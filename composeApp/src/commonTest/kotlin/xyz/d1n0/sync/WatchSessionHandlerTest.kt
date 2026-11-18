@@ -12,6 +12,7 @@ import xyz.d1n0.data.database.AppConfig
 import xyz.d1n0.data.database.AppConfigDao
 import xyz.d1n0.data.database.FakePairedWatchDao
 import xyz.d1n0.data.database.PairedWatch
+import xyz.d1n0.data.database.SyncFailure
 import xyz.d1n0.data.repository.InstallationRepository
 import xyz.d1n0.data.repository.PairedWatchRepository
 import xyz.d1n0.lib.connection.WatchConnectionManager
@@ -19,6 +20,7 @@ import xyz.d1n0.lib.constant.ConnectReason
 import xyz.d1n0.lib.constant.OpCode
 import xyz.d1n0.lib.model.AppInfo
 import xyz.d1n0.lib.model.CustomWatchModel
+import xyz.d1n0.lib.model.WatchErrorPacket
 import xyz.d1n0.lib.model.WatchFeatures
 import xyz.d1n0.lib.model.WatchInfo
 import xyz.d1n0.lib.model.WatchModel
@@ -219,7 +221,7 @@ class WatchSessionHandlerTest {
 		assertEquals("My square", stored.displayName)
 		assertEquals(42, stored.platformAssociationId)
 		assertNotNull(stored.lastSyncAt)
-		assertNull(stored.lastSyncError)
+		assertNull(stored.lastSyncFailure)
 		assertEquals(
 			listOf("connected:My square", "syncing", "connected:My square"),
 			fixture.connectionNotifier.events,
@@ -516,7 +518,7 @@ class WatchSessionHandlerTest {
 		val stored = assertNotNull(fixture.repository.find(ADDRESS))
 		assertEquals("New name", stored.displayName)
 		assertNotNull(stored.lastSyncAt)
-		assertNull(stored.lastSyncError)
+		assertNull(stored.lastSyncFailure)
 		assertEquals(
 			listOf("connected:New name", "syncing", "connected:New name"),
 			fixture.connectionNotifier.events,
@@ -538,7 +540,9 @@ class WatchSessionHandlerTest {
 
 		val synced = assertIs<BackgroundSessionResult.Synced>(result)
 		assertTrue(synced.error === failure)
-		assertEquals("write failed", fixture.repository.find(ADDRESS)?.lastSyncError)
+		val stored = assertNotNull(fixture.repository.find(ADDRESS))
+		assertEquals(SyncFailure.OTHER, stored.lastSyncFailure)
+		assertEquals("write failed", stored.lastSyncErrorDetail)
 		assertEquals(1, watch.disconnectCount)
 		assertEquals(
 			listOf(
@@ -548,6 +552,22 @@ class WatchSessionHandlerTest {
 			),
 			fixture.connectionNotifier.events,
 		)
+	}
+
+	@Test
+	fun watchErrorDuringTimeAdjustmentIsRecordedWithItsBytes() = runTest {
+		val fixture = Fixture()
+		fixture.pair()
+		val watch = FakeConnectedWatch(
+			connectReason = ConnectReason.AUTO_SYNC,
+			adjustResult = Result.failure(WatchErrorPacket("FF811D".hexToByteArray())),
+		)
+
+		fixture.handler.runBackground(ADDRESS) { watch }
+
+		val stored = assertNotNull(fixture.repository.find(ADDRESS))
+		assertEquals(SyncFailure.WATCH_ERROR, stored.lastSyncFailure)
+		assertEquals("FF 81 1D", stored.lastSyncErrorDetail)
 	}
 
 	@Test

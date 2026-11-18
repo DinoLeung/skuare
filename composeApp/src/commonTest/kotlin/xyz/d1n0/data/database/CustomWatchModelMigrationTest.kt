@@ -42,6 +42,15 @@ class CustomWatchModelMigrationTest {
 	}
 
 	@Test
+	fun version5KeepsOldSyncErrorsAsOtherWithTheirMessage() {
+		val sql = SyncFailureMigration.FILL_SYNC_FAILURE_SQL
+		// the kind of an old failure isn't known, its message moved to lastSyncErrorDetail
+		assertContains(sql, "lastSyncFailure = 'OTHER'")
+		// a sync that succeeded must keep a NULL failure
+		assertContains(sql, "WHERE lastSyncErrorDetail IS NOT NULL")
+	}
+
+	@Test
 	fun unknownWatchGetsDefaultCustomModel() {
 		assertEquals(CustomWatchModel(), migratedCustomModel("CASIO GBD-H2000"))
 		assertEquals(CustomWatchModel(), migratedCustomModel("CASIO GW-B5600BC"))
