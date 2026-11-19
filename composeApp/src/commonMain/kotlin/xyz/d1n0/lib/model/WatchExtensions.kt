@@ -116,10 +116,10 @@ private fun ByteArray.isClocksReply() = when (firstOrNull()) {
 }
 
 suspend fun Watch.writeClocks(clocksSettings: ClocksSettings) =
-	clocksSettings.clocksPackets.forEach { write(it) }
+	clocksSettings.clocksPackets.forEach { writeOrThrow(it) }
 
 suspend fun Watch.writeTime(delay: Duration = 0.seconds) =
-	clocks.value.pinnedClock?.let { write(it.getCurrentDateTimePacket(delay = delay)) }
+	clocks.value.pinnedClock?.let { writeOrThrow(it.getCurrentDateTimePacket(delay = delay)) }
 
 suspend fun Watch.requestAlarms() {
 	request(OpCode.ALARM_A)
@@ -139,7 +139,7 @@ suspend fun Watch.requestTimeZoneConfigs() {
 }
 
 suspend fun Watch.writeTimeZoneConfigs(clocksSettings: ClocksSettings) =
-	clocksSettings.timeZoneConfigPackets.forEach { write(it) }
+	clocksSettings.timeZoneConfigPackets.forEach { writeOrThrow(it) }
 
 suspend fun Watch.requestTimeZoneNames() {
 	for (i in 0 until model.clockCount) {
@@ -152,7 +152,7 @@ suspend fun Watch.requestTimeZoneNames() {
  * name, the same order as the official app: 1F 00, 1F 06, 1F 01, 1F 07, …
  */
 suspend fun Watch.writeTimeZoneNames(clocksSettings: ClocksSettings) =
-	timeZoneNamePackets(clocksSettings).forEach { write(it) }
+	timeZoneNamePackets(clocksSettings).forEach { writeOrThrow(it) }
 
 private fun Watch.timeZoneNamePackets(clocksSettings: ClocksSettings): List<ByteArray> =
 	if (model.hasShortCityNames) {
@@ -174,7 +174,7 @@ suspend fun Watch.requestTimeZoneCoordinatesAndRadioId() {
 
 /** Writes nothing on watches without [WatchFeatures.hasTimeZoneLocation]. */
 suspend fun Watch.writeTimeZoneCoordinatesAndRadioId(clocksSettings: ClocksSettings) =
-	timeZoneLocationPackets(clocksSettings).forEach { write(it) }
+	timeZoneLocationPackets(clocksSettings).forEach { writeOrThrow(it) }
 
 suspend fun Watch.requestReminderTitles() {
 	for (i in 1..model.reminderCount) {
@@ -203,6 +203,9 @@ suspend fun Watch.writeReminderConfigs(remindersSettings: RemindersSettings) =
  * order: clocks, configs with coordinates and radio IDs, then names. Otherwise each packet is
  * written to the IO characteristic.
  *
+ * Unlike most writes, a failed one throws, e.g. [com.juul.kable.NotConnectedException], so a sync
+ * or save that didn't reach the watch fails.
+ *
  * @throws IllegalArgumentException if a clock isn't initialized.
  */
 private suspend fun Watch.writeClocksAndTimeZoneData(clocksSettings: ClocksSettings) {
@@ -212,7 +215,7 @@ private suspend fun Watch.writeClocksAndTimeZoneData(clocksSettings: ClocksSetti
 			clocksSettings.timeZoneConfigPackets + timeZoneLocationPackets(clocksSettings),
 			timeZoneNamePackets(clocksSettings),
 		)
-		batches.forEach { writeBatch(it) }
+		batches.forEach { writeBatchOrThrow(it) }
 	} else {
 		writeClocks(clocksSettings)
 		writeTimeZoneConfigs(clocksSettings)
@@ -284,8 +287,6 @@ suspend fun Watch.adjustTime(delay: Duration = 0.seconds) =
 		}
 		writeClocksAndTimeZoneData(clocks.value)
 		writeTime(delay = delay)
-		// the writes only log their failures, a disconnect during them must not count as a sync
-		requireConnected()
 	}.onSuccess {
 		log.d { "Time sync completed" }
 	}.onFailure { error ->
@@ -293,9 +294,9 @@ suspend fun Watch.adjustTime(delay: Duration = 0.seconds) =
 	}
 
 /**
- * Throws [NotConnectedException] if the watch is no longer connected. [Watch.write] and
- * [Watch.request] log a failure instead of throwing, so a sequence of them checks the connection
- * after, e.g. to not record a time sync the watch never received.
+ * Throws [NotConnectedException] if the watch is no longer connected. [Watch.request] logs a
+ * failure instead of throwing, so a wait for its reply checks the connection, e.g. to report a
+ * lost connection rather than a timeout.
  */
 private fun Watch.requireConnected() {
 	if (state.value !is State.Connected) throw NotConnectedException("Watch disconnected")
