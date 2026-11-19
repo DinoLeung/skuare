@@ -92,5 +92,7 @@ One Gradle module, `composeApp`, holds everything, UI included.
 
 - Tabs for indentation, official Kotlin code style.
 - Conventional commit subjects (`feat:`, `fix:`, `refactor:`, `docs:`, `test:`, `build:`,
-  `chore:`). `scripts/changelog.sh` builds the store changelog from `feat` and `fix` subjects, so
-  those must read as user-facing notes.
+  `chore:`). `scripts/store-changelog.sh` lists `feat` subjects in the F-Droid and Play changelog
+  (any `fix` commits become one "Bug fixes" line), and `scripts/github-release-notes.sh` groups
+  `feat`, `fix` and `refactor` subjects for the GitHub release, so those must read as user-facing
+  notes.

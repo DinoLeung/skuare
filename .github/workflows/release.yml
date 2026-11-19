@@ -25,6 +25,9 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
+        with:
+          # Full history and tags for scripts/github-release-notes.sh
+          fetch-depth: 0
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -48,10 +51,10 @@ jobs:
           fi
       - name: Copy Play release notes
         run: |
-          # Committed by scripts/changelog.sh so F-Droid reads the same notes from the tag
+          # Committed by scripts/store-changelog.sh so F-Droid reads the same notes from the tag
           code=$(grep -oP 'versionCode = \K[0-9]+' composeApp/build.gradle.kts)
           notes=fastlane/metadata/android/en-US/changelogs/$code.txt
-          [ -f "$notes" ] || { echo "Missing $notes, run scripts/changelog.sh before tagging"; exit 1; }
+          [ -f "$notes" ] || { echo "Missing $notes, run scripts/store-changelog.sh before tagging"; exit 1; }
           mkdir -p "$RUNNER_TEMP/whatsnew"
           cp "$notes" "$RUNNER_TEMP/whatsnew/whatsnew-$PLAY_LOCALE"
           cat "$RUNNER_TEMP/whatsnew/whatsnew-$PLAY_LOCALE"
@@ -76,10 +79,12 @@ jobs:
           tracks: ${{ steps.channel.outputs.track }}
           status: completed
           whatsNewDirectory: ${{ runner.temp }}/whatsnew
+      - name: Write GitHub release notes
+        run: scripts/github-release-notes.sh | tee "$RUNNER_TEMP/release-notes.md"
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          generate_release_notes: true
+          body_path: ${{ runner.temp }}/release-notes.md
           prerelease: ${{ steps.channel.outputs.prerelease }}
           files: |
             composeApp/build/outputs/apk/release/composeApp-release.apk
