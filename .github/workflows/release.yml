@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: read
 
 env:
   # Play track for -rc tags: alpha = closed testing, beta = open testing
@@ -81,6 +82,9 @@ jobs:
           whatsNewDirectory: ${{ runner.temp }}/whatsnew
       - name: Write GitHub release notes
         run: scripts/github-release-notes.sh | tee "$RUNNER_TEMP/release-notes.md"
+        env:
+          # Looks up the pull request behind each commit to credit other contributors
+          GH_TOKEN: ${{ github.token }}
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
