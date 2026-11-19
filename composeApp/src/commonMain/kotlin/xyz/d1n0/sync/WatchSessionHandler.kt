@@ -271,7 +271,8 @@ class WatchSessionHandler(
 		address?.let {
 			pairedWatchRepository.recordSync(
 				address = it,
-				error = error?.let { e -> e.message ?: e::class.simpleName ?: "Unknown error" },
+				failure = error?.syncFailure,
+				errorDetail = error?.syncErrorDetail,
 			)
 		}
 		return error

@@ -72,7 +72,8 @@ class TimerTest {
 
 	@Test
 	fun rejectsDurationOfOneDay() {
-		assertFailsWith<IllegalArgumentException> { Timer(1.days, TimerStatus.NOT_STARTED) }
+		val error = assertFailsWith<DurationTooLongException> { Timer(1.days, TimerStatus.NOT_STARTED) }
+		assertEquals(1.days, error.limit)
 	}
 
 	@Test

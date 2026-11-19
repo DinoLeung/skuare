@@ -15,7 +15,8 @@ import kotlin.time.Instant
  * @property displayName Name the user set on the watch, see [xyz.d1n0.lib.model.WatchInfo.name]. Falls
  *           back to [advertisedName] until the watch has told us its name.
  * @property lastSyncAt When the last time sync finished, in the background or from the app, null if it never ran.
- * @property lastSyncError Why the last time sync failed, null if it succeeded.
+ * @property lastSyncFailure Why the last time sync failed, null if it succeeded.
+ * @property lastSyncErrorDetail Technical detail of [lastSyncFailure], English, e.g. the watch's error packet in hex.
  * @property platformAssociationId Android Companion Device Manager association id, unused on iOS.
  * @property customModel Features the user set for a watch skuare doesn't recognise, null for a
  *           known [xyz.d1n0.lib.model.WatchModel]. Only a watch paired as custom has one, see
@@ -29,7 +30,8 @@ data class PairedWatch(
 	val displayName: String,
 	val pairedAt: Instant,
 	val lastSyncAt: Instant? = null,
-	val lastSyncError: String? = null,
+	val lastSyncFailure: SyncFailure? = null,
+	val lastSyncErrorDetail: String? = null,
 	val platformAssociationId: Int? = null,
 	@Embedded(prefix = "model_") val customModel: CustomWatchModel? = null,
 	@ColumnInfo(defaultValue = "0") val customModelIntroShown: Boolean = false,

@@ -13,7 +13,10 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
+import xyz.d1n0.ui.text.label
 import xyz.d1n0.ui.theme.SkuareTheme
+import org.jetbrains.compose.resources.stringResource
+import xyz.d1n0.resources.*
 
 @Composable
 fun TimerCard(
@@ -26,10 +29,10 @@ fun TimerCard(
 ) {
 	CardView(
 		modifier = modifier,
-		title = { Text("Timer") },
+		title = { Text(stringResource(Res.string.timer_title)) },
 		indicator = {
 			AssistChip(
-				label = { Text(timer.status.toString()) },
+				label = { Text(stringResource(timer.status.label)) },
 				onClick = { /* no-op */ },
 			)
 		},

@@ -17,7 +17,7 @@ import (
 	"strings"
 )
 
-// Run together with iataCityCodes.go: go run generateWorldCitymap.go iataCityCodes.go
+// Run together with the shared files: go run generateWorldCitymap.go iataCityCodes.go timezoneNames.go
 
 const (
 	boundaryReleaseURL = "https://api.github.com/repos/evansiroky/timezone-boundary-builder/releases/latest"
@@ -78,7 +78,6 @@ func run() error {
 	if err != nil {
 		return err
 	}
-
 	ianaData, err := download(ianaDataURL)
 	if err != nil {
 		return fmt.Errorf("download latest IANA timezone data: %w", err)
@@ -144,7 +143,15 @@ func run() error {
 		len(cities),
 		ianaVersion,
 	)
-	return nil
+
+	// last, so a failed download or boundary check leaves the app's city names as they were
+	names := make([]cityDisplayName, 0, len(cities))
+	for _, city := range cities {
+		names = append(names, cityDisplayName{id: city.id, name: city.city})
+	}
+	return writeCityNames(
+		"world_timezones.xml", worldCityKeyPrefix, "generateWorldCitymap.go", "world_time_city.csv", names,
+	)
 }
 
 func readCities(path string) ([]*cityRecord, error) {

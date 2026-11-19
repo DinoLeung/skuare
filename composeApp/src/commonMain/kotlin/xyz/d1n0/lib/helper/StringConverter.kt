@@ -1,8 +1,6 @@
 package xyz.d1n0.lib.helper
 
-import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
-import kotlinx.datetime.Month
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
@@ -32,37 +30,3 @@ fun Duration.Companion.fromHHMMSS(text: String): Duration {
 
 fun LocalTime.toHHMMString() =
 	this.hour.toString().padStart(2, '0') + ":" + this.minute.toString().padStart(2, '0')
-
-fun Month.abbreviatedName(): String = when (this) {
-	Month.JANUARY -> "Jan"
-	Month.FEBRUARY -> "Feb"
-	Month.MARCH -> "Mar"
-	Month.APRIL -> "Apr"
-	Month.MAY -> "May"
-	Month.JUNE -> "Jun"
-	Month.JULY -> "Jul"
-	Month.AUGUST -> "Aug"
-	Month.SEPTEMBER -> "Sep"
-	Month.OCTOBER -> "Oct"
-	Month.NOVEMBER -> "Nov"
-	Month.DECEMBER -> "Dec"
-}
-
-fun Month.fullName(): String = when (this) {
-	Month.JANUARY -> "January"
-	Month.FEBRUARY -> "February"
-	Month.MARCH -> "March"
-	Month.APRIL -> "April"
-	Month.MAY -> "May"
-	Month.JUNE -> "June"
-	Month.JULY -> "July"
-	Month.AUGUST -> "August"
-	Month.SEPTEMBER -> "September"
-	Month.OCTOBER -> "October"
-	Month.NOVEMBER -> "November"
-	Month.DECEMBER -> "December"
-}
-
-fun LocalDate.toMonthYear() = "${this.month.fullName()} ${this.year}"
-fun LocalDate.toDayMonthYear() =
-	"${this.day} ${this.month.abbreviatedName()} ${(this.year - 2000).toString().padStart(2, '0')}"

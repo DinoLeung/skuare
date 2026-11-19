@@ -5,10 +5,14 @@ import xyz.d1n0.lib.helper.requireOpCode
 
 data class WatchName(val value: String) {
 	init {
-		require(value.length <= 19) { "Watch name must not exceed 19 characters" }
+		if (value.length > MAX_LENGTH) {
+			throw TextTooLongException(MAX_LENGTH, "Watch name must not exceed $MAX_LENGTH characters")
+		}
 	}
 
 	companion object {
+		const val MAX_LENGTH = 19
+
 		fun fromPacket(packet: ByteArray): WatchName {
 			packet.requireOpCode(OpCode.WATCH_NAME, "Watch name")
 			require(packet.size == 20) {

@@ -25,8 +25,8 @@ internal class FakePairedWatchDao : PairedWatchDao {
 		watches.update { current -> current.filterNot { it.address == watch.address } + watch }
 	}
 
-	override suspend fun updateLastSync(address: String, at: Instant, error: String?) =
-		updateWhere(address) { it.copy(lastSyncAt = at, lastSyncError = error) }
+	override suspend fun updateLastSync(address: String, at: Instant, failure: SyncFailure?, errorDetail: String?) =
+		updateWhere(address) { it.copy(lastSyncAt = at, lastSyncFailure = failure, lastSyncErrorDetail = errorDetail) }
 
 	override suspend fun updateDisplayName(address: String, displayName: String) =
 		updateWhere(address) { it.copy(displayName = displayName) }

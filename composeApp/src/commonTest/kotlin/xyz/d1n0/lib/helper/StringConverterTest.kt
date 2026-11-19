@@ -1,8 +1,6 @@
 package xyz.d1n0.lib.helper
 
-import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
-import kotlinx.datetime.Month
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -63,30 +61,5 @@ class StringConverterTest {
 		assertEquals("00:00", LocalTime(0, 0).toHHMMString())
 		assertEquals("07:05", LocalTime(7, 5).toHHMMString())
 		assertEquals("23:59", LocalTime(23, 59).toHHMMString())
-	}
-
-	@Test
-	fun `Month name helpers cover every month`() {
-		val abbreviated = listOf(
-			"Jan", "Feb", "Mar", "Apr", "May", "Jun",
-			"Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
-		)
-		val full = listOf(
-			"January", "February", "March", "April", "May", "June",
-			"July", "August", "September", "October", "November", "December",
-		)
-
-		Month.entries.forEachIndexed { index, month ->
-			assertEquals(abbreviated[index], month.abbreviatedName())
-			assertEquals(full[index], month.fullName())
-		}
-	}
-
-	@Test
-	fun `LocalDate helpers format picker labels`() {
-		val date = LocalDate(2026, 10, 8)
-
-		assertEquals("October 2026", date.toMonthYear())
-		assertEquals("8 Oct 26", date.toDayMonthYear())
 	}
 }

@@ -28,6 +28,8 @@ import xyz.d1n0.lib.model.WorldClock
 import xyz.d1n0.ui.component.ClockCard
 import xyz.d1n0.ui.component.TimeZonePickerDialog
 import xyz.d1n0.ui.theme.SkuareTheme
+import org.jetbrains.compose.resources.stringResource
+import xyz.d1n0.resources.*
 
 @Composable
 fun TimezonesScreen(viewModel: TimezonesScreenViewModel) {
@@ -119,7 +121,7 @@ private fun ClockTimeZonePickerDialog(
 			onConfirm(clock.copy(timeZone = timeZone, dstSettings = dstSettings))
 		},
 		onDismiss = onDismiss,
-		title = "Select home time zone",
+		title = stringResource(Res.string.timezones_select_home),
 	)
 
 	is WorldClock -> TimeZonePickerDialog(
@@ -131,7 +133,7 @@ private fun ClockTimeZonePickerDialog(
 			onConfirm(clock.copy(timeZone = timeZone, dstSettings = dstSettings))
 		},
 		onDismiss = onDismiss,
-		title = "Select world time zone",
+		title = stringResource(Res.string.timezones_select_world),
 	)
 }
 

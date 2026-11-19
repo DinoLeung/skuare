@@ -21,7 +21,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import xyz.d1n0.resources.*
 import xyz.d1n0.ui.component.CustomWatchModelDialog
 import xyz.d1n0.ui.component.CustomWatchModelIntroDialog
 import xyz.d1n0.ui.component.DisconnectDialog
@@ -57,6 +59,7 @@ fun NavBarScaffold(
 	val settingsViewModel = koinViewModel<SettingsScreenViewModel>()
 
 	val navBarItems = viewModel.navBarItems
+	val watchName = viewModel.watchName ?: stringResource(Res.string.nav_this_watch)
 	// only screens with a tab, so a hidden screen is never saved
 	val saveableScreens: Map<NavBarRoute, SaveableScreen> = mapOf(
 		NavBarRoute.Timezones to timezonesViewModel,
@@ -109,7 +112,7 @@ fun NavBarScaffold(
 
 	if (showCustomModelIntro) {
 		CustomWatchModelIntroDialog(
-			watchName = viewModel.watchName,
+			watchName = watchName,
 			onAdjust = {
 				viewModel.dismissCustomModelIntro()
 				openCustomModelDialog(false)
@@ -138,7 +141,7 @@ fun NavBarScaffold(
 
 	customModel?.takeIf { showCustomModelDialog }?.let { model ->
 		CustomWatchModelDialog(
-			watchName = viewModel.watchName,
+			watchName = watchName,
 			initial = model,
 			hasUnsavedChanges = saveStates.values.any { it.hasUpdates },
 			disconnectsOnSave = customModelDisconnectsOnSave,
@@ -152,9 +155,8 @@ fun NavBarScaffold(
 
 	// in tab order, for the disconnect dialog
 	val unsavedTabs = navBarItems
-		.map { it.route }
-		.filter { saveStates[it]?.hasUpdates == true }
-		.map { it.route }
+		.filter { saveStates[it.route]?.hasUpdates == true }
+		.map { stringResource(it.title) }
 	var showDisconnectDialog by remember { mutableStateOf(false) }
 
 	if (showDisconnectDialog) {
@@ -171,7 +173,10 @@ fun NavBarScaffold(
 	Scaffold(
 		topBar = {
 			TopAppBar(
-				title = { Text(currentBottomNavBarRoute?.route ?: "Skuare") },
+				title = {
+					val tab = navBarItems.find { it.route == currentBottomNavBarRoute }
+					Text(stringResource(tab?.title ?: Res.string.app_name))
+				},
 				actions = {
 					IconButton(
 						onClick = {
@@ -181,14 +186,14 @@ fun NavBarScaffold(
 						// disconnecting mid-save could leave a write session half done
 						enabled = !isSaving && watchConnectionState.value is PeripheralState.Connected,
 					) {
-						Icon(Icons.Sharp.LinkOff, contentDescription = "Disconnect")
+						Icon(Icons.Sharp.LinkOff, contentDescription = stringResource(Res.string.common_disconnect))
 					}
 					if (customModel != null) {
 						IconButton(
 							onClick = { openCustomModelDialog(false) },
 							enabled = !isSaving && watchConnectionState.value is PeripheralState.Connected,
 						) {
-							Icon(Icons.Sharp.Build, contentDescription = "Adjust watch features")
+							Icon(Icons.Sharp.Build, contentDescription = stringResource(Res.string.nav_adjust_watch_features))
 						}
 					}
 				},

@@ -6,9 +6,12 @@ import xyz.d1n0.data.database.databaseBuilder
 import xyz.d1n0.sync.UnsupportedWatchPresenceMonitor
 import xyz.d1n0.sync.WatchConnectionNotifier
 import xyz.d1n0.sync.WatchPresenceMonitor
+import xyz.d1n0.ui.text.IosLocaleFormatter
+import xyz.d1n0.ui.text.LocaleFormatter
 
 actual val platformModule: Module = module {
 	single { databaseBuilder() }
 	single<WatchPresenceMonitor> { UnsupportedWatchPresenceMonitor() }
 	single<WatchConnectionNotifier> { WatchConnectionNotifier.None }
+	single<LocaleFormatter> { IosLocaleFormatter() }
 }

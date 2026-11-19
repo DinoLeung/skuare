@@ -40,6 +40,7 @@ kotlin {
 			implementation(libs.material.icons.extended)
 			implementation(libs.compose.ui)
 			implementation(libs.compose.ui.tooling.preview)
+			implementation(libs.compose.components.resources)
 			implementation(libs.androidx.lifecycle.viewmodel)
 			implementation(libs.androidx.lifecycle.runtime.compose)
 			implementation(libs.androidx.lifecycle.viewmodel.compose)
@@ -150,6 +151,12 @@ dependencies {
 	}
 }
 
+compose.resources {
+	packageOfResClass = "xyz.d1n0.resources"
+}
+
 room {
 	schemaDirectory("$projectDir/schemas")
 }
+
+apply(from = rootProject.file("gradle/i18n-checks.gradle.kts"))

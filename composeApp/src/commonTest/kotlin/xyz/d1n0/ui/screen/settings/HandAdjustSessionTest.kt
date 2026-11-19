@@ -9,9 +9,11 @@ import kotlinx.coroutines.test.runTest
 import xyz.d1n0.Log
 import xyz.d1n0.lib.constant.HandGroup
 import xyz.d1n0.lib.model.FakeHandAdjustWatch
+import xyz.d1n0.lib.model.WatchErrorPacket
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -102,7 +104,8 @@ class HandAdjustSessionTest {
 		val session = session(watch).apply { start() }
 		advanceUntilIdle()
 
-		assertNotNull(session.state.value.error)
+		// kept as the watch sent it, the dialog shows its bytes
+		assertIs<WatchErrorPacket>(session.state.value.error)
 		assertFalse(session.state.value.isMoving)
 		assertFalse(session.state.value.isReady)
 	}

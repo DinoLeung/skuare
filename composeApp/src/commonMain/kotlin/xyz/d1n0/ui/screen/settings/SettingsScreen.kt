@@ -17,7 +17,11 @@ import xyz.d1n0.lib.constant.DateFormat
 import xyz.d1n0.lib.constant.FontStyle
 import xyz.d1n0.lib.constant.WeekdayLanguage
 import xyz.d1n0.ui.component.*
+import xyz.d1n0.ui.text.label
+import xyz.d1n0.ui.text.userMessage
 import xyz.d1n0.ui.theme.SkuareTheme
+import org.jetbrains.compose.resources.stringResource
+import xyz.d1n0.resources.*
 
 @Composable
 fun SettingsScreen(viewModel: SettingsScreenViewModel) {
@@ -57,14 +61,14 @@ private fun SettingsScreenContent(
 		item {
 			CardView(
 				modifier = Modifier.fillMaxWidth(),
-				title = { Text("Display") }
+				title = { Text(stringResource(Res.string.settings_display)) }
 			) {
 				Column(
 					modifier = Modifier.fillMaxWidth(),
 					verticalArrangement = Arrangement.spacedBy(8.dp)
 				) {
 					SwitchField(
-						title = "24 Hour format",
+						title = stringResource(Res.string.settings_24_hour_format),
 						check = state.pendingWatchSettings.preferences.is24HourTime,
 						onCheckedChange = { onEvent(SettingsUiEvent.Is24HourChange(it)) },
 						enabled = state.isWatchSettingsInitialized && state.isLoading == false,
@@ -75,8 +79,9 @@ private fun SettingsScreenContent(
 						horizontalArrangement = Arrangement.spacedBy(8.dp)
 					) {
 						EnumDropdown(
-							label = "Date Format",
+							label = stringResource(Res.string.settings_date_format),
 							selectedOption = state.pendingWatchSettings.dateFormat,
+							optionLabel = { it.label },
 							onOptionSelected = {
 								onEvent(SettingsUiEvent.DateFormatChange(it))
 							},
@@ -86,8 +91,9 @@ private fun SettingsScreenContent(
 						)
 						if (state.hasWeekdayLanguage) {
 							EnumDropdown(
-								label = "Weekday Language",
+								label = stringResource(Res.string.settings_weekday_language),
 								selectedOption = state.pendingWatchSettings.weekdayLanguage,
+								optionLabel = { stringResource(it.label) },
 								onOptionSelected = {
 									onEvent(SettingsUiEvent.WeekdayLanguageChange(it))
 								},
@@ -99,8 +105,9 @@ private fun SettingsScreenContent(
 					}
 					if (state.hasFontStyle) {
 						EnumDropdown(
-							label = "Font style",
+							label = stringResource(Res.string.settings_font_style),
 							selectedOption = state.pendingWatchSettings.fontStyle,
+							optionLabel = { stringResource(it.label) },
 							onOptionSelected = {
 								onEvent(SettingsUiEvent.FontStyleChange(it))
 							},
@@ -116,14 +123,14 @@ private fun SettingsScreenContent(
 		item {
 			CardView(
 				modifier = Modifier.fillMaxWidth(),
-				title = { Text("Backlight") }
+				title = { Text(stringResource(Res.string.settings_backlight)) }
 			) {
 				Column(
 					modifier = Modifier.fillMaxWidth(),
 					verticalArrangement = Arrangement.spacedBy(8.dp)
 				) {
 					SwitchField(
-						title = "Auto Backlight",
+						title = stringResource(Res.string.settings_auto_backlight),
 						check = state.pendingWatchSettings.preferences.autoBacklight,
 						onCheckedChange = {
 							onEvent(
@@ -136,8 +143,9 @@ private fun SettingsScreenContent(
 						modifier = Modifier.fillMaxWidth(),
 					)
 					EnumDropdown(
-						label = "Backlight Duration",
+						label = stringResource(Res.string.settings_backlight_duration),
 						selectedOption = state.pendingWatchSettings.backlightDuration,
+						optionLabel = { stringResource(it.label) },
 						onOptionSelected = {
 							onEvent(
 								SettingsUiEvent.BacklightDurationChange(
@@ -156,26 +164,27 @@ private fun SettingsScreenContent(
 		item {
 			CardView(
 				modifier = Modifier.fillMaxWidth(),
-				title = { Text(("Time Adjustment")) }
+				title = { Text(stringResource(Res.string.settings_time_adjustment)) }
 			) {
 				Column {
 					SwitchField(
-						title = "Auto Time Adjustment",
+						title = stringResource(Res.string.settings_auto_time_adjustment),
 						check = state.pendingConnectionSettings.autoSyncEnable,
 						onCheckedChange = { onEvent(SettingsUiEvent.AutoSyncChange(it)) },
 						enabled = state.isConnectionSettingsInitialized && state.isLoading == false,
 						modifier = Modifier.fillMaxWidth()
 					)
 					val autoSyncEnabled = state.pendingConnectionSettings.autoSyncEnable
-					val adjustmentTimes = state.pendingConnectionSettings.autoSyncDelay.adjustmentTimes
-						.map { it.toString() }
-					val schedule = "${adjustmentTimes.dropLast(1).joinToString(", ")} and ${adjustmentTimes.last()}"
 					SliderField(
-						label = "Minutes past the hour",
+						label = stringResource(Res.string.settings_minutes_past_hour),
 						supportingText = if (autoSyncEnabled) {
-							"The watch adjusts its time at $schedule"
+							// the string holds the fixed hours, AutoSyncDelay.ADJUSTMENT_HOURS
+							stringResource(
+								Res.string.settings_auto_time_adjustment_schedule,
+								state.pendingConnectionSettings.autoSyncDelay.minutes.toString().padStart(2, '0'),
+							)
 						} else {
-							"The watch won't adjust its time automatically"
+							stringResource(Res.string.settings_auto_time_adjustment_off)
 						},
 						value = state.pendingConnectionSettings.autoSyncDelay.minutes,
 						enabled = autoSyncEnabled && state.isConnectionSettingsInitialized && state.isLoading == false,
@@ -197,20 +206,20 @@ private fun SettingsScreenContent(
 		item {
 			CardView(
 				modifier = Modifier.fillMaxWidth(),
-				title = { Text("Others") }
+				title = { Text(stringResource(Res.string.common_others)) }
 			) {
 				Column(
 					modifier = Modifier.fillMaxWidth(),
 					verticalArrangement = Arrangement.spacedBy(8.dp)
 				) {
 					OutlinedTextField(
-						label = { Text("Watch Name") },
+						label = { Text(stringResource(Res.string.settings_watch_name)) },
 						value = nameFieldValue,
 						enabled = state.isInitialized && state.isLoading == false,
 						isError = state.pendingNameError != null,
 						supportingText = {
 							state.pendingNameError?.let {
-								Text(it.message ?: "Unknown errors")
+								Text(it.userMessage)
 							}
 						},
 						onValueChange = {
@@ -220,7 +229,7 @@ private fun SettingsScreenContent(
 						modifier = Modifier.fillMaxWidth()
 					)
 					SwitchField(
-						title = "Power Saving Mode",
+						title = stringResource(Res.string.settings_power_saving_mode),
 						check = state.pendingWatchSettings.preferences.powerSaving,
 						onCheckedChange = {
 							onEvent(
@@ -233,15 +242,16 @@ private fun SettingsScreenContent(
 						modifier = Modifier.fillMaxWidth()
 					)
 					SwitchField(
-						title = "Mute Button Tone",
+						title = stringResource(Res.string.settings_mute_button_tone),
 						check = state.pendingWatchSettings.preferences.isToneMuted,
 						onCheckedChange = { onEvent(SettingsUiEvent.IsMutedChange(it)) },
 						enabled = state.isWatchSettingsInitialized && state.isLoading == false,
 						modifier = Modifier.fillMaxWidth()
 					)
 					EnumDropdown(
-						label = "Connection Timeout",
+						label = stringResource(Res.string.settings_connection_timeout),
 						selectedOption = state.pendingConnectionSettings.connectionTimeout,
+						optionLabel = { it.label },
 						onOptionSelected = {
 							onEvent(
 								SettingsUiEvent.ConnectionTimeoutChange(
@@ -258,7 +268,7 @@ private fun SettingsScreenContent(
 							onClick = { showHandGroupDialog = true },
 							enabled = state.isLoading == false && state.handAdjust == null,
 							modifier = Modifier.fillMaxWidth(),
-						) { Text("Adjust Hands") }
+						) { Text(stringResource(Res.string.settings_adjust_hands)) }
 					}
 				}
 			}

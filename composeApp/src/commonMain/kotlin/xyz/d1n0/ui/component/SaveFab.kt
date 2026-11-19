@@ -11,6 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import xyz.d1n0.ui.theme.SkuareTheme
+import org.jetbrains.compose.resources.stringResource
+import xyz.d1n0.resources.*
 
 @Composable
 fun SaveFab(
@@ -29,7 +31,7 @@ fun SaveFab(
 		) {
 			Icon(
 				imageVector = Icons.Outlined.Save,
-				contentDescription = "Save",
+				contentDescription = stringResource(Res.string.common_save),
 			)
 		}
 	}

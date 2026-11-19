@@ -15,9 +15,4 @@ enum class FontStyle(val byte: Byte) {
 		fun fromByte(byte: Byte) =
 			if (byte.toInt() and CLASSIC_BIT != 0) CLASSIC else STANDARD
 	}
-
-	override fun toString(): String = when (this) {
-		STANDARD -> "Standard"
-		CLASSIC -> "Classic"
-	}
 }

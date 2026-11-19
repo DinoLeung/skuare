@@ -1,5 +1,7 @@
 package xyz.d1n0.lib.model
 
+import com.juul.kable.NotConnectedException
+import com.juul.kable.State
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -114,10 +116,10 @@ private fun ByteArray.isClocksReply() = when (firstOrNull()) {
 }
 
 suspend fun Watch.writeClocks(clocksSettings: ClocksSettings) =
-	clocksSettings.clocksPackets.forEach { write(it) }
+	clocksSettings.clocksPackets.forEach { writeOrThrow(it) }
 
 suspend fun Watch.writeTime(delay: Duration = 0.seconds) =
-	clocks.value.pinnedClock?.let { write(it.getCurrentDateTimePacket(delay = delay)) }
+	clocks.value.pinnedClock?.let { writeOrThrow(it.getCurrentDateTimePacket(delay = delay)) }
 
 suspend fun Watch.requestAlarms() {
 	request(OpCode.ALARM_A)
@@ -137,7 +139,7 @@ suspend fun Watch.requestTimeZoneConfigs() {
 }
 
 suspend fun Watch.writeTimeZoneConfigs(clocksSettings: ClocksSettings) =
-	clocksSettings.timeZoneConfigPackets.forEach { write(it) }
+	clocksSettings.timeZoneConfigPackets.forEach { writeOrThrow(it) }
 
 suspend fun Watch.requestTimeZoneNames() {
 	for (i in 0 until model.clockCount) {
@@ -150,7 +152,7 @@ suspend fun Watch.requestTimeZoneNames() {
  * name, the same order as the official app: 1F 00, 1F 06, 1F 01, 1F 07, …
  */
 suspend fun Watch.writeTimeZoneNames(clocksSettings: ClocksSettings) =
-	timeZoneNamePackets(clocksSettings).forEach { write(it) }
+	timeZoneNamePackets(clocksSettings).forEach { writeOrThrow(it) }
 
 private fun Watch.timeZoneNamePackets(clocksSettings: ClocksSettings): List<ByteArray> =
 	if (model.hasShortCityNames) {
@@ -172,7 +174,7 @@ suspend fun Watch.requestTimeZoneCoordinatesAndRadioId() {
 
 /** Writes nothing on watches without [WatchFeatures.hasTimeZoneLocation]. */
 suspend fun Watch.writeTimeZoneCoordinatesAndRadioId(clocksSettings: ClocksSettings) =
-	timeZoneLocationPackets(clocksSettings).forEach { write(it) }
+	timeZoneLocationPackets(clocksSettings).forEach { writeOrThrow(it) }
 
 suspend fun Watch.requestReminderTitles() {
 	for (i in 1..model.reminderCount) {
@@ -201,6 +203,9 @@ suspend fun Watch.writeReminderConfigs(remindersSettings: RemindersSettings) =
  * order: clocks, configs with coordinates and radio IDs, then names. Otherwise each packet is
  * written to the IO characteristic.
  *
+ * Unlike most writes, a failed one throws, e.g. [com.juul.kable.NotConnectedException], so a sync
+ * or save that didn't reach the watch fails.
+ *
  * @throws IllegalArgumentException if a clock isn't initialized.
  */
 private suspend fun Watch.writeClocksAndTimeZoneData(clocksSettings: ClocksSettings) {
@@ -210,7 +215,7 @@ private suspend fun Watch.writeClocksAndTimeZoneData(clocksSettings: ClocksSetti
 			clocksSettings.timeZoneConfigPackets + timeZoneLocationPackets(clocksSettings),
 			timeZoneNamePackets(clocksSettings),
 		)
-		batches.forEach { writeBatch(it) }
+		batches.forEach { writeBatchOrThrow(it) }
 	} else {
 		writeClocks(clocksSettings)
 		writeTimeZoneConfigs(clocksSettings)
@@ -274,9 +279,11 @@ suspend fun Watch.adjustTime(delay: Duration = 0.seconds) =
 			withTimeoutOrNull(10.seconds) {
 				while (clocks.value.isInitialized == false) {
 					_clocksError.value?.let { throw it }
+					// a request the watch never got isn't a timeout
+					requireConnected()
 					delay(100.milliseconds)
 				}
-			} ?: throw IllegalStateException("Timeout waiting for clocks initialization")
+			} ?: throw WatchTimeoutException("Timeout waiting for clocks initialization")
 		}
 		writeClocksAndTimeZoneData(clocks.value)
 		writeTime(delay = delay)
@@ -285,6 +292,15 @@ suspend fun Watch.adjustTime(delay: Duration = 0.seconds) =
 	}.onFailure { error ->
 		log.e { "Error syncing time: ${error.message}" }
 	}
+
+/**
+ * Throws [NotConnectedException] if the watch is no longer connected. [Watch.request] logs a
+ * failure instead of throwing, so a wait for its reply checks the connection, e.g. to report a
+ * lost connection rather than a timeout.
+ */
+private fun Watch.requireConnected() {
+	if (state.value !is State.Connected) throw NotConnectedException("Watch disconnected")
+}
 
 /**
  * Hand adjustment on this watch, see [HandAdjuster]. Only for watches with
@@ -297,9 +313,9 @@ fun Watch.handAdjuster(): HandAdjuster {
 	return HandAdjuster(write = ::write, packets = packets)
 }
 
-suspend fun Watch.startClockUpdateSession() = write(ClocksSettings.clocksUpdateSessionStartPacket)
+suspend fun Watch.startClockUpdateSession() = writeOrThrow(ClocksSettings.clocksUpdateSessionStartPacket)
 
-suspend fun Watch.endClockUpdateSession() = write(ClocksSettings.clocksUpdateSessionEndPacket)
+suspend fun Watch.endClockUpdateSession() = writeOrThrow(ClocksSettings.clocksUpdateSessionEndPacket)
 
 /**
  * Processes an incoming BLE packet by dispatching it based on its opcode.

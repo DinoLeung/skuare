@@ -14,7 +14,11 @@ import xyz.d1n0.lib.constant.ReminderRecurrence
 import xyz.d1n0.lib.model.Reminder
 import xyz.d1n0.lib.model.ReminderConfig
 import xyz.d1n0.lib.model.ReminderTitle
+import xyz.d1n0.ui.text.label
+import xyz.d1n0.ui.text.userMessage
 import xyz.d1n0.ui.theme.SkuareTheme
+import org.jetbrains.compose.resources.stringResource
+import xyz.d1n0.resources.*
 
 @Composable
 fun ReminderCard(
@@ -46,7 +50,7 @@ fun ReminderCard(
 					OutlinedTextField(
 						modifier = Modifier.fillMaxWidth(),
 						value = reminder.title.value,
-						label = { Text("Title") },
+						label = { Text(stringResource(Res.string.reminder_title)) },
 						onValueChange = onTitleChange,
 						enabled = titleEnabled,
 						isError = titleIsError,
@@ -67,8 +71,9 @@ fun ReminderCard(
 				Box(modifier = Modifier.weight(1f)) {
 					EnumDropdown(
 						selectedOption = reminder.config.recurrence,
+						optionLabel = { stringResource(it.label) },
 						options = ReminderRecurrence.values().toSet(),
-						label = "Recurrence",
+						label = stringResource(Res.string.reminder_recurrence),
 						onOptionSelected = recurrenceChange,
 						enabled = configEnabled,
 					)
@@ -83,7 +88,7 @@ fun ReminderCard(
 									endDateChange(it)
 								},
 								modifier = Modifier.fillMaxWidth(),
-								label = "On",
+								label = stringResource(Res.string.reminder_date_on),
 								enabled = configEnabled
 							)
 						}
@@ -96,14 +101,14 @@ fun ReminderCard(
 									value = reminder.config.startDate,
 									onValueChange = { startDateChange(it) },
 									modifier = Modifier.weight(1f),
-									label = "From",
+									label = stringResource(Res.string.reminder_from),
 									enabled = configEnabled
 								)
 								SingleDatePickerField(
 									value = reminder.config.endDate,
 									onValueChange = { endDateChange(it) },
 									modifier = Modifier.weight(1f),
-									label = "To",
+									label = stringResource(Res.string.reminder_to),
 									enabled = configEnabled
 								)
 							}
@@ -112,11 +117,12 @@ fun ReminderCard(
 						ReminderRecurrence.REPEAT_WEEKLY -> {
 							EnumDropdown(
 								selectedOptions = reminder.config.daysOfWeek,
+								optionLabel = { it.label },
 								options = ReminderDayOfWeek.values().toSet(),
 								onOptionSelected = { daysOfWeekChange(it) },
-								allSelectedText = "Every day",
-								noneSelectedText = "Never",
-								label = "On",
+								allSelectedText = stringResource(Res.string.reminder_every_day),
+								noneSelectedText = stringResource(Res.string.reminder_never),
+								label = stringResource(Res.string.reminder_days_on),
 								enabled = configEnabled
 							)
 						}
@@ -129,14 +135,14 @@ fun ReminderCard(
 									endDateChange(it)
 								},
 								modifier = Modifier.fillMaxWidth(),
-								label = "Starts On",
+								label = stringResource(Res.string.reminder_starts_on),
 								enabled = configEnabled
 							)
 						}
 					}
 				}
 			}
-			configError?.message?.let { ErrorText(text = it) }
+			configError?.let { ErrorText(text = it.userMessage) }
 		}
 	}
 }

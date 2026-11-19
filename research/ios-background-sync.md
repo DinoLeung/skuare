@@ -54,3 +54,23 @@ iOS needs its own `WatchPresenceMonitor` and background trigger.
   new column, i.e. a new schema version with a migration (never a destructive one, it would
   wipe the install token and unpair every watch).
 - Whether a pending connect survives the user force quitting the app is up to iOS, test it.
+
+## Bluetooth permission and languages
+
+Found while making the UI translatable (research/i18n-plan.md, step 6), 2026-11-18.
+
+- `Info.plist` has no `NSBluetoothAlwaysUsageDescription`, nor do the project's build settings
+  (no `INFOPLIST_KEY_*`). iOS terminates an app that uses CoreBluetooth without it, so it is
+  needed before any BLE works, in the foreground too. Put its text in an `InfoPlist.xcstrings`
+  string catalog so it can be translated like the rest of the UI.
+- `CFBundleLocalizations` in `Info.plist` lists the app's languages, only `en` so far. Keep it
+  the same as `composeApp/src/androidMain/res/xml/locales_config.xml` and the
+  `composeResources/values-<lang>` folders:
+  - `NSLocale.currentLocale` only takes a language the bundle declares, and `IosLocaleFormatter`
+    formats dates with it, so a language missing there shows its dates in English.
+  - iOS offers the app's language setting once the bundle declares more than one language.
+- Compose resources pick the strings from `NSLocale.preferredLanguages`, which follows that
+  setting, so the strings need nothing iOS specific.
+- `IosLocaleFormatter` has only been type-checked (`compileIosMainKotlinMetadata` on Linux), never
+  run. Check the date fields, the date picker, the last sync time and the reminder weekdays on a
+  device, in a 12 and a 24 hour setting.

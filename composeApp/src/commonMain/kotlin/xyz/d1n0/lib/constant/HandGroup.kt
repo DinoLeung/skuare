@@ -21,9 +21,4 @@ enum class HandGroup(val id: Int, val stepModulus: Int) {
 	 * adjusted all the way round. The adjusting position is 3 o'clock, 9 o'clock is 90 steps away.
 	 */
 	MODE(id = 2, stepModulus = 180);
-
-	override fun toString(): String = when (this) {
-		CLOCK -> "Clock hands"
-		MODE -> "Mode hand"
-	}
 }

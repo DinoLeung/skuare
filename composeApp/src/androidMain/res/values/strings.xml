@@ -1,3 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Android-only strings: what the system shows outside the Compose UI, the app's name and the
+    connection notification. Everything else is in composeApp/src/commonMain/composeResources.
+    This is Android's resource format: an apostrophe is written \', unlike in composeResources.
+-->
 <resources>
-    <string name="app_name">skuare</string>
+    <string name="app_name" translatable="false">skuare</string>
+
+    <!-- Name of the notification channel, shown in the app's notification settings -->
+    <string name="notification_channel_watch_connection">Watch connection</string>
+    <!-- %1$s: the watch's name, e.g. CASIO GW-B5600 -->
+    <string name="notification_connected">Connected to %1$s</string>
+    <!-- When the watch's name isn't known yet -->
+    <string name="notification_connected_unnamed">Connected to watch</string>
+    <string name="notification_syncing">Syncing time</string>
 </resources>

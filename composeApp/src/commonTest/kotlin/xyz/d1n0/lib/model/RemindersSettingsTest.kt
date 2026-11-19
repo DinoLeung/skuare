@@ -31,7 +31,7 @@ class RemindersSettingsTest {
 
 	@Test
 	fun titleValidatesLengths() {
-		assertFailsWith<IllegalArgumentException> { ReminderTitle("1234567890123456789") }
+		assertEquals(18, assertFailsWith<TextTooLongException> { ReminderTitle("1234567890123456789") }.maxLength)
 		assertFailsWith<IllegalArgumentException> { ReminderTitle.fromBytes(ByteArray(17)) }
 	}
 

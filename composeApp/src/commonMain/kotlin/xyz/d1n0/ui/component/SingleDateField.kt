@@ -14,7 +14,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.LocalDate
 import androidx.compose.ui.tooling.preview.Preview
-import xyz.d1n0.lib.helper.toDayMonthYear
+import xyz.d1n0.ui.text.LocalLocaleFormatter
+import xyz.d1n0.ui.text.formatShortDate
 import xyz.d1n0.ui.theme.SkuareTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,7 +34,7 @@ fun SingleDatePickerField(
 		modifier = modifier.height(IntrinsicSize.Min).width(IntrinsicSize.Min)
 	) {
 		OutlinedTextField(
-			value = value.toDayMonthYear(),
+			value = LocalLocaleFormatter.current.formatShortDate(value),
 			singleLine = true,
 			readOnly = true,
 			enabled = enabled,

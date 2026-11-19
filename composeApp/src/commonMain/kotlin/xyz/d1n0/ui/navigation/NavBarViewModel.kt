@@ -28,8 +28,8 @@ class NavBarViewModel : ViewModel(), KoinComponent {
 	 */
 	val navBarItems: List<NavBarItem> = navBarItemsFor(watch.model)
 
-	/** Name to show for the watch's model, e.g. CASIO GA-B2100. */
-	val watchName: String = watch.advertisedName ?: "This watch"
+	/** Name to show for the watch's model, e.g. CASIO GA-B2100, null if it didn't advertise one. */
+	val watchName: String? = watch.advertisedName
 
 	private val _disconnectEvents = MutableSharedFlow<Unit>()
 	val disconnectEvents: SharedFlow<Unit> = _disconnectEvents.asSharedFlow()

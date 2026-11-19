@@ -1,6 +1,7 @@
 package xyz.d1n0.lib.constant
 
 import kotlinx.datetime.LocalTime
+import xyz.d1n0.lib.model.ValueOutOfRangeException
 import kotlin.jvm.JvmInline
 
 /**
@@ -10,8 +11,8 @@ import kotlin.jvm.JvmInline
 @JvmInline
 value class AutoSyncDelay(val minutes: Int) {
 	init {
-		require(minutes in 0..59) {
-			"AutoSyncDelay must be between 0 and 59, got $minutes"
+		if (minutes !in RANGE) {
+			throw ValueOutOfRangeException(RANGE, "AutoSyncDelay must be in $RANGE, got $minutes")
 		}
 	}
 
@@ -23,6 +24,8 @@ value class AutoSyncDelay(val minutes: Int) {
 		get() = ADJUSTMENT_HOURS.map { LocalTime(it, minutes) }
 
 	companion object {
+		val RANGE = 0..59
+
 		/** The watch runs the auto time adjustment four times a day, at these hours. */
 		val ADJUSTMENT_HOURS = listOf(0, 6, 12, 18)
 

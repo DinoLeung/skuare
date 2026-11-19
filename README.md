@@ -101,6 +101,11 @@ excellent opportunity to learn JetBrains Compose Multiplatform and core BLE comm
 - [ ] Handle multiple paired watches are connect
 - [ ] Default data when invalid data received from watch, including timezone
 
+## Translations
+
+Skuare is available in English and Traditional Chinese (Hong Kong and Taiwan). To add a language or
+improve one, see [TRANSLATING.md](TRANSLATING.md).
+
 ## Disclaimer
 
 This project is an independent, open-source implementation for communicating with Casio watches over

@@ -28,7 +28,7 @@ class WatchNameTest {
 
 	@Test
 	fun rejectsInvalidNameAndPackets() {
-		assertFailsWith<IllegalArgumentException> { WatchName("12345678901234567890") }
+		assertEquals(19, assertFailsWith<TextTooLongException> { WatchName("12345678901234567890") }.maxLength)
 		assertFailsWith<IllegalArgumentException> { WatchName.fromPacket(packet.copyOf(19)) }
 		assertFailsWith<IllegalArgumentException> {
 			WatchName.fromPacket(packet.copyOf().also { it[0] = 0 })

@@ -33,7 +33,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import xyz.d1n0.lib.constant.HandGroup
+import xyz.d1n0.ui.text.userMessage
 import xyz.d1n0.ui.theme.SkuareTheme
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
+import xyz.d1n0.resources.*
 
 /**
  * What [HandAdjustDialog] shows for a hand adjust session, see
@@ -50,7 +54,7 @@ data class HandAdjustUiState(
 	val steps: Int = 0,
 	val isReady: Boolean = false,
 	val isMoving: Boolean = true,
-	val error: String? = null,
+	val error: Throwable? = null,
 ) {
 	/**
 	 * The largest move either way. A whole turn or more would be sent as 0, the move to the
@@ -112,13 +116,15 @@ fun HandAdjustDialog(
 					) {
 						CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
 						Text(
-							text = if (state.isReady) "Moving the hands…" else "Moving the hands to the adjusting position…",
+							text = stringResource(
+								if (state.isReady) Res.string.hand_adjust_moving else Res.string.hand_adjust_moving_to_position
+							),
 							style = MaterialTheme.typography.bodyMedium,
 						)
 					}
 				}
 				OutlinedTextField(
-					label = { Text("Steps") },
+					label = { Text(stringResource(Res.string.hand_adjust_steps)) },
 					value = stepsText,
 					onValueChange = { input ->
 						// digits, with an optional leading minus for anticlockwise
@@ -129,7 +135,7 @@ fun HandAdjustDialog(
 					singleLine = true,
 					enabled = state.canEditSteps,
 					isError = state.isStepsValid == false,
-					supportingText = { Text(state.group.stepHint) },
+					supportingText = { Text(stringResource(state.group.stepHint)) },
 					modifier = Modifier.fillMaxWidth(),
 				)
 				// a segmented group for the look, never selected: both buttons are actions, not a choice
@@ -139,37 +145,45 @@ fun HandAdjustDialog(
 						onClick = onStepAnticlockwise,
 						shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2),
 						enabled = state.canStepAnticlockwise,
-						icon = { Icon(Icons.Outlined.RotateLeft, contentDescription = null) },
-						label = { Text("Anticlockwise") },
+						icon = { Icon(anticlockwiseIcon, contentDescription = null) },
+						label = { Text(stringResource(Res.string.hand_adjust_anticlockwise)) },
 					)
 					SegmentedButton(
 						selected = false,
 						onClick = onStepClockwise,
 						shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2),
 						enabled = state.canStepClockwise,
-						icon = { Icon(Icons.Outlined.RotateRight, contentDescription = null) },
-						label = { Text("Clockwise") },
+						icon = { Icon(clockwiseIcon, contentDescription = null) },
+						label = { Text(stringResource(Res.string.hand_adjust_clockwise)) },
 					)
 				}
 				Button(
 					onClick = onSet,
 					enabled = state.canSet,
 					modifier = Modifier.fillMaxWidth(),
-				) { Text("Set") }
-				state.error?.let { ErrorText(it) }
+				) { Text(stringResource(Res.string.hand_adjust_set)) }
+				state.error?.let { ErrorText(it.userMessage) }
 			}
 		},
 		confirmButton = {
-			TextButton(onClick = onFinish, enabled = state.canFinish) { Text("Finish") }
+			TextButton(onClick = onFinish, enabled = state.canFinish) { Text(stringResource(Res.string.hand_adjust_finish)) }
 		},
 	)
 }
 
+// A turn is clockwise or anticlockwise whatever the layout direction, so these must not mirror in
+// right-to-left languages like their AutoMirrored replacements do.
+@Suppress("DEPRECATION")
+private val anticlockwiseIcon = Icons.Outlined.RotateLeft
+
+@Suppress("DEPRECATION")
+private val clockwiseIcon = Icons.Outlined.RotateRight
+
 /** How far a step moves the hands, for the steps field. */
-private val HandGroup.stepHint: String
+private val HandGroup.stepHint: StringResource
 	get() = when (this) {
-		HandGroup.CLOCK -> "3 steps is 1 minute"
-		HandGroup.MODE -> "90 steps is half a turn"
+		HandGroup.CLOCK -> Res.string.hand_adjust_clock_step_hint
+		HandGroup.MODE -> Res.string.hand_adjust_mode_step_hint
 	}
 
 @Preview(showBackground = true, widthDp = 420, heightDp = 720)

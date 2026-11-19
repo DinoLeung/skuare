@@ -28,12 +28,4 @@ enum class ReminderRecurrence {
 			REPEAT_MONTHLY -> MONTHLY.toByte()
 			REPEAT_YEARLY -> YEARLY.toByte()
 		}
-
-	override fun toString(): String = when (this) {
-		ONCE -> "Once"
-		REPEAT_DAILY -> "Daily"
-		REPEAT_WEEKLY -> "Weekly"
-		REPEAT_MONTHLY -> "Monthly"
-		REPEAT_YEARLY -> "Yearly"
-	}
 }

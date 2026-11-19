@@ -68,8 +68,8 @@ class HandAdjuster(
 				reply.await()
 			}
 		}
-		checkNotNull(reply) {
-			"No reply to hand adjust ${packet.toHexString(HexFormat.UpperCase)} within $timeout"
+		if (reply == null) {
+			throw WatchTimeoutException("No reply to hand adjust ${packet.toHexString(HexFormat.UpperCase)} within $timeout")
 		}
 		if (reply.first() == OpCode.ERROR.byte) throw WatchErrorPacket(reply)
 	}
