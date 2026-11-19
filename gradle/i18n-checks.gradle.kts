@@ -146,13 +146,21 @@ tasks.register("checkUiStrings") {
 			val source = file.readText()
 			val lines = source.lines()
 			val (code, previews) = scan(source)
+			// what a literal shows: a raw string as written, an ordinary one with its escapes
+			// decoded, so the letters of e.g. \n or \t don't count
+			fun content(literal: String): String =
+				if (literal.startsWith("\"\"\"")) literal.removeSurrounding("\"\"\"")
+				else literal.removeSurrounding("\"").replace(Regex("""\\u([0-9a-fA-F]{4})|\\(.)""")) { escape ->
+					escape.groups[1]?.let { it.value.toInt(16).toChar().toString() }
+						?: if (escape.groupValues[2] in setOf("n", "t", "r", "b")) " " else escape.groupValues[2]
+				}
 			hardCoded.findAll(code).mapNotNull { match ->
 				// the line of the literal's opening quote, the call may start on an earlier one
 				val quote = match.range.first + match.value.indexOf('"')
 				val line = code.substring(0, quote).count { it == '\n' }
-				// e.g. "" or "00:00" has nothing to translate
-				val text = (match.groups[1] ?: match.groups[2])!!.value
-				val exempt = text.none { it.isLetter() } || previews.any { quote in it } ||
+				// e.g. "", "00:00" or "\n" has nothing to translate
+				val literal = (match.groups[1] ?: match.groups[2])!!.value
+				val exempt = content(literal).none { it.isLetter() } || previews.any { quote in it } ||
 					lines[line].trimEnd().endsWith("// i18n-ignore")
 				if (exempt) null
 				else "${file.relativeTo(projectDir)}:${line + 1}: hard-coded UI text, use a string resource: ${lines[line].trim()}"
