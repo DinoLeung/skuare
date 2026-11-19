@@ -313,9 +313,9 @@ fun Watch.handAdjuster(): HandAdjuster {
 	return HandAdjuster(write = ::write, packets = packets)
 }
 
-suspend fun Watch.startClockUpdateSession() = write(ClocksSettings.clocksUpdateSessionStartPacket)
+suspend fun Watch.startClockUpdateSession() = writeOrThrow(ClocksSettings.clocksUpdateSessionStartPacket)
 
-suspend fun Watch.endClockUpdateSession() = write(ClocksSettings.clocksUpdateSessionEndPacket)
+suspend fun Watch.endClockUpdateSession() = writeOrThrow(ClocksSettings.clocksUpdateSessionEndPacket)
 
 /**
  * Processes an incoming BLE packet by dispatching it based on its opcode.
