@@ -10,8 +10,8 @@ import org.w3c.dom.Element
 /*
  * checkUiStrings fails on text written straight into the UI instead of coming from a string
  * resource: Text("…"), ErrorText("…"), Hint("…") and text, label, title, … = "…" with a letter in
- * it, also when the call spans lines. Comments and previews are exempt, as is a literal on a line
- * ending in `// i18n-ignore` (e.g. a brand name).
+ * it, ordinary or triple-quoted, also when the call spans lines. Comments (nested ones too) and
+ * previews are exempt, as is a literal on a line ending in `// i18n-ignore` (e.g. a brand name).
  */
 tasks.register("checkUiStrings") {
 	group = "verification"
@@ -21,9 +21,11 @@ tasks.register("checkUiStrings") {
 	inputs.files(sources)
 
 	doLast {
+		// a whole string literal, triple-quoted or ordinary with escapes, e.g. "Say \"hi\""
+		val literal = """("{3}[\s\S]*?"{3}|"(?:\\.|[^"\\\n])*")"""
 		val hardCoded = Regex(
-			"""\b(?:Text|ErrorText|Hint)\(\s*"[^"]*\p{L}""" +
-				"""|\b(?:text|label|title|contentDescription|placeholder|supportingText|allSelectedText|noneSelectedText)\s*=\s*"[^"]*\p{L}"""
+			"""\b(?:Text|ErrorText|Hint)\(\s*$literal""" +
+				"""|\b(?:text|label|title|contentDescription|placeholder|supportingText|allSelectedText|noneSelectedText)\s*=\s*$literal"""
 		)
 
 		// The source with comments blanked out (line breaks kept), and the ranges of preview
@@ -69,7 +71,25 @@ tasks.register("checkUiStrings") {
 					}
 
 					source.startsWith("/*", i) -> {
-						val end = source.indexOf("*/", i + 2).let { if (it < 0) source.length else it + 2 }
+						// Kotlin block comments nest, the comment ends where its own opener closes
+						var nesting = 0
+						var end = i
+						while (end < source.length) {
+							when {
+								source.startsWith("/*", end) -> {
+									nesting++
+									end += 2
+								}
+
+								source.startsWith("*/", end) -> {
+									nesting--
+									end += 2
+									if (nesting == 0) break
+								}
+
+								else -> end++
+							}
+						}
 						for (k in i until end) code.append(if (source[k] == '\n') '\n' else ' ')
 						i = end
 						continue
@@ -130,7 +150,10 @@ tasks.register("checkUiStrings") {
 				// the line of the literal's opening quote, the call may start on an earlier one
 				val quote = match.range.first + match.value.indexOf('"')
 				val line = code.substring(0, quote).count { it == '\n' }
-				val exempt = previews.any { quote in it } || lines[line].trimEnd().endsWith("// i18n-ignore")
+				// e.g. "" or "00:00" has nothing to translate
+				val text = (match.groups[1] ?: match.groups[2])!!.value
+				val exempt = text.none { it.isLetter() } || previews.any { quote in it } ||
+					lines[line].trimEnd().endsWith("// i18n-ignore")
 				if (exempt) null
 				else "${file.relativeTo(projectDir)}:${line + 1}: hard-coded UI text, use a string resource: ${lines[line].trim()}"
 			}.toList()
