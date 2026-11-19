@@ -275,14 +275,22 @@ class Watch @OptIn(ExperimentalKableApi::class) constructor(
 	 */
 	@Throws(CancellationException::class, IOException::class, NotConnectedException::class)
 	suspend fun write(data: ByteArray) {
+		runCatching { writeOrThrow(data) }
+	}
+
+	/**
+	 * Like [write], but throws what the write threw after logging it, for writes that must not count
+	 * as done when one fails, e.g. a time sync.
+	 */
+	@Throws(CancellationException::class, IOException::class, NotConnectedException::class)
+	suspend fun writeOrThrow(data: ByteArray) {
 		log.d { "Writing: ${data.toHexString(HexFormat.UpperCase)}" }
-		runCatching {
-			peripheral.write(
-				ioCharacteristic,
-				data,
-				WriteType.WithResponse
-			)
-		}.onFailure { log.e { "Failed to write ${data.toHexString(HexFormat.UpperCase)}: ${it.message}" } }
+		try {
+			peripheral.write(ioCharacteristic, data, WriteType.WithResponse)
+		} catch (e: Exception) {
+			log.e { "Failed to write ${data.toHexString(HexFormat.UpperCase)}: ${e.message}" }
+			throw e
+		}
 	}
 
 	/**
@@ -341,11 +349,20 @@ class Watch @OptIn(ExperimentalKableApi::class) constructor(
 	 */
 	@Throws(CancellationException::class, IOException::class, NotConnectedException::class)
 	suspend fun writeBatch(records: List<ByteArray>) {
+		runCatching { writeBatchOrThrow(records) }
+	}
+
+	/** Like [writeBatch], but throws what the write threw after logging it, see [writeOrThrow]. */
+	@Throws(CancellationException::class, IOException::class, NotConnectedException::class)
+	suspend fun writeBatchOrThrow(records: List<ByteArray>) {
 		val batch = BatchPacket.encode(records)
 		log.d { "Writing batch: ${batch.toHexString(HexFormat.UpperCase)}" }
-		runCatching {
+		try {
 			peripheral.write(batchTransferCharacteristic, batch, WriteType.WithResponse)
-		}.onFailure { log.e { "Failed to write batch ${batch.toHexString(HexFormat.UpperCase)}: ${it.message}" } }
+		} catch (e: Exception) {
+			log.e { "Failed to write batch ${batch.toHexString(HexFormat.UpperCase)}: ${e.message}" }
+			throw e
+		}
 	}
 
 	/**
