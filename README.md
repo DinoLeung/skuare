@@ -35,10 +35,12 @@ Skuare supports the following watch models and Casio modules:
     - [Module 3540](https://shockbase.org/watches/modules_dyn.php?module=3540)
 - MRG-B5000
     - [Module 3501](https://shockbase.org/watches/modules_dyn.php?module=3501) (untested)
+- GCW-B5000
+  - [Module 3543](https://shockbase.org/watches/modules_dyn.php?module=3543) (untested)
 - GW-BX5600
     - [Module 3578](https://shockbase.org/watches/modules_dyn.php?module=3578)
 - GMW-BZ5000
-    - [Module 3575](https://shockbase.org/watches/modules_dyn.php?module=3575)
+    - [Module 3575](https://shockbase.org/watches/modules_dyn.php?module=3575) (untested)
 - DW-B5600
     - [Module 3509](https://shockbase.org/watches/modules_dyn.php?module=3509) (untested)
 - GA-B2100

@@ -61,6 +61,7 @@ enum class WatchModel(
 	companion object {
 		private val models = mapOf(
 			"MRG-B5000" to CLASSIC_SQUARE,  // module 3501
+			"GCW-B5000" to CLASSIC_SQUARE,  // module 3543
 			"GMW-B5000" to CLASSIC_SQUARE,  // modules 3459, 3539
 			"GW-B5600" to CLASSIC_SQUARE,   // modules 3461, 3540
 			"GW-BX5600" to MIP_SQUARE,      // module 3578
