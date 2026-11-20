@@ -1,6 +1,5 @@
 package xyz.d1n0.lib.connection
 
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.koin.core.context.startKoin
@@ -47,7 +46,8 @@ class WatchConnectionManagerTest {
 		runCurrent()
 
 		val second = manager.connectDemo()
-		advanceUntilIdle()
+		// not advanceUntilIdle, it leaves the background scope's tasks, the resumed wait among them
+		runCurrent()
 
 		// replace releases the first watch before its wait resumes, so only connectDemo reports its end
 		assertEquals(listOf("ended", "ended"), notifier.events)
