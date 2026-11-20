@@ -37,7 +37,8 @@ val coreModule = module {
 	singleOf(::PairedWatchRepository)
 	singleOf(::InstallationRepository)
 
-	singleOf(::WatchConnectionManager)
+	// not singleOf, it would ask Koin for the scope too
+	single { WatchConnectionManager(connectionNotifier = get(), pairedWatchRepository = get()) }
 	singleOf(::WatchSessionHandler)
 	// Resolved on every injection, so screens get the currently connected watch
 	factory { get<WatchConnectionManager>().requireWatch() }

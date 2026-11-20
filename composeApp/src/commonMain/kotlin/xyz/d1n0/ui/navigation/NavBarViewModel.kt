@@ -31,6 +31,9 @@ class NavBarViewModel : ViewModel(), KoinComponent {
 	/** Name to show for the watch's model, e.g. CASIO GA-B2100, null if it didn't advertise one. */
 	val watchName: String? = watch.advertisedName
 
+	/** Whether this is the demo watch, see [Watch.demo]. */
+	val isDemo: Boolean = watch.isDemo
+
 	private val _disconnectEvents = MutableSharedFlow<Unit>()
 	val disconnectEvents: SharedFlow<Unit> = _disconnectEvents.asSharedFlow()
 
@@ -47,10 +50,13 @@ class NavBarViewModel : ViewModel(), KoinComponent {
 
 	/**
 	 * The custom model of an unrecognised watch, null for a known watch, which can't be adjusted.
+	 * The demo watch isn't stored, its custom model is the one it uses.
 	 */
-	val customModel: StateFlow<CustomWatchModel?> = pairedWatch
-		.map { it?.customModel }
-		.stateIn(viewModelScope, SharingStarted.Eagerly, null)
+	val customModel: StateFlow<CustomWatchModel?> =
+		if (isDemo) MutableStateFlow(watch.model as? CustomWatchModel).asStateFlow()
+		else pairedWatch
+			.map { it?.customModel }
+			.stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
 	/**
 	 * Whether to explain [customModel], until the user dismisses it once.
@@ -125,10 +131,19 @@ class NavBarViewModel : ViewModel(), KoinComponent {
 	 * @param disconnect Disconnect instead of rebuilding the screens, [model] is then used once
 	 *        the watch reconnects. For when the user came from a [watchError], the watch can
 	 *        keep refusing on this connection.
+	 *
+	 * The demo watch has nothing stored, it only switches to [model].
 	 */
 	fun saveCustomModel(model: CustomWatchModel, disconnect: Boolean = false) {
-		val address = address ?: return
 		if (_isSaving.value) return
+		if (isDemo) {
+			viewModelScope.launch {
+				watch.useCustomModel(model)
+				_reloadEvents.emit(Unit)
+			}
+			return
+		}
+		val address = address ?: return
 		viewModelScope.launch {
 			if (!pairedWatchRepository.updateCustomModel(address, model)) {
 				log.w { "Custom model not stored, $address isn't paired as custom" }

@@ -1,6 +1,7 @@
 package xyz.d1n0.ui.screen.pairing
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,16 +12,24 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -71,6 +80,7 @@ fun PairingScreen(
 	)
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PairingScreenContent(
 	state: PairingUiState,
@@ -78,6 +88,33 @@ private fun PairingScreenContent(
 	onOpenSettings: () -> Unit,
 ) {
 	Scaffold(
+		topBar = {
+			TopAppBar(
+				title = { Text(stringResource(Res.string.app_name)) },
+				actions = {
+					var menuExpanded by remember { mutableStateOf(false) }
+					// the box anchors the menu to the button
+					Box {
+						IconButton(onClick = { menuExpanded = true }) {
+							Icon(Icons.Default.MoreVert, contentDescription = stringResource(Res.string.pairing_more_options))
+						}
+						DropdownMenu(
+							expanded = menuExpanded,
+							onDismissRequest = { menuExpanded = false },
+						) {
+							// needs no permissions, the demo watch uses no Bluetooth
+							DropdownMenuItem(
+								text = { Text(stringResource(Res.string.pairing_connect_demo_watch)) },
+								onClick = {
+									menuExpanded = false
+									onEvent(PairingUiEvent.StartDemo)
+								},
+							)
+						}
+					}
+				},
+			)
+		},
 		// the FAB sits above the bottom bar, so the version stays visible in the corner
 		bottomBar = {
 			Text(

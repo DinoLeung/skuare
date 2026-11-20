@@ -59,7 +59,10 @@ fun NavBarScaffold(
 	val settingsViewModel = koinViewModel<SettingsScreenViewModel>()
 
 	val navBarItems = viewModel.navBarItems
-	val watchName = viewModel.watchName ?: stringResource(Res.string.nav_this_watch)
+	val watchName = when {
+		viewModel.isDemo -> stringResource(Res.string.nav_demo_watch)
+		else -> viewModel.watchName ?: stringResource(Res.string.nav_this_watch)
+	}
 	// only screens with a tab, so a hidden screen is never saved
 	val saveableScreens: Map<NavBarRoute, SaveableScreen> = mapOf(
 		NavBarRoute.Timezones to timezonesViewModel,

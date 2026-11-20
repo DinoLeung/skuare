@@ -44,6 +44,7 @@ sealed interface PairingUiEvent {
 	object Search : PairingUiEvent
 	object StopSearching : PairingUiEvent
 	object RequestPermissions : PairingUiEvent
+	object StartDemo : PairingUiEvent
 	data class Connect(val peripheral: Peripheral) : PairingUiEvent
 	data class Forget(val address: String) : PairingUiEvent
 }
@@ -88,6 +89,7 @@ class PairingScreenViewModel(
 		PairingUiEvent.RequestPermissions -> checkPermissions()
 		PairingUiEvent.Search -> startSearching()
 		PairingUiEvent.StopSearching -> stopSearching()
+		PairingUiEvent.StartDemo -> viewModelScope.launch { startDemo() }
 		is PairingUiEvent.Connect -> viewModelScope.launch { connect(event.peripheral) }
 		is PairingUiEvent.Forget -> viewModelScope.launch { watchSessionHandler.forget(event.address) }
 	}
@@ -106,6 +108,16 @@ class PairingScreenViewModel(
 	private suspend fun connect(peripheral: Peripheral) {
 		val watch = watchConnectionManager.connect(peripheral)
 		watchSessionHandler.runForeground(watch)
+		onConnect()
+	}
+
+	/**
+	 * Opens the watch screens with the demo watch, see [Watch.demo]. Skips the session a real
+	 * watch gets, so nothing is paired or stored.
+	 */
+	private suspend fun startDemo() {
+		stopSearching()
+		watchConnectionManager.connectDemo()
 		onConnect()
 	}
 

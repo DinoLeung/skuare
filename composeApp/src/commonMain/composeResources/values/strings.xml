@@ -27,10 +27,16 @@
 	<string name="nav_adjust_watch_features">Adjust watch features</string>
 	<!-- Stands in for the watch's model name when it didn't advertise one -->
 	<string name="nav_this_watch">This watch</string>
+	<!-- Stands in for the watch's model name in demo mode, see pairing_connect_demo_watch -->
+	<string name="nav_demo_watch">Demo watch</string>
 
 	<!-- Pairing -->
 	<string name="pairing_stop_searching">Stop searching</string>
 	<string name="pairing_pair_new_watch">Pair a new watch</string>
+	<!-- Opens the watch screens with a demo watch, no watch or Bluetooth needed -->
+	<string name="pairing_connect_demo_watch">Connect to a demo watch</string>
+	<!-- Opens the menu in the pairing screen's title bar -->
+	<string name="pairing_more_options">More options</string>
 	<string name="pairing_grant_permissions">Grant permissions from app settings</string>
 	<string name="pairing_no_watches">No paired watches</string>
 	<string name="pairing_no_watches_hint">Press and hold the MODE button (lower-left) on your watch, then tap + to pair it.</string>
