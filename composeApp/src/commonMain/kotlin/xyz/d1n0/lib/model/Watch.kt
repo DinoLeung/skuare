@@ -10,6 +10,7 @@ import com.juul.kable.characteristicOf
 import com.juul.kable.logs.Logging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -39,23 +40,43 @@ import kotlin.time.Duration.Companion.seconds
 import kotlin.uuid.ExperimentalUuidApi
 
 /**
- * A connected Casio watch.
+ * A connected Casio watch, or the demo watch, see [demo].
  *
- * @param peripheral The watch to talk to.
- * @param advertisedName Name the watch advertises, e.g. CASIO GMW-B5000#, null if unknown. It
- *        decides [model], so it is fixed when the watch is created. Not the same as the watch
- *        name from [OpCode.WATCH_NAME], which the user can set to anything.
- * @param customModel The custom model stored for the watch, null if none or not known yet, see
- *        [resolveWatchModel]. Ignored for watches with a known [advertisedName].
+ * @param blePeripheral The watch to talk to, null for the demo watch.
+ * @param demo What stands in for Bluetooth on the demo watch, null for a real one. Every
+ *        function that would use Bluetooth uses it instead.
  */
-class Watch @OptIn(ExperimentalKableApi::class) constructor(
-	private val peripheral: Peripheral,
-	val advertisedName: String? = peripheral.name,
-	customModel: CustomWatchModel? = null,
+class Watch private constructor(
+	private val blePeripheral: Peripheral?,
+	val advertisedName: String?,
+	customModel: CustomWatchModel?,
+	private val demo: DemoWatch?,
 ) : KoinComponent {
+
+	/**
+	 * @param peripheral The watch to talk to.
+	 * @param advertisedName Name the watch advertises, e.g. CASIO GMW-B5000#, null if unknown. It
+	 *        decides [model], so it is fixed when the watch is created. Not the same as the watch
+	 *        name from [OpCode.WATCH_NAME], which the user can set to anything.
+	 * @param customModel The custom model stored for the watch, null if none or not known yet, see
+	 *        [resolveWatchModel]. Ignored for watches with a known [advertisedName].
+	 */
+	@OptIn(ExperimentalKableApi::class)
+	constructor(
+		peripheral: Peripheral,
+		advertisedName: String? = peripheral.name,
+		customModel: CustomWatchModel? = null,
+	) : this(blePeripheral = peripheral, advertisedName = advertisedName, customModel = customModel, demo = null)
 
 	@OptIn(ExperimentalUuidApi::class)
 	companion object {
+		/**
+		 * A watch to try the app without one. It uses no Bluetooth: writes are kept in memory and
+		 * requests are answered from them, see [DemoWatch]. It has every feature, see
+		 * [DemoWatch.model], and no advertised name. Not connected until [connect].
+		 */
+		fun demo(): Watch = Watch(blePeripheral = null, advertisedName = null, customModel = DemoWatch.model, demo = DemoWatch())
+
 		private val requestCharacteristic = characteristicOf(
 			service = BleUuid.ALL_FEATURES_CHARACTERISTIC_UUID,
 			characteristic = BleUuid.REQUEST_CHARACTERISTIC_UUID
@@ -96,6 +117,13 @@ class Watch @OptIn(ExperimentalKableApi::class) constructor(
 	}
 
 	val log: Log by inject()
+
+	/** Whether this is the demo watch, see [demo]. */
+	val isDemo: Boolean get() = demo != null
+
+	/** Only used once [demo] has been ruled out. */
+	private val peripheral: Peripheral
+		get() = checkNotNull(blePeripheral) { "The demo watch has no peripheral" }
 
 	private val _model = MutableStateFlow(
 		resolveWatchModel(advertisedName, customModel).also { log.i { "Watch $advertisedName is $it" } }
@@ -152,13 +180,13 @@ class Watch @OptIn(ExperimentalKableApi::class) constructor(
 	 * Provides the [CoroutineScope] associated with the watch connection.
 	 * This scope is used to launch coroutines tied to the lifecycle of the peripheral.
 	 */
-	val scope: CoroutineScope get() = peripheral.scope
+	val scope: CoroutineScope get() = demo?.scope ?: peripheral.scope
 
 	/**
 	 * Represents the current connection state of the watch as a [StateFlow].
 	 * This can be observed to react to connection state changes, such as connected, disconnected, or connecting.
 	 */
-	val state: StateFlow<State> get() = peripheral.state
+	val state: StateFlow<State> get() = demo?.state ?: peripheral.state
 
 	private val _packets = MutableSharedFlow<ByteArray>(extraBufferCapacity = 64)
 
@@ -180,9 +208,10 @@ class Watch @OptIn(ExperimentalKableApi::class) constructor(
 	 *
 	 * This job is launched in the [peripheral]'s coroutine scope and collects data packets emitted by the IO characteristic.
 	 * Each received packet is processed by the [handlePacket] function, then emitted to [packets].
-	 * The job will automatically be cancelled when the peripheral's scope is cancelled.
+	 * The job will automatically be cancelled when the peripheral's scope is cancelled. Null on
+	 * the demo watch, its replies are handled where they are made, see [receive].
 	 */
-	val ioDataObserverJob = peripheral.scope.launch {
+	val ioDataObserverJob: Job? = blePeripheral?.scope?.launch {
 		peripheral.observe(ioCharacteristic).collect {
 			handlePacket(it)
 			_packets.emit(it)
@@ -190,19 +219,36 @@ class Watch @OptIn(ExperimentalKableApi::class) constructor(
 	}
 
 	/**
+	 * Handles a reply from the demo watch the same way as one received on the IO characteristic.
+	 */
+	private suspend fun receive(packet: ByteArray) {
+		handlePacket(packet)
+		_packets.emit(packet)
+	}
+
+	/**
 	 * Connects to the watch.
 	 */
-	suspend fun connect() = peripheral.connect()
+	suspend fun connect() {
+		demo?.let { return it.connect() }
+		peripheral.connect()
+	}
 
 	/**
 	 * Disconnects the BLE connection from the peripheral.
 	 */
-	suspend fun disconnect() = peripheral.disconnect()
+	suspend fun disconnect() {
+		demo?.let { return it.disconnect() }
+		peripheral.disconnect()
+	}
 
 	/**
 	 * Closes the peripheral and cancels [scope], the watch can't be connected again afterwards.
 	 */
-	fun close() = peripheral.close()
+	fun close() {
+		demo?.let { return it.close() }
+		peripheral.close()
+	}
 
 	/**
 	 * Sends a request to the peripheral with a specified command and position.
@@ -214,6 +260,10 @@ class Watch @OptIn(ExperimentalKableApi::class) constructor(
 	@Throws(CancellationException::class, IOException::class, NotConnectedException::class)
 	suspend fun request(opCode: OpCode) {
 		log.d { "Requesting: ${opCode.byte.toHexString(HexFormat.UpperCase)}" }
+		demo?.let { demo ->
+			demo.reply(opCode, position = null, clockCount = model.clockCount)?.let { receive(it) }
+			return
+		}
 		runCatching {
 			peripheral.write(
 				requestCharacteristic,
@@ -233,6 +283,10 @@ class Watch @OptIn(ExperimentalKableApi::class) constructor(
 	@Throws(CancellationException::class, IOException::class, NotConnectedException::class)
 	suspend fun request(opCode: OpCode, position: Int) {
 		log.d { "Requesting: ${opCode.byte.toHexString(HexFormat.UpperCase)} position: $position" }
+		demo?.let { demo ->
+			demo.reply(opCode, position = position, clockCount = model.clockCount)?.let { receive(it) }
+			return
+		}
 		runCatching {
 			peripheral.write(
 				requestCharacteristic, byteArrayOf(opCode.byte, position.toByte())
@@ -285,6 +339,10 @@ class Watch @OptIn(ExperimentalKableApi::class) constructor(
 	@Throws(CancellationException::class, IOException::class, NotConnectedException::class)
 	suspend fun writeOrThrow(data: ByteArray) {
 		log.d { "Writing: ${data.toHexString(HexFormat.UpperCase)}" }
+		demo?.let { demo ->
+			demo.write(data)?.let { receive(it) }
+			return
+		}
 		try {
 			peripheral.write(ioCharacteristic, data, WriteType.WithResponse)
 		} catch (e: Exception) {
@@ -296,11 +354,12 @@ class Watch @OptIn(ExperimentalKableApi::class) constructor(
 	/**
 	 * Whether the connected watch has the batched characteristics, see [BatchPacket], e.g. the
 	 * GW-BX5600. Decided from the discovered services rather than the [model], so it holds for
-	 * custom models too. False while not connected.
+	 * custom models too. False while not connected, and on the demo watch, so batches are never
+	 * used on it.
 	 */
 	@OptIn(ExperimentalUuidApi::class)
 	val hasBatchCharacteristics: Boolean
-		get() = peripheral.services.value.orEmpty()
+		get() = !isDemo && peripheral.services.value.orEmpty()
 			.flatMap { it.characteristics }
 			.map { it.characteristicUuid }
 			.containsAll(listOf(BleUuid.BATCH_REQUEST_CHARACTERISTIC_UUID, BleUuid.BATCH_TRANSFER_CHARACTERISTIC_UUID))
@@ -323,6 +382,7 @@ class Watch @OptIn(ExperimentalKableApi::class) constructor(
 		requests: List<Pair<OpCode, Int>>,
 		timeout: Duration = 5.seconds,
 	): Result<List<ByteArray>> = runCatching {
+		check(!isDemo) { "The demo watch has no batch characteristics" }
 		val request = BatchPacket.request(requests)
 		val opCodes = requests.map { it.first }.toSet()
 		log.d { "Requesting batch: ${request.toHexString(HexFormat.UpperCase)}" }
@@ -355,6 +415,7 @@ class Watch @OptIn(ExperimentalKableApi::class) constructor(
 	/** Like [writeBatch], but throws what the write threw after logging it, see [writeOrThrow]. */
 	@Throws(CancellationException::class, IOException::class, NotConnectedException::class)
 	suspend fun writeBatchOrThrow(records: List<ByteArray>) {
+		check(!isDemo) { "The demo watch has no batch characteristics" }
 		val batch = BatchPacket.encode(records)
 		log.d { "Writing batch: ${batch.toHexString(HexFormat.UpperCase)}" }
 		try {
@@ -378,9 +439,11 @@ class Watch @OptIn(ExperimentalKableApi::class) constructor(
 	 * @param end The packet that ends the transfer, e.g. [WatchStatus.endPacket].
 	 * @param timeout How long to wait for the reply.
 	 * @return The received data.
+	 * @throws IllegalStateException on the demo watch, it has no data transfer characteristic.
 	 */
 	@Throws(CancellationException::class, IOException::class, NotConnectedException::class)
 	suspend fun requestData(request: ByteArray, end: ByteArray, timeout: Duration = 5.seconds): ByteArray {
+		check(!isDemo) { "The demo watch has no data transfer characteristic" }
 		log.d { "Requesting data: ${request.toHexString(HexFormat.UpperCase)}" }
 		return withTimeout(timeout) {
 			peripheral.observe(dataTransferCharacteristic) {

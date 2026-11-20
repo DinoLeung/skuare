@@ -63,6 +63,20 @@ class WatchConnectionManager(
 	suspend fun connect(peripheral: Peripheral): Watch = slot.replace { connectPeripheral(peripheral) }
 
 	/**
+	 * Like [connect], but with [Watch.demo], to try the app without a watch. It uses no Bluetooth
+	 * and shows no connection notification. Background sync leaves it alone, like any connected
+	 * watch, see [connectIfIdle].
+	 *
+	 * @return The connected demo watch.
+	 */
+	suspend fun connectDemo(): Watch = slot.replace {
+		// the watch it replaced is released by replace, which doesn't report its end, and the demo
+		// watch starts no connection to update the notification, so end it here
+		connectionNotifier.connectionEnded()
+		Watch.demo().also { it.connect() }
+	}
+
+	/**
 	 * Like [connect], but leaves the current watch alone. Used by background sync, so it never
 	 * takes over a watch the UI is connected to.
 	 *
