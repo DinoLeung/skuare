@@ -18,14 +18,16 @@ import xyz.d1n0.sync.WatchConnectionNotifier
 /**
  * Owns the connection to the watch. It is the only place that creates or drops a [Watch], so the
  * UI and background sync never connect to a watch at the same time.
+ *
+ * @param scope Where each watch is awaited until it disconnects, a test scope in tests.
  */
 class WatchConnectionManager(
 	private val connectionNotifier: WatchConnectionNotifier = WatchConnectionNotifier.None,
 	private val pairedWatchRepository: PairedWatchRepository? = null,
+	scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
 ) {
 	private val log = Log
 
-	private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 	private val slot = SingleConnectionSlot(
 		scope = scope,
 		disconnect = Watch::disconnect,

@@ -1,5 +1,7 @@
 package xyz.d1n0.lib.connection
 
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
@@ -39,12 +41,15 @@ class WatchConnectionManagerTest {
 	@Test
 	fun demoEndsTheConnectionItReplaces() = runTest {
 		val notifier = RecordingNotifier()
-		val manager = WatchConnectionManager(connectionNotifier = notifier)
+		val manager = WatchConnectionManager(connectionNotifier = notifier, scope = backgroundScope)
 		val first = manager.connectDemo()
+		// the first watch is awaited until it disconnects, as when the demo replaces a real watch
+		runCurrent()
 
 		val second = manager.connectDemo()
+		advanceUntilIdle()
 
-		// the replaced watch is released by replace, its own end is never reported
+		// replace releases the first watch before its wait resumes, so only connectDemo reports its end
 		assertEquals(listOf("ended", "ended"), notifier.events)
 		assertTrue(second.isDemo)
 		assertEquals(second, manager.watch.value)
