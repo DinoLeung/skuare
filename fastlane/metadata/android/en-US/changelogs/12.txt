@@ -1,0 +1,7 @@
+- Connect to a demo watch from the pairing screen menu
+- Support the GCW-B5000 (module 3543)
+- Show city names in Traditional Chinese (Taiwan)
+- Add Traditional Chinese (Taiwan)
+- Show city names in Traditional Chinese (Hong Kong)
+- Add Traditional Chinese (Hong Kong)
+- Bug fixes
