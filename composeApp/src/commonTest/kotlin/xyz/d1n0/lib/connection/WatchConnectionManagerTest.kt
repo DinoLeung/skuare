@@ -25,6 +25,10 @@ class WatchConnectionManagerTest {
 		override fun connectionEnded() {
 			events += "ended"
 		}
+
+		override fun savingLocation() {
+			events += "saving location"
+		}
 	}
 
 	@BeforeTest

@@ -25,14 +25,19 @@ import org.koin.core.component.inject
 import xyz.d1n0.Log
 import xyz.d1n0.data.database.PairedWatch
 import xyz.d1n0.data.repository.PairedWatchRepository
+import xyz.d1n0.data.repository.PressedLocationRepository
 import xyz.d1n0.lib.connection.WatchConnectionManager
 import xyz.d1n0.lib.model.Watch
 import xyz.d1n0.sync.WatchPresenceMonitor
 import xyz.d1n0.sync.WatchSessionHandler
 
+/**
+ * @property locationCounts Recorded locations per watch address, for the forget dialog.
+ */
 data class PairingUiState(
 	val isSearching: Boolean = false,
 	val pairedWatches: List<PairedWatch> = emptyList(),
+	val locationCounts: Map<String, Int> = emptyMap(),
 	val scanPermissionState: PermissionState = PermissionState.NotDetermined,
 	val connectPermissionState: PermissionState = PermissionState.NotDetermined,
 ) {
@@ -46,7 +51,7 @@ sealed interface PairingUiEvent {
 	object RequestPermissions : PairingUiEvent
 	object StartDemo : PairingUiEvent
 	data class Connect(val peripheral: Peripheral) : PairingUiEvent
-	data class Forget(val address: String) : PairingUiEvent
+	data class Forget(val address: String, val deleteLocations: Boolean) : PairingUiEvent
 }
 
 class PairingScreenViewModel(
@@ -57,6 +62,7 @@ class PairingScreenViewModel(
 	private val watchConnectionManager: WatchConnectionManager by inject()
 	private val watchSessionHandler: WatchSessionHandler by inject()
 	private val pairedWatchRepository: PairedWatchRepository by inject()
+	private val pressedLocationRepository: PressedLocationRepository by inject()
 	private val presenceMonitor: WatchPresenceMonitor by inject()
 
 	private val _state = MutableStateFlow(PairingUiState())
@@ -69,6 +75,12 @@ class PairingScreenViewModel(
 		viewModelScope.launch {
 			pairedWatchRepository.observeAll().collect { watches ->
 				_state.update { it.copy(pairedWatches = watches) }
+			}
+		}
+
+		viewModelScope.launch {
+			pressedLocationRepository.observeCounts().collect { counts ->
+				_state.update { it.copy(locationCounts = counts) }
 			}
 		}
 
@@ -91,7 +103,9 @@ class PairingScreenViewModel(
 		PairingUiEvent.StopSearching -> stopSearching()
 		PairingUiEvent.StartDemo -> viewModelScope.launch { startDemo() }
 		is PairingUiEvent.Connect -> viewModelScope.launch { connect(event.peripheral) }
-		is PairingUiEvent.Forget -> viewModelScope.launch { watchSessionHandler.forget(event.address) }
+		is PairingUiEvent.Forget -> viewModelScope.launch {
+			watchSessionHandler.forget(event.address, deleteLocations = event.deleteLocations)
+		}
 	}
 
 	private fun startSearching() {

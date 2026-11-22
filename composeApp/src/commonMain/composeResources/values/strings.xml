@@ -10,6 +10,7 @@
 	<string name="common_cancel">Cancel</string>
 	<string name="common_close">Close</string>
 	<string name="common_confirm">Confirm</string>
+	<string name="common_delete">Delete</string>
 	<string name="common_disconnect">Disconnect</string>
 	<string name="common_others">Others</string>
 	<string name="common_save">Save</string>
@@ -50,6 +51,63 @@
 	<string name="paired_watch_last_synced">Last synced %1$s</string>
 	<!-- %1$s: date and time of the last sync -->
 	<string name="paired_watch_last_sync_failed">Last sync failed %1$s</string>
+	<!-- Checkbox in the forget dialog, unchecked by default. %1$d: how many locations the watch has -->
+	<plurals name="paired_watch_forget_delete_locations">
+		<item quantity="one">Also delete its recorded location</item>
+		<item quantity="other">Also delete its %1$d recorded locations</item>
+	</plurals>
+
+	<!-- App settings, opened from the gear in the title bar. Settings of the app itself, the Settings tab is the watch's -->
+	<string name="app_settings_title">App settings</string>
+	<string name="app_settings_back">Back</string>
+	<string name="app_settings_location_title">Record location</string>
+	<string name="app_settings_location_switch">Save the phone's location when the lower-right button is pressed briefly</string>
+	<string name="app_settings_location_description">The watch syncs its time as usual, and Skuare saves where your phone is. Needs precise location, allowed all the time.</string>
+	<!-- The switch is on, but the permission was taken away in the system settings since -->
+	<string name="app_settings_location_permission_missing">Location isn't allowed all the time, so no locations are saved.</string>
+	<!-- Turning the switch on failed, the user didn't allow the location -->
+	<string name="app_settings_location_permission_denied">Location wasn't allowed. Allow precise location all the time in the system settings.</string>
+	<!-- Opens the system's settings page for Skuare, where permissions are changed -->
+	<string name="app_settings_open_system_settings">Open system settings</string>
+	<!-- On a platform without background sync, e.g. iOS for now -->
+	<string name="app_settings_location_unsupported">Not available on this device yet, it needs background sync.</string>
+
+	<!-- Recorded locations, a list of where the phone was at each short press of the lower-right button -->
+	<string name="locations_title">Recorded locations</string>
+	<string name="locations_empty">No locations recorded yet</string>
+	<!-- Location recording is off -->
+	<string name="locations_empty_hint_off">Turn on Record location in App settings, then briefly press the lower-right button on your watch.</string>
+	<!-- Location recording is on -->
+	<string name="locations_empty_hint_on">Briefly press the lower-right button on your watch to record where your phone is.</string>
+	<!-- Latitude and longitude in decimal degrees, the format map apps read, the same in every language -->
+	<string name="locations_coordinates" translatable="false">%1$s, %2$s</string>
+	<!-- %1$d: radius around the position in meters -->
+	<string name="locations_accuracy">± %1$d m</string>
+	<!-- Tapping a location opens it in a map app, shown when the phone has none that can -->
+	<string name="locations_no_map_app">No app can show this location</string>
+	<!-- Snackbar after deleting one location from its long-press menu, with locations_undo -->
+	<string name="locations_deleted">Location deleted</string>
+	<string name="locations_undo">Undo</string>
+	<!-- Title bar button and its confirmation -->
+	<string name="locations_delete_all">Delete all locations</string>
+	<string name="locations_delete_all_title">Delete all locations?</string>
+	<!-- %1$d: how many locations there are -->
+	<plurals name="locations_delete_all_text">
+		<item quantity="one">The recorded location will be deleted. This can't be undone.</item>
+		<item quantity="other">All %1$d recorded locations will be deleted. This can't be undone.</item>
+	</plurals>
+	<!-- Title bar button and the title of its dialog, which offers the ages below -->
+	<string name="locations_delete_older">Delete older locations</string>
+	<string name="locations_older_than_week">Older than 1 week</string>
+	<string name="locations_older_than_month">Older than 1 month</string>
+	<string name="locations_older_than_three_months">Older than 3 months</string>
+	<string name="locations_older_than_six_months">Older than 6 months</string>
+	<string name="locations_older_than_year">Older than 1 year</string>
+	<!-- Confirm button of the older locations dialog. %1$d: how many the picked age deletes -->
+	<plurals name="locations_delete_count">
+		<item quantity="one">Delete %1$d location</item>
+		<item quantity="other">Delete %1$d locations</item>
+	</plurals>
 
 	<!-- Timezones -->
 	<string name="timezones_select_home">Select home time zone</string>

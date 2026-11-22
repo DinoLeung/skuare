@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -54,6 +55,7 @@ import xyz.d1n0.resources.*
 @Composable
 fun PairingScreen(
 	onConnect: () -> Unit,
+	onOpenAppSettings: () -> Unit,
 ) {
 	val permissionsControllerFactory = rememberPermissionsControllerFactory()
 	val permissionsController =
@@ -77,6 +79,7 @@ fun PairingScreen(
 			else viewModel.onEvent(event)
 		},
 		onOpenSettings = viewModel.permissionsController::openAppSettings,
+		onOpenAppSettings = onOpenAppSettings,
 	)
 }
 
@@ -86,12 +89,16 @@ private fun PairingScreenContent(
 	state: PairingUiState,
 	onEvent: (PairingUiEvent) -> Unit,
 	onOpenSettings: () -> Unit,
+	onOpenAppSettings: () -> Unit,
 ) {
 	Scaffold(
 		topBar = {
 			TopAppBar(
 				title = { Text(stringResource(Res.string.app_name)) },
 				actions = {
+					IconButton(onClick = onOpenAppSettings) {
+						Icon(Icons.Default.Settings, contentDescription = stringResource(Res.string.app_settings_title))
+					}
 					var menuExpanded by remember { mutableStateOf(false) }
 					// the box anchors the menu to the button
 					Box {
@@ -182,7 +189,8 @@ private fun PairingScreenContent(
 				items(state.pairedWatches, key = { it.address }) { watch ->
 					PairedWatchCard(
 						watch = watch,
-						onForget = { onEvent(PairingUiEvent.Forget(watch.address)) },
+						locationCount = state.locationCounts[watch.address] ?: 0,
+						onForget = { deleteLocations -> onEvent(PairingUiEvent.Forget(watch.address, deleteLocations)) },
 						modifier = Modifier.fillMaxWidth(),
 					)
 				}
@@ -219,6 +227,7 @@ private fun PairingScreenPreview() {
 			),
 			onEvent = {},
 			onOpenSettings = {},
+			onOpenAppSettings = {},
 		)
 	}
 }
@@ -233,6 +242,7 @@ private fun PairingScreenEmptyPreview() {
 			),
 			onEvent = {},
 			onOpenSettings = {},
+			onOpenAppSettings = {},
 		)
 	}
 }
@@ -245,6 +255,7 @@ private fun PairingScreenNoPermissionPreview() {
 			state = PairingUiState(),
 			onEvent = {},
 			onOpenSettings = {},
+			onOpenAppSettings = {},
 		)
 	}
 }

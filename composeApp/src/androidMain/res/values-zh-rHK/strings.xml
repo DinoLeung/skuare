@@ -5,4 +5,5 @@
     <string name="notification_connected">已連接到 %1$s</string>
     <string name="notification_connected_unnamed">已連接到手錶</string>
     <string name="notification_syncing">正在同步時間</string>
+    <string name="notification_saving_location">正在儲存位置</string>
 </resources>

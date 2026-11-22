@@ -21,6 +21,15 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
 
+    <!--
+        Optional, only asked for when the user turns on location recording in App settings: a short
+        press of the watch's lower-right button records the phone's location. The session runs in
+        the background, so it needs background location too.
+    -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+
     <!-- Ongoing watch connection status -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 

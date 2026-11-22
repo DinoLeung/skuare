@@ -35,6 +35,15 @@ object WatchNotifications {
 			.notify(CONNECTION_ID, syncing(context))
 	}
 
+	/**
+	 * The watch disconnected and the phone's location is still being read. Replaces the
+	 * foreground notification, so it goes away with [WatchSyncService].
+	 */
+	fun updateSavingLocation(context: Context) {
+		context.getSystemService(NotificationManager::class.java)
+			.notify(CONNECTION_ID, connectionNotification(context, context.getString(R.string.notification_saving_location)))
+	}
+
 	private fun connectionNotification(context: Context, status: String): Notification {
 		createChannel(context)
 		val openApp = PendingIntent.getActivity(

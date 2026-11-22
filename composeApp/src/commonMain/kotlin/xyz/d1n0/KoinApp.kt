@@ -12,12 +12,16 @@ import org.koin.dsl.module
 import org.koin.mp.KoinPlatform
 import xyz.d1n0.data.database.SkuareDatabase
 import xyz.d1n0.data.database.buildSkuareDatabase
+import xyz.d1n0.data.repository.AppSettingsRepository
 import xyz.d1n0.data.repository.InstallationRepository
 import xyz.d1n0.data.repository.PairedWatchRepository
+import xyz.d1n0.data.repository.PressedLocationRepository
 import xyz.d1n0.lib.connection.WatchConnectionManager
 import xyz.d1n0.sync.WatchSessionHandler
 import xyz.d1n0.ui.navigation.NavBarViewModel
 import xyz.d1n0.ui.screen.alarms.AlarmsScreenViewModel
+import xyz.d1n0.ui.screen.appsettings.AppSettingsScreenViewModel
+import xyz.d1n0.ui.screen.locations.LocationsScreenViewModel
 import xyz.d1n0.ui.screen.timezones.TimezonesScreenViewModel
 import xyz.d1n0.ui.screen.pairing.PairingScreenViewModel
 import xyz.d1n0.ui.screen.reminders.RemindersScreenViewModel
@@ -34,8 +38,12 @@ val coreModule = module {
 	single { get<RoomDatabase.Builder<SkuareDatabase>>().buildSkuareDatabase() }
 	single { get<SkuareDatabase>().pairedWatchDao() }
 	single { get<SkuareDatabase>().appConfigDao() }
+	single { get<SkuareDatabase>().appSettingsDao() }
+	single { get<SkuareDatabase>().pressedLocationDao() }
 	singleOf(::PairedWatchRepository)
 	singleOf(::InstallationRepository)
+	singleOf(::AppSettingsRepository)
+	singleOf(::PressedLocationRepository)
 
 	// not singleOf, it would ask Koin for the scope too
 	single { WatchConnectionManager(connectionNotifier = get(), pairedWatchRepository = get()) }
@@ -46,6 +54,16 @@ val coreModule = module {
 
 val uiModule = module {
 	viewModel { params -> PairingScreenViewModel(onConnect = params[0], permissionsController = params[1]) }
+	viewModel { params ->
+		AppSettingsScreenViewModel(
+			permissionsController = params[0],
+			appSettingsRepository = get(),
+			locationProvider = get(),
+			presenceMonitor = get(),
+		)
+	}
+	// not viewModelOf, it would ask Koin for the clock and time zone too
+	viewModel { LocationsScreenViewModel(pressedLocationRepository = get(), appSettingsRepository = get()) }
 
 	viewModelOf(::NavBarViewModel)
 	viewModelOf(::TimezonesScreenViewModel)

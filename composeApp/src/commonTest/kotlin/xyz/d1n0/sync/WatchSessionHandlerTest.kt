@@ -1,20 +1,31 @@
 package xyz.d1n0.sync
 
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withTimeout
-import xyz.d1n0.data.database.AppConfig
-import xyz.d1n0.data.database.AppConfigDao
+import xyz.d1n0.data.database.FakeAppConfigDao
+import xyz.d1n0.data.database.FakeAppSettingsDao
 import xyz.d1n0.data.database.FakePairedWatchDao
+import xyz.d1n0.data.database.FakePressedLocationDao
 import xyz.d1n0.data.database.PairedWatch
+import xyz.d1n0.data.database.PressedLocation
 import xyz.d1n0.data.database.SyncFailure
+import xyz.d1n0.data.repository.AppSettingsRepository
 import xyz.d1n0.data.repository.InstallationRepository
 import xyz.d1n0.data.repository.PairedWatchRepository
+import xyz.d1n0.data.repository.PressedLocationRepository
+import xyz.d1n0.phone.FakeLocationProvider
+import xyz.d1n0.phone.GeoPoint
+import xyz.d1n0.phone.LocationResult
 import xyz.d1n0.lib.connection.WatchConnectionManager
 import xyz.d1n0.lib.constant.ConnectReason
 import xyz.d1n0.lib.constant.OpCode
@@ -34,6 +45,9 @@ import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
+import kotlin.time.Clock
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
@@ -45,16 +59,6 @@ class WatchSessionHandlerTest {
 		val PAIRED_AT = Instant.parse("2026-01-01T00:00:00Z")
 		const val UNKNOWN_NAME = "CASIO GBD-H2000"
 		val ADJUSTED_MODEL = CustomWatchModel(clockCount = 4, reminderCount = 5, hasWeekdayLanguage = true)
-	}
-
-	private class FakeAppConfigDao(appInfo: AppInfo) : AppConfigDao {
-		private var config: AppConfig? = AppConfig(installationId = appInfo.id)
-
-		override suspend fun get(): AppConfig? = config
-
-		override suspend fun insertIfMissing(config: AppConfig) {
-			if (this.config == null) this.config = config
-		}
 	}
 
 	private class FakePresenceMonitor : WatchPresenceMonitor {
@@ -93,6 +97,10 @@ class WatchSessionHandlerTest {
 
 		override fun connectionEnded() {
 			events += "disconnected"
+		}
+
+		override fun savingLocation() {
+			events += "saving location"
 		}
 	}
 
@@ -158,9 +166,13 @@ class WatchSessionHandlerTest {
 			statusRequestCount++
 		}
 
+		/** How long the time adjustment takes, in the test's virtual time. */
+		var adjustDuration: Duration = Duration.ZERO
+
 		override suspend fun adjustTime(): Result<Unit> {
 			adjustCount++
 			modelAtAdjust = model
+			delay(adjustDuration)
 			return adjustResult
 		}
 
@@ -174,18 +186,26 @@ class WatchSessionHandlerTest {
 		}
 	}
 
-	private class Fixture {
+	private class Fixture(val locationProvider: FakeLocationProvider = FakeLocationProvider()) {
 		val dao = FakePairedWatchDao()
 		val repository = PairedWatchRepository(dao)
 		val presenceMonitor = FakePresenceMonitor()
 		val connectionNotifier = FakeConnectionNotifier()
+		val installationRepository = InstallationRepository(FakeAppConfigDao(OUR_APP_INFO.id))
+		val appSettingsRepository = AppSettingsRepository(FakeAppSettingsDao())
+		val locationDao = FakePressedLocationDao(dao)
 		val handler = WatchSessionHandler(
 			connectionManager = WatchConnectionManager(),
 			pairedWatchRepository = repository,
-			installationRepository = InstallationRepository(FakeAppConfigDao(OUR_APP_INFO)),
+			installationRepository = installationRepository,
 			presenceMonitor = presenceMonitor,
+			appSettingsRepository = appSettingsRepository,
+			pressedLocationRepository = PressedLocationRepository(locationDao),
+			locationProvider = locationProvider,
 			connectionNotifier = connectionNotifier,
 		)
+
+		suspend fun enableLocationRecording() = appSettingsRepository.setLocationRecordingEnabled(true)
 
 		suspend fun pair(
 			address: String = ADDRESS,
@@ -665,7 +685,7 @@ class WatchSessionHandlerTest {
 		val paired = fixture.pair()
 		val watch = FakeConnectedWatch()
 
-		fixture.handler.forget(ADDRESS, watch)
+		fixture.handler.forget(ADDRESS, deleteLocations = false, connectedWatch = watch)
 
 		assertEquals(listOf(paired), fixture.presenceMonitor.unregistered)
 		assertNull(fixture.repository.find(ADDRESS))
@@ -678,9 +698,269 @@ class WatchSessionHandlerTest {
 		fixture.pair()
 		val other = FakeConnectedWatch(address = "00:11:22:33:44:55")
 
-		fixture.handler.forget(ADDRESS, other)
+		fixture.handler.forget(ADDRESS, deleteLocations = false, connectedWatch = other)
 
 		assertEquals(0, other.disconnectCount)
 		assertFalse(fixture.presenceMonitor.unregistered.isEmpty())
+	}
+
+	@Test
+	fun manualSyncRecordsLocationAfterTheWatchDisconnected() = runTest {
+		val fixture = Fixture()
+		fixture.pair()
+		fixture.enableLocationRecording()
+		val answer = CompletableDeferred<Unit>()
+		fixture.locationProvider.answer = answer
+		val watch = FakeConnectedWatch(connectReason = ConnectReason.MANUAL_SYNC)
+		val before = Clock.System.now()
+
+		val session = async { fixture.handler.runBackground(ADDRESS) { watch } }
+		// the time is adjusted and the watch let go while the location read is still open
+		watch.disconnected.await()
+		assertEquals(1, watch.adjustCount)
+		assertEquals(1, fixture.locationProvider.requestCount)
+		assertTrue(fixture.locationDao.all.isEmpty())
+		// the notification stops saying the watch is connected while the location is saved
+		fixture.connectionNotifier.events.first { it == "saving location" }
+		answer.complete(Unit)
+		val result = session.await()
+
+		val synced = assertIs<BackgroundSessionResult.Synced>(result)
+		assertNull(synced.error)
+		assertIs<LocationResult.Fix>(synced.location)
+		val stored = fixture.locationDao.all.single()
+		assertEquals(ADDRESS, stored.watchAddress)
+		assertEquals("Test watch", stored.watchName)
+		assertEquals(22.2793, stored.latitude)
+		assertEquals(114.16281, stored.longitude)
+		assertEquals(12.0, stored.accuracyMeters)
+		assertTrue(stored.pressedAt in before..Clock.System.now())
+		assertEquals(1, watch.disconnectCount)
+		assertEquals("saving location", fixture.connectionNotifier.events.last())
+	}
+
+	@Test
+	fun locationRecordingOffNeverShowsSavingLocation() = runTest {
+		val fixture = Fixture()
+		fixture.pair()
+		val watch = FakeConnectedWatch(connectReason = ConnectReason.MANUAL_SYNC)
+
+		fixture.handler.runBackground(ADDRESS) { watch }
+
+		assertFalse("saving location" in fixture.connectionNotifier.events)
+	}
+
+	@Test
+	fun manualSyncWithLocationRecordingOffDoesNotReadLocation() = runTest {
+		val fixture = Fixture()
+		fixture.pair()
+		val watch = FakeConnectedWatch(connectReason = ConnectReason.MANUAL_SYNC)
+
+		val result = fixture.handler.runBackground(ADDRESS) { watch }
+
+		assertNull(assertIs<BackgroundSessionResult.Synced>(result).location)
+		assertEquals(1, watch.adjustCount)
+		assertEquals(0, fixture.locationProvider.requestCount)
+		assertTrue(fixture.locationDao.all.isEmpty())
+	}
+
+	@Test
+	fun autoSyncDoesNotReadLocation() = runTest {
+		val fixture = Fixture()
+		fixture.pair()
+		fixture.enableLocationRecording()
+		val watch = FakeConnectedWatch(connectReason = ConnectReason.AUTO_SYNC)
+
+		val result = fixture.handler.runBackground(ADDRESS) { watch }
+
+		assertNull(assertIs<BackgroundSessionResult.Synced>(result).location)
+		assertEquals(0, fixture.locationProvider.requestCount)
+	}
+
+	@Test
+	fun unsupportedPlatformDoesNotReadLocation() = runTest {
+		val fixture = Fixture(FakeLocationProvider(isSupported = false))
+		fixture.pair()
+		fixture.enableLocationRecording()
+		val watch = FakeConnectedWatch(connectReason = ConnectReason.MANUAL_SYNC)
+
+		fixture.handler.runBackground(ADDRESS) { watch }
+
+		assertEquals(0, fixture.locationProvider.requestCount)
+		assertEquals(1, watch.adjustCount)
+	}
+
+	@Test
+	fun locationFailureKeepsTheSyncAndStoresNothing() = runTest {
+		listOf(
+			LocationResult.PermissionDenied,
+			LocationResult.Disabled,
+			LocationResult.TimedOut,
+			LocationResult.Failed(IllegalStateException("no provider")),
+		).forEach { failure ->
+			val fixture = Fixture(FakeLocationProvider(result = failure))
+			fixture.pair()
+			fixture.enableLocationRecording()
+			val watch = FakeConnectedWatch(connectReason = ConnectReason.MANUAL_SYNC)
+
+			val result = fixture.handler.runBackground(ADDRESS) { watch }
+
+			val synced = assertIs<BackgroundSessionResult.Synced>(result)
+			assertNull(synced.error, "$failure")
+			assertEquals(failure, synced.location)
+			assertNotNull(fixture.repository.find(ADDRESS)?.lastSyncAt, "$failure")
+			assertTrue(fixture.locationDao.all.isEmpty(), "$failure")
+			assertEquals(1, watch.disconnectCount, "$failure")
+		}
+	}
+
+	@OptIn(ExperimentalCoroutinesApi::class) // currentTime
+	@Test
+	fun locationReadThatNeverAnswersTimesOut() = runTest {
+		val fixture = Fixture()
+		fixture.pair()
+		fixture.enableLocationRecording()
+		// never completed
+		fixture.locationProvider.answer = CompletableDeferred()
+		val watch = FakeConnectedWatch(connectReason = ConnectReason.MANUAL_SYNC)
+
+		val result = fixture.handler.runBackground(ADDRESS) { watch }
+
+		assertEquals(LocationResult.TimedOut, assertIs<BackgroundSessionResult.Synced>(result).location)
+		assertTrue(fixture.locationProvider.cancelled)
+		assertTrue(fixture.locationDao.all.isEmpty())
+		// 10 s after the disconnect, the session itself took no time
+		assertEquals(10.seconds, testScheduler.currentTime.milliseconds)
+	}
+
+	@Test
+	fun fixArrivingWithinTenSecondsOfTheDisconnectIsKeptAfterALongSession() = runTest {
+		val fixture = Fixture()
+		fixture.pair()
+		fixture.enableLocationRecording()
+		val answer = CompletableDeferred<Unit>()
+		fixture.locationProvider.answer = answer
+		// the read starts at the press, the session takes 30 s, the fix comes 8 s after it ended
+		val watch = FakeConnectedWatch(connectReason = ConnectReason.MANUAL_SYNC).also { it.adjustDuration = 30.seconds }
+		launch {
+			delay(38.seconds)
+			answer.complete(Unit)
+		}
+
+		val result = fixture.handler.runBackground(ADDRESS) { watch }
+
+		assertIs<LocationResult.Fix>(assertIs<BackgroundSessionResult.Synced>(result).location)
+		assertFalse(fixture.locationProvider.cancelled)
+		assertEquals(22.2793, fixture.locationDao.all.single().latitude)
+	}
+
+	@OptIn(ExperimentalCoroutinesApi::class) // currentTime
+	@Test
+	fun withoutAFixTenSecondsAfterTheDisconnectTheLastKnownLocationIsUsed() = runTest {
+		val fixture = Fixture(FakeLocationProvider(lastKnown = GeoPoint(51.5, -0.12, accuracyMeters = 30.0)))
+		fixture.pair()
+		fixture.enableLocationRecording()
+		val answer = CompletableDeferred<Unit>()
+		fixture.locationProvider.answer = answer
+		val watch = FakeConnectedWatch(connectReason = ConnectReason.MANUAL_SYNC).also { it.adjustDuration = 30.seconds }
+		// 11 s after the session ended, too late
+		launch {
+			delay(41.seconds)
+			answer.complete(Unit)
+		}
+
+		val result = fixture.handler.runBackground(ADDRESS) { watch }
+
+		assertIs<LocationResult.Fix>(assertIs<BackgroundSessionResult.Synced>(result).location)
+		assertTrue(fixture.locationProvider.cancelled)
+		assertEquals(40.seconds, testScheduler.currentTime.milliseconds)
+		val stored = fixture.locationDao.all.single()
+		assertEquals(51.5, stored.latitude)
+		assertEquals(30.0, stored.accuracyMeters)
+	}
+
+	@Test
+	fun platformGivingUpFallsBackToTheLastKnownLocation() = runTest {
+		val fixture = Fixture(FakeLocationProvider(result = LocationResult.TimedOut, lastKnown = GeoPoint(51.5, -0.12)))
+		fixture.pair()
+		fixture.enableLocationRecording()
+		val watch = FakeConnectedWatch(connectReason = ConnectReason.MANUAL_SYNC)
+
+		val result = fixture.handler.runBackground(ADDRESS) { watch }
+
+		assertIs<LocationResult.Fix>(assertIs<BackgroundSessionResult.Synced>(result).location)
+		assertEquals(51.5, fixture.locationDao.all.single().latitude)
+	}
+
+	@Test
+	fun deniedPermissionDoesNotFallBackToTheLastKnownLocation() = runTest {
+		val fixture = Fixture(FakeLocationProvider(result = LocationResult.PermissionDenied, lastKnown = GeoPoint(51.5, -0.12)))
+		fixture.pair()
+		fixture.enableLocationRecording()
+		val watch = FakeConnectedWatch(connectReason = ConnectReason.MANUAL_SYNC)
+
+		val result = fixture.handler.runBackground(ADDRESS) { watch }
+
+		assertEquals(LocationResult.PermissionDenied, assertIs<BackgroundSessionResult.Synced>(result).location)
+		assertTrue(fixture.locationDao.all.isEmpty())
+	}
+
+	@Test
+	fun watchPairedWithAnotherAppRecordsNoLocation() = runTest {
+		val fixture = Fixture()
+		fixture.pair()
+		fixture.enableLocationRecording()
+		val watch = FakeConnectedWatch(connectReason = ConnectReason.MANUAL_SYNC, appInfo = OTHER_APP_INFO)
+
+		val result = fixture.handler.runBackground(ADDRESS) { watch }
+
+		assertIs<BackgroundSessionResult.Skipped>(result)
+		assertEquals(0, fixture.locationProvider.requestCount)
+		assertTrue(fixture.locationDao.all.isEmpty())
+	}
+
+	@Test
+	fun forgetDeletesLocationsOnlyWhenAsked() = runTest {
+		suspend fun Fixture.recordFor(address: String) = PressedLocationRepository(locationDao).record(
+			watchAddress = address,
+			watchName = "Watch $address",
+			pressedAt = PAIRED_AT,
+			point = GeoPoint(1.0, 2.0),
+		)
+
+		val keeping = Fixture()
+		keeping.pair()
+		keeping.recordFor(ADDRESS)
+		keeping.handler.forget(ADDRESS, deleteLocations = false, connectedWatch = null)
+		assertEquals(listOf(ADDRESS), keeping.locationDao.all.map(PressedLocation::watchAddress))
+
+		val deleting = Fixture()
+		deleting.pair()
+		deleting.recordFor(ADDRESS)
+		deleting.recordFor("00:11:22:33:44:55")
+		deleting.handler.forget(ADDRESS, deleteLocations = true, connectedWatch = null)
+		// another watch's locations stay
+		assertEquals(listOf("00:11:22:33:44:55"), deleting.locationDao.all.map(PressedLocation::watchAddress))
+	}
+
+	@Test
+	fun forgettingAWatchWhileItsLocationIsReadLeavesNoLocation() = runTest {
+		listOf(true, false).forEach { deleteLocations ->
+			val fixture = Fixture()
+			fixture.pair()
+			fixture.enableLocationRecording()
+			val answer = CompletableDeferred<Unit>()
+			fixture.locationProvider.answer = answer
+			val watch = FakeConnectedWatch(connectReason = ConnectReason.MANUAL_SYNC)
+
+			val session = async { fixture.handler.runBackground(ADDRESS) { watch } }
+			// the watch is let go, the read still runs, and the user forgets the watch meanwhile
+			watch.disconnected.await()
+			fixture.handler.forget(ADDRESS, deleteLocations = deleteLocations, connectedWatch = null)
+			answer.complete(Unit)
+			session.await()
+
+			assertTrue(fixture.locationDao.all.isEmpty(), "deleteLocations = $deleteLocations")
+		}
 	}
 }

@@ -19,13 +19,15 @@ const val DATABASE_NAME = "skuare.db"
  * composeApp/schemas are what auto migrations compare against.
  */
 @Database(
-	entities = [PairedWatch::class, AppConfig::class],
-	version = 5,
+	entities = [PairedWatch::class, AppConfig::class, AppSettings::class, PressedLocation::class],
+	version = 6,
 	autoMigrations = [
 		AutoMigration(from = 1, to = 2, spec = CustomWatchModelMigration::class),
 		AutoMigration(from = 2, to = 3, spec = AlarmAndLocationFeaturesMigration::class),
 		AutoMigration(from = 3, to = 4, spec = HandAdjustFeatureMigration::class),
 		AutoMigration(from = 4, to = 5, spec = SyncFailureMigration::class),
+		// adds app_settings (no row: every setting at its default) and pressed_location, nothing to fill in
+		AutoMigration(from = 5, to = 6),
 	],
 )
 @TypeConverters(Converters::class)
@@ -33,6 +35,8 @@ const val DATABASE_NAME = "skuare.db"
 abstract class SkuareDatabase : RoomDatabase() {
 	abstract fun pairedWatchDao(): PairedWatchDao
 	abstract fun appConfigDao(): AppConfigDao
+	abstract fun appSettingsDao(): AppSettingsDao
+	abstract fun pressedLocationDao(): PressedLocationDao
 }
 
 // Room generates the actual implementations

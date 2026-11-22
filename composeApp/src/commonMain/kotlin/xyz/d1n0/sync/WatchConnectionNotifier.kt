@@ -22,11 +22,18 @@ interface WatchConnectionNotifier {
 	/** Called after the BLE connection ends or its connection attempt fails. */
 	fun connectionEnded()
 
+	/**
+	 * Called after a background session let the watch go while the phone's location is still
+	 * being read, until the session ends.
+	 */
+	fun savingLocation()
+
 	object None : WatchConnectionNotifier {
 		override fun connectionStarted(name: String?) = Unit
 		override fun connectionNameUpdated(name: String?) = Unit
 		override fun timeSyncStarted() = Unit
 		override fun timeSyncFinished(name: String?) = Unit
 		override fun connectionEnded() = Unit
+		override fun savingLocation() = Unit
 	}
 }
