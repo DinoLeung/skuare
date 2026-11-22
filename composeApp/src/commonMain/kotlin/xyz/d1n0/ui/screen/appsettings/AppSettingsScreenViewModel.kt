@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import xyz.d1n0.Log
 import xyz.d1n0.data.repository.AppSettingsRepository
 import xyz.d1n0.data.repository.FindPhoneSettings
@@ -77,6 +79,12 @@ class AppSettingsScreenViewModel(
 
 	private var playback: Job? = null
 
+	/**
+	 * Takes turns between choosing and resetting the sound, Reset stays enabled while a picked file is
+	 * taken. Interleaved, a reset could delete the new copy before its name is stored.
+	 */
+	private val soundChange = Mutex()
+
 	private val _state = MutableStateFlow(
 		AppSettingsUiState(
 			isLocationSupported = locationProvider.isSupported && presenceMonitor.isSupported,
@@ -120,7 +128,7 @@ class AppSettingsScreenViewModel(
 		viewModelScope.launch {
 			_state.update { it.copy(isTakingSound = true, soundRejection = null) }
 			try {
-				val rejection = sounds.choose(picked)
+				val rejection = soundChange.withLock { sounds.choose(picked) }
 				_state.update { it.copy(soundRejection = rejection) }
 			} finally {
 				_state.update { it.copy(isTakingSound = false) }
@@ -133,7 +141,7 @@ class AppSettingsScreenViewModel(
 	fun resetSound() {
 		viewModelScope.launch {
 			_state.update { it.copy(soundRejection = null) }
-			sounds.reset()
+			soundChange.withLock { sounds.reset() }
 			checkCustomSound()
 		}
 	}

@@ -4,12 +4,14 @@ import dev.icerock.moko.permissions.Permission
 import dev.icerock.moko.permissions.location.BACKGROUND_LOCATION
 import dev.icerock.moko.permissions.location.LOCATION
 import dev.icerock.moko.permissions.notifications.REMOTE_NOTIFICATION
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import xyz.d1n0.data.database.FakeAppSettingsDao
@@ -35,7 +37,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
-@OptIn(ExperimentalCoroutinesApi::class) // setMain, UnconfinedTestDispatcher
+@OptIn(ExperimentalCoroutinesApi::class) // setMain, UnconfinedTestDispatcher, runCurrent
 class AppSettingsScreenViewModelTest {
 	private companion object {
 		val LOCATION_PERMISSIONS = listOf(Permission.LOCATION, Permission.BACKGROUND_LOCATION)
@@ -108,6 +110,23 @@ class AppSettingsScreenViewModelTest {
 
 		assertEquals("Song.mp3", viewModel.findPhone.soundName)
 		assertNull(viewModel.state.value.soundRejection)
+		assertFalse(viewModel.state.value.isTakingSound)
+	}
+
+	@Test
+	fun resettingWhileASoundIsTakenEndsWithTheBuiltInTone() = runTest {
+		val viewModel = viewModel()
+		val reading = CompletableDeferred<Unit>()
+		val bytes = byteArrayOf(1, 2, 3)
+		viewModel.chooseSound(PickedAudio("Song.mp3", bytes.size.toLong()) { reading.await(); bytes })
+		assertTrue(viewModel.state.value.isTakingSound)
+
+		viewModel.resetSound()
+		reading.complete(Unit)
+		runCurrent()
+
+		assertNull(viewModel.findPhone.soundName)
+		assertNull(store.stored)
 		assertFalse(viewModel.state.value.isTakingSound)
 	}
 
