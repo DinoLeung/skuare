@@ -1,0 +1,271 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 8,
+    "identityHash": "d4283ae21316ce3703934cfed7197287",
+    "entities": [
+      {
+        "tableName": "paired_watch",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`address` TEXT NOT NULL, `advertisedName` TEXT NOT NULL, `displayName` TEXT NOT NULL, `pairedAt` INTEGER NOT NULL, `lastSyncAt` INTEGER, `lastSyncFailure` TEXT, `lastSyncErrorDetail` TEXT, `platformAssociationId` INTEGER, `customModelIntroShown` INTEGER NOT NULL DEFAULT 0, `model_clockCount` INTEGER, `model_reminderCount` INTEGER, `model_hasFontStyle` INTEGER, `model_hasShortCityNames` INTEGER, `model_hasWeekdayLanguage` INTEGER, `model_hasSnoozeAlarm` INTEGER, `model_hasTimeZoneLocation` INTEGER, `model_canAdjustHands` INTEGER, PRIMARY KEY(`address`))",
+        "fields": [
+          {
+            "fieldPath": "address",
+            "columnName": "address",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "advertisedName",
+            "columnName": "advertisedName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pairedAt",
+            "columnName": "pairedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastSyncAt",
+            "columnName": "lastSyncAt",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "lastSyncFailure",
+            "columnName": "lastSyncFailure",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "lastSyncErrorDetail",
+            "columnName": "lastSyncErrorDetail",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "platformAssociationId",
+            "columnName": "platformAssociationId",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "customModelIntroShown",
+            "columnName": "customModelIntroShown",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "customModel.clockCount",
+            "columnName": "model_clockCount",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "customModel.reminderCount",
+            "columnName": "model_reminderCount",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "customModel.hasFontStyle",
+            "columnName": "model_hasFontStyle",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "customModel.hasShortCityNames",
+            "columnName": "model_hasShortCityNames",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "customModel.hasWeekdayLanguage",
+            "columnName": "model_hasWeekdayLanguage",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "customModel.hasSnoozeAlarm",
+            "columnName": "model_hasSnoozeAlarm",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "customModel.hasTimeZoneLocation",
+            "columnName": "model_hasTimeZoneLocation",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "customModel.canAdjustHands",
+            "columnName": "model_canAdjustHands",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "address"
+          ]
+        }
+      },
+      {
+        "tableName": "app_config",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `installationId` BLOB NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "installationId",
+            "columnName": "installationId",
+            "affinity": "BLOB",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "app_settings",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `locationRecordingEnabled` INTEGER NOT NULL DEFAULT 0, `findPhoneEnabled` INTEGER NOT NULL DEFAULT 0, `findPhoneRingUntilStopped` INTEGER NOT NULL DEFAULT 0, `findPhoneRingSeconds` INTEGER NOT NULL DEFAULT 60, `findPhoneSoundName` TEXT, `findPhoneMaxVolume` INTEGER NOT NULL DEFAULT 1, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "locationRecordingEnabled",
+            "columnName": "locationRecordingEnabled",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "findPhoneEnabled",
+            "columnName": "findPhoneEnabled",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "findPhoneRingUntilStopped",
+            "columnName": "findPhoneRingUntilStopped",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "findPhoneRingSeconds",
+            "columnName": "findPhoneRingSeconds",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "60"
+          },
+          {
+            "fieldPath": "findPhoneSoundName",
+            "columnName": "findPhoneSoundName",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "findPhoneMaxVolume",
+            "columnName": "findPhoneMaxVolume",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "1"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "pressed_location",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `watchAddress` TEXT NOT NULL, `watchName` TEXT NOT NULL, `pressedAt` INTEGER NOT NULL, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `accuracyMeters` REAL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "watchAddress",
+            "columnName": "watchAddress",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "watchName",
+            "columnName": "watchName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pressedAt",
+            "columnName": "pressedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "latitude",
+            "columnName": "latitude",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "longitude",
+            "columnName": "longitude",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "accuracyMeters",
+            "columnName": "accuracyMeters",
+            "affinity": "REAL"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_pressed_location_watchAddress",
+            "unique": false,
+            "columnNames": [
+              "watchAddress"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_pressed_location_watchAddress` ON `${TABLE_NAME}` (`watchAddress`)"
+          },
+          {
+            "name": "index_pressed_location_pressedAt",
+            "unique": false,
+            "columnNames": [
+              "pressedAt"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_pressed_location_pressedAt` ON `${TABLE_NAME}` (`pressedAt`)"
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd4283ae21316ce3703934cfed7197287')"
+    ]
+  }
+}

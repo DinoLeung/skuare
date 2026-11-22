@@ -20,7 +20,23 @@ interface AppSettingsDao {
 	@Insert(onConflict = OnConflictStrategy.IGNORE)
 	suspend fun insertIfMissing(settings: AppSettings)
 
-	/** Does nothing until the row exists, see [insertIfMissing]. */
+	// The setters below do nothing until the row exists, see insertIfMissing.
+
 	@Query("UPDATE app_settings SET locationRecordingEnabled = :enabled WHERE id = 0")
 	suspend fun setLocationRecordingEnabled(enabled: Boolean)
+
+	@Query("UPDATE app_settings SET findPhoneEnabled = :enabled WHERE id = 0")
+	suspend fun setFindPhoneEnabled(enabled: Boolean)
+
+	@Query("UPDATE app_settings SET findPhoneRingUntilStopped = :untilStopped WHERE id = 0")
+	suspend fun setFindPhoneRingUntilStopped(untilStopped: Boolean)
+
+	@Query("UPDATE app_settings SET findPhoneRingSeconds = :seconds WHERE id = 0")
+	suspend fun setFindPhoneRingSeconds(seconds: Int)
+
+	@Query("UPDATE app_settings SET findPhoneSoundName = :name WHERE id = 0")
+	suspend fun setFindPhoneSoundName(name: String?)
+
+	@Query("UPDATE app_settings SET findPhoneMaxVolume = :maxVolume WHERE id = 0")
+	suspend fun setFindPhoneMaxVolume(maxVolume: Boolean)
 }

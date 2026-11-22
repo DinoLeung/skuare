@@ -71,6 +71,43 @@
 	<string name="app_settings_open_system_settings">Open system settings</string>
 	<!-- On a platform without background sync, e.g. iOS for now -->
 	<string name="app_settings_location_unsupported">Not available on this device yet, it needs background sync.</string>
+	<!-- Phone finder: holding the watch's lower-right button rings the phone -->
+	<string name="app_settings_find_phone_title">Phone finder</string>
+	<string name="app_settings_find_phone_switch">Ring the phone when the lower-right button is held</string>
+	<string name="app_settings_find_phone_description">Hold the lower-right button on your watch and the phone rings like an alarm, also in silent mode. Stop it from the notification or in Skuare.</string>
+	<!-- Raises the alarm volume to its maximum while it rings, back afterwards. Off, it rings at the alarm volume the user set -->
+	<string name="app_settings_find_phone_max_volume">Ring at full alarm volume</string>
+	<string name="app_settings_find_phone_until_stopped">Ring until stopped</string>
+	<!-- Label of the ring length field, hours, minutes and seconds -->
+	<string name="app_settings_find_phone_ring_for">Ring for</string>
+	<string name="app_settings_find_phone_ring_length_error">At least 1 second</string>
+	<!-- iOS, which doesn't let an app raise the phone's volume -->
+	<string name="app_settings_find_phone_volume_note">Rings at the phone's current volume, apps can't raise it on this system.</string>
+	<!-- The switch is on, but notifications were turned off in the system settings since -->
+	<string name="app_settings_find_phone_notifications_missing">Notifications are off, so the ringing has no Stop button in a notification.</string>
+	<!-- Turning the switch on failed, the user didn't allow notifications -->
+	<string name="app_settings_find_phone_notifications_denied">Notifications weren't allowed. Allow them in the system settings for the Stop button.</string>
+	<!-- On a platform without background sync, e.g. iOS for now -->
+	<string name="app_settings_find_phone_unsupported">Not available on this device yet, it needs background sync.</string>
+	<!-- %1$s: the picked file's name, or app_settings_find_phone_sound_default -->
+	<string name="app_settings_find_phone_sound">Sound: %1$s</string>
+	<string name="app_settings_find_phone_sound_default">Built-in tone</string>
+	<!-- Opens the system's file picker for an audio file -->
+	<string name="app_settings_find_phone_sound_choose">Choose</string>
+	<string name="app_settings_find_phone_sound_reset">Use the built-in tone</string>
+	<!-- Plays the sound at the phone's current volume until tapped again (find_phone_stop), the sound only, no notification -->
+	<string name="app_settings_find_phone_sound_play">Play sound</string>
+	<!-- The picked sound's copy is gone, e.g. after restoring a backup, which leaves it out -->
+	<string name="app_settings_find_phone_sound_missing">The copy of your sound is missing, the built-in tone rings instead. Choose it again.</string>
+	<!-- %1$d: the largest file size allowed, in megabytes -->
+	<string name="app_settings_find_phone_sound_too_large">This file is larger than %1$d MB.</string>
+	<string name="app_settings_find_phone_sound_unplayable">This phone can't play this file.</string>
+	<string name="app_settings_find_phone_sound_failed">This file couldn't be read.</string>
+
+	<!-- Over every screen while find phone rings, its only button stops it -->
+	<string name="find_phone_ringing_title">Your phone is ringing</string>
+	<string name="find_phone_ringing_text">Your watch is looking for this phone.</string>
+	<string name="find_phone_stop">Stop</string>
 
 	<!-- Recorded locations, a list of where the phone was at each short press of the lower-right button -->
 	<string name="locations_title">Recorded locations</string>

@@ -32,6 +32,7 @@ import xyz.d1n0.lib.model.CustomWatchModel
 import xyz.d1n0.lib.model.Watch
 import xyz.d1n0.phone.LocationProvider
 import xyz.d1n0.phone.LocationResult
+import xyz.d1n0.phone.PhoneFinder
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Clock
 import kotlin.time.Duration
@@ -68,9 +69,12 @@ sealed interface BackgroundSessionResult {
 	data class OpenAppRequested(val watch: ConnectedWatch, val syncError: Throwable?) : BackgroundSessionResult
 
 	/**
-	 * Find phone (lower-right long press), not supported yet, disconnected.
+	 * Find phone (lower-right long press), disconnected without adjusting the time.
+	 *
+	 * @property rang Whether the phone started ringing, false if find phone is off or the platform
+	 *           can't ring. The ringing goes on after the session, see [PhoneFinder].
 	 */
-	data object Ignored : BackgroundSessionResult
+	data class FoundPhone(val rang: Boolean) : BackgroundSessionResult
 
 	/**
 	 * Connecting or reading from the watch failed or timed out, disconnected.
@@ -89,6 +93,7 @@ class WatchSessionHandler(
 	private val appSettingsRepository: AppSettingsRepository,
 	private val pressedLocationRepository: PressedLocationRepository,
 	private val locationProvider: LocationProvider,
+	private val phoneFinder: PhoneFinder,
 	private val connectionNotifier: WatchConnectionNotifier = WatchConnectionNotifier.None,
 ) {
 	private companion object {
@@ -183,7 +188,9 @@ class WatchSessionHandler(
 	 *    - setup or default (lower-left long press): adjusts the time like a sync, then keeps the
 	 *      connection and holds the watch in [pendingForegroundWatch], the caller should ask the
 	 *      user to open the app.
-	 *    - find: does nothing.
+	 *    - find (lower-right long press): if the user turned on find phone, rings the phone for the
+	 *      length they set, or until stopped. The ringing goes on after the session, in
+	 *      [PhoneFinder], a long press while it rings restarts the timer. The time isn't adjusted.
 	 * 5. Disconnects, unless the watch is waiting for the app.
 	 * 6. Waits for the location read, if one started, so the watch isn't kept connected for it: up to
 	 *    10 s from the disconnect, then a recent last known location, see [finishLocationRead].
@@ -334,8 +341,17 @@ class WatchSessionHandler(
 				BackgroundSessionResult.OpenAppRequested(watch, syncError)
 			}
 
-			ConnectReason.FIND -> BackgroundSessionResult.Ignored
+			ConnectReason.FIND -> BackgroundSessionResult.FoundPhone(rang = ringIfEnabled())
 		}
+	}
+
+	/** Starts find phone if the user turned it on, the watch is let go right after. */
+	private suspend fun ringIfEnabled(): Boolean {
+		if (!phoneFinder.isSupported) return false
+		val settings = appSettingsRepository.findPhoneSettings()
+		if (!settings.enabled) return false
+		phoneFinder.ring(settings.ringDuration, forceMaxVolume = settings.maxVolume)
+		return true
 	}
 
 	/** A fresh fix, waited for until [finishLocationRead] gives up. Never throws, except for cancellation. */

@@ -85,6 +85,11 @@ excellent opportunity to learn JetBrains Compose Multiplatform and core BLE comm
 - [x] Reminders title and config
 - [x] Hand adjustment (home position correction) on analog watches
     - [x] Clock hands and mode hand
+- [x] Lower-right button, both optional and off until turned on in App settings
+    - [x] Short press: record the phone's location, kept only on the phone, listed in Recorded
+      locations
+    - [x] Long press: find the phone, it rings like an alarm, also in silent mode, at full volume
+      unless turned off, with its own tone or your ringtone (Android only for now)
 
 ## Roadmap
 

@@ -51,6 +51,30 @@
 	<string name="app_settings_location_permission_denied">未取得位置權限。請到系統設定中允許 Skuare 一律使用精確位置。</string>
 	<string name="app_settings_open_system_settings">開啟系統設定</string>
 	<string name="app_settings_location_unsupported">這部裝置目前尚不支援，需要背景同步。</string>
+	<string name="app_settings_find_phone_title">尋找手機</string>
+	<string name="app_settings_find_phone_switch">長按右下按鈕時讓手機響鈴</string>
+	<string name="app_settings_find_phone_description">長按手錶的右下按鈕，手機就會像鬧鐘一樣響鈴，靜音模式下也會響。可以在通知或 Skuare 中停止。</string>
+	<string name="app_settings_find_phone_max_volume">以最大鬧鐘音量響鈴</string>
+	<string name="app_settings_find_phone_until_stopped">持續響鈴直到停止</string>
+	<string name="app_settings_find_phone_ring_for">響鈴時間</string>
+	<string name="app_settings_find_phone_ring_length_error">至少 1 秒</string>
+	<string name="app_settings_find_phone_volume_note">會以手機目前的音量響鈴，這個系統不允許應用程式調高音量。</string>
+	<string name="app_settings_find_phone_notifications_missing">通知已關閉，因此通知中不會有「停止」按鈕。</string>
+	<string name="app_settings_find_phone_notifications_denied">未取得通知權限。請到系統設定中允許通知，以使用「停止」按鈕。</string>
+	<string name="app_settings_find_phone_unsupported">這部裝置目前尚不支援，需要背景同步。</string>
+	<string name="app_settings_find_phone_sound">鈴聲：%1$s</string>
+	<string name="app_settings_find_phone_sound_default">內建鈴聲</string>
+	<string name="app_settings_find_phone_sound_choose">選擇</string>
+	<string name="app_settings_find_phone_sound_reset">使用內建鈴聲</string>
+	<string name="app_settings_find_phone_sound_play">試聽</string>
+	<string name="app_settings_find_phone_sound_missing">找不到你所選鈴聲的副本，會改用內建鈴聲響鈴。請重新選擇。</string>
+	<string name="app_settings_find_phone_sound_too_large">這個檔案超過 %1$d MB。</string>
+	<string name="app_settings_find_phone_sound_unplayable">這支手機無法播放這個檔案。</string>
+	<string name="app_settings_find_phone_sound_failed">無法讀取這個檔案。</string>
+
+	<string name="find_phone_ringing_title">手機正在響鈴</string>
+	<string name="find_phone_ringing_text">手錶正在尋找這支手機。</string>
+	<string name="find_phone_stop">停止</string>
 
 	<string name="locations_title">已記錄的位置</string>
 	<string name="locations_empty">尚未記錄任何位置</string>

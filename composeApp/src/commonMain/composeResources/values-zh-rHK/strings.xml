@@ -51,6 +51,30 @@
 	<string name="app_settings_location_permission_denied">未獲允許使用位置。請在系統設定中允許 Skuare 一直使用精確位置。</string>
 	<string name="app_settings_open_system_settings">開啟系統設定</string>
 	<string name="app_settings_location_unsupported">此裝置暫時未支援，需要背景同步。</string>
+	<string name="app_settings_find_phone_title">尋找手機</string>
+	<string name="app_settings_find_phone_switch">長按右下按鈕時讓手機響鬧</string>
+	<string name="app_settings_find_phone_description">長按手錶的右下按鈕，手機就會像鬧鐘一樣響鬧，靜音模式下亦會響。可在通知或 Skuare 中停止。</string>
+	<string name="app_settings_find_phone_max_volume">以最大鬧鐘音量響鬧</string>
+	<string name="app_settings_find_phone_until_stopped">一直響鬧直至停止</string>
+	<string name="app_settings_find_phone_ring_for">響鬧時間</string>
+	<string name="app_settings_find_phone_ring_length_error">最少 1 秒</string>
+	<string name="app_settings_find_phone_volume_note">以手機目前的音量響鬧，此系統不允許應用程式調高音量。</string>
+	<string name="app_settings_find_phone_notifications_missing">通知已關閉，通知中不會有「停止」按鈕。</string>
+	<string name="app_settings_find_phone_notifications_denied">未獲允許傳送通知。請在系統設定中允許通知，以使用「停止」按鈕。</string>
+	<string name="app_settings_find_phone_unsupported">此裝置暫時未支援，需要背景同步。</string>
+	<string name="app_settings_find_phone_sound">鈴聲：%1$s</string>
+	<string name="app_settings_find_phone_sound_default">內置鈴聲</string>
+	<string name="app_settings_find_phone_sound_choose">選擇</string>
+	<string name="app_settings_find_phone_sound_reset">使用內置鈴聲</string>
+	<string name="app_settings_find_phone_sound_play">試聽</string>
+	<string name="app_settings_find_phone_sound_missing">找不到你所選鈴聲的副本，會改用內置鈴聲響鬧。請重新選擇。</string>
+	<string name="app_settings_find_phone_sound_too_large">此檔案超過 %1$d MB。</string>
+	<string name="app_settings_find_phone_sound_unplayable">此手機無法播放此檔案。</string>
+	<string name="app_settings_find_phone_sound_failed">無法讀取此檔案。</string>
+
+	<string name="find_phone_ringing_title">手機正在響鬧</string>
+	<string name="find_phone_ringing_text">手錶正在尋找此手機。</string>
+	<string name="find_phone_stop">停止</string>
 
 	<string name="locations_title">已記錄的位置</string>
 	<string name="locations_empty">尚未記錄任何位置</string>

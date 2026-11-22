@@ -9,6 +9,8 @@ Skuare is a minimal, open-source companion app for Casio G-Shock watches. It spe
 <li>Timer</li>
 <li>Reminder titles and settings</li>
 <li>Watch settings: name, connection timeout, time adjustment, date and time display, power saving, backlight duration and auto backlight</li>
+<li>Optional: a short press of the watch's lower-right button records the phone's location, kept only on the phone</li>
+<li>Optional: hold the lower-right button to find your phone, it rings like an alarm even in silent mode, at full volume and with your own ringtone if you like</li>
 </ul>
 
 <b>Tested modules</b>
