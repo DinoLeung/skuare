@@ -69,7 +69,7 @@ val uiModule = module {
 	viewModel { params -> PairingScreenViewModel(onConnect = params[0], permissionsController = params[1]) }
 	viewModel { params ->
 		AppSettingsScreenViewModel(
-			permissionsController = params[0],
+			permissions = params[0],
 			appSettingsRepository = get(),
 			locationProvider = get(),
 			presenceMonitor = get(),

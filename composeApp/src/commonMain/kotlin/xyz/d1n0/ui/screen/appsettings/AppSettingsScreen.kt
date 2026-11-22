@@ -50,17 +50,19 @@ fun AppSettingsScreen(
 	val permissionsControllerFactory = rememberPermissionsControllerFactory()
 	val permissionsController =
 		remember(permissionsControllerFactory) { permissionsControllerFactory.createPermissionsController() }
-	val viewModel = koinViewModel<AppSettingsScreenViewModel>(parameters = { parametersOf(permissionsController) })
+	val viewModel = koinViewModel<AppSettingsScreenViewModel>(
+		parameters = { parametersOf(permissionsController.asRequester()) }
+	)
 	val state by viewModel.state.collectAsState()
 
-	BindEffect(viewModel.permissionsController)
+	BindEffect(permissionsController)
 	LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { viewModel.refreshPermissions() }
 
 	AppSettingsScreenContent(
 		state = state,
 		onBack = onBack,
 		onLocationRecordingChange = viewModel::setLocationRecording,
-		onOpenSystemSettings = viewModel.permissionsController::openAppSettings,
+		onOpenSystemSettings = viewModel::openSystemSettings,
 		onOpenLocations = onOpenLocations,
 	)
 }

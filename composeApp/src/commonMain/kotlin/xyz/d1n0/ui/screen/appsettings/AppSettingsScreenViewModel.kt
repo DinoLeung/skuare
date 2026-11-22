@@ -2,8 +2,6 @@ package xyz.d1n0.ui.screen.appsettings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.icerock.moko.permissions.PermissionState
-import dev.icerock.moko.permissions.PermissionsController
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -34,8 +32,11 @@ data class AppSettingsUiState(
 		get() = isLocationRecordingEnabled && !isLocationPermissionGranted
 }
 
+/**
+ * @param permissions Requests through the screen's moko controller, see [asRequester].
+ */
 class AppSettingsScreenViewModel(
-	val permissionsController: PermissionsController,
+	private val permissions: PermissionRequester,
 	private val appSettingsRepository: AppSettingsRepository,
 	private val locationProvider: LocationProvider,
 	presenceMonitor: WatchPresenceMonitor,
@@ -60,6 +61,8 @@ class AppSettingsScreenViewModel(
 	fun refreshPermissions() {
 		_state.update { it.copy(isLocationPermissionGranted = locationProvider.isPermissionGranted()) }
 	}
+
+	fun openSystemSettings() = permissions.openAppSettings()
 
 	/**
 	 * Turning it on asks for the permissions it needs first, and stays off if any is refused.
@@ -88,9 +91,9 @@ class AppSettingsScreenViewModel(
 	/** Asks for each of [LocationProvider.requiredPermissions] in turn, stops at the first refused. */
 	private suspend fun requestLocationPermissions(): Boolean {
 		for (permission in locationProvider.requiredPermissions) {
-			if (permissionsController.getPermissionState(permission) == PermissionState.Granted) continue
+			if (permissions.isGranted(permission)) continue
 			try {
-				permissionsController.providePermission(permission)
+				permissions.request(permission)
 			} catch (e: CancellationException) {
 				throw e
 			} catch (e: Exception) {
