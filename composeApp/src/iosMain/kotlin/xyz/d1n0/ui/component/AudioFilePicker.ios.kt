@@ -3,6 +3,17 @@ package xyz.d1n0.ui.component
 import androidx.compose.runtime.Composable
 import xyz.d1n0.phone.PickedAudio
 
-// step 7 of research/button-actions-plan.md, UIDocumentPickerViewController, the Sound row hides till then
+/**
+ * None on iOS yet, so the Sound row of the Find phone card stays hidden. See step 7 of
+ * research/button-actions-plan.md, to do once there's a Mac and an iOS device to try it on.
+ */
 @Composable
-actual fun rememberAudioFilePicker(onPicked: (PickedAudio) -> Unit): (() -> Unit)? = null
+actual fun rememberAudioFilePicker(onPicked: (PickedAudio) -> Unit): (() -> Unit)? {
+	// TODO: present UIDocumentPickerViewController(forOpeningContentTypes = listOf(UTTypeAudio),
+	//  asCopy = true) from the Compose UIViewController, with a delegate calling onPicked.
+	// TODO: asCopy hands over a temporary copy, no security-scoped access needed. PickedAudio from
+	//  its URL: displayName = lastPathComponent, sizeBytes from NSURLFileSizeKey, read = the bytes
+	//  of NSData(contentsOfURL) on Dispatchers.IO.
+	// TODO: not MPMediaPickerController, songs protected or only in iCloud have no readable file.
+	return null
+}
