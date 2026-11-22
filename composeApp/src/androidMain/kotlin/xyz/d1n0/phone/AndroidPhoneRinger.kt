@@ -10,9 +10,10 @@ import android.os.VibrationAttributes
 import android.os.VibrationEffect
 import android.os.VibratorManager
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import xyz.d1n0.Log
+import kotlin.coroutines.resumeWithException
 
 /**
  * Rings on the alarm stream, so it plays in silent and vibrate mode, and in Do Not Disturb unless
@@ -46,14 +47,14 @@ class AndroidPhoneRinger(context: Context) : PhoneRinger {
 
 			audio.requestAudioFocus(focus)
 			if (forceMaxVolume) setAlarmVolume(audio, audio.getStreamMaxVolume(AudioManager.STREAM_ALARM))
-			player.start()
-			if (vibrate) {
-				vibrator.vibrate(
-					VibrationEffect.createWaveform(VIBRATION_PATTERN, 0),
-					VibrationAttributes.createForUsage(VibrationAttributes.USAGE_ALARM),
-				)
+			playUntilCancelledOrFailed(player) {
+				if (vibrate) {
+					vibrator.vibrate(
+						VibrationEffect.createWaveform(VIBRATION_PATTERN, 0),
+						VibrationAttributes.createForUsage(VibrationAttributes.USAGE_ALARM),
+					)
+				}
 			}
-			awaitCancellation()
 		} finally {
 			vibrator.cancel()
 			// stop throws if prepare failed before start, nothing to stop then
@@ -61,6 +62,25 @@ class AndroidPhoneRinger(context: Context) : PhoneRinger {
 			player.release()
 			audio.abandonAudioFocusRequest(focus)
 			if (forceMaxVolume) setAlarmVolume(audio, previousVolume)
+		}
+	}
+
+	/**
+	 * Starts [player], then [onStarted], and suspends until cancelled. A playback error, e.g. a
+	 * ringtone that prepared but is damaged further in, ends it with an exception instead of leaving
+	 * the phone silent while it looks like ringing: [PhoneFinder] falls back to the built-in tone.
+	 */
+	private suspend fun playUntilCancelledOrFailed(player: MediaPlayer, onStarted: () -> Unit) {
+		suspendCancellableCoroutine<Unit> { continuation ->
+			player.setOnErrorListener { _, what, extra ->
+				if (continuation.isActive) {
+					continuation.resumeWithException(IllegalStateException("Playback failed, MediaPlayer error $what/$extra"))
+				}
+				// handled, no completion callback follows
+				true
+			}
+			player.start()
+			onStarted()
 		}
 	}
 
