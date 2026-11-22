@@ -17,8 +17,8 @@
     <!-- The watch disconnected, the phone is still saving its location after a short press of the lower-right button -->
     <string name="notification_saving_location">Saving location</string>
 
-    <!-- Name of the notification channel for find phone, shown in the app's notification settings -->
-    <string name="notification_channel_find_phone">Find phone</string>
+    <!-- Name of the notification channel for the phone finder, shown in the app's notification settings -->
+    <string name="notification_channel_find_phone">Phone finder</string>
     <!-- While the phone rings after a long press of the watch's lower-right button -->
     <string name="notification_find_phone_title">Your watch is looking for this phone</string>
     <!-- Stops the ringing -->

@@ -71,8 +71,8 @@
 	<string name="app_settings_open_system_settings">Open system settings</string>
 	<!-- On a platform without background sync, e.g. iOS for now -->
 	<string name="app_settings_location_unsupported">Not available on this device yet, it needs background sync.</string>
-	<!-- Find phone: holding the watch's lower-right button rings the phone -->
-	<string name="app_settings_find_phone_title">Find phone</string>
+	<!-- Phone finder: holding the watch's lower-right button rings the phone -->
+	<string name="app_settings_find_phone_title">Phone finder</string>
 	<string name="app_settings_find_phone_switch">Ring the phone when the lower-right button is held</string>
 	<string name="app_settings_find_phone_description">Hold the lower-right button on your watch and the phone rings like an alarm, also in silent mode. Stop it from the notification or in Skuare.</string>
 	<!-- Raises the alarm volume to its maximum while it rings, back afterwards. Off, it rings at the alarm volume the user set -->
