@@ -14,17 +14,21 @@ import kotlinx.coroutines.test.setMain
 import xyz.d1n0.data.database.FakeAppSettingsDao
 import xyz.d1n0.data.database.PairedWatch
 import xyz.d1n0.data.repository.AppSettingsRepository
+import xyz.d1n0.phone.FakeCustomSoundStore
 import xyz.d1n0.phone.FakePhoneRinger
+import xyz.d1n0.phone.FindPhoneSounds
 import xyz.d1n0.phone.GeoPoint
 import xyz.d1n0.phone.LocationProvider
 import xyz.d1n0.phone.LocationResult
 import xyz.d1n0.phone.PhoneFinder
+import xyz.d1n0.phone.PickedAudio
 import xyz.d1n0.sync.WatchPresenceMonitor
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
@@ -78,6 +82,8 @@ class AppSettingsScreenViewModelTest {
 		Dispatchers.resetMain()
 	}
 
+	private val store = FakeCustomSoundStore()
+
 	private fun TestScope.viewModel(
 		ringer: FakePhoneRinger = FakePhoneRinger(),
 		backgroundSync: Boolean = true,
@@ -86,8 +92,67 @@ class AppSettingsScreenViewModelTest {
 		appSettingsRepository = repository,
 		locationProvider = FakeLocation(permissions),
 		phoneFinder = PhoneFinder(ringer, loadSound = { byteArrayOf() }, scope = backgroundScope),
+		sounds = FindPhoneSounds(store, repository, ringer, loadBuiltIn = { byteArrayOf(0) }),
 		presenceMonitor = FakePresence(backgroundSync),
 	)
+
+	private fun picked(name: String = "Song.mp3", bytes: ByteArray = byteArrayOf(1, 2, 3)) =
+		PickedAudio(displayName = name, sizeBytes = bytes.size.toLong(), read = { bytes })
+
+	@Test
+	fun choosingASoundShowsItsName() = runTest {
+		val viewModel = viewModel()
+
+		viewModel.chooseSound(picked())
+
+		assertEquals("Song.mp3", viewModel.findPhone.soundName)
+		assertNull(viewModel.state.value.soundRejection)
+		assertFalse(viewModel.state.value.isTakingSound)
+	}
+
+	@Test
+	fun aRejectedSoundSaysWhyAndKeepsThePreviousOne() = runTest {
+		val ringer = FakePhoneRinger()
+		val viewModel = viewModel(ringer)
+		viewModel.chooseSound(picked())
+
+		ringer.playable = { false }
+		viewModel.chooseSound(picked(name = "Other.ogg"))
+
+		assertEquals(FindPhoneSounds.Rejection.Unplayable, viewModel.state.value.soundRejection)
+		assertEquals("Song.mp3", viewModel.findPhone.soundName)
+
+		// a later pick or a reset clears the message
+		viewModel.resetSound()
+		assertNull(viewModel.state.value.soundRejection)
+		assertNull(viewModel.findPhone.soundName)
+	}
+
+	@Test
+	fun aMissingCopyShowsAfterComingBack() = runTest {
+		val viewModel = viewModel()
+		viewModel.chooseSound(picked())
+		assertFalse(viewModel.state.value.isCustomSoundMissing)
+
+		store.stored = null
+		viewModel.refreshPermissions()
+
+		assertTrue(viewModel.state.value.isCustomSoundMissing)
+	}
+
+	@Test
+	fun previewPlaysAtTheCurrentVolumeForAFewSecondsOrUntilToggled() = runTest {
+		val ringer = FakePhoneRinger()
+		val viewModel = viewModel(ringer)
+
+		viewModel.togglePreview()
+		assertTrue(viewModel.state.value.isPreviewing)
+		assertEquals(listOf(false), ringer.maxVolumes)
+
+		viewModel.togglePreview()
+		assertFalse(viewModel.state.value.isPreviewing)
+		assertEquals(1, ringer.cancelCount)
+	}
 
 	private val AppSettingsScreenViewModel.findPhone get() = state.value.findPhone
 

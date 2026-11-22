@@ -4,16 +4,20 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.icerock.moko.permissions.Permission
 import dev.icerock.moko.permissions.notifications.REMOTE_NOTIFICATION
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import xyz.d1n0.Log
 import xyz.d1n0.data.repository.AppSettingsRepository
 import xyz.d1n0.data.repository.FindPhoneSettings
+import xyz.d1n0.phone.FindPhoneSounds
 import xyz.d1n0.phone.LocationProvider
 import xyz.d1n0.phone.PhoneFinder
+import xyz.d1n0.phone.PickedAudio
 import xyz.d1n0.sync.WatchPresenceMonitor
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Duration
@@ -29,6 +33,10 @@ import kotlin.time.Duration.Companion.seconds
  * @property isNotificationPermissionGranted The Stop button of the ringing lives in a notification.
  * @property notificationPermissionDenied Turning find phone on failed, notifications weren't allowed.
  * @property isRequestingPermission A permission prompt is open, the switches wait for it.
+ * @property isCustomSoundMissing A ringtone is set but its copy is gone, the built-in tone rings.
+ * @property soundRejection Why the last picked file wasn't taken, until the next pick or reset.
+ * @property isTakingSound A picked file is being read and checked.
+ * @property isPreviewing The sound plays for a few seconds, see [AppSettingsScreenViewModel.togglePreview].
  */
 data class AppSettingsUiState(
 	val isLocationSupported: Boolean = false,
@@ -41,6 +49,10 @@ data class AppSettingsUiState(
 	val isNotificationPermissionGranted: Boolean = false,
 	val notificationPermissionDenied: Boolean = false,
 	val isRequestingPermission: Boolean = false,
+	val isCustomSoundMissing: Boolean = false,
+	val soundRejection: FindPhoneSounds.Rejection? = null,
+	val isTakingSound: Boolean = false,
+	val isPreviewing: Boolean = false,
 ) {
 	/** On, but the permission was taken away in the system settings since. */
 	val isLocationPermissionMissing: Boolean
@@ -59,9 +71,12 @@ class AppSettingsScreenViewModel(
 	private val appSettingsRepository: AppSettingsRepository,
 	private val locationProvider: LocationProvider,
 	phoneFinder: PhoneFinder,
+	private val sounds: FindPhoneSounds,
 	presenceMonitor: WatchPresenceMonitor,
 ) : ViewModel() {
 	private val log = Log
+
+	private var preview: Job? = null
 
 	private val _state = MutableStateFlow(
 		AppSettingsUiState(
@@ -81,18 +96,72 @@ class AppSettingsScreenViewModel(
 		viewModelScope.launch {
 			appSettingsRepository.observeFindPhoneSettings().collect { settings ->
 				_state.update { it.copy(findPhone = settings) }
+				checkCustomSound()
 			}
 		}
 		refreshPermissions()
 	}
 
-	/** Reads the permissions again, e.g. on resume, the user may have changed them in the system settings. */
+	/**
+	 * Reads the permissions again, e.g. on resume, the user may have changed them in the system
+	 * settings. Checks the ringtone's copy too.
+	 */
 	fun refreshPermissions() {
 		_state.update { it.copy(isLocationPermissionGranted = locationProvider.isPermissionGranted()) }
 		viewModelScope.launch {
 			val granted = permissions.isGranted(Permission.REMOTE_NOTIFICATION)
 			_state.update { it.copy(isNotificationPermissionGranted = granted) }
+			checkCustomSound()
 		}
+	}
+
+	/** Takes [picked] as the ringtone, or says why not and keeps the previous one, see [FindPhoneSounds.choose]. */
+	fun chooseSound(picked: PickedAudio) {
+		if (_state.value.isTakingSound) return
+		viewModelScope.launch {
+			_state.update { it.copy(isTakingSound = true, soundRejection = null) }
+			try {
+				val rejection = sounds.choose(picked)
+				_state.update { it.copy(soundRejection = rejection) }
+			} finally {
+				_state.update { it.copy(isTakingSound = false) }
+				checkCustomSound()
+			}
+		}
+	}
+
+	/** Back to the built-in tone. */
+	fun resetSound() {
+		viewModelScope.launch {
+			_state.update { it.copy(soundRejection = null) }
+			sounds.reset()
+			checkCustomSound()
+		}
+	}
+
+	/** Plays the sound for [PREVIEW_LENGTH] at the phone's current volume, or stops it if it plays. */
+	fun togglePreview() {
+		preview?.takeIf { it.isActive }?.let {
+			it.cancel()
+			return
+		}
+		preview = viewModelScope.launch {
+			_state.update { it.copy(isPreviewing = true) }
+			try {
+				withTimeoutOrNull(PREVIEW_LENGTH) { sounds.preview() }
+			} catch (e: CancellationException) {
+				throw e
+			} catch (e: Exception) {
+				log.w { "Preview failed: ${e.message}" }
+			} finally {
+				_state.update { it.copy(isPreviewing = false) }
+			}
+		}
+	}
+
+	private suspend fun checkCustomSound() {
+		val missing = sounds.isCustomSoundMissing()
+		_state.update { it.copy(isCustomSoundMissing = missing) }
 	}
 
 	fun openSystemSettings() = permissions.openAppSettings()
@@ -178,5 +247,8 @@ class AppSettingsScreenViewModel(
 	companion object {
 		/** A ring length the user can store, at least a second. */
 		fun isValidRingLength(length: Duration) = length >= 1.seconds
+
+		/** How long Preview plays, enough to hear the sound, not to annoy. */
+		val PREVIEW_LENGTH = 5.seconds
 	}
 }

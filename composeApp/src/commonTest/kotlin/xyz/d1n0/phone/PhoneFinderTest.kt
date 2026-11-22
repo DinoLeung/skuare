@@ -23,10 +23,11 @@ class PhoneFinderTest {
 	private val ringer = FakePhoneRinger()
 
 	/** On the test's virtual time, in its background scope, so a ring left running doesn't hang the test. */
-	private fun TestScope.phoneFinder() = PhoneFinder(
+	private fun TestScope.phoneFinder(customSound: suspend () -> ByteArray? = { null }) = PhoneFinder(
 		ringer,
 		loadSound = { tone },
 		scope = backgroundScope,
+		loadCustomSound = customSound,
 		clock = object : Clock {
 			override fun now() = Instant.fromEpochMilliseconds(currentTime)
 		},
@@ -180,5 +181,44 @@ class PhoneFinderTest {
 		advanceTimeBy(11.seconds)
 		assertNull(finder.ringEndsAt.value)
 		assertFalse(finder.ringing.value)
+	}
+
+	@Test
+	fun ringsWithTheCustomSoundWhenThereIsOne() = runTest {
+		val song = byteArrayOf(7, 8)
+		val finder = phoneFinder(customSound = { song })
+
+		finder.ring(30.seconds)
+		runCurrent()
+
+		assertContentEquals(song, ringer.sounds.single())
+		assertTrue(finder.ringing.value)
+	}
+
+	@Test
+	fun aCustomSoundThatFailsToPlayFallsBackToTheBuiltInTone() = runTest {
+		val song = byteArrayOf(7, 8)
+		ringer.failure = IllegalStateException("unsupported format")
+		ringer.failsOn = song
+		val finder = phoneFinder(customSound = { song })
+
+		finder.ring(30.seconds)
+		runCurrent()
+
+		// it never stays silent
+		assertEquals(2, ringer.sounds.size)
+		assertContentEquals(tone, ringer.sounds.last())
+		assertTrue(finder.ringing.value)
+	}
+
+	@Test
+	fun aCustomSoundThatFailsToLoadFallsBackToTheBuiltInTone() = runTest {
+		val finder = phoneFinder(customSound = { error("copy unreadable") })
+
+		finder.ring(30.seconds)
+		runCurrent()
+
+		assertContentEquals(tone, ringer.sounds.single())
+		assertTrue(finder.ringing.value)
 	}
 }

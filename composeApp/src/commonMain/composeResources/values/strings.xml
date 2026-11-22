@@ -87,6 +87,20 @@
 	<string name="app_settings_find_phone_notifications_denied">Notifications weren't allowed. Allow them in the system settings for the Stop button.</string>
 	<!-- On a platform without background sync, e.g. iOS for now -->
 	<string name="app_settings_find_phone_unsupported">Not available on this device yet, it needs background sync.</string>
+	<!-- %1$s: the picked file's name, or app_settings_find_phone_sound_default -->
+	<string name="app_settings_find_phone_sound">Sound: %1$s</string>
+	<string name="app_settings_find_phone_sound_default">Built-in tone</string>
+	<!-- Opens the system's file picker for an audio file -->
+	<string name="app_settings_find_phone_sound_choose">Choose</string>
+	<string name="app_settings_find_phone_sound_reset">Use the built-in tone</string>
+	<!-- Plays the sound for a few seconds at the phone's current volume -->
+	<string name="app_settings_find_phone_sound_preview">Preview</string>
+	<!-- The picked sound's copy is gone, e.g. after restoring a backup, which leaves it out -->
+	<string name="app_settings_find_phone_sound_missing">The copy of your sound is missing, the built-in tone rings instead. Choose it again.</string>
+	<!-- %1$d: the largest file size allowed, in megabytes -->
+	<string name="app_settings_find_phone_sound_too_large">This file is larger than %1$d MB.</string>
+	<string name="app_settings_find_phone_sound_unplayable">This phone can't play this file.</string>
+	<string name="app_settings_find_phone_sound_failed">This file couldn't be read.</string>
 
 	<!-- Over every screen while find phone rings, its only button stops it -->
 	<string name="find_phone_ringing_title">Your phone is ringing</string>

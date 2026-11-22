@@ -61,6 +61,15 @@
 	<string name="app_settings_find_phone_notifications_missing">通知已關閉，通知中不會有「停止」按鈕。</string>
 	<string name="app_settings_find_phone_notifications_denied">未獲允許傳送通知。請在系統設定中允許通知，以使用「停止」按鈕。</string>
 	<string name="app_settings_find_phone_unsupported">此裝置暫時未支援，需要背景同步。</string>
+	<string name="app_settings_find_phone_sound">鈴聲：%1$s</string>
+	<string name="app_settings_find_phone_sound_default">內置鈴聲</string>
+	<string name="app_settings_find_phone_sound_choose">選擇</string>
+	<string name="app_settings_find_phone_sound_reset">使用內置鈴聲</string>
+	<string name="app_settings_find_phone_sound_preview">試聽</string>
+	<string name="app_settings_find_phone_sound_missing">找不到你所選鈴聲的副本，會改用內置鈴聲響鬧。請重新選擇。</string>
+	<string name="app_settings_find_phone_sound_too_large">此檔案超過 %1$d MB。</string>
+	<string name="app_settings_find_phone_sound_unplayable">此手機無法播放此檔案。</string>
+	<string name="app_settings_find_phone_sound_failed">無法讀取此檔案。</string>
 
 	<string name="find_phone_ringing_title">手機正在響鬧</string>
 	<string name="find_phone_ringing_text">手錶正在尋找此手機。</string>

@@ -20,6 +20,7 @@ import xyz.d1n0.data.repository.InstallationRepository
 import xyz.d1n0.data.repository.PairedWatchRepository
 import xyz.d1n0.data.repository.PressedLocationRepository
 import xyz.d1n0.lib.connection.WatchConnectionManager
+import xyz.d1n0.phone.FindPhoneSounds
 import xyz.d1n0.phone.PhoneFinder
 import xyz.d1n0.phone.builtInFindPhoneSound
 import xyz.d1n0.sync.WatchSessionHandler
@@ -53,11 +54,14 @@ val coreModule = module {
 	// not singleOf, it would ask Koin for the scope too
 	single { WatchConnectionManager(connectionNotifier = get(), pairedWatchRepository = get()) }
 	singleOf(::WatchSessionHandler)
+	single { FindPhoneSounds(store = get(), appSettingsRepository = get(), ringer = get()) }
 	// rings outside any screen or session, for as long as the process lives
 	single {
+		val sounds = get<FindPhoneSounds>()
 		PhoneFinder(
 			ringer = get(),
 			loadSound = ::builtInFindPhoneSound,
+			loadCustomSound = sounds::customSound,
 			scope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
 		)
 	}
@@ -73,6 +77,7 @@ val uiModule = module {
 			appSettingsRepository = get(),
 			locationProvider = get(),
 			phoneFinder = get(),
+			sounds = get(),
 			presenceMonitor = get(),
 		)
 	}

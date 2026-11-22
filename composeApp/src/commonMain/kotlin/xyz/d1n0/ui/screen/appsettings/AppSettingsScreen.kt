@@ -2,6 +2,7 @@ package xyz.d1n0.ui.screen.appsettings
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,11 +38,13 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import xyz.d1n0.data.repository.FindPhoneSettings
+import xyz.d1n0.phone.FindPhoneSounds
 import xyz.d1n0.resources.*
 import xyz.d1n0.ui.component.CardView
 import xyz.d1n0.ui.component.DurationTextInput
 import xyz.d1n0.ui.component.ErrorText
 import xyz.d1n0.ui.component.SwitchField
+import xyz.d1n0.ui.component.rememberAudioFilePicker
 import xyz.d1n0.ui.theme.SkuareTheme
 import kotlin.time.Duration
 
@@ -61,6 +64,7 @@ fun AppSettingsScreen(
 		parameters = { parametersOf(permissionsController.asRequester()) }
 	)
 	val state by viewModel.state.collectAsState()
+	val soundPicker = rememberAudioFilePicker(onPicked = viewModel::chooseSound)
 
 	BindEffect(permissionsController)
 	LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { viewModel.refreshPermissions() }
@@ -72,6 +76,9 @@ fun AppSettingsScreen(
 		onFindPhoneChange = viewModel::setFindPhone,
 		onRingUntilStoppedChange = viewModel::setRingUntilStopped,
 		onRingLengthChange = viewModel::setRingLength,
+		onChooseSound = soundPicker,
+		onResetSound = viewModel::resetSound,
+		onTogglePreview = viewModel::togglePreview,
 		onOpenSystemSettings = viewModel::openSystemSettings,
 		onOpenLocations = onOpenLocations,
 	)
@@ -86,6 +93,9 @@ private fun AppSettingsScreenContent(
 	onFindPhoneChange: (Boolean) -> Unit,
 	onRingUntilStoppedChange: (Boolean) -> Unit,
 	onRingLengthChange: (Duration) -> Unit,
+	onChooseSound: (() -> Unit)?,
+	onResetSound: () -> Unit,
+	onTogglePreview: () -> Unit,
 	onOpenSystemSettings: () -> Unit,
 	onOpenLocations: () -> Unit,
 ) {
@@ -133,6 +143,9 @@ private fun AppSettingsScreenContent(
 					onFindPhoneChange = onFindPhoneChange,
 					onRingUntilStoppedChange = onRingUntilStoppedChange,
 					onRingLengthChange = onRingLengthChange,
+					onChooseSound = onChooseSound,
+					onResetSound = onResetSound,
+					onTogglePreview = onTogglePreview,
 					onOpenSystemSettings = onOpenSystemSettings,
 					modifier = Modifier.fillMaxWidth(),
 				)
@@ -178,6 +191,9 @@ private fun FindPhoneCard(
 	onFindPhoneChange: (Boolean) -> Unit,
 	onRingUntilStoppedChange: (Boolean) -> Unit,
 	onRingLengthChange: (Duration) -> Unit,
+	onChooseSound: (() -> Unit)?,
+	onResetSound: () -> Unit,
+	onTogglePreview: () -> Unit,
 	onOpenSystemSettings: () -> Unit,
 	modifier: Modifier = Modifier,
 ) {
@@ -215,6 +231,62 @@ private fun FindPhoneCard(
 			enabled = !findPhone.ringUntilStopped,
 			onRingLengthChange = onRingLengthChange,
 		)
+		// only where the platform has a file picker
+		onChooseSound?.let {
+			SoundRow(
+				state = state,
+				onChooseSound = it,
+				onResetSound = onResetSound,
+				onTogglePreview = onTogglePreview,
+			)
+		}
+	}
+}
+
+/** Which sound rings, the user's own or the built-in tone, with Choose, Reset and Preview. */
+@Composable
+private fun SoundRow(
+	state: AppSettingsUiState,
+	onChooseSound: () -> Unit,
+	onResetSound: () -> Unit,
+	onTogglePreview: () -> Unit,
+) {
+	val soundName = state.findPhone.soundName
+	Text(
+		text = stringResource(
+			Res.string.app_settings_find_phone_sound,
+			soundName ?: stringResource(Res.string.app_settings_find_phone_sound_default),
+		),
+		style = MaterialTheme.typography.bodyMedium,
+	)
+	if (state.isCustomSoundMissing) ErrorText(stringResource(Res.string.app_settings_find_phone_sound_missing))
+	when (val rejection = state.soundRejection) {
+		null -> Unit
+		FindPhoneSounds.Rejection.TooLarge -> ErrorText(
+			stringResource(
+				Res.string.app_settings_find_phone_sound_too_large,
+				FindPhoneSounds.MAX_SIZE_BYTES / (1024 * 1024),
+			)
+		)
+		FindPhoneSounds.Rejection.Unplayable -> ErrorText(stringResource(Res.string.app_settings_find_phone_sound_unplayable))
+		is FindPhoneSounds.Rejection.Failed -> ErrorText(stringResource(Res.string.app_settings_find_phone_sound_failed))
+	}
+	FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+		TextButton(onClick = onChooseSound, enabled = !state.isTakingSound) {
+			Text(stringResource(Res.string.app_settings_find_phone_sound_choose))
+		}
+		TextButton(onClick = onTogglePreview) {
+			Text(
+				stringResource(
+					if (state.isPreviewing) Res.string.find_phone_stop else Res.string.app_settings_find_phone_sound_preview
+				)
+			)
+		}
+		if (soundName != null) {
+			TextButton(onClick = onResetSound) {
+				Text(stringResource(Res.string.app_settings_find_phone_sound_reset))
+			}
+		}
 	}
 }
 
@@ -298,7 +370,7 @@ private fun AppSettingsScreenPreview() {
 				isLocationPermissionGranted = false,
 				isFindPhoneSupported = true,
 				canForceMaxVolume = false,
-				findPhone = FindPhoneSettings(enabled = true),
+				findPhone = FindPhoneSettings(enabled = true, soundName = "Ringtone.mp3"),
 				isNotificationPermissionGranted = true,
 			),
 			onBack = {},
@@ -306,6 +378,9 @@ private fun AppSettingsScreenPreview() {
 			onFindPhoneChange = {},
 			onRingUntilStoppedChange = {},
 			onRingLengthChange = {},
+			onChooseSound = {},
+			onResetSound = {},
+			onTogglePreview = {},
 			onOpenSystemSettings = {},
 			onOpenLocations = {},
 		)

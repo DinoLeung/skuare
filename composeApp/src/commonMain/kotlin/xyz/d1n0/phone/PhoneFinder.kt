@@ -21,7 +21,9 @@ import kotlin.time.Instant
  * in [scope], not in the background session that started it, so another long press is a session of
  * its own that restarts the timer.
  *
- * @param loadSound The sound to ring with, the built-in tone or the user's own.
+ * @param loadSound The built-in tone, always there.
+ * @param loadCustomSound The user's own ringtone, null for the built-in tone, see [FindPhoneSounds].
+ *        If it fails to load or to play, the phone rings with [loadSound], it never stays silent.
  * @param scope Lives as long as the app process, tests pass one on virtual time.
  * @param clock For [ringEndsAt], tests pass one on virtual time.
  */
@@ -29,6 +31,7 @@ class PhoneFinder(
 	private val ringer: PhoneRinger,
 	private val loadSound: suspend () -> ByteArray,
 	private val scope: CoroutineScope,
+	private val loadCustomSound: suspend () -> ByteArray? = { null },
 	private val clock: Clock = Clock.System,
 ) {
 	private val log = Log
@@ -96,6 +99,7 @@ class PhoneFinder(
 
 	private suspend fun play() {
 		try {
+			if (ringCustomSound()) return
 			ringer.ring(loadSound())
 		} catch (e: CancellationException) {
 			throw e
@@ -105,6 +109,27 @@ class PhoneFinder(
 		} finally {
 			_ringEndsAt.value = null
 			_ringing.value = false
+		}
+	}
+
+	/** Rings with the user's ringtone, false if there is none or it failed, then the built-in tone rings. */
+	private suspend fun ringCustomSound(): Boolean {
+		val sound = try {
+			loadCustomSound()
+		} catch (e: CancellationException) {
+			throw e
+		} catch (e: Exception) {
+			log.w { "Couldn't load the custom sound, ringing with the built-in one: ${e.message}" }
+			null
+		} ?: return false
+		return try {
+			ringer.ring(sound)
+			true
+		} catch (e: CancellationException) {
+			throw e
+		} catch (e: Exception) {
+			log.w { "Couldn't play the custom sound, ringing with the built-in one: ${e.message}" }
+			false
 		}
 	}
 }
