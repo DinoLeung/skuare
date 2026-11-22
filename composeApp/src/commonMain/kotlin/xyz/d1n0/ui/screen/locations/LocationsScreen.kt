@@ -30,12 +30,8 @@ import org.koin.compose.viewmodel.koinViewModel
 import xyz.d1n0.data.database.PressedLocation
 import xyz.d1n0.data.database.PressedLocationWithWatch
 import xyz.d1n0.resources.*
-import xyz.d1n0.ui.component.CardView
-import xyz.d1n0.ui.text.LocalLocaleFormatter
-import xyz.d1n0.ui.text.formatCoordinate
-import xyz.d1n0.ui.text.formatDateTime
+import xyz.d1n0.ui.component.LocationCard
 import xyz.d1n0.ui.theme.SkuareTheme
-import kotlin.math.roundToInt
 import kotlin.time.Instant
 
 /**
@@ -101,40 +97,6 @@ private fun LocationsScreenContent(
 				items(locations, key = { it.location.id }) { location ->
 					LocationCard(location, modifier = Modifier.fillMaxWidth())
 				}
-			}
-		}
-	}
-}
-
-@Composable
-private fun LocationCard(item: PressedLocationWithWatch, modifier: Modifier = Modifier) {
-	val location = item.location
-	CardView(
-		modifier = modifier,
-		title = { Text(text = item.watchName, style = MaterialTheme.typography.titleMedium) },
-	) {
-		Column(
-			modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
-			verticalArrangement = Arrangement.spacedBy(4.dp),
-		) {
-			Text(
-				text = LocalLocaleFormatter.current.formatDateTime(location.pressedAt),
-				style = MaterialTheme.typography.bodyMedium,
-			)
-			Text(
-				text = stringResource(
-					Res.string.locations_coordinates,
-					formatCoordinate(location.latitude),
-					formatCoordinate(location.longitude),
-				),
-				style = MaterialTheme.typography.bodyMedium,
-			)
-			location.accuracyMeters?.let {
-				Text(
-					text = stringResource(Res.string.locations_accuracy, it.roundToInt()),
-					style = MaterialTheme.typography.bodySmall,
-					color = MaterialTheme.colorScheme.onSurfaceVariant,
-				)
 			}
 		}
 	}
