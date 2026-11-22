@@ -2,6 +2,7 @@ package xyz.d1n0.ui.navigation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -65,12 +66,15 @@ class NavBarViewModel : ViewModel(), KoinComponent {
 		.map { it?.customModel != null && !it.customModelIntroShown }
 		.stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
-	private val _reloadEvents = MutableSharedFlow<Unit>()
+	// a channel, not a SharedFlow, which drops an event nobody collects: App settings may cover the
+	// watch screens while a custom model is saved. Conflated, two quick saves need one rebuild.
+	private val _reloadEvents = Channel<Unit>(Channel.CONFLATED)
 
 	/**
 	 * Emitted after a custom model was saved, the watch screens must be rebuilt for its features.
+	 * Kept until collected, e.g. once the watch screens are shown again, and delivered once.
 	 */
-	val reloadEvents: SharedFlow<Unit> = _reloadEvents.asSharedFlow()
+	val reloadEvents: Flow<Unit> = _reloadEvents.receiveAsFlow()
 
 	private val _watchError = MutableStateFlow<WatchErrorPacket?>(null)
 
@@ -139,7 +143,7 @@ class NavBarViewModel : ViewModel(), KoinComponent {
 		if (isDemo) {
 			viewModelScope.launch {
 				watch.useCustomModel(model)
-				_reloadEvents.emit(Unit)
+				_reloadEvents.send(Unit)
 			}
 			return
 		}
@@ -156,7 +160,7 @@ class NavBarViewModel : ViewModel(), KoinComponent {
 			}
 			watch.useCustomModel(model)
 			// last, rebuilding the screens clears this view model
-			_reloadEvents.emit(Unit)
+			_reloadEvents.send(Unit)
 		}
 	}
 }
