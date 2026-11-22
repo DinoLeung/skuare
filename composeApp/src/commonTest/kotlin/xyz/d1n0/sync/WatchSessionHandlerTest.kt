@@ -14,12 +14,14 @@ import xyz.d1n0.data.database.FakeAppSettingsDao
 import xyz.d1n0.data.database.FakePairedWatchDao
 import xyz.d1n0.data.database.FakePressedLocationDao
 import xyz.d1n0.data.database.PairedWatch
+import xyz.d1n0.data.database.PressedLocation
 import xyz.d1n0.data.database.SyncFailure
 import xyz.d1n0.data.repository.AppSettingsRepository
 import xyz.d1n0.data.repository.InstallationRepository
 import xyz.d1n0.data.repository.PairedWatchRepository
 import xyz.d1n0.data.repository.PressedLocationRepository
 import xyz.d1n0.phone.FakeLocationProvider
+import xyz.d1n0.phone.GeoPoint
 import xyz.d1n0.phone.LocationResult
 import xyz.d1n0.lib.connection.WatchConnectionManager
 import xyz.d1n0.lib.constant.ConnectReason
@@ -674,7 +676,7 @@ class WatchSessionHandlerTest {
 		val paired = fixture.pair()
 		val watch = FakeConnectedWatch()
 
-		fixture.handler.forget(ADDRESS, watch)
+		fixture.handler.forget(ADDRESS, deleteLocations = false, connectedWatch = watch)
 
 		assertEquals(listOf(paired), fixture.presenceMonitor.unregistered)
 		assertNull(fixture.repository.find(ADDRESS))
@@ -687,7 +689,7 @@ class WatchSessionHandlerTest {
 		fixture.pair()
 		val other = FakeConnectedWatch(address = "00:11:22:33:44:55")
 
-		fixture.handler.forget(ADDRESS, other)
+		fixture.handler.forget(ADDRESS, deleteLocations = false, connectedWatch = other)
 
 		assertEquals(0, other.disconnectCount)
 		assertFalse(fixture.presenceMonitor.unregistered.isEmpty())
@@ -830,5 +832,29 @@ class WatchSessionHandlerTest {
 		assertIs<BackgroundSessionResult.Skipped>(result)
 		assertEquals(0, fixture.locationProvider.requestCount)
 		assertTrue(fixture.locationDao.all.isEmpty())
+	}
+
+	@Test
+	fun forgetDeletesLocationsOnlyWhenAsked() = runTest {
+		suspend fun Fixture.recordFor(address: String) = PressedLocationRepository(locationDao).record(
+			watchAddress = address,
+			watchName = "Watch $address",
+			pressedAt = PAIRED_AT,
+			point = GeoPoint(1.0, 2.0),
+		)
+
+		val keeping = Fixture()
+		keeping.pair()
+		keeping.recordFor(ADDRESS)
+		keeping.handler.forget(ADDRESS, deleteLocations = false, connectedWatch = null)
+		assertEquals(listOf(ADDRESS), keeping.locationDao.all.map(PressedLocation::watchAddress))
+
+		val deleting = Fixture()
+		deleting.pair()
+		deleting.recordFor(ADDRESS)
+		deleting.recordFor("00:11:22:33:44:55")
+		deleting.handler.forget(ADDRESS, deleteLocations = true, connectedWatch = null)
+		// another watch's locations stay
+		assertEquals(listOf("00:11:22:33:44:55"), deleting.locationDao.all.map(PressedLocation::watchAddress))
 	}
 }

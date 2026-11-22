@@ -37,6 +37,9 @@
 	<string name="paired_watch_never_synced">從未同步</string>
 	<string name="paired_watch_last_synced">上次同步：%1$s</string>
 	<string name="paired_watch_last_sync_failed">上次同步失敗：%1$s</string>
+	<plurals name="paired_watch_forget_delete_locations">
+		<item quantity="other">同時刪除此手錶的 %1$d 個已記錄位置</item>
+	</plurals>
 
 	<string name="app_settings_title">應用程式設定</string>
 	<string name="app_settings_back">返回</string>

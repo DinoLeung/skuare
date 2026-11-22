@@ -50,6 +50,11 @@
 	<string name="paired_watch_last_synced">Last synced %1$s</string>
 	<!-- %1$s: date and time of the last sync -->
 	<string name="paired_watch_last_sync_failed">Last sync failed %1$s</string>
+	<!-- Checkbox in the forget dialog, unchecked by default. %1$d: how many locations the watch has -->
+	<plurals name="paired_watch_forget_delete_locations">
+		<item quantity="one">Also delete its recorded location</item>
+		<item quantity="other">Also delete its %1$d recorded locations</item>
+	</plurals>
 
 	<!-- App settings, opened from the gear in the title bar. Settings of the app itself, the Settings tab is the watch's -->
 	<string name="app_settings_title">App settings</string>

@@ -189,7 +189,8 @@ private fun PairingScreenContent(
 				items(state.pairedWatches, key = { it.address }) { watch ->
 					PairedWatchCard(
 						watch = watch,
-						onForget = { onEvent(PairingUiEvent.Forget(watch.address)) },
+						locationCount = state.locationCounts[watch.address] ?: 0,
+						onForget = { deleteLocations -> onEvent(PairingUiEvent.Forget(watch.address, deleteLocations)) },
 						modifier = Modifier.fillMaxWidth(),
 					)
 				}

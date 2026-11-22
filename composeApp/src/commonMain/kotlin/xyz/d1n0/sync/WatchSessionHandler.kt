@@ -256,18 +256,22 @@ class WatchSessionHandler(
 	 * The watch keeps our app info, connecting to it from the app pairs it again.
 	 *
 	 * @param address BLE address of the watch.
+	 * @param deleteLocations Also deletes the locations recorded with this watch, the user chose
+	 *        it in the forget dialog. Kept otherwise, pairing the watch again finds them by address.
 	 */
-	suspend fun forget(address: String) {
+	suspend fun forget(address: String, deleteLocations: Boolean) {
 		forget(
 			address = address,
+			deleteLocations = deleteLocations,
 			connectedWatch = connectionManager.watch.value?.let(::KableConnectedWatch),
 		)
 	}
 
-	internal suspend fun forget(address: String, connectedWatch: ConnectedWatch?) {
+	internal suspend fun forget(address: String, deleteLocations: Boolean, connectedWatch: ConnectedWatch?) {
 		pairedWatchRepository.find(address)?.let { presenceMonitor.unregister(it) }
 		pairedWatchRepository.remove(address)
-		log.i { "Forgot $address" }
+		if (deleteLocations) pressedLocationRepository.deleteFor(address)
+		log.i { "Forgot $address${if (deleteLocations) " and its locations" else ""}" }
 		connectedWatch
 			?.takeIf { it.info.value.address == address }
 			?.let { runCatching { it.disconnect() } }

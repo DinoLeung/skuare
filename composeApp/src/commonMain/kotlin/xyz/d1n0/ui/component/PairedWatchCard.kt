@@ -2,8 +2,11 @@ package xyz.d1n0.ui.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -12,7 +15,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import xyz.d1n0.data.database.PairedWatch
@@ -21,16 +26,22 @@ import xyz.d1n0.ui.text.LocalLocaleFormatter
 import xyz.d1n0.ui.text.formatDateTime
 import xyz.d1n0.ui.text.lastSyncFailureMessage
 import xyz.d1n0.ui.theme.SkuareTheme
+import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import xyz.d1n0.resources.*
 
 /**
  * A paired watch with its last background sync, and a button to forget it after confirming.
+ *
+ * @param locationCount Locations recorded with this watch. With any, the forget dialog asks
+ *        whether to delete them too, unchecked by default since it can't be undone.
+ * @param onForget Called with whether to delete the watch's locations too.
  */
 @Composable
 fun PairedWatchCard(
 	watch: PairedWatch,
-	onForget: () -> Unit,
+	locationCount: Int,
+	onForget: (deleteLocations: Boolean) -> Unit,
 	modifier: Modifier = Modifier,
 ) {
 	var showForgetDialog by remember { mutableStateOf(false) }
@@ -55,14 +66,41 @@ fun PairedWatchCard(
 	}
 
 	if (showForgetDialog) {
+		var deleteLocations by remember { mutableStateOf(false) }
 		AlertDialog(
 			onDismissRequest = { showForgetDialog = false },
 			title = { Text(stringResource(Res.string.paired_watch_forget_title, watch.displayName)) },
-			text = { Text(stringResource(Res.string.paired_watch_forget_text)) },
+			text = {
+				Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+					Text(stringResource(Res.string.paired_watch_forget_text))
+					if (locationCount > 0) {
+						Row(
+							modifier = Modifier
+								.fillMaxWidth()
+								.toggleable(
+									value = deleteLocations,
+									onValueChange = { deleteLocations = it },
+									role = Role.Checkbox,
+								),
+							verticalAlignment = Alignment.CenterVertically,
+						) {
+							// the row handles the click, so the label toggles it too
+							Checkbox(checked = deleteLocations, onCheckedChange = null)
+							Text(
+								pluralStringResource(
+									Res.plurals.paired_watch_forget_delete_locations,
+									locationCount,
+									locationCount,
+								)
+							)
+						}
+					}
+				}
+			},
 			confirmButton = {
 				TextButton(onClick = {
 					showForgetDialog = false
-					onForget()
+					onForget(locationCount > 0 && deleteLocations)
 				}) { Text(stringResource(Res.string.paired_watch_forget_confirm)) }
 			},
 			dismissButton = {
@@ -92,6 +130,7 @@ private fun PairedWatchCardPreview() {
 				pairedAt = Instant.fromEpochMilliseconds(1792220000000),
 				lastSyncAt = Instant.fromEpochMilliseconds(1792231646000),
 			),
+			locationCount = 3,
 			onForget = {},
 		)
 	}
