@@ -21,7 +21,7 @@ interface PhoneRinger {
 	 * each platform. The alarm-style notification with Stop is the platform's, shown while
 	 * [PhoneFinder.ringing], e.g. Android's foreground service.
 	 *
-	 * @param forceMaxVolume False for the App settings preview: the phone's current volume, no
+	 * @param forceMaxVolume False for App settings' Play sound: the phone's current volume, no
 	 *        vibration.
 	 * @throws Exception If [sound] can't be played, [PhoneFinder] falls back to the built-in tone.
 	 */

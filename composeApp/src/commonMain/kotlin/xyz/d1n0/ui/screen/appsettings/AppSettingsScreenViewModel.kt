@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeoutOrNull
 import xyz.d1n0.Log
 import xyz.d1n0.data.repository.AppSettingsRepository
 import xyz.d1n0.data.repository.FindPhoneSettings
@@ -36,7 +35,7 @@ import kotlin.time.Duration.Companion.seconds
  * @property isCustomSoundMissing A ringtone is set but its copy is gone, the built-in tone rings.
  * @property soundRejection Why the last picked file wasn't taken, until the next pick or reset.
  * @property isTakingSound A picked file is being read and checked.
- * @property isPreviewing The sound plays for a few seconds, see [AppSettingsScreenViewModel.togglePreview].
+ * @property isPlayingSound The sound plays until stopped, see [AppSettingsScreenViewModel.toggleSoundPlayback].
  */
 data class AppSettingsUiState(
 	val isLocationSupported: Boolean = false,
@@ -52,7 +51,7 @@ data class AppSettingsUiState(
 	val isCustomSoundMissing: Boolean = false,
 	val soundRejection: FindPhoneSounds.Rejection? = null,
 	val isTakingSound: Boolean = false,
-	val isPreviewing: Boolean = false,
+	val isPlayingSound: Boolean = false,
 ) {
 	/** On, but the permission was taken away in the system settings since. */
 	val isLocationPermissionMissing: Boolean
@@ -76,7 +75,7 @@ class AppSettingsScreenViewModel(
 ) : ViewModel() {
 	private val log = Log
 
-	private var preview: Job? = null
+	private var playback: Job? = null
 
 	private val _state = MutableStateFlow(
 		AppSettingsUiState(
@@ -139,24 +138,35 @@ class AppSettingsScreenViewModel(
 		}
 	}
 
-	/** Plays the sound for [PREVIEW_LENGTH] at the phone's current volume, or stops it if it plays. */
-	fun togglePreview() {
-		preview?.takeIf { it.isActive }?.let {
-			it.cancel()
+	/**
+	 * Plays the sound at the phone's current volume until called again, or stops it if it plays. A
+	 * whole track can be heard this way, not only its start. See [stopSoundPlayback] for leaving.
+	 */
+	fun toggleSoundPlayback() {
+		if (playback?.isActive == true) {
+			stopSoundPlayback()
 			return
 		}
-		preview = viewModelScope.launch {
-			_state.update { it.copy(isPreviewing = true) }
+		playback = viewModelScope.launch {
+			_state.update { it.copy(isPlayingSound = true) }
 			try {
-				withTimeoutOrNull(PREVIEW_LENGTH) { sounds.preview() }
+				sounds.playAtCurrentVolume()
 			} catch (e: CancellationException) {
 				throw e
 			} catch (e: Exception) {
-				log.w { "Preview failed: ${e.message}" }
+				log.w { "Playing the sound failed: ${e.message}" }
 			} finally {
-				_state.update { it.copy(isPreviewing = false) }
+				_state.update { it.copy(isPlayingSound = false) }
 			}
 		}
+	}
+
+	/**
+	 * Stops Play sound, also when the screen goes to the background, so it doesn't keep playing
+	 * where the user can't see Stop. Leaving the screen stops it too, with the view model.
+	 */
+	fun stopSoundPlayback() {
+		playback?.cancel()
 	}
 
 	private suspend fun checkCustomSound() {
@@ -247,8 +257,5 @@ class AppSettingsScreenViewModel(
 	companion object {
 		/** A ring length the user can store, at least a second. */
 		fun isValidRingLength(length: Duration) = length >= 1.seconds
-
-		/** How long Preview plays, enough to hear the sound, not to annoy. */
-		val PREVIEW_LENGTH = 5.seconds
 	}
 }

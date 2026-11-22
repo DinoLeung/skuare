@@ -8,6 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -141,17 +142,38 @@ class AppSettingsScreenViewModelTest {
 	}
 
 	@Test
-	fun previewPlaysAtTheCurrentVolumeForAFewSecondsOrUntilToggled() = runTest {
+	fun playSoundPlaysAtTheCurrentVolumeUntilToggled() = runTest {
+		// the view model's time is this test's, so minutes can pass
+		Dispatchers.setMain(UnconfinedTestDispatcher(testScheduler))
 		val ringer = FakePhoneRinger()
 		val viewModel = viewModel(ringer)
 
-		viewModel.togglePreview()
-		assertTrue(viewModel.state.value.isPreviewing)
+		viewModel.toggleSoundPlayback()
+		assertTrue(viewModel.state.value.isPlayingSound)
 		assertEquals(listOf(false), ringer.maxVolumes)
 
-		viewModel.togglePreview()
-		assertFalse(viewModel.state.value.isPreviewing)
+		// a whole track can be heard, it doesn't stop after a few seconds
+		advanceTimeBy(5.minutes)
+		assertTrue(viewModel.state.value.isPlayingSound)
+		assertEquals(0, ringer.cancelCount)
+
+		viewModel.toggleSoundPlayback()
+		assertFalse(viewModel.state.value.isPlayingSound)
 		assertEquals(1, ringer.cancelCount)
+	}
+
+	@Test
+	fun playSoundStopsWhenTheScreenGoesToTheBackground() = runTest {
+		val ringer = FakePhoneRinger()
+		val viewModel = viewModel(ringer)
+		viewModel.toggleSoundPlayback()
+
+		viewModel.stopSoundPlayback()
+
+		assertFalse(viewModel.state.value.isPlayingSound)
+		assertEquals(1, ringer.cancelCount)
+		// nothing to stop is fine too
+		viewModel.stopSoundPlayback()
 	}
 
 	private val AppSettingsScreenViewModel.findPhone get() = state.value.findPhone

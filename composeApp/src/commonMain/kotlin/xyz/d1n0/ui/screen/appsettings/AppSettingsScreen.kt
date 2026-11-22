@@ -68,6 +68,7 @@ fun AppSettingsScreen(
 
 	BindEffect(permissionsController)
 	LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { viewModel.refreshPermissions() }
+	LifecycleEventEffect(Lifecycle.Event.ON_PAUSE) { viewModel.stopSoundPlayback() }
 
 	AppSettingsScreenContent(
 		state = state,
@@ -78,7 +79,7 @@ fun AppSettingsScreen(
 		onRingLengthChange = viewModel::setRingLength,
 		onChooseSound = soundPicker,
 		onResetSound = viewModel::resetSound,
-		onTogglePreview = viewModel::togglePreview,
+		onToggleSoundPlayback = viewModel::toggleSoundPlayback,
 		onOpenSystemSettings = viewModel::openSystemSettings,
 		onOpenLocations = onOpenLocations,
 	)
@@ -95,7 +96,7 @@ private fun AppSettingsScreenContent(
 	onRingLengthChange: (Duration) -> Unit,
 	onChooseSound: (() -> Unit)?,
 	onResetSound: () -> Unit,
-	onTogglePreview: () -> Unit,
+	onToggleSoundPlayback: () -> Unit,
 	onOpenSystemSettings: () -> Unit,
 	onOpenLocations: () -> Unit,
 ) {
@@ -145,7 +146,7 @@ private fun AppSettingsScreenContent(
 					onRingLengthChange = onRingLengthChange,
 					onChooseSound = onChooseSound,
 					onResetSound = onResetSound,
-					onTogglePreview = onTogglePreview,
+					onToggleSoundPlayback = onToggleSoundPlayback,
 					onOpenSystemSettings = onOpenSystemSettings,
 					modifier = Modifier.fillMaxWidth(),
 				)
@@ -193,7 +194,7 @@ private fun FindPhoneCard(
 	onRingLengthChange: (Duration) -> Unit,
 	onChooseSound: (() -> Unit)?,
 	onResetSound: () -> Unit,
-	onTogglePreview: () -> Unit,
+	onToggleSoundPlayback: () -> Unit,
 	onOpenSystemSettings: () -> Unit,
 	modifier: Modifier = Modifier,
 ) {
@@ -237,19 +238,19 @@ private fun FindPhoneCard(
 				state = state,
 				onChooseSound = it,
 				onResetSound = onResetSound,
-				onTogglePreview = onTogglePreview,
+				onToggleSoundPlayback = onToggleSoundPlayback,
 			)
 		}
 	}
 }
 
-/** Which sound rings, the user's own or the built-in tone, with Choose, Reset and Preview. */
+/** Which sound rings, the user's own or the built-in tone, with Choose, Reset and Play sound. */
 @Composable
 private fun SoundRow(
 	state: AppSettingsUiState,
 	onChooseSound: () -> Unit,
 	onResetSound: () -> Unit,
-	onTogglePreview: () -> Unit,
+	onToggleSoundPlayback: () -> Unit,
 ) {
 	val soundName = state.findPhone.soundName
 	Text(
@@ -275,10 +276,10 @@ private fun SoundRow(
 		TextButton(onClick = onChooseSound, enabled = !state.isTakingSound) {
 			Text(stringResource(Res.string.app_settings_find_phone_sound_choose))
 		}
-		TextButton(onClick = onTogglePreview) {
+		TextButton(onClick = onToggleSoundPlayback) {
 			Text(
 				stringResource(
-					if (state.isPreviewing) Res.string.find_phone_stop else Res.string.app_settings_find_phone_sound_preview
+					if (state.isPlayingSound) Res.string.find_phone_stop else Res.string.app_settings_find_phone_sound_play
 				)
 			)
 		}
@@ -380,7 +381,7 @@ private fun AppSettingsScreenPreview() {
 			onRingLengthChange = {},
 			onChooseSound = {},
 			onResetSound = {},
-			onTogglePreview = {},
+			onToggleSoundPlayback = {},
 			onOpenSystemSettings = {},
 			onOpenLocations = {},
 		)

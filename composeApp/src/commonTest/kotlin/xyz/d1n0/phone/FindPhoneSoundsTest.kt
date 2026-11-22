@@ -99,14 +99,14 @@ class FindPhoneSoundsTest {
 
 	@OptIn(ExperimentalCoroutinesApi::class) // runCurrent
 	@Test
-	fun previewPlaysTheCurrentSoundAtTheCurrentVolume() = runTest {
-		backgroundScope.launch { sounds.preview() }
+	fun playAtCurrentVolumePlaysTheCurrentSound() = runTest {
+		backgroundScope.launch { sounds.playAtCurrentVolume() }
 		runCurrent()
 		assertContentEquals(builtIn, ringer.sounds.last())
 		assertEquals(false, ringer.maxVolumes.last())
 
 		sounds.choose(picked())
-		backgroundScope.launch { sounds.preview() }
+		backgroundScope.launch { sounds.playAtCurrentVolume() }
 		runCurrent()
 		assertContentEquals(song, ringer.sounds.last())
 	}

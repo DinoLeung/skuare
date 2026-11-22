@@ -65,7 +65,7 @@
 	<string name="app_settings_find_phone_sound_default">內置鈴聲</string>
 	<string name="app_settings_find_phone_sound_choose">選擇</string>
 	<string name="app_settings_find_phone_sound_reset">使用內置鈴聲</string>
-	<string name="app_settings_find_phone_sound_preview">試聽</string>
+	<string name="app_settings_find_phone_sound_play">試聽</string>
 	<string name="app_settings_find_phone_sound_missing">找不到你所選鈴聲的副本，會改用內置鈴聲響鬧。請重新選擇。</string>
 	<string name="app_settings_find_phone_sound_too_large">此檔案超過 %1$d MB。</string>
 	<string name="app_settings_find_phone_sound_unplayable">此手機無法播放此檔案。</string>

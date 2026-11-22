@@ -93,8 +93,8 @@
 	<!-- Opens the system's file picker for an audio file -->
 	<string name="app_settings_find_phone_sound_choose">Choose</string>
 	<string name="app_settings_find_phone_sound_reset">Use the built-in tone</string>
-	<!-- Plays the sound for a few seconds at the phone's current volume -->
-	<string name="app_settings_find_phone_sound_preview">Preview</string>
+	<!-- Plays the sound at the phone's current volume until tapped again (find_phone_stop), the sound only, no notification -->
+	<string name="app_settings_find_phone_sound_play">Play sound</string>
 	<!-- The picked sound's copy is gone, e.g. after restoring a backup, which leaves it out -->
 	<string name="app_settings_find_phone_sound_missing">The copy of your sound is missing, the built-in tone rings instead. Choose it again.</string>
 	<!-- %1$d: the largest file size allowed, in megabytes -->

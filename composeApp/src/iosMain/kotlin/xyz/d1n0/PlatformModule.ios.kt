@@ -29,7 +29,7 @@ actual val platformModule: Module = module {
 	// TODO: IosPhoneRinger. AVAudioSession category .playback (plays in silent mode),
 	//  AVAudioPlayer(data:) with numberOfLoops = -1 and volume = 1, until cancelled.
 	//  canForceMaxVolume = false, iOS has no public API to raise the system volume. forceMaxVolume
-	//  = false (preview) plays the same way. canPlay = whether AVAudioPlayer(data:) initialises.
+	//  = false (Play sound) plays the same way. canPlay = whether AVAudioPlayer(data:) initialises.
 	// TODO: spike: can a BLE-woken app start playback in the background? Needs `audio` in
 	//  UIBackgroundModes in Info.plist. If not, fall back to a time-sensitive local notification
 	//  with the sound (at most 30 s, follows the ringer volume and the silent switch).

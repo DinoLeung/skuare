@@ -74,7 +74,7 @@ class FindPhoneSounds(
 	}
 
 	/** Plays the sound find phone would ring with at the phone's current volume, until cancelled. */
-	suspend fun preview() {
+	suspend fun playAtCurrentVolume() {
 		ringer.ring(customSound() ?: loadBuiltIn(), forceMaxVolume = false)
 	}
 
