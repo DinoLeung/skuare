@@ -63,7 +63,9 @@ class LocationsScreenViewModel(
 		val zone = timeZone()
 		val locations = state.value.locations.orEmpty()
 		return LocationAge.entries.associateWith { age ->
-			val cutoff = age.cutoff(now, zone)
+			// in whole milliseconds, like the database stores it (Converters), otherwise a location in
+			// the cutoff's millisecond is counted here but not deleted by the query
+			val cutoff = age.cutoff(now, zone).toEpochMilliseconds().let(Instant::fromEpochMilliseconds)
 			OlderThan(cutoff = cutoff, count = locations.count { it.location.pressedAt < cutoff })
 		}
 	}

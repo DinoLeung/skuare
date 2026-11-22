@@ -164,6 +164,21 @@ class LocationsScreenViewModelTest {
 	}
 
 	@Test
+	fun cutoffIsInTheDatabasesWholeMilliseconds() = runTest {
+		// the database rounds a cutoff down to the millisecond, this location wouldn't be deleted
+		recordAt("2026-10-22T12:00:00Z")
+		now = Instant.parse("2026-11-22T12:00:00.000500Z")
+		val viewModel = viewModel()
+
+		val choice = viewModel.olderThan().getValue(LocationAge.MONTH)
+
+		assertEquals(Instant.parse("2026-10-22T12:00:00Z"), choice.cutoff)
+		assertEquals(0, choice.count)
+		viewModel.deleteBefore(choice.cutoff)
+		assertEquals(listOf("2026-10-22T12:00:00Z"), storedTimes)
+	}
+
+	@Test
 	fun deletesAll() = runTest {
 		recordAt("2026-11-21T12:00:00Z")
 		recordAt("2020-01-01T00:00:00Z")
