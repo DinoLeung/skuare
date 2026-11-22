@@ -4,7 +4,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 /**
- * App wide settings, the table only ever holds the row with [id] 0.
+ * This install's identity, the table only ever holds the row with [id] 0. The user's settings
+ * are in [AppSettings].
  *
  * @property installationId Id written to the watch's app info, see [xyz.d1n0.lib.model.AppInfo.id].
  */

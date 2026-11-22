@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.Build
 import androidx.compose.material.icons.sharp.LinkOff
+import androidx.compose.material.icons.sharp.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -47,6 +48,7 @@ fun NavBarScaffold(
 	startRoute: String?,
 	onDisconnect: () -> Unit,
 	onReload: (NavBarRoute?) -> Unit,
+	onOpenAppSettings: () -> Unit,
 ) {
 	val viewModel = koinViewModel<NavBarViewModel>()
 
@@ -93,7 +95,10 @@ fun NavBarScaffold(
 		viewModel.watchState.collectAsState(initial = PeripheralState.Disconnected())
 
 	LaunchedEffect(viewModel.disconnectEvents) {
-		viewModel.disconnectEvents.collect { onDisconnect() }
+		// disconnectEvents drops a disconnect nobody collected, e.g. while App settings covered
+		// these screens, so the state is checked when they're shown again
+		if (viewModel.watchState.value is PeripheralState.Disconnected) onDisconnect()
+		else viewModel.disconnectEvents.collect { onDisconnect() }
 	}
 
 	LaunchedEffect(viewModel.reloadEvents) {
@@ -198,6 +203,9 @@ fun NavBarScaffold(
 						) {
 							Icon(Icons.Sharp.Build, contentDescription = stringResource(Res.string.nav_adjust_watch_features))
 						}
+					}
+					IconButton(onClick = onOpenAppSettings) {
+						Icon(Icons.Sharp.Settings, contentDescription = stringResource(Res.string.app_settings_title))
 					}
 				},
 			)

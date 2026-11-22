@@ -31,4 +31,8 @@ class AndroidWatchConnectionNotifier(context: Context) : WatchConnectionNotifier
 		connectionActive = false
 		WatchSyncService.connectionEnded(applicationContext)
 	}
+
+	// Not gated on connectionActive: the watch disconnected already. WatchSyncService keeps
+	// running, with this notification, until the background session that calls this ends.
+	override fun savingLocation() = WatchNotifications.updateSavingLocation(applicationContext)
 }

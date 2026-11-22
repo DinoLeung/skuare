@@ -51,6 +51,33 @@
 	<!-- %1$s: date and time of the last sync -->
 	<string name="paired_watch_last_sync_failed">Last sync failed %1$s</string>
 
+	<!-- App settings, opened from the gear in the title bar. Settings of the app itself, the Settings tab is the watch's -->
+	<string name="app_settings_title">App settings</string>
+	<string name="app_settings_back">Back</string>
+	<string name="app_settings_location_title">Record location</string>
+	<string name="app_settings_location_switch">Save the phone's location when the lower-right button is pressed briefly</string>
+	<string name="app_settings_location_description">The watch syncs its time as usual, and Skuare saves where your phone is. Needs precise location, allowed all the time.</string>
+	<!-- The switch is on, but the permission was taken away in the system settings since -->
+	<string name="app_settings_location_permission_missing">Location isn't allowed all the time, so no locations are saved.</string>
+	<!-- Turning the switch on failed, the user didn't allow the location -->
+	<string name="app_settings_location_permission_denied">Location wasn't allowed. Allow precise location all the time in the system settings.</string>
+	<!-- Opens the system's settings page for Skuare, where permissions are changed -->
+	<string name="app_settings_open_system_settings">Open system settings</string>
+	<!-- On a platform without background sync, e.g. iOS for now -->
+	<string name="app_settings_location_unsupported">Not available on this device yet, it needs background sync.</string>
+
+	<!-- Recorded locations, a list of where the phone was at each short press of the lower-right button -->
+	<string name="locations_title">Recorded locations</string>
+	<string name="locations_empty">No locations recorded yet</string>
+	<!-- Location recording is off -->
+	<string name="locations_empty_hint_off">Turn on Record location in App settings, then briefly press the lower-right button on your watch.</string>
+	<!-- Location recording is on -->
+	<string name="locations_empty_hint_on">Briefly press the lower-right button on your watch to record where your phone is.</string>
+	<!-- Latitude and longitude in decimal degrees, the format map apps read, the same in every language -->
+	<string name="locations_coordinates" translatable="false">%1$s, %2$s</string>
+	<!-- %1$d: radius around the position in meters -->
+	<string name="locations_accuracy">± %1$d m</string>
+
 	<!-- Timezones -->
 	<string name="timezones_select_home">Select home time zone</string>
 	<string name="timezones_select_world">Select world time zone</string>

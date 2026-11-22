@@ -38,6 +38,22 @@
 	<string name="paired_watch_last_synced">上次同步：%1$s</string>
 	<string name="paired_watch_last_sync_failed">上次同步失敗：%1$s</string>
 
+	<string name="app_settings_title">應用程式設定</string>
+	<string name="app_settings_back">返回</string>
+	<string name="app_settings_location_title">記錄位置</string>
+	<string name="app_settings_location_switch">短按右下按鈕時儲存手機位置</string>
+	<string name="app_settings_location_description">手錶會照常校正時間，Skuare 會儲存手機當時的位置。需要允許 Skuare 一律使用精確位置。</string>
+	<string name="app_settings_location_permission_missing">未允許一律使用位置，因此不會儲存位置。</string>
+	<string name="app_settings_location_permission_denied">未取得位置權限。請到系統設定中允許 Skuare 一律使用精確位置。</string>
+	<string name="app_settings_open_system_settings">開啟系統設定</string>
+	<string name="app_settings_location_unsupported">這部裝置目前尚不支援，需要背景同步。</string>
+
+	<string name="locations_title">已記錄的位置</string>
+	<string name="locations_empty">尚未記錄任何位置</string>
+	<string name="locations_empty_hint_off">請到應用程式設定中開啟「記錄位置」，然後短按手錶的右下按鈕。</string>
+	<string name="locations_empty_hint_on">短按手錶的右下按鈕，即可記錄手機的位置。</string>
+	<string name="locations_accuracy">誤差 ±%1$d 公尺</string>
+
 	<!-- Timezones -->
 	<string name="timezones_select_home">選擇本地時區</string>
 	<string name="timezones_select_world">選擇世界時區</string>

@@ -8,6 +8,8 @@ import androidx.compose.runtime.setValue
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import xyz.d1n0.ui.screen.appsettings.AppSettingsScreen
+import xyz.d1n0.ui.screen.locations.LocationsScreen
 import xyz.d1n0.ui.screen.pairing.PairingScreen
 
 @Composable
@@ -39,19 +41,40 @@ fun RootNavGraph() {
 		}
 	}
 
+	// on top of the pairing or the watch screens. A watch disconnecting meanwhile doesn't close it,
+	// the watch screens go back to pairing once they're shown again
+	val onOpenAppSettings = {
+		rootNavHostController.navigate(RootNavRoute.AppSettings.route) { launchSingleTop = true }
+	}
+
+	// navigateUp never pops the start destination, a double tap on back can't empty the back stack
+	val onBack: () -> Unit = { rootNavHostController.navigateUp() }
+
 	NavHost(
 		navController = rootNavHostController,
 		startDestination = RootNavRoute.Pairing.route,
 	) {
 		composable(RootNavRoute.Pairing.route) {
-			PairingScreen(onConnect = onConnect)
+			PairingScreen(onConnect = onConnect, onOpenAppSettings = onOpenAppSettings)
 		}
 		composable(RootNavRoute.Watch.route) {
 			NavBarScaffold(
 				startRoute = watchStartRoute,
 				onDisconnect = onDisconnect,
 				onReload = onReload,
+				onOpenAppSettings = onOpenAppSettings,
 			)
+		}
+		composable(RootNavRoute.AppSettings.route) {
+			AppSettingsScreen(
+				onBack = onBack,
+				onOpenLocations = {
+					rootNavHostController.navigate(RootNavRoute.Locations.route) { launchSingleTop = true }
+				},
+			)
+		}
+		composable(RootNavRoute.Locations.route) {
+			LocationsScreen(onBack = onBack)
 		}
 	}
 }

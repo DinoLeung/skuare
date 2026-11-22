@@ -14,4 +14,6 @@
     <!-- When the watch's name isn't known yet -->
     <string name="notification_connected_unnamed">Connected to watch</string>
     <string name="notification_syncing">Syncing time</string>
+    <!-- The watch disconnected, the phone is still saving its location after a short press of the lower-right button -->
+    <string name="notification_saving_location">Saving location</string>
 </resources>

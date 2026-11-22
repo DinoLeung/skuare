@@ -25,6 +25,11 @@
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<!-- Location recording on a short press of the watch's lower-right button, asked for only when the user turns it on -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Skuare saves where your phone is when you briefly press the lower-right button on your watch.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Skuare saves where your phone is when you briefly press the lower-right button on your watch, also while Skuare is closed.</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
