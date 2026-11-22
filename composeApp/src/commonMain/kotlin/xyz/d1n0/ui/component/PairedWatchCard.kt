@@ -83,6 +83,9 @@ fun PairedWatchCard(
 									role = Role.Checkbox,
 								),
 							verticalAlignment = Alignment.CenterVertically,
+							// without its own click the checkbox has no touch target padding, this puts the
+							// label where it sits next to a standard 48 dp checkbox
+							horizontalArrangement = Arrangement.spacedBy(12.dp),
 						) {
 							// the row handles the click, so the label toggles it too
 							Checkbox(checked = deleteLocations, onCheckedChange = null)

@@ -83,7 +83,9 @@ fun DeleteOlderLocationsDialog(
 							.selectable(selected = age == selected, onClick = { selected = age }, role = Role.RadioButton)
 							.padding(vertical = 4.dp),
 						verticalAlignment = Alignment.CenterVertically,
-						horizontalArrangement = Arrangement.spacedBy(8.dp),
+						// without its own click the radio button has no touch target padding, this puts
+						// the label where it sits next to a standard 48 dp radio button
+						horizontalArrangement = Arrangement.spacedBy(12.dp),
 					) {
 						// the row handles the click, so the label selects it too
 						RadioButton(selected = age == selected, onClick = null)
