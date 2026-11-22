@@ -20,13 +20,21 @@ interface PhoneRinger {
 	 * way out. Cancellation is the only way to stop it, there is no stop() to keep in step with it on
 	 * each platform. The alarm-style notification with Stop is the platform's, shown while
 	 * [PhoneFinder.ringing], e.g. Android's foreground service.
+	 *
+	 * @param forceMaxVolume False for the App settings preview: the phone's current volume, no
+	 *        vibration.
+	 * @throws Exception If [sound] can't be played, [PhoneFinder] falls back to the built-in tone.
 	 */
-	suspend fun ring(sound: ByteArray)
+	suspend fun ring(sound: ByteArray, forceMaxVolume: Boolean = true)
+
+	/** Whether this phone's player decodes [sound], checked before a picked ringtone is stored. */
+	suspend fun canPlay(sound: ByteArray): Boolean
 }
 
 /** For platforms that can't ring yet, find phone stays hidden. */
 class UnsupportedPhoneRinger : PhoneRinger {
 	override val isSupported = false
 	override val canForceMaxVolume = false
-	override suspend fun ring(sound: ByteArray) = Unit
+	override suspend fun ring(sound: ByteArray, forceMaxVolume: Boolean) = Unit
+	override suspend fun canPlay(sound: ByteArray) = false
 }

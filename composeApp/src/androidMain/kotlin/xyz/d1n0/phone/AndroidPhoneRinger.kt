@@ -29,7 +29,7 @@ class AndroidPhoneRinger(context: Context) : PhoneRinger {
 	override val isSupported = true
 	override val canForceMaxVolume = true
 
-	override suspend fun ring(sound: ByteArray) {
+	override suspend fun ring(sound: ByteArray, forceMaxVolume: Boolean) {
 		val audio = context.getSystemService(AudioManager::class.java)
 		val vibrator = context.getSystemService(VibratorManager::class.java).defaultVibrator
 		val focus = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT)
@@ -44,12 +44,14 @@ class AndroidPhoneRinger(context: Context) : PhoneRinger {
 			withContext(Dispatchers.IO) { player.prepare() }
 
 			audio.requestAudioFocus(focus)
-			setAlarmVolume(audio, audio.getStreamMaxVolume(AudioManager.STREAM_ALARM))
+			if (forceMaxVolume) setAlarmVolume(audio, audio.getStreamMaxVolume(AudioManager.STREAM_ALARM))
 			player.start()
-			vibrator.vibrate(
-				VibrationEffect.createWaveform(VIBRATION_PATTERN, 0),
-				VibrationAttributes.createForUsage(VibrationAttributes.USAGE_ALARM),
-			)
+			if (forceMaxVolume) {
+				vibrator.vibrate(
+					VibrationEffect.createWaveform(VIBRATION_PATTERN, 0),
+					VibrationAttributes.createForUsage(VibrationAttributes.USAGE_ALARM),
+				)
+			}
 			awaitCancellation()
 		} finally {
 			vibrator.cancel()
@@ -57,7 +59,23 @@ class AndroidPhoneRinger(context: Context) : PhoneRinger {
 			runCatching { player.stop() }
 			player.release()
 			audio.abandonAudioFocusRequest(focus)
-			setAlarmVolume(audio, previousVolume)
+			if (forceMaxVolume) setAlarmVolume(audio, previousVolume)
+		}
+	}
+
+	/** Whether [MediaPlayer] gets as far as prepared with [sound], it reads the format then. */
+	override suspend fun canPlay(sound: ByteArray): Boolean = withContext(Dispatchers.IO) {
+		val player = MediaPlayer()
+		try {
+			player.setAudioAttributes(ALARM)
+			player.setDataSource(ByteArraySource(sound))
+			player.prepare()
+			true
+		} catch (e: Exception) {
+			log.i { "Can't play the picked sound: ${e.message}" }
+			false
+		} finally {
+			player.release()
 		}
 	}
 
