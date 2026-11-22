@@ -3,7 +3,9 @@ package xyz.d1n0.phone
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -87,8 +89,12 @@ class PhoneFinder(
 
 	private suspend fun stopAfter(duration: Duration) {
 		delay(duration)
-		// throws if a later ring cancelled this timer meanwhile, so it can't stop the new ringing
 		mutex.withLock {
+			// A later ring or stop cancels this timer while holding the mutex. Checked here, as
+			// withLock only throws on cancellation when it had to wait, and on Dispatchers.Default a
+			// ring on another thread can cancel this timer after its delay ended and release the mutex
+			// before this takes it. Without the check, it would stop the new ringing.
+			currentCoroutineContext().ensureActive()
 			timer = null
 			stopSound()
 		}
