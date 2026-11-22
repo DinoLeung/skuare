@@ -1,6 +1,7 @@
 package xyz.d1n0.sync
 
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitCancellation
@@ -9,9 +10,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.advanceTimeBy
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withTimeout
+import xyz.d1n0.data.database.AppSettings
 import xyz.d1n0.data.database.FakeAppConfigDao
 import xyz.d1n0.data.database.FakeAppSettingsDao
 import xyz.d1n0.data.database.FakePairedWatchDao
@@ -24,8 +29,10 @@ import xyz.d1n0.data.repository.InstallationRepository
 import xyz.d1n0.data.repository.PairedWatchRepository
 import xyz.d1n0.data.repository.PressedLocationRepository
 import xyz.d1n0.phone.FakeLocationProvider
+import xyz.d1n0.phone.FakePhoneRinger
 import xyz.d1n0.phone.GeoPoint
 import xyz.d1n0.phone.LocationResult
+import xyz.d1n0.phone.PhoneFinder
 import xyz.d1n0.lib.connection.WatchConnectionManager
 import xyz.d1n0.lib.constant.ConnectReason
 import xyz.d1n0.lib.constant.OpCode
@@ -39,6 +46,7 @@ import xyz.d1n0.lib.model.WatchName
 import xyz.d1n0.lib.model.resolveWatchModel
 import xyz.d1n0.lib.model.shouldSwitchToCustomModel
 import kotlin.test.Test
+import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertIs
@@ -47,13 +55,16 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.time.Clock
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
+@OptIn(ExperimentalCoroutinesApi::class) // advanceTimeBy, runCurrent, currentTime
 class WatchSessionHandlerTest {
 	private companion object {
 		const val ADDRESS = "ED:A1:AF:D5:A2:40"
+		val TONE = byteArrayOf(1, 2, 3)
 		val OUR_APP_INFO = AppInfo(byteArrayOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
 		val OTHER_APP_INFO = AppInfo(byteArrayOf(10, 9, 8, 7, 6, 5, 4, 3, 2, 1))
 		val PAIRED_AT = Instant.parse("2026-01-01T00:00:00Z")
@@ -186,14 +197,24 @@ class WatchSessionHandlerTest {
 		}
 	}
 
-	private class Fixture(val locationProvider: FakeLocationProvider = FakeLocationProvider()) {
+	/**
+	 * @param phoneFinderScope Where the phone rings, find phone tests pass the test's backgroundScope
+	 *        for virtual time and so a ring left running doesn't keep the test waiting.
+	 */
+	private class Fixture(
+		val locationProvider: FakeLocationProvider = FakeLocationProvider(),
+		val ringer: FakePhoneRinger = FakePhoneRinger(),
+		phoneFinderScope: CoroutineScope = CoroutineScope(SupervisorJob()),
+	) {
 		val dao = FakePairedWatchDao()
 		val repository = PairedWatchRepository(dao)
 		val presenceMonitor = FakePresenceMonitor()
 		val connectionNotifier = FakeConnectionNotifier()
 		val installationRepository = InstallationRepository(FakeAppConfigDao(OUR_APP_INFO.id))
-		val appSettingsRepository = AppSettingsRepository(FakeAppSettingsDao())
+		val settingsDao = FakeAppSettingsDao()
+		val appSettingsRepository = AppSettingsRepository(settingsDao)
 		val locationDao = FakePressedLocationDao(dao)
+		val phoneFinder = PhoneFinder(ringer, loadSound = { TONE }, scope = phoneFinderScope)
 		val handler = WatchSessionHandler(
 			connectionManager = WatchConnectionManager(),
 			pairedWatchRepository = repository,
@@ -202,10 +223,17 @@ class WatchSessionHandlerTest {
 			appSettingsRepository = appSettingsRepository,
 			pressedLocationRepository = PressedLocationRepository(locationDao),
 			locationProvider = locationProvider,
+			phoneFinder = phoneFinder,
 			connectionNotifier = connectionNotifier,
 		)
 
 		suspend fun enableLocationRecording() = appSettingsRepository.setLocationRecordingEnabled(true)
+
+		suspend fun enableFindPhone(ringLength: Duration = 60.seconds, untilStopped: Boolean = false) {
+			appSettingsRepository.setFindPhoneEnabled(true)
+			appSettingsRepository.setFindPhoneRingLength(ringLength)
+			appSettingsRepository.setFindPhoneRingUntilStopped(untilStopped)
+		}
 
 		suspend fun pair(
 			address: String = ADDRESS,
@@ -626,16 +654,137 @@ class WatchSessionHandlerTest {
 	}
 
 	@Test
-	fun findRequestIsIgnoredAndDisconnected() = runTest {
-		val fixture = Fixture()
+	fun findWithFindPhoneOffOnlyDisconnects() = runTest {
+		val fixture = Fixture(phoneFinderScope = backgroundScope)
 		fixture.pair()
 		val watch = FakeConnectedWatch(connectReason = ConnectReason.FIND)
 
 		val result = fixture.handler.runBackground(ADDRESS) { watch }
+		runCurrent()
 
-		assertEquals(BackgroundSessionResult.Ignored, result)
+		assertEquals(BackgroundSessionResult.FoundPhone(rang = false), result)
+		assertTrue(fixture.ringer.sounds.isEmpty())
 		assertEquals(0, watch.adjustCount)
 		assertEquals(1, watch.disconnectCount)
+	}
+
+	@Test
+	fun findRingsForTheSetLengthAfterTheWatchIsLetGo() = runTest {
+		val fixture = Fixture(phoneFinderScope = backgroundScope)
+		fixture.pair()
+		fixture.enableFindPhone(ringLength = 90.seconds)
+		val watch = FakeConnectedWatch(connectReason = ConnectReason.FIND)
+
+		val result = fixture.handler.runBackground(ADDRESS) { watch }
+		runCurrent()
+
+		// the session is over and the watch disconnected, the phone still rings, with no time sync
+		assertEquals(BackgroundSessionResult.FoundPhone(rang = true), result)
+		assertEquals(1, watch.disconnectCount)
+		assertEquals(0, watch.adjustCount)
+		assertTrue(fixture.phoneFinder.ringing.value)
+		assertContentEquals(TONE, fixture.ringer.sounds.single())
+
+		advanceTimeBy(89.seconds)
+		assertTrue(fixture.phoneFinder.ringing.value)
+		advanceTimeBy(2.seconds)
+		assertFalse(fixture.phoneFinder.ringing.value)
+	}
+
+	@Test
+	fun findUntilStoppedRingsUntilStopped() = runTest {
+		val fixture = Fixture(phoneFinderScope = backgroundScope)
+		fixture.pair()
+		fixture.enableFindPhone(untilStopped = true)
+
+		fixture.handler.runBackground(ADDRESS) { FakeConnectedWatch(connectReason = ConnectReason.FIND) }
+		advanceTimeBy(1.days)
+
+		assertTrue(fixture.phoneFinder.ringing.value)
+		fixture.phoneFinder.stop()
+		assertFalse(fixture.phoneFinder.ringing.value)
+	}
+
+	@Test
+	fun findWithAStoredLengthThatIsntPositiveRingsForAMinute() = runTest {
+		val fixture = Fixture(phoneFinderScope = backgroundScope)
+		fixture.pair()
+		fixture.settingsDao.store(AppSettings(findPhoneEnabled = true, findPhoneRingSeconds = 0))
+
+		fixture.handler.runBackground(ADDRESS) { FakeConnectedWatch(connectReason = ConnectReason.FIND) }
+		advanceTimeBy(59.seconds)
+		assertTrue(fixture.phoneFinder.ringing.value)
+		advanceTimeBy(2.seconds)
+
+		assertFalse(fixture.phoneFinder.ringing.value)
+	}
+
+	@Test
+	fun aSecondFindWhileRingingRestartsTheTimer() = runTest {
+		val fixture = Fixture(phoneFinderScope = backgroundScope)
+		fixture.pair()
+		fixture.enableFindPhone(ringLength = 60.seconds)
+
+		fixture.handler.runBackground(ADDRESS) { FakeConnectedWatch(connectReason = ConnectReason.FIND) }
+		advanceTimeBy(40.seconds)
+		fixture.handler.runBackground(ADDRESS) { FakeConnectedWatch(connectReason = ConnectReason.FIND) }
+		advanceTimeBy(40.seconds)
+
+		// 80 s after the first press, 40 s after the second
+		assertTrue(fixture.phoneFinder.ringing.value)
+		assertEquals(1, fixture.ringer.sounds.size)
+		advanceTimeBy(21.seconds)
+		assertFalse(fixture.phoneFinder.ringing.value)
+	}
+
+	@Test
+	fun findOnAPlatformThatCantRingDoesNothing() = runTest {
+		val fixture = Fixture(ringer = FakePhoneRinger(isSupported = false), phoneFinderScope = backgroundScope)
+		fixture.pair()
+		fixture.enableFindPhone()
+
+		val result = fixture.handler.runBackground(ADDRESS) { FakeConnectedWatch(connectReason = ConnectReason.FIND) }
+		runCurrent()
+
+		assertEquals(BackgroundSessionResult.FoundPhone(rang = false), result)
+		assertTrue(fixture.ringer.sounds.isEmpty())
+	}
+
+	@Test
+	fun findFromAWatchPairedWithAnotherAppDoesntRing() = runTest {
+		val fixture = Fixture(phoneFinderScope = backgroundScope)
+		fixture.pair()
+		fixture.enableFindPhone()
+		val watch = FakeConnectedWatch(connectReason = ConnectReason.FIND, appInfo = OTHER_APP_INFO)
+
+		val result = fixture.handler.runBackground(ADDRESS) { watch }
+		runCurrent()
+
+		assertIs<BackgroundSessionResult.Skipped>(result)
+		assertTrue(fixture.ringer.sounds.isEmpty())
+	}
+
+	@Test
+	fun findFromAnUnpairedWatchDoesntRing() = runTest {
+		val fixture = Fixture(phoneFinderScope = backgroundScope)
+		fixture.enableFindPhone()
+
+		val result = fixture.handler.runBackground(ADDRESS) { FakeConnectedWatch(connectReason = ConnectReason.FIND) }
+		runCurrent()
+
+		assertIs<BackgroundSessionResult.Skipped>(result)
+		assertTrue(fixture.ringer.sounds.isEmpty())
+	}
+
+	@Test
+	fun connectingFromTheAppWithALongPressDoesntRing() = runTest {
+		val fixture = Fixture(phoneFinderScope = backgroundScope)
+		fixture.enableFindPhone()
+
+		fixture.handler.runForeground(FakeConnectedWatch(connectReason = ConnectReason.FIND))
+		runCurrent()
+
+		assertTrue(fixture.ringer.sounds.isEmpty())
 	}
 
 	@Test
@@ -814,7 +963,6 @@ class WatchSessionHandlerTest {
 		}
 	}
 
-	@OptIn(ExperimentalCoroutinesApi::class) // currentTime
 	@Test
 	fun locationReadThatNeverAnswersTimesOut() = runTest {
 		val fixture = Fixture()
@@ -854,7 +1002,6 @@ class WatchSessionHandlerTest {
 		assertEquals(22.2793, fixture.locationDao.all.single().latitude)
 	}
 
-	@OptIn(ExperimentalCoroutinesApi::class) // currentTime
 	@Test
 	fun withoutAFixTenSecondsAfterTheDisconnectTheLastKnownLocationIsUsed() = runTest {
 		val fixture = Fixture(FakeLocationProvider(lastKnown = GeoPoint(51.5, -0.12, accuracyMeters = 30.0)))

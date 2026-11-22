@@ -39,6 +39,10 @@ class PhoneFinder(
 	/** Whether the phone is ringing, for the in-app Stop and to keep the app alive meanwhile. */
 	val ringing: StateFlow<Boolean> = _ringing.asStateFlow()
 
+	/** See [PhoneRinger.isSupported]. */
+	val isSupported: Boolean
+		get() = ringer.isSupported
+
 	/**
 	 * Rings for [duration], or until [stop] if null. Called while ringing, it restarts the timer with
 	 * the new [duration] and keeps the sound playing, it doesn't start it again.
