@@ -39,6 +39,10 @@ internal class FakeAppSettingsDao : AppSettingsDao {
 		settings.update { it?.copy(findPhoneSoundName = name) }
 	}
 
+	override suspend fun setFindPhoneMaxVolume(maxVolume: Boolean) {
+		settings.update { it?.copy(findPhoneMaxVolume = maxVolume) }
+	}
+
 	/** Stores [settings] as they are, e.g. a value the screen wouldn't allow. */
 	fun store(settings: AppSettings) {
 		this.settings.value = settings

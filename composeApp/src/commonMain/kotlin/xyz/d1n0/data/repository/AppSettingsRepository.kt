@@ -46,6 +46,9 @@ class AppSettingsRepository(private val dao: AppSettingsDao) {
 	/** Null for the built-in tone, see [FindPhoneSettings.soundName]. */
 	suspend fun setFindPhoneSoundName(name: String?) = update { dao.setFindPhoneSoundName(name) }
 
+	/** See [FindPhoneSettings.maxVolume]. */
+	suspend fun setFindPhoneMaxVolume(maxVolume: Boolean) = update { dao.setFindPhoneMaxVolume(maxVolume) }
+
 	/** Creates the row with every default first, the setters only update an existing one. */
 	private suspend fun update(set: suspend () -> Unit) {
 		dao.insertIfMissing(defaults)

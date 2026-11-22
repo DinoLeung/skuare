@@ -21,6 +21,8 @@ import androidx.room.PrimaryKey
  * @property findPhoneRingSeconds How long the phone rings, in whole seconds, at least 1.
  * @property findPhoneSoundName The display name of the user's own ringtone, null for the built-in
  *           tone. The sound itself is a file, kept apart from the database.
+ * @property findPhoneMaxVolume Whether the phone rings at the maximum alarm volume, or at the one
+ *           the user set. On, as find phone rang before it was a setting.
  */
 @Entity(tableName = "app_settings")
 data class AppSettings(
@@ -30,6 +32,7 @@ data class AppSettings(
 	@ColumnInfo(defaultValue = "0") val findPhoneRingUntilStopped: Boolean = false,
 	@ColumnInfo(defaultValue = "$DEFAULT_RING_SECONDS") val findPhoneRingSeconds: Int = DEFAULT_RING_SECONDS,
 	val findPhoneSoundName: String? = null,
+	@ColumnInfo(defaultValue = "1") val findPhoneMaxVolume: Boolean = true,
 ) {
 	companion object {
 		/** A minute, the column default and the fallback for a length that isn't valid. */

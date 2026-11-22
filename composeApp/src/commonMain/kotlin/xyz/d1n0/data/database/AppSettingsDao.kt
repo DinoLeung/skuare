@@ -36,4 +36,7 @@ interface AppSettingsDao {
 
 	@Query("UPDATE app_settings SET findPhoneSoundName = :name WHERE id = 0")
 	suspend fun setFindPhoneSoundName(name: String?)
+
+	@Query("UPDATE app_settings SET findPhoneMaxVolume = :maxVolume WHERE id = 0")
+	suspend fun setFindPhoneMaxVolume(maxVolume: Boolean)
 }

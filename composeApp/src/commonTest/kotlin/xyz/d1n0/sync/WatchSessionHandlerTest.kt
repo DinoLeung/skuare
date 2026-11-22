@@ -692,6 +692,23 @@ class WatchSessionHandlerTest {
 	}
 
 	@Test
+	fun findRingsAtFullVolumeUnlessTurnedOff() = runTest {
+		val fixture = Fixture(phoneFinderScope = backgroundScope)
+		fixture.pair()
+		fixture.enableFindPhone()
+
+		fixture.handler.runBackground(ADDRESS) { FakeConnectedWatch(connectReason = ConnectReason.FIND) }
+		runCurrent()
+		fixture.phoneFinder.stop()
+		fixture.appSettingsRepository.setFindPhoneMaxVolume(false)
+		fixture.handler.runBackground(ADDRESS) { FakeConnectedWatch(connectReason = ConnectReason.FIND) }
+		runCurrent()
+
+		assertEquals(listOf(true, false), fixture.ringer.maxVolumes)
+		assertEquals(listOf(true, true), fixture.ringer.vibrates)
+	}
+
+	@Test
 	fun findUntilStoppedRingsUntilStopped() = runTest {
 		val fixture = Fixture(phoneFinderScope = backgroundScope)
 		fixture.pair()

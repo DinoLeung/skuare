@@ -53,7 +53,8 @@
 	<string name="app_settings_location_unsupported">這部裝置目前尚不支援，需要背景同步。</string>
 	<string name="app_settings_find_phone_title">尋找手機</string>
 	<string name="app_settings_find_phone_switch">長按右下按鈕時讓手機響鈴</string>
-	<string name="app_settings_find_phone_description">長按手錶的右下按鈕，手機就會以最大鬧鐘音量響鈴，靜音模式下也會響。可以在通知或 Skuare 中停止。</string>
+	<string name="app_settings_find_phone_description">長按手錶的右下按鈕，手機就會像鬧鐘一樣響鈴，靜音模式下也會響。可以在通知或 Skuare 中停止。</string>
+	<string name="app_settings_find_phone_max_volume">以最大鬧鐘音量響鈴</string>
 	<string name="app_settings_find_phone_until_stopped">持續響鈴直到停止</string>
 	<string name="app_settings_find_phone_ring_for">響鈴時間</string>
 	<string name="app_settings_find_phone_ring_length_error">至少 1 秒</string>

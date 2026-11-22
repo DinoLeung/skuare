@@ -23,12 +23,16 @@ internal class FakePhoneRinger(
 	/** The forceMaxVolume of each ring, in order. */
 	val maxVolumes = mutableListOf<Boolean>()
 
+	/** The vibrate of each ring, in order. */
+	val vibrates = mutableListOf<Boolean>()
+
 	var cancelCount = 0
 		private set
 
-	override suspend fun ring(sound: ByteArray, forceMaxVolume: Boolean) {
+	override suspend fun ring(sound: ByteArray, forceMaxVolume: Boolean, vibrate: Boolean) {
 		sounds += sound
 		maxVolumes += forceMaxVolume
+		vibrates += vibrate
 		failure?.takeIf { failsOn == null || failsOn.contentEquals(sound) }?.let { throw it }
 		try {
 			awaitCancellation()

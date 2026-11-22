@@ -65,14 +65,17 @@ class PhoneFinder(
 	/**
 	 * Rings for [duration], or until [stop] if null. Called while ringing, it restarts the timer with
 	 * the new [duration] and keeps the sound playing, it doesn't start it again.
+	 *
+	 * @param forceMaxVolume At the maximum alarm volume, else the one the user set, see
+	 *        [PhoneRinger.ring]. Only for a ringing that starts, a restarted one keeps its volume.
 	 */
-	suspend fun ring(duration: Duration?) = mutex.withLock {
+	suspend fun ring(duration: Duration?, forceMaxVolume: Boolean = true) = mutex.withLock {
 		timer?.cancel()
 		timer = duration?.let { scope.launch { stopAfter(it) } }
 		_ringEndsAt.value = duration?.let { clock.now() + it }
 		if (sound?.isActive == true) return@withLock
 		_ringing.value = true
-		sound = scope.launch { play() }
+		sound = scope.launch { play(forceMaxVolume) }
 	}
 
 	/** Stops ringing, e.g. from the notification's Stop. Does nothing if it isn't ringing. */
@@ -97,10 +100,10 @@ class PhoneFinder(
 		sound = null
 	}
 
-	private suspend fun play() {
+	private suspend fun play(forceMaxVolume: Boolean) {
 		try {
-			if (ringCustomSound()) return
-			ringer.ring(loadSound())
+			if (ringCustomSound(forceMaxVolume)) return
+			ringer.ring(loadSound(), forceMaxVolume)
 		} catch (e: CancellationException) {
 			throw e
 		} catch (e: Exception) {
@@ -113,7 +116,7 @@ class PhoneFinder(
 	}
 
 	/** Rings with the user's ringtone, false if there is none or it failed, then the built-in tone rings. */
-	private suspend fun ringCustomSound(): Boolean {
+	private suspend fun ringCustomSound(forceMaxVolume: Boolean): Boolean {
 		val sound = try {
 			loadCustomSound()
 		} catch (e: CancellationException) {
@@ -123,7 +126,7 @@ class PhoneFinder(
 			null
 		} ?: return false
 		return try {
-			ringer.ring(sound)
+			ringer.ring(sound, forceMaxVolume)
 			true
 		} catch (e: CancellationException) {
 			throw e

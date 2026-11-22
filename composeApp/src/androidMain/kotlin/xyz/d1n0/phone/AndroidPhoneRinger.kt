@@ -16,8 +16,9 @@ import xyz.d1n0.Log
 
 /**
  * Rings on the alarm stream, so it plays in silent and vibrate mode, and in Do Not Disturb unless
- * the user blocked alarms there. The alarm volume goes to its maximum while ringing and back to
- * what it was afterwards. Other playback, e.g. music, pauses meanwhile, and the phone vibrates.
+ * the user blocked alarms there. With forceMaxVolume, the alarm volume goes to its maximum while
+ * ringing and back to what it was afterwards, else it rings at the alarm volume the user set. Other
+ * playback, e.g. music, pauses meanwhile, and with vibrate the phone vibrates.
  *
  * The notification with Stop is [xyz.d1n0.sync.WatchSyncService]'s, shown while
  * [PhoneFinder.ringing].
@@ -29,7 +30,7 @@ class AndroidPhoneRinger(context: Context) : PhoneRinger {
 	override val isSupported = true
 	override val canForceMaxVolume = true
 
-	override suspend fun ring(sound: ByteArray, forceMaxVolume: Boolean) {
+	override suspend fun ring(sound: ByteArray, forceMaxVolume: Boolean, vibrate: Boolean) {
 		val audio = context.getSystemService(AudioManager::class.java)
 		val vibrator = context.getSystemService(VibratorManager::class.java).defaultVibrator
 		val focus = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT)
@@ -46,7 +47,7 @@ class AndroidPhoneRinger(context: Context) : PhoneRinger {
 			audio.requestAudioFocus(focus)
 			if (forceMaxVolume) setAlarmVolume(audio, audio.getStreamMaxVolume(AudioManager.STREAM_ALARM))
 			player.start()
-			if (forceMaxVolume) {
+			if (vibrate) {
 				vibrator.vibrate(
 					VibrationEffect.createWaveform(VIBRATION_PATTERN, 0),
 					VibrationAttributes.createForUsage(VibrationAttributes.USAGE_ALARM),

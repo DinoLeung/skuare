@@ -273,6 +273,17 @@ class AppSettingsScreenViewModelTest {
 	}
 
 	@Test
+	fun fullVolumeCanBeTurnedOff() = runTest {
+		val viewModel = viewModel()
+		assertTrue(viewModel.findPhone.maxVolume)
+
+		viewModel.setMaxVolume(false)
+
+		assertFalse(viewModel.findPhone.maxVolume)
+		assertFalse(repository.findPhoneSettings().maxVolume)
+	}
+
+	@Test
 	fun findPhoneIsUnsupportedWithoutARingerOrBackgroundSync() = runTest {
 		assertTrue(viewModel().state.value.isFindPhoneSupported)
 		assertFalse(viewModel(ringer = FakePhoneRinger(isSupported = false)).state.value.isFindPhoneSupported)

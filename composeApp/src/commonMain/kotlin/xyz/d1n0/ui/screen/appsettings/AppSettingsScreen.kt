@@ -76,6 +76,7 @@ fun AppSettingsScreen(
 		onLocationRecordingChange = viewModel::setLocationRecording,
 		onFindPhoneChange = viewModel::setFindPhone,
 		onRingUntilStoppedChange = viewModel::setRingUntilStopped,
+		onMaxVolumeChange = viewModel::setMaxVolume,
 		onRingLengthChange = viewModel::setRingLength,
 		onChooseSound = soundPicker,
 		onResetSound = viewModel::resetSound,
@@ -93,6 +94,7 @@ private fun AppSettingsScreenContent(
 	onLocationRecordingChange: (Boolean) -> Unit,
 	onFindPhoneChange: (Boolean) -> Unit,
 	onRingUntilStoppedChange: (Boolean) -> Unit,
+	onMaxVolumeChange: (Boolean) -> Unit,
 	onRingLengthChange: (Duration) -> Unit,
 	onChooseSound: (() -> Unit)?,
 	onResetSound: () -> Unit,
@@ -143,6 +145,7 @@ private fun AppSettingsScreenContent(
 					state = state,
 					onFindPhoneChange = onFindPhoneChange,
 					onRingUntilStoppedChange = onRingUntilStoppedChange,
+					onMaxVolumeChange = onMaxVolumeChange,
 					onRingLengthChange = onRingLengthChange,
 					onChooseSound = onChooseSound,
 					onResetSound = onResetSound,
@@ -191,6 +194,7 @@ private fun FindPhoneCard(
 	state: AppSettingsUiState,
 	onFindPhoneChange: (Boolean) -> Unit,
 	onRingUntilStoppedChange: (Boolean) -> Unit,
+	onMaxVolumeChange: (Boolean) -> Unit,
 	onRingLengthChange: (Duration) -> Unit,
 	onChooseSound: (() -> Unit)?,
 	onResetSound: () -> Unit,
@@ -212,7 +216,16 @@ private fun FindPhoneCard(
 			enabled = !state.isRequestingPermission,
 		)
 		Description(Res.string.app_settings_find_phone_description)
-		if (!state.canForceMaxVolume) Description(Res.string.app_settings_find_phone_volume_note)
+		if (state.canForceMaxVolume) {
+			SwitchField(
+				modifier = Modifier.fillMaxWidth(),
+				title = stringResource(Res.string.app_settings_find_phone_max_volume),
+				check = findPhone.maxVolume,
+				onCheckedChange = onMaxVolumeChange,
+			)
+		} else {
+			Description(Res.string.app_settings_find_phone_volume_note)
+		}
 		PermissionProblem(
 			problem = when {
 				state.isNotificationPermissionMissing -> Res.string.app_settings_find_phone_notifications_missing
@@ -378,6 +391,7 @@ private fun AppSettingsScreenPreview() {
 			onLocationRecordingChange = {},
 			onFindPhoneChange = {},
 			onRingUntilStoppedChange = {},
+			onMaxVolumeChange = {},
 			onRingLengthChange = {},
 			onChooseSound = {},
 			onResetSound = {},

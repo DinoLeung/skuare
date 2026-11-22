@@ -221,4 +221,19 @@ class PhoneFinderTest {
 		assertContentEquals(tone, ringer.sounds.single())
 		assertTrue(finder.ringing.value)
 	}
+
+	@Test
+	fun ringsAtTheVolumeAskedForAndAlwaysVibrates() = runTest {
+		val finder = phoneFinder()
+
+		finder.ring(30.seconds, forceMaxVolume = false)
+		runCurrent()
+
+		assertEquals(listOf(false), ringer.maxVolumes)
+		assertEquals(listOf(true), ringer.vibrates)
+		// restarting the timer keeps the volume the ringing started with
+		finder.ring(30.seconds)
+		runCurrent()
+		assertEquals(listOf(false), ringer.maxVolumes)
+	}
 }

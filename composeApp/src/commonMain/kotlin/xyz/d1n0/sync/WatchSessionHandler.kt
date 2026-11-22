@@ -350,7 +350,7 @@ class WatchSessionHandler(
 		if (!phoneFinder.isSupported) return false
 		val settings = appSettingsRepository.findPhoneSettings()
 		if (!settings.enabled) return false
-		phoneFinder.ring(settings.ringDuration)
+		phoneFinder.ring(settings.ringDuration, forceMaxVolume = settings.maxVolume)
 		return true
 	}
 

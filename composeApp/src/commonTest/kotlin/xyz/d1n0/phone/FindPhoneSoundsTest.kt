@@ -104,6 +104,7 @@ class FindPhoneSoundsTest {
 		runCurrent()
 		assertContentEquals(builtIn, ringer.sounds.last())
 		assertEquals(false, ringer.maxVolumes.last())
+		assertEquals(false, ringer.vibrates.last())
 
 		sounds.choose(picked())
 		backgroundScope.launch { sounds.playAtCurrentVolume() }

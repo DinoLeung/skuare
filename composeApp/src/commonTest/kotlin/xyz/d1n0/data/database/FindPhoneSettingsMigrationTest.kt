@@ -30,4 +30,13 @@ class FindPhoneSettingsMigrationTest {
 		assertTrue(sql.any { it.endsWith("`findPhoneRingSeconds` INTEGER NOT NULL DEFAULT ${defaults.findPhoneRingSeconds}") })
 		assertEquals(null, defaults.findPhoneSoundName)
 	}
+
+	@Test
+	fun version8AddsFullVolumeOnAsFindPhoneRangBefore() {
+		assertEquals(
+			listOf("ALTER TABLE `app_settings` ADD COLUMN `findPhoneMaxVolume` INTEGER NOT NULL DEFAULT 1"),
+			autoMigrationSql(from = 7, to = 8),
+		)
+		assertTrue(AppSettings().findPhoneMaxVolume)
+	}
 }

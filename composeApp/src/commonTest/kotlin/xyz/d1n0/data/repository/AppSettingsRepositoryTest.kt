@@ -105,6 +105,17 @@ class AppSettingsRepositoryTest {
 	}
 
 	@Test
+	fun fullVolumeIsOnByDefaultAndCanBeTurnedOff() = runTest {
+		val repository = AppSettingsRepository(FakeAppSettingsDao())
+		assertTrue(repository.findPhoneSettings().maxVolume)
+
+		repository.setFindPhoneMaxVolume(false)
+
+		assertFalse(repository.findPhoneSettings().maxVolume)
+		assertFalse(repository.observeFindPhoneSettings().first().maxVolume)
+	}
+
+	@Test
 	fun turningItOffAgainKeepsTheRow() = runTest {
 		val dao = FakeAppSettingsDao()
 		val repository = AppSettingsRepository(dao)

@@ -74,7 +74,9 @@
 	<!-- Find phone: holding the watch's lower-right button rings the phone -->
 	<string name="app_settings_find_phone_title">Find phone</string>
 	<string name="app_settings_find_phone_switch">Ring the phone when the lower-right button is held</string>
-	<string name="app_settings_find_phone_description">Hold the lower-right button on your watch and the phone rings at full alarm volume, also in silent mode. Stop it from the notification or in Skuare.</string>
+	<string name="app_settings_find_phone_description">Hold the lower-right button on your watch and the phone rings like an alarm, also in silent mode. Stop it from the notification or in Skuare.</string>
+	<!-- Raises the alarm volume to its maximum while it rings, back afterwards. Off, it rings at the alarm volume the user set -->
+	<string name="app_settings_find_phone_max_volume">Ring at full alarm volume</string>
 	<string name="app_settings_find_phone_until_stopped">Ring until stopped</string>
 	<!-- Label of the ring length field, hours, minutes and seconds -->
 	<string name="app_settings_find_phone_ring_for">Ring for</string>

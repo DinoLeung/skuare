@@ -216,6 +216,11 @@ class AppSettingsScreenViewModel(
 		viewModelScope.launch { appSettingsRepository.setFindPhoneRingUntilStopped(untilStopped) }
 	}
 
+	/** See [FindPhoneSettings.maxVolume]. */
+	fun setMaxVolume(maxVolume: Boolean) {
+		viewModelScope.launch { appSettingsRepository.setFindPhoneMaxVolume(maxVolume) }
+	}
+
 	/**
 	 * Stores [length] if it's at least a second, see [isValidRingLength]. The screen shows anything
 	 * shorter as an error and the stored length stays.

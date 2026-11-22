@@ -21,11 +21,12 @@ interface PhoneRinger {
 	 * each platform. The alarm-style notification with Stop is the platform's, shown while
 	 * [PhoneFinder.ringing], e.g. Android's foreground service.
 	 *
-	 * @param forceMaxVolume False for App settings' Play sound: the phone's current volume, no
-	 *        vibration.
+	 * @param forceMaxVolume Raises the volume to its maximum while ringing, else the phone's current
+	 *        volume. Off when the user turned full volume off, and for App settings' Play sound.
+	 * @param vibrate Vibrates alongside, off for Play sound.
 	 * @throws Exception If [sound] can't be played, [PhoneFinder] falls back to the built-in tone.
 	 */
-	suspend fun ring(sound: ByteArray, forceMaxVolume: Boolean = true)
+	suspend fun ring(sound: ByteArray, forceMaxVolume: Boolean = true, vibrate: Boolean = true)
 
 	/** Whether this phone's player decodes [sound], checked before a picked ringtone is stored. */
 	suspend fun canPlay(sound: ByteArray): Boolean
@@ -35,6 +36,6 @@ interface PhoneRinger {
 class UnsupportedPhoneRinger : PhoneRinger {
 	override val isSupported = false
 	override val canForceMaxVolume = false
-	override suspend fun ring(sound: ByteArray, forceMaxVolume: Boolean) = Unit
+	override suspend fun ring(sound: ByteArray, forceMaxVolume: Boolean, vibrate: Boolean) = Unit
 	override suspend fun canPlay(sound: ByteArray) = false
 }
