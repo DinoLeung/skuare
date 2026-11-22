@@ -6,4 +6,7 @@
     <string name="notification_connected_unnamed">已連接到手錶</string>
     <string name="notification_syncing">正在同步時間</string>
     <string name="notification_saving_location">正在儲存位置</string>
+    <string name="notification_channel_find_phone">尋找手機</string>
+    <string name="notification_find_phone_title">手錶正在尋找此手機</string>
+    <string name="notification_find_phone_stop">停止</string>
 </resources>

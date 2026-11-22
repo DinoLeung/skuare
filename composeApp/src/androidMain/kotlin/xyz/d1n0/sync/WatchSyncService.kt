@@ -11,6 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -18,6 +19,8 @@ import org.koin.core.component.inject
 import xyz.d1n0.Log
 import xyz.d1n0.lib.connection.WatchConnectionManager
 import xyz.d1n0.lib.connection.watchBluetoothDevice
+import xyz.d1n0.phone.PhoneFinder
+import kotlin.time.Instant
 
 /**
  * Owns the ongoing notification for every watch connection. It also runs
@@ -33,6 +36,7 @@ class WatchSyncService : Service(), KoinComponent {
 		private const val ACTION_RUN_BACKGROUND_SYNC = "xyz.d1n0.action.RUN_BACKGROUND_SYNC"
 		private const val ACTION_SHOW_CONNECTED = "xyz.d1n0.action.SHOW_CONNECTED"
 		private const val ACTION_CONNECTION_ENDED = "xyz.d1n0.action.CONNECTION_ENDED"
+		private const val ACTION_STOP_RINGING = "xyz.d1n0.action.STOP_RINGING"
 		private const val EXTRA_ADDRESS = "address"
 		private const val EXTRA_ADVERTISED_NAME = "advertised_name"
 
@@ -63,11 +67,16 @@ class WatchSyncService : Service(), KoinComponent {
 				Intent(context, WatchSyncService::class.java).setAction(ACTION_CONNECTION_ENDED)
 			)
 		}
+
+		/** Stop on the find phone notification, and swiping it away. */
+		fun stopRingingIntent(context: Context): Intent =
+			Intent(context, WatchSyncService::class.java).setAction(ACTION_STOP_RINGING)
 	}
 
 	private val log: Log by inject()
 	private val watchSessionHandler: WatchSessionHandler by inject()
 	private val watchConnectionManager: WatchConnectionManager by inject()
+	private val phoneFinder: PhoneFinder by inject()
 
 	private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 	@Volatile
@@ -76,6 +85,21 @@ class WatchSyncService : Service(), KoinComponent {
 	private var connectionActive = false
 
 	override fun onBind(intent: Intent?): IBinder? = null
+
+	override fun onCreate() {
+		super.onCreate()
+		// Find phone rings outside any session, see PhoneFinder. While it rings, this service's
+		// notification is the ringing one and the service stays up, a long press session started it.
+		scope.launch(Dispatchers.Main) {
+			var wasRinging = false
+			combine(phoneFinder.ringing, phoneFinder.ringEndsAt) { ringing, endsAt -> ringing to endsAt }
+				.collect { (ringing, endsAt) ->
+					if (ringing) showRinging(endsAt)
+					else if (wasRinging) ringingStopped()
+					wasRinging = ringing
+				}
+		}
+	}
 
 	override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 		when (intent?.action) {
@@ -86,7 +110,12 @@ class WatchSyncService : Service(), KoinComponent {
 			ACTION_SHOW_CONNECTED -> showConnected(intent.getStringExtra(EXTRA_ADVERTISED_NAME))
 			ACTION_CONNECTION_ENDED -> {
 				connectionActive = false
-				if (session?.isActive != true) stopSelfResult(startId)
+				if (session?.isActive != true && !phoneFinder.ringing.value) stopSelfResult(startId)
+			}
+			ACTION_STOP_RINGING -> scope.launch {
+				phoneFinder.stop()
+				// started by the notification after the ringing ended on its own, nothing else to do
+				if (isIdle()) stopSelf()
 			}
 			else -> stopSelfResult(startId)
 		}
@@ -110,13 +139,36 @@ class WatchSyncService : Service(), KoinComponent {
 	private fun showConnected(advertisedName: String?) {
 		connectionActive = true
 		// Every startForegroundService call is answered immediately, including updates while the
-		// activity is visible.
+		// activity is visible. While find phone rings, its notification stays, a watch connecting
+		// meanwhile, e.g. for another long press, doesn't replace it.
+		val notification =
+			if (phoneFinder.ringing.value) {
+				WatchNotifications.lastConnectedName = advertisedName
+				WatchNotifications.ringing(this, phoneFinder.ringEndsAt.value)
+			} else {
+				WatchNotifications.connected(this, advertisedName)
+			}
+		startForeground(WatchNotifications.CONNECTION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE)
+	}
+
+	private fun showRinging(endsAt: Instant?) {
 		startForeground(
 			WatchNotifications.CONNECTION_ID,
-			WatchNotifications.connected(this, advertisedName),
+			WatchNotifications.ringing(this, endsAt),
 			ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE,
 		)
 	}
+
+	/** Back to the connection notification while a watch is still connected, else done. */
+	private fun ringingStopped() {
+		if (isIdle()) stopSelf()
+		else showConnected(WatchNotifications.lastConnectedName)
+	}
+
+	/** No background session, no watch connection and no ringing left to show. */
+	private fun isIdle() =
+		session?.isActive != true && !phoneFinder.ringing.value &&
+			(!connectionActive || watchConnectionManager.watch.value == null)
 
 	private fun startBackgroundSession(address: String?) {
 		when {
@@ -132,8 +184,9 @@ class WatchSyncService : Service(), KoinComponent {
 				} finally {
 					session = null
 					// If the app accepted an open-app handoff, the watch is still connected and this
-					// service keeps showing its notification until that connection ends.
-					if (!connectionActive || watchConnectionManager.watch.value == null) stopSelf()
+					// service keeps showing its notification until that connection ends. A long press
+					// leaves the phone ringing, the service stays for that too.
+					if (isIdle()) stopSelf()
 				}
 			}
 		}

@@ -12,7 +12,9 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import xyz.d1n0.Log
 import kotlin.coroutines.cancellation.CancellationException
+import kotlin.time.Clock
 import kotlin.time.Duration
+import kotlin.time.Instant
 
 /**
  * Rings the phone for find phone, a long press of the watch's lower-right button. The ringing runs
@@ -21,11 +23,13 @@ import kotlin.time.Duration
  *
  * @param loadSound The sound to ring with, the built-in tone or the user's own.
  * @param scope Lives as long as the app process, tests pass one on virtual time.
+ * @param clock For [ringEndsAt], tests pass one on virtual time.
  */
 class PhoneFinder(
 	private val ringer: PhoneRinger,
 	private val loadSound: suspend () -> ByteArray,
 	private val scope: CoroutineScope,
+	private val clock: Clock = Clock.System,
 ) {
 	private val log = Log
 
@@ -39,6 +43,14 @@ class PhoneFinder(
 	/** Whether the phone is ringing, for the in-app Stop and to keep the app alive meanwhile. */
 	val ringing: StateFlow<Boolean> = _ringing.asStateFlow()
 
+	private val _ringEndsAt = MutableStateFlow<Instant?>(null)
+
+	/**
+	 * When the ringing stops by itself, for the notification's countdown. Null while it rings until
+	 * stopped, and when it doesn't ring.
+	 */
+	val ringEndsAt: StateFlow<Instant?> = _ringEndsAt.asStateFlow()
+
 	/** See [PhoneRinger.isSupported]. */
 	val isSupported: Boolean
 		get() = ringer.isSupported
@@ -50,6 +62,7 @@ class PhoneFinder(
 	suspend fun ring(duration: Duration?) = mutex.withLock {
 		timer?.cancel()
 		timer = duration?.let { scope.launch { stopAfter(it) } }
+		_ringEndsAt.value = duration?.let { clock.now() + it }
 		if (sound?.isActive == true) return@withLock
 		_ringing.value = true
 		sound = scope.launch { play() }
@@ -86,6 +99,7 @@ class PhoneFinder(
 			// a ringer that fails must not leave the app thinking it rings
 			log.e { "Ringing failed: ${e.message}" }
 		} finally {
+			_ringEndsAt.value = null
 			_ringing.value = false
 		}
 	}

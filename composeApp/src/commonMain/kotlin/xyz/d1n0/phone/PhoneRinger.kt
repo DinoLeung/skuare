@@ -15,10 +15,11 @@ interface PhoneRinger {
 	val canForceMaxVolume: Boolean
 
 	/**
-	 * Plays [sound], a whole audio file, in a loop at the loudest level the platform allows, with its
-	 * alarm-style notification, until the calling coroutine is cancelled. Restores anything it changed,
-	 * e.g. the alarm volume, and removes the notification on the way out. Cancellation is the only
-	 * way to stop it, there is no stop() to keep in step with it on each platform.
+	 * Plays [sound], a whole audio file, in a loop at the loudest level the platform allows, until
+	 * the calling coroutine is cancelled. Restores anything it changed, e.g. the alarm volume, on the
+	 * way out. Cancellation is the only way to stop it, there is no stop() to keep in step with it on
+	 * each platform. The alarm-style notification with Stop is the platform's, shown while
+	 * [PhoneFinder.ringing], e.g. Android's foreground service.
 	 */
 	suspend fun ring(sound: ByteArray)
 }

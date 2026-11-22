@@ -1,0 +1,93 @@
+package xyz.d1n0.phone
+
+import android.content.Context
+import android.media.AudioAttributes
+import android.media.AudioFocusRequest
+import android.media.AudioManager
+import android.media.MediaDataSource
+import android.media.MediaPlayer
+import android.os.VibrationAttributes
+import android.os.VibrationEffect
+import android.os.VibratorManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.withContext
+import xyz.d1n0.Log
+
+/**
+ * Rings on the alarm stream, so it plays in silent and vibrate mode, and in Do Not Disturb unless
+ * the user blocked alarms there. The alarm volume goes to its maximum while ringing and back to
+ * what it was afterwards. Other playback, e.g. music, pauses meanwhile, and the phone vibrates.
+ *
+ * The notification with Stop is [xyz.d1n0.sync.WatchSyncService]'s, shown while
+ * [PhoneFinder.ringing].
+ */
+class AndroidPhoneRinger(context: Context) : PhoneRinger {
+	private val context = context.applicationContext
+	private val log = Log
+
+	override val isSupported = true
+	override val canForceMaxVolume = true
+
+	override suspend fun ring(sound: ByteArray) {
+		val audio = context.getSystemService(AudioManager::class.java)
+		val vibrator = context.getSystemService(VibratorManager::class.java).defaultVibrator
+		val focus = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT)
+			.setAudioAttributes(ALARM)
+			.build()
+		val previousVolume = audio.getStreamVolume(AudioManager.STREAM_ALARM)
+		val player = MediaPlayer()
+		try {
+			player.setAudioAttributes(ALARM)
+			player.setDataSource(ByteArraySource(sound))
+			player.isLooping = true
+			withContext(Dispatchers.IO) { player.prepare() }
+
+			audio.requestAudioFocus(focus)
+			setAlarmVolume(audio, audio.getStreamMaxVolume(AudioManager.STREAM_ALARM))
+			player.start()
+			vibrator.vibrate(
+				VibrationEffect.createWaveform(VIBRATION_PATTERN, 0),
+				VibrationAttributes.createForUsage(VibrationAttributes.USAGE_ALARM),
+			)
+			awaitCancellation()
+		} finally {
+			vibrator.cancel()
+			// stop throws if prepare failed before start, nothing to stop then
+			runCatching { player.stop() }
+			player.release()
+			audio.abandonAudioFocusRequest(focus)
+			setAlarmVolume(audio, previousVolume)
+		}
+	}
+
+	/** A failed volume change, e.g. blocked by Do Not Disturb, mustn't stop the ringing. */
+	private fun setAlarmVolume(audio: AudioManager, volume: Int) {
+		runCatching { audio.setStreamVolume(AudioManager.STREAM_ALARM, volume, 0) }
+			.onFailure { log.w { "Couldn't set the alarm volume: ${it.message}" } }
+	}
+
+	/** A whole audio file in memory, for [MediaPlayer.setDataSource]. */
+	private class ByteArraySource(private val data: ByteArray) : MediaDataSource() {
+		override fun readAt(position: Long, buffer: ByteArray, offset: Int, size: Int): Int {
+			if (position >= data.size) return -1
+			val count = minOf(size.toLong(), data.size - position).toInt()
+			data.copyInto(buffer, offset, position.toInt(), position.toInt() + count)
+			return count
+		}
+
+		override fun getSize() = data.size.toLong()
+
+		override fun close() = Unit
+	}
+
+	private companion object {
+		val ALARM: AudioAttributes = AudioAttributes.Builder()
+			.setUsage(AudioAttributes.USAGE_ALARM)
+			.setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+			.build()
+
+		/** Off, on, off in ms, repeated from the start. */
+		val VIBRATION_PATTERN = longArrayOf(0, 800, 600)
+	}
+}

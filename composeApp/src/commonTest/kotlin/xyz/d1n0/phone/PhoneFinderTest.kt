@@ -3,23 +3,34 @@ package xyz.d1n0.phone
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceTimeBy
+import kotlinx.coroutines.test.currentTime
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
 
-@OptIn(ExperimentalCoroutinesApi::class) // advanceTimeBy, runCurrent
+@OptIn(ExperimentalCoroutinesApi::class) // advanceTimeBy, runCurrent, currentTime
 class PhoneFinderTest {
 	private val tone = byteArrayOf(1, 2, 3)
 	private val ringer = FakePhoneRinger()
 
 	/** On the test's virtual time, in its background scope, so a ring left running doesn't hang the test. */
-	private fun TestScope.phoneFinder() = PhoneFinder(ringer, loadSound = { tone }, scope = backgroundScope)
+	private fun TestScope.phoneFinder() = PhoneFinder(
+		ringer,
+		loadSound = { tone },
+		scope = backgroundScope,
+		clock = object : Clock {
+			override fun now() = Instant.fromEpochMilliseconds(currentTime)
+		},
+	)
 
 	@Test
 	fun ringsForTheDurationThenStops() = runTest {
@@ -146,5 +157,28 @@ class PhoneFinderTest {
 		finder.ring(30.seconds)
 		runCurrent()
 		assertTrue(finder.ringing.value)
+	}
+
+	@Test
+	fun ringEndsAtFollowsTheTimer() = runTest {
+		val finder = phoneFinder()
+		assertNull(finder.ringEndsAt.value)
+
+		finder.ring(30.seconds)
+		assertEquals(Instant.fromEpochMilliseconds(30_000), finder.ringEndsAt.value)
+
+		// a second ring moves it to its own end
+		advanceTimeBy(20.seconds)
+		finder.ring(30.seconds)
+		assertEquals(Instant.fromEpochMilliseconds(50_000), finder.ringEndsAt.value)
+
+		// until stopped has no end
+		finder.ring(null)
+		assertNull(finder.ringEndsAt.value)
+
+		finder.ring(10.seconds)
+		advanceTimeBy(11.seconds)
+		assertNull(finder.ringEndsAt.value)
+		assertFalse(finder.ringing.value)
 	}
 }
