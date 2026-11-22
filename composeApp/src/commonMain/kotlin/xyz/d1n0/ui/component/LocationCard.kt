@@ -4,6 +4,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.OpenInNew
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,16 +26,22 @@ import kotlin.time.Instant
 
 /**
  * A recorded location: the watch, when its lower-right button was pressed, and where the phone was.
+ *
+ * @param onClick Opens the location in the phone's map app.
  */
 @Composable
 fun LocationCard(
 	item: PressedLocationWithWatch,
+	onClick: () -> Unit,
 	modifier: Modifier = Modifier,
 ) {
 	val location = item.location
 	CardView(
 		modifier = modifier,
+		onClick = onClick,
 		title = { Text(text = item.watchName, style = MaterialTheme.typography.titleMedium) },
+		// the whole card opens the map, the icon only shows that it does
+		indicator = { Icon(Icons.AutoMirrored.Filled.OpenInNew, contentDescription = null) },
 	) {
 		Column(
 			modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
@@ -78,6 +87,7 @@ private fun LocationCardPreview() {
 				),
 				pairedDisplayName = "My watch",
 			),
+			onClick = {},
 		)
 	}
 }

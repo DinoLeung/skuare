@@ -4,7 +4,9 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import xyz.d1n0.data.database.databaseBuilder
 import xyz.d1n0.phone.IosLocationProvider
+import xyz.d1n0.phone.AppleMapsLinks
 import xyz.d1n0.phone.LocationProvider
+import xyz.d1n0.phone.MapLinkBuilder
 import xyz.d1n0.sync.UnsupportedWatchPresenceMonitor
 import xyz.d1n0.sync.WatchConnectionNotifier
 import xyz.d1n0.sync.WatchPresenceMonitor
@@ -17,4 +19,5 @@ actual val platformModule: Module = module {
 	single<WatchConnectionNotifier> { WatchConnectionNotifier.None }
 	single<LocaleFormatter> { IosLocaleFormatter() }
 	single<LocationProvider> { IosLocationProvider() }
+	single<MapLinkBuilder> { AppleMapsLinks }
 }

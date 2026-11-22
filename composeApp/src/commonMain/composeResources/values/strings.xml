@@ -82,6 +82,8 @@
 	<string name="locations_coordinates" translatable="false">%1$s, %2$s</string>
 	<!-- %1$d: radius around the position in meters -->
 	<string name="locations_accuracy">± %1$d m</string>
+	<!-- Tapping a location opens it in a map app, shown when the phone has none that can -->
+	<string name="locations_no_map_app">No app can show this location</string>
 
 	<!-- Timezones -->
 	<string name="timezones_select_home">Select home time zone</string>

@@ -56,6 +56,7 @@
 	<string name="locations_empty_hint_off">請到應用程式設定中開啟「記錄位置」，然後短按手錶的右下按鈕。</string>
 	<string name="locations_empty_hint_on">短按手錶的右下按鈕，即可記錄手機的位置。</string>
 	<string name="locations_accuracy">誤差 ±%1$d 公尺</string>
+	<string name="locations_no_map_app">沒有可顯示這個位置的應用程式</string>
 
 	<!-- Timezones -->
 	<string name="timezones_select_home">選擇本地時區</string>
