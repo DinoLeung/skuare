@@ -7,6 +7,8 @@ import xyz.d1n0.phone.IosLocationProvider
 import xyz.d1n0.phone.AppleMapsLinks
 import xyz.d1n0.phone.LocationProvider
 import xyz.d1n0.phone.MapLinkBuilder
+import xyz.d1n0.phone.PhoneRinger
+import xyz.d1n0.phone.UnsupportedPhoneRinger
 import xyz.d1n0.sync.UnsupportedWatchPresenceMonitor
 import xyz.d1n0.sync.WatchConnectionNotifier
 import xyz.d1n0.sync.WatchPresenceMonitor
@@ -19,5 +21,7 @@ actual val platformModule: Module = module {
 	single<WatchConnectionNotifier> { WatchConnectionNotifier.None }
 	single<LocaleFormatter> { IosLocaleFormatter() }
 	single<LocationProvider> { IosLocationProvider() }
+	// find phone, step 4 (Android) and step 7 (iOS) of research/button-actions-plan.md
+	single<PhoneRinger> { UnsupportedPhoneRinger() }
 	single<MapLinkBuilder> { AppleMapsLinks }
 }

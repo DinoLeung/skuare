@@ -3,6 +3,9 @@ package xyz.d1n0
 import androidx.room.RoomDatabase
 import co.touchlab.kermit.Logger
 import co.touchlab.kermit.koin.KermitKoinLogger
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import org.koin.core.context.startKoin
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModel
@@ -17,6 +20,8 @@ import xyz.d1n0.data.repository.InstallationRepository
 import xyz.d1n0.data.repository.PairedWatchRepository
 import xyz.d1n0.data.repository.PressedLocationRepository
 import xyz.d1n0.lib.connection.WatchConnectionManager
+import xyz.d1n0.phone.PhoneFinder
+import xyz.d1n0.phone.builtInFindPhoneSound
 import xyz.d1n0.sync.WatchSessionHandler
 import xyz.d1n0.ui.navigation.NavBarViewModel
 import xyz.d1n0.ui.screen.alarms.AlarmsScreenViewModel
@@ -48,6 +53,14 @@ val coreModule = module {
 	// not singleOf, it would ask Koin for the scope too
 	single { WatchConnectionManager(connectionNotifier = get(), pairedWatchRepository = get()) }
 	singleOf(::WatchSessionHandler)
+	// rings outside any screen or session, for as long as the process lives
+	single {
+		PhoneFinder(
+			ringer = get(),
+			loadSound = ::builtInFindPhoneSound,
+			scope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
+		)
+	}
 	// Resolved on every injection, so screens get the currently connected watch
 	factory { get<WatchConnectionManager>().requireWatch() }
 }
