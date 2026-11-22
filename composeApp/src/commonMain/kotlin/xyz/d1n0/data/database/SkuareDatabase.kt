@@ -20,7 +20,7 @@ const val DATABASE_NAME = "skuare.db"
  */
 @Database(
 	entities = [PairedWatch::class, AppConfig::class, AppSettings::class, PressedLocation::class],
-	version = 6,
+	version = 7,
 	autoMigrations = [
 		AutoMigration(from = 1, to = 2, spec = CustomWatchModelMigration::class),
 		AutoMigration(from = 2, to = 3, spec = AlarmAndLocationFeaturesMigration::class),
@@ -28,6 +28,8 @@ const val DATABASE_NAME = "skuare.db"
 		AutoMigration(from = 4, to = 5, spec = SyncFailureMigration::class),
 		// adds app_settings (no row: every setting at its default) and pressed_location, nothing to fill in
 		AutoMigration(from = 5, to = 6),
+		// adds the find phone settings to app_settings, off, a minute, the built-in tone
+		AutoMigration(from = 6, to = 7),
 	],
 )
 @TypeConverters(Converters::class)

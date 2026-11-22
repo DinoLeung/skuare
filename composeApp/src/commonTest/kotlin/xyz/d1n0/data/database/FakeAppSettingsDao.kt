@@ -22,4 +22,25 @@ internal class FakeAppSettingsDao : AppSettingsDao {
 	override suspend fun setLocationRecordingEnabled(enabled: Boolean) {
 		settings.update { it?.copy(locationRecordingEnabled = enabled) }
 	}
+
+	override suspend fun setFindPhoneEnabled(enabled: Boolean) {
+		settings.update { it?.copy(findPhoneEnabled = enabled) }
+	}
+
+	override suspend fun setFindPhoneRingUntilStopped(untilStopped: Boolean) {
+		settings.update { it?.copy(findPhoneRingUntilStopped = untilStopped) }
+	}
+
+	override suspend fun setFindPhoneRingSeconds(seconds: Int) {
+		settings.update { it?.copy(findPhoneRingSeconds = seconds) }
+	}
+
+	override suspend fun setFindPhoneSoundName(name: String?) {
+		settings.update { it?.copy(findPhoneSoundName = name) }
+	}
+
+	/** Stores [settings] as they are, e.g. a value the screen wouldn't allow. */
+	fun store(settings: AppSettings) {
+		this.settings.value = settings
+	}
 }
