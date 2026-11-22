@@ -1,5 +1,7 @@
 package xyz.d1n0.phone
 
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.withContext
 import xyz.d1n0.Log
 import xyz.d1n0.data.repository.AppSettingsRepository
 import kotlin.coroutines.cancellation.CancellationException
@@ -55,8 +57,7 @@ class FindPhoneSounds(
 				bytes.size > MAX_SIZE_BYTES -> Rejection.TooLarge
 				!ringer.canPlay(bytes) -> Rejection.Unplayable
 				else -> {
-					store.save(bytes, extensionOf(picked.displayName))
-					appSettingsRepository.setFindPhoneSoundName(picked.displayName)
+					replace(bytes, picked.displayName)
 					null
 				}
 			}
@@ -65,6 +66,33 @@ class FindPhoneSounds(
 		} catch (e: Exception) {
 			log.w { "Couldn't take the picked sound: ${e.message}" }
 			Rejection.Failed(e)
+		}
+	}
+
+	/**
+	 * Stores [bytes] as the copy, then [name]. If either fails or is cancelled, the previous copy and
+	 * name are put back, so the screen never names a sound other than the one that rings. Cancelling
+	 * can land after the save is done, so the copy is restored even when the save itself threw.
+	 */
+	private suspend fun replace(bytes: ByteArray, name: String) {
+		val previousName = appSettingsRepository.findPhoneSettings().soundName
+		val previous = previousName?.let { store.load() }
+		try {
+			store.save(bytes, extensionOf(name))
+			appSettingsRepository.setFindPhoneSoundName(name)
+		} catch (e: Throwable) {
+			withContext(NonCancellable) { restore(previousName, previous) }
+			throw e
+		}
+	}
+
+	/** Without [bytes], e.g. the built-in tone was set, the copy is deleted. */
+	private suspend fun restore(name: String?, bytes: ByteArray?) {
+		try {
+			if (bytes != null) store.save(bytes, extensionOf(name.orEmpty())) else store.delete()
+			appSettingsRepository.setFindPhoneSoundName(name)
+		} catch (e: Exception) {
+			log.e { "Couldn't restore the previous find phone sound: ${e.message}" }
 		}
 	}
 

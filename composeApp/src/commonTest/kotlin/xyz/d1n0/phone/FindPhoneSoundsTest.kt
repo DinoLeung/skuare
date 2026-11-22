@@ -1,9 +1,11 @@
 package xyz.d1n0.phone
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
+import xyz.d1n0.data.database.AppSettingsDao
 import xyz.d1n0.data.database.FakeAppSettingsDao
 import xyz.d1n0.data.repository.AppSettingsRepository
 import kotlin.test.Test
@@ -18,7 +20,16 @@ class FindPhoneSoundsTest {
 	private val builtIn = byteArrayOf(0)
 	private val song = byteArrayOf(1, 2, 3)
 	private val store = FakeCustomSoundStore()
-	private val settings = AppSettingsRepository(FakeAppSettingsDao())
+	private val dao = FakeAppSettingsDao()
+
+	/** Runs before the next sound name write, once, e.g. to throw or to suspend. */
+	private var beforeNameWrite: (suspend () -> Unit)? = null
+	private val settings = AppSettingsRepository(object : AppSettingsDao by dao {
+		override suspend fun setFindPhoneSoundName(name: String?) {
+			beforeNameWrite?.let { beforeNameWrite = null; it() }
+			dao.setFindPhoneSoundName(name)
+		}
+	})
 	private val ringer = FakePhoneRinger()
 	private val sounds = FindPhoneSounds(store, settings, ringer, loadBuiltIn = { builtIn })
 
@@ -64,6 +75,46 @@ class FindPhoneSoundsTest {
 
 		assertNull(sounds.choose(picked(bytes = bytes, size = null)))
 		assertEquals(FindPhoneSounds.MAX_SIZE_BYTES, store.stored?.size)
+	}
+
+	@Test
+	fun aFailedNameWriteKeepsThePreviousSound() = runTest {
+		sounds.choose(picked())
+		beforeNameWrite = { error("database locked") }
+
+		assertIs<FindPhoneSounds.Rejection.Failed>(sounds.choose(picked(name = "Other.wav", bytes = byteArrayOf(9))))
+
+		assertContentEquals(song, store.stored)
+		assertEquals("mp3", store.extension)
+		assertEquals("Song.MP3", settings.findPhoneSettings().soundName)
+	}
+
+	@Test
+	fun aFailedNameWriteForTheFirstSoundKeepsTheBuiltInTone() = runTest {
+		beforeNameWrite = { error("database locked") }
+
+		assertIs<FindPhoneSounds.Rejection.Failed>(sounds.choose(picked()))
+
+		assertNull(store.stored)
+		assertNull(settings.findPhoneSettings().soundName)
+	}
+
+	@OptIn(ExperimentalCoroutinesApi::class) // runCurrent
+	@Test
+	fun cancellingAfterTheSaveKeepsThePreviousSound() = runTest {
+		sounds.choose(picked())
+		beforeNameWrite = { awaitCancellation() }
+
+		val choosing = launch { sounds.choose(picked(name = "Other.wav", bytes = byteArrayOf(9))) }
+		runCurrent()
+		// saved, waiting on the name
+		assertContentEquals(byteArrayOf(9), store.stored)
+		choosing.cancel()
+		runCurrent()
+
+		assertContentEquals(song, store.stored)
+		assertEquals("mp3", store.extension)
+		assertEquals("Song.MP3", settings.findPhoneSettings().soundName)
 	}
 
 	@Test
