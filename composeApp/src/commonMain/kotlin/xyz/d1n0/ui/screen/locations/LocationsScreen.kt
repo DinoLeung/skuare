@@ -82,8 +82,9 @@ fun LocationsScreen(onBack: () -> Unit) {
 			} catch (e: CancellationException) {
 				throw e
 			} catch (e: Exception) {
-				// e.g. Android without an app for geo: links
-				Log.w { "Can't open $link: ${e.message}" }
+				// e.g. Android without an app for geo: links. Neither the link nor the message, which
+				// repeats it, is logged: they hold the location
+				Log.w { "Can't open the location in a map app: ${e::class.simpleName}" }
 				scope.launch { snackbarHostState.showSnackbar(getString(Res.string.locations_no_map_app)) }
 			}
 		},

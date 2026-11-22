@@ -208,7 +208,8 @@ class WatchSessionHandler(
 		// the watch is gone, the notification shouldn't say it's still connected meanwhile
 		if (read.fix.isActive) connectionNotifier.savingLocation()
 		val location = finishLocationRead(read)
-		log.i { "Location after the button press: $location" }
+		// the kind only, a Fix holds the phone's position, which doesn't belong in the system log
+		log.i { "Location after the button press: ${location::class.simpleName}" }
 		if (result is BackgroundSessionResult.Synced) result.copy(location = location) else result
 	}
 
