@@ -8,7 +8,7 @@ import xyz.d1n0.phone.PickedAudio
  * research/button-actions-plan.md, to do once there's a Mac and an iOS device to try it on.
  */
 @Composable
-actual fun rememberAudioFilePicker(onPicked: (PickedAudio) -> Unit): (() -> Unit)? {
+actual fun rememberAudioFilePicker(onPicked: (load: suspend () -> PickedAudio) -> Unit): (() -> Unit)? {
 	// TODO: present UIDocumentPickerViewController(forOpeningContentTypes = listOf(UTTypeAudio),
 	//  asCopy = true) from the Compose UIViewController, with a delegate calling onPicked.
 	// TODO: asCopy hands over a temporary copy, no security-scoped access needed. PickedAudio from

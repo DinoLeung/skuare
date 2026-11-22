@@ -31,6 +31,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertIs
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.time.Duration
@@ -106,7 +107,7 @@ class AppSettingsScreenViewModelTest {
 	fun choosingASoundShowsItsName() = runTest {
 		val viewModel = viewModel()
 
-		viewModel.chooseSound(picked())
+		viewModel.chooseSound { picked() }
 
 		assertEquals("Song.mp3", viewModel.findPhone.soundName)
 		assertNull(viewModel.state.value.soundRejection)
@@ -118,7 +119,7 @@ class AppSettingsScreenViewModelTest {
 		val viewModel = viewModel()
 		val reading = CompletableDeferred<Unit>()
 		val bytes = byteArrayOf(1, 2, 3)
-		viewModel.chooseSound(PickedAudio("Song.mp3", bytes.size.toLong()) { reading.await(); bytes })
+		viewModel.chooseSound { PickedAudio("Song.mp3", bytes.size.toLong()) { reading.await(); bytes } }
 		assertTrue(viewModel.state.value.isTakingSound)
 
 		viewModel.resetSound()
@@ -131,13 +132,40 @@ class AppSettingsScreenViewModelTest {
 	}
 
 	@Test
+	fun resettingWhileThePickedFileIsLookedUpEndsWithTheBuiltInTone() = runTest {
+		val viewModel = viewModel()
+		val lookingUp = CompletableDeferred<Unit>()
+		viewModel.chooseSound { lookingUp.await(); picked() }
+		assertTrue(viewModel.state.value.isTakingSound)
+
+		viewModel.resetSound()
+		lookingUp.complete(Unit)
+		runCurrent()
+
+		assertNull(viewModel.findPhone.soundName)
+		assertNull(store.stored)
+		assertFalse(viewModel.state.value.isTakingSound)
+	}
+
+	@Test
+	fun aPickedFileThatCantBeLookedUpSaysItFailed() = runTest {
+		val viewModel = viewModel()
+
+		viewModel.chooseSound { error("access revoked") }
+
+		assertIs<FindPhoneSounds.Rejection.Failed>(viewModel.state.value.soundRejection)
+		assertFalse(viewModel.state.value.isTakingSound)
+		assertNull(viewModel.findPhone.soundName)
+	}
+
+	@Test
 	fun aRejectedSoundSaysWhyAndKeepsThePreviousOne() = runTest {
 		val ringer = FakePhoneRinger()
 		val viewModel = viewModel(ringer)
-		viewModel.chooseSound(picked())
+		viewModel.chooseSound { picked() }
 
 		ringer.playable = { false }
-		viewModel.chooseSound(picked(name = "Other.ogg"))
+		viewModel.chooseSound { picked(name = "Other.ogg") }
 
 		assertEquals(FindPhoneSounds.Rejection.Unplayable, viewModel.state.value.soundRejection)
 		assertEquals("Song.mp3", viewModel.findPhone.soundName)
@@ -151,7 +179,7 @@ class AppSettingsScreenViewModelTest {
 	@Test
 	fun aMissingCopyShowsAfterComingBack() = runTest {
 		val viewModel = viewModel()
-		viewModel.chooseSound(picked())
+		viewModel.chooseSound { picked() }
 		assertFalse(viewModel.state.value.isCustomSoundMissing)
 
 		store.stored = null

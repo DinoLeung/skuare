@@ -8,11 +8,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import xyz.d1n0.phone.PickedAudio
 import java.io.ByteArrayOutputStream
@@ -23,13 +21,12 @@ import java.io.InputStream
  * so no lasting access to it is kept either.
  */
 @Composable
-actual fun rememberAudioFilePicker(onPicked: (PickedAudio) -> Unit): (() -> Unit)? {
-	val resolver = LocalContext.current.contentResolver
+actual fun rememberAudioFilePicker(onPicked: (load: suspend () -> PickedAudio) -> Unit): (() -> Unit)? {
+	// the application's, the lookup runs in the caller's scope, which can outlive this activity
+	val resolver = LocalContext.current.applicationContext.contentResolver
 	val currentOnPicked by rememberUpdatedState(onPicked)
-	// The composition's scope resumes on the main thread, so onPicked is called there.
-	val scope = rememberCoroutineScope()
 	val launcher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-		uri?.let { scope.launch { currentOnPicked(resolver.pickedAudio(it)) } }
+		uri?.let { currentOnPicked { resolver.pickedAudio(it) } }
 	}
 	return remember(launcher) { { launcher.launch(arrayOf("audio/*")) } }
 }

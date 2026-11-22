@@ -83,7 +83,8 @@ class AppSettingsScreenViewModel(
 
 	/**
 	 * Takes turns between choosing and resetting the sound, Reset stays enabled while a picked file is
-	 * taken. Interleaved, a reset could delete the new copy before its name is stored.
+	 * taken. Interleaved, a reset could delete the new copy before its name is stored, or be undone by
+	 * a pick still looking up its file.
 	 */
 	private val soundChange = Mutex()
 
@@ -124,19 +125,37 @@ class AppSettingsScreenViewModel(
 		}
 	}
 
-	/** Takes [picked] as the ringtone, or says why not and keeps the previous one, see [FindPhoneSounds.choose]. */
-	fun chooseSound(picked: PickedAudio) {
+	/**
+	 * Takes the picked file as the ringtone, or says why not and keeps the previous one, see
+	 * [FindPhoneSounds.choose].
+	 *
+	 * @param load Looks up the file's name and size. Run here in turn with Reset, so a reset tapped
+	 *        while it's still looking isn't undone by the pick once it's done.
+	 */
+	fun chooseSound(load: suspend () -> PickedAudio) {
 		if (_state.value.isTakingSound) return
 		viewModelScope.launch {
 			_state.update { it.copy(isTakingSound = true, soundRejection = null) }
 			try {
-				val rejection = soundChange.withLock { sounds.choose(picked) }
+				val rejection = soundChange.withLock { loadAndChoose(load) }
 				_state.update { it.copy(soundRejection = rejection) }
 			} finally {
 				_state.update { it.copy(isTakingSound = false) }
 				checkCustomSound()
 			}
 		}
+	}
+
+	private suspend fun loadAndChoose(load: suspend () -> PickedAudio): FindPhoneSounds.Rejection? {
+		val picked = try {
+			load()
+		} catch (e: CancellationException) {
+			throw e
+		} catch (e: Exception) {
+			log.w { "Couldn't look up the picked sound: ${e.message}" }
+			return FindPhoneSounds.Rejection.Failed(e)
+		}
+		return sounds.choose(picked)
 	}
 
 	/** Back to the built-in tone. */
