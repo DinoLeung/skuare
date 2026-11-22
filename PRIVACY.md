@@ -1,6 +1,6 @@
 # Privacy Policy for Skuare
 
-**Effective date:** October 20, 2026
+**Effective date:** November 22, 2026
 
 Skuare is an independent, open-source companion app for supported Bluetooth Casio G-Shock watches. Skuare is developed and maintained by Dino Leung.
 
@@ -14,7 +14,7 @@ Skuare is designed to communicate directly with your watch over Bluetooth. The a
 - does not include advertising or analytics SDKs;
 - does not send your watch data or app data to the developer's servers;
 - does not sell or share your personal data with advertisers or data brokers; and
-- does not request or use your device's location.
+- uses your device's location only if you turn on **Record location**, and keeps those locations on your device.
 
 ## Information Skuare accesses
 
@@ -26,7 +26,11 @@ To discover, pair with, and communicate with a supported watch, Skuare may acces
 - the Android Companion Device Manager association for a paired watch; and
 - technical error information produced while pairing, connecting, or synchronizing.
 
-Bluetooth scan access is used only to find supported watches. Skuare declares that Bluetooth scanning is not used to derive physical location and does not request Android location permission.
+Bluetooth scan access is used only to find supported watches. Skuare declares that Bluetooth scanning is not used to derive physical location.
+
+### Location (optional)
+
+**Record location** in Skuare's App settings is off by default. If you turn it on, Skuare asks for precise location, allowed all the time, and then saves your device's location each time you briefly press the lower-right button on a paired watch. Location is read only at that press, never continuously, and only while the feature is on. If you don't turn it on, Skuare doesn't ask for location access.
 
 ## Information stored on your device
 
@@ -34,6 +38,7 @@ Skuare stores the following information in its local app database so that paired
 
 - Bluetooth address and watch names;
 - the Android companion-device association identifier;
+- if you turned on **Record location**, each recorded location: latitude, longitude, accuracy, the date and time of the button press, and the watch's address and name;
 - pairing and last-synchronization times;
 - the most recent synchronization error, if any; and
 - a randomly generated installation identifier used to associate this installation of Skuare with your watch.
@@ -67,6 +72,7 @@ Skuare may request or use these Android permissions and capabilities:
 
 - **Nearby devices / Bluetooth scan and connect:** finds and communicates with supported watches.
 - **Companion-device presence and background operation:** detects a paired watch and supports synchronization while the app is not open.
+- **Location, including background location (optional):** records your device's location when you briefly press the watch's lower-right button, only after you turn on **Record location**. The press is handled while the app is closed, which is why it needs location allowed all the time.
 - **Foreground service:** maintains an active Bluetooth synchronization session.
 - **Notifications:** informs you about synchronization activity or asks you to open Skuare when watch interaction requires it.
 
@@ -74,7 +80,7 @@ You can deny or revoke optional permissions through Android settings. Some app f
 
 ## Data retention and deletion
 
-Local information about a paired watch is retained until you use Skuare's **Forget** action. You can delete all locally stored Skuare data by clearing the app's storage or uninstalling the app. Android-managed backups may remain subject to the retention and deletion practices of your operating-system or backup provider.
+Local information about a paired watch is retained until you use Skuare's **Forget** action. Recorded locations are kept until you delete them: when you forget a watch, Skuare asks whether to delete that watch's locations too. Turning off **Record location** stops new recordings but keeps the existing ones. You can delete all locally stored Skuare data by clearing the app's storage or uninstalling the app. Android-managed backups may remain subject to the retention and deletion practices of your operating-system or backup provider.
 
 Skuare does not provide user accounts and therefore holds no server-side account data to delete.
 
