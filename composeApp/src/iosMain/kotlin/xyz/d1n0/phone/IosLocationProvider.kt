@@ -8,7 +8,6 @@ import kotlinx.cinterop.useContents
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.withTimeoutOrNull
 import platform.CoreLocation.CLLocation
 import platform.CoreLocation.CLLocationManager
 import platform.CoreLocation.CLLocationManagerDelegateProtocol
@@ -39,16 +38,20 @@ class IosLocationProvider : LocationProvider {
 		CLLocationManager().authorizationStatus == kCLAuthorizationStatusAuthorizedAlways
 
 	// CLLocationManager calls its delegate on the thread it was created on, which needs a run loop
-	override suspend fun currentLocation(timeout: Duration, maxAge: Duration): LocationResult =
+	override suspend fun currentLocation(): LocationResult =
 		withContext(Dispatchers.Main) {
 			if (!isPermissionGranted()) return@withContext LocationResult.PermissionDenied
 			if (!CLLocationManager.locationServicesEnabled()) return@withContext LocationResult.Disabled
 
 			val manager = CLLocationManager().apply { desiredAccuracy = kCLLocationAccuracyBest }
-			val fix = withTimeoutOrNull(timeout) { requestFix(manager) }
-			val location = fix ?: manager.location?.takeIf { it.age <= maxAge }
-				?: return@withContext LocationResult.TimedOut
-			LocationResult.Fix(location.toGeoPoint())
+			// CoreLocation gives up on its own after a while, the caller usually cancels before
+			requestFix(manager)?.let { LocationResult.Fix(it.toGeoPoint()) } ?: LocationResult.TimedOut
+		}
+
+	override suspend fun lastKnownLocation(maxAge: Duration): GeoPoint? =
+		withContext(Dispatchers.Main) {
+			if (!isPermissionGranted()) return@withContext null
+			CLLocationManager().location?.takeIf { it.age <= maxAge }?.toGeoPoint()
 		}
 
 	/** A fresh fix, null if CoreLocation failed to get one. */

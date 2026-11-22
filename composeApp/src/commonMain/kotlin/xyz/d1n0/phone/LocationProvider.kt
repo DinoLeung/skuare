@@ -27,7 +27,7 @@ sealed interface LocationResult {
 	/** Location services are off. */
 	data object Disabled : LocationResult
 
-	/** No fix in time and no recent last known location. */
+	/** No fix in time, or the platform gave up on one, and no recent last known location. */
 	data object TimedOut : LocationResult
 
 	data class Failed(val error: Throwable) : LocationResult
@@ -51,11 +51,17 @@ interface LocationProvider {
 	fun isPermissionGranted(): Boolean
 
 	/**
-	 * One fix within [timeout]. Falls back to the last known location if it's younger than
-	 * [maxAge], so the stored press time stays close to where the phone was. Never throws for a
-	 * missing permission or disabled location services, see [LocationResult].
+	 * A fresh fix. Suspends until one arrives, the caller decides how long to wait and cancels it.
+	 * [LocationResult.TimedOut] if the platform gave up on its own. Never throws for a missing
+	 * permission or disabled location services, see [LocationResult].
 	 */
-	suspend fun currentLocation(timeout: Duration, maxAge: Duration): LocationResult
+	suspend fun currentLocation(): LocationResult
+
+	/**
+	 * The newest location the phone already has, if it's younger than [maxAge], the fallback when
+	 * no fresh fix came in time. Null without one, or without the permission.
+	 */
+	suspend fun lastKnownLocation(maxAge: Duration): GeoPoint?
 }
 
 /** For platforms that can't read the location in the background yet, the feature stays hidden. */
@@ -63,5 +69,6 @@ class UnsupportedLocationProvider : LocationProvider {
 	override val isSupported = false
 	override val requiredPermissions = emptyList<Permission>()
 	override fun isPermissionGranted() = false
-	override suspend fun currentLocation(timeout: Duration, maxAge: Duration) = LocationResult.PermissionDenied
+	override suspend fun currentLocation() = LocationResult.PermissionDenied
+	override suspend fun lastKnownLocation(maxAge: Duration): GeoPoint? = null
 }

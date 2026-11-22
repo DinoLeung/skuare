@@ -13,7 +13,6 @@ import dev.icerock.moko.permissions.PermissionDelegate
 import dev.icerock.moko.permissions.PermissionState
 import dev.icerock.moko.permissions.location.LOCATION
 import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.coroutines.resume
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.nanoseconds
@@ -37,24 +36,33 @@ class AndroidLocationProvider(context: Context) : LocationProvider {
 	override fun isPermissionGranted(): Boolean =
 		isGranted(Manifest.permission.ACCESS_FINE_LOCATION) && isGranted(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
 
-	// the permissions are checked by isPermissionGranted first
-	@SuppressLint("MissingPermission")
-	override suspend fun currentLocation(timeout: Duration, maxAge: Duration): LocationResult {
+	override suspend fun currentLocation(): LocationResult {
 		if (!isPermissionGranted()) return LocationResult.PermissionDenied
 		if (!manager.isLocationEnabled) return LocationResult.Disabled
-		val providers = PROVIDERS.filter { manager.hasProvider(it) && manager.isProviderEnabled(it) }
-		val provider = providers.firstOrNull() ?: return LocationResult.Disabled
-
-		val fix = withTimeoutOrNull(timeout) { requestFix(provider) }
-		val location = fix ?: lastKnownLocation(providers, maxAge) ?: return LocationResult.TimedOut
-		return LocationResult.Fix(
-			GeoPoint(
-				latitude = location.latitude,
-				longitude = location.longitude,
-				accuracyMeters = location.takeIf { it.hasAccuracy() }?.accuracy?.toDouble(),
-			)
-		)
+		val provider = enabledProviders().firstOrNull() ?: return LocationResult.Disabled
+		// the provider gives up on its own after a while, the caller usually cancels before
+		val fix = requestFix(provider) ?: return LocationResult.TimedOut
+		return LocationResult.Fix(fix.toGeoPoint())
 	}
+
+	// the permissions are checked by isPermissionGranted first
+	@SuppressLint("MissingPermission")
+	override suspend fun lastKnownLocation(maxAge: Duration): GeoPoint? {
+		if (!isPermissionGranted()) return null
+		return enabledProviders()
+			.mapNotNull { manager.getLastKnownLocation(it) }
+			.filter { (SystemClock.elapsedRealtimeNanos() - it.elapsedRealtimeNanos).nanoseconds <= maxAge }
+			.maxByOrNull { it.elapsedRealtimeNanos }
+			?.toGeoPoint()
+	}
+
+	private fun enabledProviders() = PROVIDERS.filter { manager.hasProvider(it) && manager.isProviderEnabled(it) }
+
+	private fun Location.toGeoPoint() = GeoPoint(
+		latitude = latitude,
+		longitude = longitude,
+		accuracyMeters = takeIf { it.hasAccuracy() }?.accuracy?.toDouble(),
+	)
 
 	/** A fresh fix, null if the provider gave up without one. */
 	@SuppressLint("MissingPermission")
@@ -65,14 +73,6 @@ class AndroidLocationProvider(context: Context) : LocationProvider {
 			if (continuation.isActive) continuation.resume(location)
 		}
 	}
-
-	/** The newest last known location of [providers], if it's younger than [maxAge]. */
-	@SuppressLint("MissingPermission")
-	private fun lastKnownLocation(providers: List<String>, maxAge: Duration): Location? =
-		providers
-			.mapNotNull { manager.getLastKnownLocation(it) }
-			.filter { (SystemClock.elapsedRealtimeNanos() - it.elapsedRealtimeNanos).nanoseconds <= maxAge }
-			.maxByOrNull { it.elapsedRealtimeNanos }
 
 	private fun isGranted(permission: String) =
 		context.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED

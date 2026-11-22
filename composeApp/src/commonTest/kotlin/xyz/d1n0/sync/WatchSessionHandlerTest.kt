@@ -1,12 +1,15 @@
 package xyz.d1n0.sync
 
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withTimeout
 import xyz.d1n0.data.database.FakeAppConfigDao
@@ -43,6 +46,8 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.time.Clock
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
@@ -161,9 +166,13 @@ class WatchSessionHandlerTest {
 			statusRequestCount++
 		}
 
+		/** How long the time adjustment takes, in the test's virtual time. */
+		var adjustDuration: Duration = Duration.ZERO
+
 		override suspend fun adjustTime(): Result<Unit> {
 			adjustCount++
 			modelAtAdjust = model
+			delay(adjustDuration)
 			return adjustResult
 		}
 
@@ -805,18 +814,94 @@ class WatchSessionHandlerTest {
 		}
 	}
 
+	@OptIn(ExperimentalCoroutinesApi::class) // currentTime
 	@Test
 	fun locationReadThatNeverAnswersTimesOut() = runTest {
 		val fixture = Fixture()
 		fixture.pair()
 		fixture.enableLocationRecording()
-		// never completed, like a platform that ignores its timeout
+		// never completed
 		fixture.locationProvider.answer = CompletableDeferred()
 		val watch = FakeConnectedWatch(connectReason = ConnectReason.MANUAL_SYNC)
 
 		val result = fixture.handler.runBackground(ADDRESS) { watch }
 
 		assertEquals(LocationResult.TimedOut, assertIs<BackgroundSessionResult.Synced>(result).location)
+		assertTrue(fixture.locationProvider.cancelled)
+		assertTrue(fixture.locationDao.all.isEmpty())
+		// 10 s after the disconnect, the session itself took no time
+		assertEquals(10.seconds, testScheduler.currentTime.milliseconds)
+	}
+
+	@Test
+	fun fixArrivingWithinTenSecondsOfTheDisconnectIsKeptAfterALongSession() = runTest {
+		val fixture = Fixture()
+		fixture.pair()
+		fixture.enableLocationRecording()
+		val answer = CompletableDeferred<Unit>()
+		fixture.locationProvider.answer = answer
+		// the read starts at the press, the session takes 30 s, the fix comes 8 s after it ended
+		val watch = FakeConnectedWatch(connectReason = ConnectReason.MANUAL_SYNC).also { it.adjustDuration = 30.seconds }
+		launch {
+			delay(38.seconds)
+			answer.complete(Unit)
+		}
+
+		val result = fixture.handler.runBackground(ADDRESS) { watch }
+
+		assertIs<LocationResult.Fix>(assertIs<BackgroundSessionResult.Synced>(result).location)
+		assertFalse(fixture.locationProvider.cancelled)
+		assertEquals(22.2793, fixture.locationDao.all.single().latitude)
+	}
+
+	@OptIn(ExperimentalCoroutinesApi::class) // currentTime
+	@Test
+	fun withoutAFixTenSecondsAfterTheDisconnectTheLastKnownLocationIsUsed() = runTest {
+		val fixture = Fixture(FakeLocationProvider(lastKnown = GeoPoint(51.5, -0.12, accuracyMeters = 30.0)))
+		fixture.pair()
+		fixture.enableLocationRecording()
+		val answer = CompletableDeferred<Unit>()
+		fixture.locationProvider.answer = answer
+		val watch = FakeConnectedWatch(connectReason = ConnectReason.MANUAL_SYNC).also { it.adjustDuration = 30.seconds }
+		// 11 s after the session ended, too late
+		launch {
+			delay(41.seconds)
+			answer.complete(Unit)
+		}
+
+		val result = fixture.handler.runBackground(ADDRESS) { watch }
+
+		assertIs<LocationResult.Fix>(assertIs<BackgroundSessionResult.Synced>(result).location)
+		assertTrue(fixture.locationProvider.cancelled)
+		assertEquals(40.seconds, testScheduler.currentTime.milliseconds)
+		val stored = fixture.locationDao.all.single()
+		assertEquals(51.5, stored.latitude)
+		assertEquals(30.0, stored.accuracyMeters)
+	}
+
+	@Test
+	fun platformGivingUpFallsBackToTheLastKnownLocation() = runTest {
+		val fixture = Fixture(FakeLocationProvider(result = LocationResult.TimedOut, lastKnown = GeoPoint(51.5, -0.12)))
+		fixture.pair()
+		fixture.enableLocationRecording()
+		val watch = FakeConnectedWatch(connectReason = ConnectReason.MANUAL_SYNC)
+
+		val result = fixture.handler.runBackground(ADDRESS) { watch }
+
+		assertIs<LocationResult.Fix>(assertIs<BackgroundSessionResult.Synced>(result).location)
+		assertEquals(51.5, fixture.locationDao.all.single().latitude)
+	}
+
+	@Test
+	fun deniedPermissionDoesNotFallBackToTheLastKnownLocation() = runTest {
+		val fixture = Fixture(FakeLocationProvider(result = LocationResult.PermissionDenied, lastKnown = GeoPoint(51.5, -0.12)))
+		fixture.pair()
+		fixture.enableLocationRecording()
+		val watch = FakeConnectedWatch(connectReason = ConnectReason.MANUAL_SYNC)
+
+		val result = fixture.handler.runBackground(ADDRESS) { watch }
+
+		assertEquals(LocationResult.PermissionDenied, assertIs<BackgroundSessionResult.Synced>(result).location)
 		assertTrue(fixture.locationDao.all.isEmpty())
 	}
 

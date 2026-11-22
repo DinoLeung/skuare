@@ -90,7 +90,10 @@ class WatchSessionHandler(
 	private val connectionNotifier: WatchConnectionNotifier = WatchConnectionNotifier.None,
 ) {
 	private companion object {
-		/** How long a background session waits for a location fix after the watch disconnected. */
+		/**
+		 * How long a background session waits for a location fix after the watch disconnected. The
+		 * read starts at the press, so it also has the whole watch session before that.
+		 */
 		val LOCATION_TIMEOUT = 10.seconds
 
 		/** The oldest last known location that still counts as where the phone was at the press. */
@@ -174,7 +177,8 @@ class WatchSessionHandler(
 	 *      user to open the app.
 	 *    - find: does nothing.
 	 * 5. Disconnects, unless the watch is waiting for the app.
-	 * 6. Waits for the location read, if one started, so the watch isn't kept connected for it.
+	 * 6. Waits for the location read, if one started, so the watch isn't kept connected for it: up to
+	 *    10 s from the disconnect, then a recent last known location, see [finishLocationRead].
 	 *
 	 * @param peripheral The watch that wants to connect.
 	 * @param address BLE address of the watch, used to look up its stored row, for its name in case
@@ -196,14 +200,14 @@ class WatchSessionHandler(
 		connectIfIdle: suspend (stored: PairedWatch?) -> ConnectedWatch?,
 	): BackgroundSessionResult = coroutineScope {
 		// started in this scope rather than inside the timeout, so it outlives the watch session
-		var locationRead: Deferred<LocationResult>? = null
+		var locationRead: LocationRead? = null
 		val result = runWatchSession(address, timeout, connectIfIdle) { request ->
-			locationRead = async { recordLocation(request) }
+			locationRead = LocationRead(request, async { readCurrentLocation() })
 		}
-		val pendingRead = locationRead ?: return@coroutineScope result
+		val read = locationRead ?: return@coroutineScope result
 		// the watch is gone, the notification shouldn't say it's still connected meanwhile
-		if (pendingRead.isActive) connectionNotifier.savingLocation()
-		val location = pendingRead.await()
+		if (read.fix.isActive) connectionNotifier.savingLocation()
+		val location = finishLocationRead(read)
 		log.i { "Location after the button press: $location" }
 		if (result is BackgroundSessionResult.Synced) result.copy(location = location) else result
 	}
@@ -212,7 +216,7 @@ class WatchSessionHandler(
 	 * The part of [runBackground] with the watch connected, disconnects it before returning unless
 	 * it waits for the app.
 	 *
-	 * @param startLocationRead Starts reading and storing the phone's location without waiting.
+	 * @param startLocationRead Starts reading the phone's location without waiting for it.
 	 */
 	private suspend fun runWatchSession(
 		address: String,
@@ -323,21 +327,30 @@ class WatchSessionHandler(
 		}
 	}
 
-	/**
-	 * Reads the phone's location and stores it for the press in [request]. Never throws, except
-	 * for cancellation: a failure is returned and logged, the time sync doesn't depend on it.
-	 */
-	private suspend fun recordLocation(request: LocationRequest): LocationResult {
-		val result = try {
-			// the platform applies the timeout, this one only stops a read that ignores it
-			withTimeoutOrNull(LOCATION_TIMEOUT + 5.seconds) {
-				locationProvider.currentLocation(LOCATION_TIMEOUT, LOCATION_MAX_AGE)
-			} ?: LocationResult.TimedOut
+	/** A fresh fix, waited for until [finishLocationRead] gives up. Never throws, except for cancellation. */
+	private suspend fun readCurrentLocation(): LocationResult =
+		try {
+			locationProvider.currentLocation()
 		} catch (e: CancellationException) {
 			throw e
 		} catch (e: Exception) {
 			LocationResult.Failed(e)
 		}
+
+	/**
+	 * Waits up to [LOCATION_TIMEOUT] from now, after the watch session, for the fix started at the
+	 * press. Without one, it stops the read and takes a last known location up to
+	 * [LOCATION_MAX_AGE] old. Stores what it got for the press. Never throws, except for
+	 * cancellation: a failure is returned and logged, the time sync doesn't depend on it.
+	 */
+	private suspend fun finishLocationRead(read: LocationRead): LocationResult {
+		val fresh = withTimeoutOrNull(LOCATION_TIMEOUT) { read.fix.await() }
+		if (fresh == null) read.fix.cancel()
+		val result = when (fresh) {
+			null, LocationResult.TimedOut -> lastKnownLocation() ?: LocationResult.TimedOut
+			else -> fresh
+		}
+		val request = read.request
 		if (result !is LocationResult.Fix) {
 			log.w { "No location recorded for ${request.address}: $result" }
 			return result
@@ -357,6 +370,16 @@ class WatchSessionHandler(
 			LocationResult.Failed(e)
 		}
 	}
+
+	private suspend fun lastKnownLocation(): LocationResult.Fix? =
+		try {
+			locationProvider.lastKnownLocation(LOCATION_MAX_AGE)?.let { LocationResult.Fix(it) }
+		} catch (e: CancellationException) {
+			throw e
+		} catch (e: Exception) {
+			log.w { "Failed to read the last known location: ${e.message}" }
+			null
+		}
 
 	/**
 	 * Adjusts the time and stores the result in [PairedWatch].
@@ -478,6 +501,9 @@ class WatchSessionHandler(
 
 	/** A lower-right short press whose location is to be recorded. */
 	private class LocationRequest(val address: String, val watchName: String, val pressedAt: Instant)
+
+	/** The fresh fix for [request], started at the press. */
+	private class LocationRead(val request: LocationRequest, val fix: Deferred<LocationResult>)
 
 	private fun holdForApp(watch: ConnectedWatch) {
 		_pendingForegroundWatch.value = watch
