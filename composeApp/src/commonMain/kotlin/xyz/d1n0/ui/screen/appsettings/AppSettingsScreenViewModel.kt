@@ -4,11 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.icerock.moko.permissions.Permission
 import dev.icerock.moko.permissions.notifications.REMOTE_NOTIFICATION
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -155,7 +157,8 @@ class AppSettingsScreenViewModel(
 			stopSoundPlayback()
 			return
 		}
-		playback = viewModelScope.launch {
+		// started once it's playback, the immediate dispatcher could otherwise run it to its end first
+		val job = viewModelScope.launch(start = CoroutineStart.LAZY) {
 			_state.update { it.copy(isPlayingSound = true) }
 			try {
 				sounds.playAtCurrentVolume()
@@ -164,9 +167,12 @@ class AppSettingsScreenViewModel(
 			} catch (e: Exception) {
 				log.w { "Playing the sound failed: ${e.message}" }
 			} finally {
-				_state.update { it.copy(isPlayingSound = false) }
+				// a stopped one can end after Play sound was tapped again, the new one still plays then
+				if (playback === coroutineContext.job) _state.update { it.copy(isPlayingSound = false) }
 			}
 		}
+		playback = job
+		job.start()
 	}
 
 	/**

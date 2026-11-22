@@ -1,7 +1,11 @@
 package xyz.d1n0.phone
 
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
+import kotlin.time.Duration
 
 /**
  * [PhoneRinger] that "rings" until cancelled, like the real ones, and records it. With [failure]
@@ -29,6 +33,9 @@ internal class FakePhoneRinger(
 	var cancelCount = 0
 		private set
 
+	/** How long stopping takes once cancelled, like a player released off the main thread. */
+	var stopTakes: Duration = Duration.ZERO
+
 	override suspend fun ring(sound: ByteArray, forceMaxVolume: Boolean, vibrate: Boolean) {
 		sounds += sound
 		maxVolumes += forceMaxVolume
@@ -38,6 +45,7 @@ internal class FakePhoneRinger(
 			awaitCancellation()
 		} catch (e: CancellationException) {
 			cancelCount++
+			if (stopTakes > Duration.ZERO) withContext(NonCancellable) { delay(stopTakes) }
 			throw e
 		}
 	}

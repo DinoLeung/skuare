@@ -195,6 +195,35 @@ class AppSettingsScreenViewModelTest {
 		viewModel.stopSoundPlayback()
 	}
 
+	@Test
+	fun playingAgainWhileTheLastOneStopsKeepsPlaying() = runTest {
+		Dispatchers.setMain(UnconfinedTestDispatcher(testScheduler))
+		val ringer = FakePhoneRinger().apply { stopTakes = 1.seconds }
+		val viewModel = viewModel(ringer)
+		viewModel.toggleSoundPlayback()
+
+		// stops, which takes a second, and plays again meanwhile
+		viewModel.toggleSoundPlayback()
+		viewModel.toggleSoundPlayback()
+		advanceTimeBy(2.seconds)
+
+		assertTrue(viewModel.state.value.isPlayingSound)
+		assertEquals(2, ringer.sounds.size)
+		viewModel.toggleSoundPlayback()
+		advanceTimeBy(2.seconds)
+		assertFalse(viewModel.state.value.isPlayingSound)
+	}
+
+	@Test
+	fun playSoundThatFailsAtOnceShowsItStopped() = runTest {
+		val ringer = FakePhoneRinger().apply { failure = IllegalStateException("no player") }
+		val viewModel = viewModel(ringer)
+
+		viewModel.toggleSoundPlayback()
+
+		assertFalse(viewModel.state.value.isPlayingSound)
+	}
+
 	private val AppSettingsScreenViewModel.findPhone get() = state.value.findPhone
 
 	@Test
