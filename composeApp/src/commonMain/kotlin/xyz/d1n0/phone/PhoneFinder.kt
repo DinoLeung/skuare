@@ -55,6 +55,10 @@ class PhoneFinder(
 	val isSupported: Boolean
 		get() = ringer.isSupported
 
+	/** See [PhoneRinger.canForceMaxVolume]. */
+	val canForceMaxVolume: Boolean
+		get() = ringer.canForceMaxVolume
+
 	/**
 	 * Rings for [duration], or until [stop] if null. Called while ringing, it restarts the timer with
 	 * the new [duration] and keeps the sound playing, it doesn't start it again.

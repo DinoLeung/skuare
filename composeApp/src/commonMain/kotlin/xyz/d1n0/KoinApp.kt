@@ -72,6 +72,7 @@ val uiModule = module {
 			permissions = params[0],
 			appSettingsRepository = get(),
 			locationProvider = get(),
+			phoneFinder = get(),
 			presenceMonitor = get(),
 		)
 	}

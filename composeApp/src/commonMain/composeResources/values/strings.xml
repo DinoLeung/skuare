@@ -71,6 +71,27 @@
 	<string name="app_settings_open_system_settings">Open system settings</string>
 	<!-- On a platform without background sync, e.g. iOS for now -->
 	<string name="app_settings_location_unsupported">Not available on this device yet, it needs background sync.</string>
+	<!-- Find phone: holding the watch's lower-right button rings the phone -->
+	<string name="app_settings_find_phone_title">Find phone</string>
+	<string name="app_settings_find_phone_switch">Ring the phone when the lower-right button is held</string>
+	<string name="app_settings_find_phone_description">Hold the lower-right button on your watch and the phone rings at full alarm volume, also in silent mode. Stop it from the notification or in Skuare.</string>
+	<string name="app_settings_find_phone_until_stopped">Ring until stopped</string>
+	<!-- Label of the ring length field, hours, minutes and seconds -->
+	<string name="app_settings_find_phone_ring_for">Ring for</string>
+	<string name="app_settings_find_phone_ring_length_error">At least 1 second</string>
+	<!-- iOS, which doesn't let an app raise the phone's volume -->
+	<string name="app_settings_find_phone_volume_note">Rings at the phone's current volume, apps can't raise it on this system.</string>
+	<!-- The switch is on, but notifications were turned off in the system settings since -->
+	<string name="app_settings_find_phone_notifications_missing">Notifications are off, so the ringing has no Stop button in a notification.</string>
+	<!-- Turning the switch on failed, the user didn't allow notifications -->
+	<string name="app_settings_find_phone_notifications_denied">Notifications weren't allowed. Allow them in the system settings for the Stop button.</string>
+	<!-- On a platform without background sync, e.g. iOS for now -->
+	<string name="app_settings_find_phone_unsupported">Not available on this device yet, it needs background sync.</string>
+
+	<!-- Over every screen while find phone rings, its only button stops it -->
+	<string name="find_phone_ringing_title">Your phone is ringing</string>
+	<string name="find_phone_ringing_text">Your watch is looking for this phone.</string>
+	<string name="find_phone_stop">Stop</string>
 
 	<!-- Recorded locations, a list of where the phone was at each short press of the lower-right button -->
 	<string name="locations_title">Recorded locations</string>
