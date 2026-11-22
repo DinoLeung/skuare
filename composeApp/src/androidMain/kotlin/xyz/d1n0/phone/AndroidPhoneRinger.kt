@@ -39,6 +39,8 @@ class AndroidPhoneRinger(context: Context) : PhoneRinger {
 			.build()
 		val previousVolume = audio.getStreamVolume(AudioManager.STREAM_ALARM)
 		val player = MediaPlayer()
+		// cancel() stops the app's vibration as a whole, e.g. a real ring's while Play sound stops
+		var startedVibrating = false
 		try {
 			player.setAudioAttributes(ALARM)
 			player.setDataSource(ByteArraySource(sound))
@@ -53,10 +55,11 @@ class AndroidPhoneRinger(context: Context) : PhoneRinger {
 						VibrationEffect.createWaveform(VIBRATION_PATTERN, 0),
 						VibrationAttributes.createForUsage(VibrationAttributes.USAGE_ALARM),
 					)
+					startedVibrating = true
 				}
 			}
 		} finally {
-			vibrator.cancel()
+			if (startedVibrating) vibrator.cancel()
 			// stop throws if prepare failed before start, nothing to stop then
 			runCatching { player.stop() }
 			player.release()
