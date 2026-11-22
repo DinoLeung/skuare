@@ -14,6 +14,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 import xyz.d1n0.Log
@@ -103,6 +105,12 @@ class WatchSessionHandler(
 	private val log = Log
 
 	private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
+	/**
+	 * Held while a location is stored and while a watch is forgotten, so a read still finishing
+	 * can't store a location for a watch the user just forgot, see [finishLocationRead].
+	 */
+	private val locationStore = Mutex()
 
 	private val _pendingForegroundWatch = MutableStateFlow<ConnectedWatch?>(null)
 
@@ -274,8 +282,10 @@ class WatchSessionHandler(
 
 	internal suspend fun forget(address: String, deleteLocations: Boolean, connectedWatch: ConnectedWatch?) {
 		pairedWatchRepository.find(address)?.let { presenceMonitor.unregister(it) }
-		pairedWatchRepository.remove(address)
-		if (deleteLocations) pressedLocationRepository.deleteFor(address)
+		locationStore.withLock {
+			pairedWatchRepository.remove(address)
+			if (deleteLocations) pressedLocationRepository.deleteFor(address)
+		}
 		log.i { "Forgot $address${if (deleteLocations) " and its locations" else ""}" }
 		connectedWatch
 			?.takeIf { it.info.value.address == address }
@@ -341,8 +351,10 @@ class WatchSessionHandler(
 	/**
 	 * Waits up to [LOCATION_TIMEOUT] from now, after the watch session, for the fix started at the
 	 * press. Without one, it stops the read and takes a last known location up to
-	 * [LOCATION_MAX_AGE] old. Stores what it got for the press. Never throws, except for
-	 * cancellation: a failure is returned and logged, the time sync doesn't depend on it.
+	 * [LOCATION_MAX_AGE] old. Stores what it got for the press, unless the watch was forgotten
+	 * meanwhile: the user may have asked to delete its locations, a late one mustn't come back.
+	 * Never throws, except for cancellation: a failure is returned and logged, the time sync
+	 * doesn't depend on it.
 	 */
 	private suspend fun finishLocationRead(read: LocationRead): LocationResult {
 		val fresh = withTimeoutOrNull(LOCATION_TIMEOUT) { read.fix.await() }
@@ -357,12 +369,18 @@ class WatchSessionHandler(
 			return result
 		}
 		return try {
-			pressedLocationRepository.record(
-				watchAddress = request.address,
-				watchName = request.watchName,
-				pressedAt = request.pressedAt,
-				point = result.point,
-			)
+			locationStore.withLock {
+				if (pairedWatchRepository.find(request.address) == null) {
+					log.i { "No location recorded for ${request.address}, it was forgotten meanwhile" }
+				} else {
+					pressedLocationRepository.record(
+						watchAddress = request.address,
+						watchName = request.watchName,
+						pressedAt = request.pressedAt,
+						point = result.point,
+					)
+				}
+			}
 			result
 		} catch (e: CancellationException) {
 			throw e

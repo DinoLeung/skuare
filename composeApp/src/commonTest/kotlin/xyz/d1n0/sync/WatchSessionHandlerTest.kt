@@ -942,4 +942,25 @@ class WatchSessionHandlerTest {
 		// another watch's locations stay
 		assertEquals(listOf("00:11:22:33:44:55"), deleting.locationDao.all.map(PressedLocation::watchAddress))
 	}
+
+	@Test
+	fun forgettingAWatchWhileItsLocationIsReadLeavesNoLocation() = runTest {
+		listOf(true, false).forEach { deleteLocations ->
+			val fixture = Fixture()
+			fixture.pair()
+			fixture.enableLocationRecording()
+			val answer = CompletableDeferred<Unit>()
+			fixture.locationProvider.answer = answer
+			val watch = FakeConnectedWatch(connectReason = ConnectReason.MANUAL_SYNC)
+
+			val session = async { fixture.handler.runBackground(ADDRESS) { watch } }
+			// the watch is let go, the read still runs, and the user forgets the watch meanwhile
+			watch.disconnected.await()
+			fixture.handler.forget(ADDRESS, deleteLocations = deleteLocations, connectedWatch = null)
+			answer.complete(Unit)
+			session.await()
+
+			assertTrue(fixture.locationDao.all.isEmpty(), "deleteLocations = $deleteLocations")
+		}
+	}
 }
