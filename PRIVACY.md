@@ -80,7 +80,7 @@ You can deny or revoke optional permissions through Android settings. Some app f
 
 ## Data retention and deletion
 
-Local information about a paired watch is retained until you use Skuare's **Forget** action. Recorded locations are kept until you delete them: when you forget a watch, Skuare asks whether to delete that watch's locations too. Turning off **Record location** stops new recordings but keeps the existing ones. You can delete all locally stored Skuare data by clearing the app's storage or uninstalling the app. Android-managed backups may remain subject to the retention and deletion practices of your operating-system or backup provider.
+Local information about a paired watch is retained until you use Skuare's **Forget** action. Recorded locations are kept until you delete them. You can delete one location, those older than a period you choose, or all of them in **Recorded locations**, and when you forget a watch, Skuare asks whether to delete that watch's locations too. Turning off **Record location** stops new recordings but keeps the existing ones. You can delete all locally stored Skuare data by clearing the app's storage or uninstalling the app. Android-managed backups may remain subject to the retention and deletion practices of your operating-system or backup provider.
 
 Skuare does not provide user accounts and therefore holds no server-side account data to delete.
 
