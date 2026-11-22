@@ -10,20 +10,26 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.outlined.AutoDelete
+import androidx.compose.material.icons.outlined.DeleteSweep
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
@@ -50,7 +56,8 @@ import kotlin.time.Instant
 
 /**
  * Where the phone was at each short press of the lower-right button, newest first. Tapping one
- * opens it in the phone's map app.
+ * opens it in the phone's map app, a long press offers to delete it. The title bar deletes the
+ * older ones or all of them.
  */
 @Composable
 fun LocationsScreen(onBack: () -> Unit) {
@@ -80,6 +87,22 @@ fun LocationsScreen(onBack: () -> Unit) {
 				scope.launch { snackbarHostState.showSnackbar(getString(Res.string.locations_no_map_app)) }
 			}
 		},
+		onDelete = { location ->
+			viewModel.delete(location)
+			scope.launch {
+				// a later delete replaces the snackbar, only the last one can be undone
+				snackbarHostState.currentSnackbarData?.dismiss()
+				val result = snackbarHostState.showSnackbar(
+					message = getString(Res.string.locations_deleted),
+					actionLabel = getString(Res.string.locations_undo),
+					duration = SnackbarDuration.Short,
+				)
+				if (result == SnackbarResult.ActionPerformed) viewModel.restore(location)
+			}
+		},
+		countsOlderThan = viewModel::countsOlderThan,
+		onDeleteOlderThan = viewModel::deleteOlderThan,
+		onDeleteAll = viewModel::deleteAll,
 	)
 }
 
@@ -90,7 +113,16 @@ private fun LocationsScreenContent(
 	snackbarHostState: SnackbarHostState,
 	onBack: () -> Unit,
 	onOpenInMaps: (PressedLocation) -> Unit,
+	onDelete: (PressedLocation) -> Unit,
+	countsOlderThan: () -> Map<LocationAge, Int>,
+	onDeleteOlderThan: (LocationAge) -> Unit,
+	onDeleteAll: () -> Unit,
 ) {
+	val locations = state.locations
+	// the counts are taken when the dialog opens, so they don't change under the user's eyes
+	var olderThanCounts by remember { mutableStateOf<Map<LocationAge, Int>?>(null) }
+	var showDeleteAllDialog by remember { mutableStateOf(false) }
+
 	Scaffold(
 		topBar = {
 			TopAppBar(
@@ -103,11 +135,27 @@ private fun LocationsScreenContent(
 						)
 					}
 				},
+				actions = {
+					if (!locations.isNullOrEmpty()) {
+						IconButton(onClick = { olderThanCounts = countsOlderThan() }) {
+							Icon(
+								Icons.Outlined.AutoDelete,
+								contentDescription = stringResource(Res.string.locations_delete_older),
+							)
+						}
+						IconButton(onClick = { showDeleteAllDialog = true }) {
+							Icon(
+								Icons.Outlined.DeleteSweep,
+								contentDescription = stringResource(Res.string.locations_delete_all),
+							)
+						}
+					}
+				},
 			)
 		},
 		snackbarHost = { SnackbarHost(snackbarHostState) },
 	) { scaffoldPadding ->
-		val locations = state.locations ?: return@Scaffold
+		if (locations == null) return@Scaffold
 		if (locations.isEmpty()) {
 			Column(
 				modifier = Modifier
@@ -139,11 +187,34 @@ private fun LocationsScreenContent(
 					LocationCard(
 						item = item,
 						onClick = { onOpenInMaps(item.location) },
+						onDelete = { onDelete(item.location) },
 						modifier = Modifier.fillMaxWidth(),
 					)
 				}
 			}
 		}
+	}
+
+	olderThanCounts?.let { counts ->
+		DeleteOlderLocationsDialog(
+			counts = counts,
+			onConfirm = { age ->
+				olderThanCounts = null
+				onDeleteOlderThan(age)
+			},
+			onDismiss = { olderThanCounts = null },
+		)
+	}
+
+	if (showDeleteAllDialog) {
+		DeleteAllLocationsDialog(
+			count = locations?.size ?: 0,
+			onConfirm = {
+				showDeleteAllDialog = false
+				onDeleteAll()
+			},
+			onDismiss = { showDeleteAllDialog = false },
+		)
 	}
 }
 
@@ -183,6 +254,10 @@ private fun LocationsScreenPreview() {
 			snackbarHostState = remember { SnackbarHostState() },
 			onBack = {},
 			onOpenInMaps = {},
+			onDelete = {},
+			countsOlderThan = { emptyMap() },
+			onDeleteOlderThan = {},
+			onDeleteAll = {},
 		)
 	}
 }
@@ -196,6 +271,10 @@ private fun LocationsScreenEmptyPreview() {
 			snackbarHostState = remember { SnackbarHostState() },
 			onBack = {},
 			onOpenInMaps = {},
+			onDelete = {},
+			countsOlderThan = { emptyMap() },
+			onDeleteOlderThan = {},
+			onDeleteAll = {},
 		)
 	}
 }

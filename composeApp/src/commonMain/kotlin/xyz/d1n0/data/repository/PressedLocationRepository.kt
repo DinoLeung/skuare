@@ -29,4 +29,14 @@ class PressedLocationRepository(private val dao: PressedLocationDao) {
 		)
 
 	suspend fun deleteFor(watchAddress: String) = dao.deleteFor(watchAddress)
+
+	suspend fun delete(location: PressedLocation) = dao.delete(location.id)
+
+	/** Puts back a [delete]d location, with its id, so the list shows it where it was. */
+	suspend fun restore(location: PressedLocation) = dao.insert(location)
+
+	/** Deletes the locations recorded before [before], @return how many. */
+	suspend fun deleteBefore(before: Instant): Int = dao.deleteBefore(before)
+
+	suspend fun deleteAll() = dao.deleteAll()
 }

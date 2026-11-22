@@ -1,15 +1,23 @@
 package xyz.d1n0.ui.component
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -26,6 +34,7 @@ import kotlin.time.Instant
 
 /**
  * A recorded location: the watch, when its lower-right button was pressed, and where the phone was.
+ * A long press opens a menu with Delete.
  *
  * @param onClick Opens the location in the phone's map app.
  */
@@ -33,12 +42,43 @@ import kotlin.time.Instant
 fun LocationCard(
 	item: PressedLocationWithWatch,
 	onClick: () -> Unit,
+	onDelete: () -> Unit,
+	modifier: Modifier = Modifier,
+) {
+	var menuExpanded by remember { mutableStateOf(false) }
+	// the box anchors the menu to the card
+	Box(modifier = modifier) {
+		LocationCardContent(
+			item = item,
+			onClick = onClick,
+			onLongClick = { menuExpanded = true },
+			modifier = Modifier.fillMaxWidth(),
+		)
+		DropdownMenu(expanded = menuExpanded, onDismissRequest = { menuExpanded = false }) {
+			DropdownMenuItem(
+				text = { Text(stringResource(Res.string.common_delete)) },
+				leadingIcon = { Icon(Icons.Outlined.Delete, contentDescription = null) },
+				onClick = {
+					menuExpanded = false
+					onDelete()
+				},
+			)
+		}
+	}
+}
+
+@Composable
+private fun LocationCardContent(
+	item: PressedLocationWithWatch,
+	onClick: () -> Unit,
+	onLongClick: () -> Unit,
 	modifier: Modifier = Modifier,
 ) {
 	val location = item.location
 	CardView(
 		modifier = modifier,
 		onClick = onClick,
+		onLongClick = onLongClick,
 		title = { Text(text = item.watchName, style = MaterialTheme.typography.titleMedium) },
 		// the whole card opens the map, the icon only shows that it does
 		indicator = { Icon(Icons.AutoMirrored.Filled.OpenInNew, contentDescription = null) },
@@ -88,6 +128,7 @@ private fun LocationCardPreview() {
 				pairedDisplayName = "My watch",
 			),
 			onClick = {},
+			onDelete = {},
 		)
 	}
 }

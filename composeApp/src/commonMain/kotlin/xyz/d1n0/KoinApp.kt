@@ -62,7 +62,8 @@ val uiModule = module {
 			presenceMonitor = get(),
 		)
 	}
-	viewModelOf(::LocationsScreenViewModel)
+	// not viewModelOf, it would ask Koin for the clock and time zone too
+	viewModel { LocationsScreenViewModel(pressedLocationRepository = get(), appSettingsRepository = get()) }
 
 	viewModelOf(::NavBarViewModel)
 	viewModelOf(::TimezonesScreenViewModel)

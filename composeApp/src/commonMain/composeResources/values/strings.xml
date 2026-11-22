@@ -10,6 +10,7 @@
 	<string name="common_cancel">Cancel</string>
 	<string name="common_close">Close</string>
 	<string name="common_confirm">Confirm</string>
+	<string name="common_delete">Delete</string>
 	<string name="common_disconnect">Disconnect</string>
 	<string name="common_others">Others</string>
 	<string name="common_save">Save</string>
@@ -84,6 +85,29 @@
 	<string name="locations_accuracy">± %1$d m</string>
 	<!-- Tapping a location opens it in a map app, shown when the phone has none that can -->
 	<string name="locations_no_map_app">No app can show this location</string>
+	<!-- Snackbar after deleting one location from its long-press menu, with locations_undo -->
+	<string name="locations_deleted">Location deleted</string>
+	<string name="locations_undo">Undo</string>
+	<!-- Title bar button and its confirmation -->
+	<string name="locations_delete_all">Delete all locations</string>
+	<string name="locations_delete_all_title">Delete all locations?</string>
+	<!-- %1$d: how many locations there are -->
+	<plurals name="locations_delete_all_text">
+		<item quantity="one">The recorded location will be deleted. This can't be undone.</item>
+		<item quantity="other">All %1$d recorded locations will be deleted. This can't be undone.</item>
+	</plurals>
+	<!-- Title bar button and the title of its dialog, which offers the ages below -->
+	<string name="locations_delete_older">Delete older locations</string>
+	<string name="locations_older_than_week">Older than 1 week</string>
+	<string name="locations_older_than_month">Older than 1 month</string>
+	<string name="locations_older_than_three_months">Older than 3 months</string>
+	<string name="locations_older_than_six_months">Older than 6 months</string>
+	<string name="locations_older_than_year">Older than 1 year</string>
+	<!-- Confirm button of the older locations dialog. %1$d: how many the picked age deletes -->
+	<plurals name="locations_delete_count">
+		<item quantity="one">Delete %1$d location</item>
+		<item quantity="other">Delete %1$d locations</item>
+	</plurals>
 
 	<!-- Timezones -->
 	<string name="timezones_select_home">Select home time zone</string>

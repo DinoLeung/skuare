@@ -5,6 +5,7 @@
 	<string name="common_cancel">取消</string>
 	<string name="common_close">關閉</string>
 	<string name="common_confirm">確定</string>
+	<string name="common_delete">刪除</string>
 	<string name="common_disconnect">中斷連線</string>
 	<string name="common_others">其他</string>
 	<string name="common_save">儲存</string>
@@ -57,6 +58,22 @@
 	<string name="locations_empty_hint_on">短按手錶的右下按鈕，即可記錄手機的位置。</string>
 	<string name="locations_accuracy">誤差 ±%1$d 公尺</string>
 	<string name="locations_no_map_app">沒有可顯示這個位置的應用程式</string>
+	<string name="locations_deleted">已刪除位置</string>
+	<string name="locations_undo">復原</string>
+	<string name="locations_delete_all">刪除所有位置</string>
+	<string name="locations_delete_all_title">要刪除所有位置嗎？</string>
+	<plurals name="locations_delete_all_text">
+		<item quantity="other">將刪除全部 %1$d 筆已記錄的位置，這個動作無法復原。</item>
+	</plurals>
+	<string name="locations_delete_older">刪除較舊的位置</string>
+	<string name="locations_older_than_week">超過 1 週</string>
+	<string name="locations_older_than_month">超過 1 個月</string>
+	<string name="locations_older_than_three_months">超過 3 個月</string>
+	<string name="locations_older_than_six_months">超過 6 個月</string>
+	<string name="locations_older_than_year">超過 1 年</string>
+	<plurals name="locations_delete_count">
+		<item quantity="other">刪除 %1$d 筆位置</item>
+	</plurals>
 
 	<!-- Timezones -->
 	<string name="timezones_select_home">選擇本地時區</string>
