@@ -15,6 +15,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import xyz.d1n0.phone.PickedAudio
+import java.io.ByteArrayOutputStream
+import java.io.InputStream
 
 /**
  * The system file picker for audio. It needs no storage permission, and the app copies the file,
@@ -47,10 +49,22 @@ private suspend fun ContentResolver.pickedAudio(uri: Uri): PickedAudio {
 	return PickedAudio(
 		displayName = name ?: uri.lastPathSegment.orEmpty(),
 		sizeBytes = size,
-		read = {
+		read = { maxBytes ->
 			withContext(Dispatchers.IO) {
-				checkNotNull(openInputStream(uri)) { "Couldn't open the picked file" }.use { it.readBytes() }
+				checkNotNull(openInputStream(uri)) { "Couldn't open the picked file" }.use { it.readAtMost(maxBytes) }
 			}
 		},
 	)
+}
+
+/** Like readNBytes, which needs API 33: stops after [limit] bytes instead of reading the whole stream. */
+private fun InputStream.readAtMost(limit: Int): ByteArray {
+	val out = ByteArrayOutputStream()
+	val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
+	while (out.size() < limit) {
+		val count = read(buffer, 0, minOf(buffer.size, limit - out.size()))
+		if (count < 0) break
+		out.write(buffer, 0, count)
+	}
+	return out.toByteArray()
 }

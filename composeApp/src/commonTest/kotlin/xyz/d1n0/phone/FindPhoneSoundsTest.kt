@@ -22,8 +22,13 @@ class FindPhoneSoundsTest {
 	private val ringer = FakePhoneRinger()
 	private val sounds = FindPhoneSounds(store, settings, ringer, loadBuiltIn = { builtIn })
 
+	private var readLimit: Int? = null
+
 	private fun picked(name: String = "Song.MP3", bytes: ByteArray = song, size: Long? = bytes.size.toLong()) =
-		PickedAudio(displayName = name, sizeBytes = size, read = { bytes })
+		PickedAudio(displayName = name, sizeBytes = size, read = { maxBytes ->
+			readLimit = maxBytes
+			bytes.copyOf(minOf(maxBytes, bytes.size))
+		})
 
 	@Test
 	fun aPlayableFileIsCopiedAndNamed() = runTest {
@@ -45,11 +50,20 @@ class FindPhoneSoundsTest {
 	}
 
 	@Test
-	fun aFileTooLargeWithoutAKnownSizeIsRejectedAfterReading() = runTest {
-		val bytes = ByteArray(FindPhoneSounds.MAX_SIZE_BYTES + 1)
+	fun aFileTooLargeWithoutAKnownSizeIsRejectedAfterReadingPastTheLimit() = runTest {
+		val bytes = ByteArray(FindPhoneSounds.MAX_SIZE_BYTES + 100)
 
 		assertEquals(FindPhoneSounds.Rejection.TooLarge, sounds.choose(picked(bytes = bytes, size = null)))
+		assertEquals(FindPhoneSounds.MAX_SIZE_BYTES + 1, readLimit)
 		assertNull(store.stored)
+	}
+
+	@Test
+	fun aFileExactlyAtTheLimitIsTaken() = runTest {
+		val bytes = ByteArray(FindPhoneSounds.MAX_SIZE_BYTES)
+
+		assertNull(sounds.choose(picked(bytes = bytes, size = null)))
+		assertEquals(FindPhoneSounds.MAX_SIZE_BYTES, store.stored?.size)
 	}
 
 	@Test

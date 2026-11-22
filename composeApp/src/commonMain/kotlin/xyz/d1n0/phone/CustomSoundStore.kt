@@ -30,10 +30,12 @@ class UnsupportedCustomSoundStore : CustomSoundStore {
  *
  * @property displayName The file's name, e.g. Ringtone.mp3, shown on the App settings screen.
  * @property sizeBytes Null if the platform doesn't know it before reading.
- * @property read The whole file. Throws if it can't be read, e.g. it was deleted meanwhile.
+ * @property read The file's bytes, at most `maxBytes` of them, so a file larger than that is never
+ *   held whole, even when [sizeBytes] is unknown or wrong. Throws if it can't be read, e.g. it was
+ *   deleted meanwhile.
  */
 class PickedAudio(
 	val displayName: String,
 	val sizeBytes: Long?,
-	val read: suspend () -> ByteArray,
+	val read: suspend (maxBytes: Int) -> ByteArray,
 )

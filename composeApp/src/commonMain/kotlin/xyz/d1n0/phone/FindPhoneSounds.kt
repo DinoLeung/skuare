@@ -49,7 +49,8 @@ class FindPhoneSounds(
 	suspend fun choose(picked: PickedAudio): Rejection? {
 		if ((picked.sizeBytes ?: 0) > MAX_SIZE_BYTES) return Rejection.TooLarge
 		return try {
-			val bytes = picked.read()
+			// one byte over the limit tells a file that's too large from one exactly at it
+			val bytes = picked.read(MAX_SIZE_BYTES + 1)
 			when {
 				bytes.size > MAX_SIZE_BYTES -> Rejection.TooLarge
 				!ringer.canPlay(bytes) -> Rejection.Unplayable

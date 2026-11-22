@@ -12,8 +12,9 @@ actual fun rememberAudioFilePicker(onPicked: (PickedAudio) -> Unit): (() -> Unit
 	// TODO: present UIDocumentPickerViewController(forOpeningContentTypes = listOf(UTTypeAudio),
 	//  asCopy = true) from the Compose UIViewController, with a delegate calling onPicked.
 	// TODO: asCopy hands over a temporary copy, no security-scoped access needed. PickedAudio from
-	//  its URL: displayName = lastPathComponent, sizeBytes from NSURLFileSizeKey, read = the bytes
-	//  of NSData(contentsOfURL) on Dispatchers.IO.
+	//  its URL: displayName = lastPathComponent, sizeBytes from NSURLFileSizeKey, read = at most
+	//  maxBytes via NSFileHandle.readDataUpToLength on Dispatchers.IO, not NSData(contentsOfURL),
+	//  which reads the whole file.
 	// TODO: not MPMediaPickerController, songs protected or only in iCloud have no readable file.
 	return null
 }
