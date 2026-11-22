@@ -383,7 +383,7 @@ private fun AppSettingsScreenPreview() {
 				isLocationRecordingEnabled = true,
 				isLocationPermissionGranted = false,
 				isFindPhoneSupported = true,
-				canForceMaxVolume = false,
+				canForceMaxVolume = true,
 				findPhone = FindPhoneSettings(enabled = true, soundName = "Ringtone.mp3"),
 				isNotificationPermissionGranted = true,
 			),
