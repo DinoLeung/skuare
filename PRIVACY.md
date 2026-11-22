@@ -34,7 +34,7 @@ Bluetooth scan access is used only to find supported watches. Skuare declares th
 
 ### Find phone (optional)
 
-**Find phone** in Skuare's App settings is off by default. If you turn it on, Skuare asks for permission to show notifications, where the Stop button is, and then rings your device when you hold the lower-right button on a paired watch. It rings at full alarm volume, also in silent mode, and vibrates. Skuare raises the alarm volume while it rings and sets it back afterwards.
+**Find phone** in Skuare's App settings is off by default. If you turn it on, Skuare asks for permission to show notifications, where the Stop button is, and then rings your device when you hold the lower-right button on a paired watch. It rings like an alarm, also in silent mode, and vibrates. Unless you turn off **Ring at full alarm volume**, Skuare raises the alarm volume while it rings and sets it back afterwards.
 
 If you choose your own sound for Find phone, Skuare reads only the audio file you pick in the system's file picker, and keeps a copy of it in its private storage, so it keeps working if the original is moved or deleted. Skuare doesn't access any other files.
 
