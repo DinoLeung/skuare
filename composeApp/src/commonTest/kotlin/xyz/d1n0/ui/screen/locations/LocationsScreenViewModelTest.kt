@@ -20,17 +20,20 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.days
 import kotlin.time.Instant
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class LocationsScreenViewModelTest {
 	private companion object {
 		const val ADDRESS = "ED:A1:AF:D5:A2:40"
-		val NOW = Instant.parse("2026-11-22T12:00:00Z")
 	}
 
 	private val dao = FakePressedLocationDao(FakePairedWatchDao())
 	private val repository = PressedLocationRepository(dao)
+
+	/** The view model's clock, a test moves it to let time pass. */
+	private var now = Instant.parse("2026-11-22T12:00:00Z")
 
 	@BeforeTest
 	fun setUp() {
@@ -48,7 +51,7 @@ class LocationsScreenViewModelTest {
 			pressedLocationRepository = repository,
 			appSettingsRepository = AppSettingsRepository(FakeAppSettingsDao()),
 			clock = object : Clock {
-				override fun now() = NOW
+				override fun now() = this@LocationsScreenViewModelTest.now
 			},
 			timeZone = { TimeZone.UTC },
 		).also { viewModel -> backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.state.collect {} } }
@@ -75,12 +78,50 @@ class LocationsScreenViewModelTest {
 	}
 
 	@Test
+	fun onlyTheLastSingleDeleteCanBeUndone() = runTest {
+		recordAt("2026-11-21T08:00:00Z")
+		recordAt("2026-11-20T08:00:00Z")
+		val viewModel = viewModel()
+		val (first, second) = viewModel.state.value.locations!!.map { it.location }
+
+		viewModel.delete(first)
+		viewModel.delete(second)
+		viewModel.restore(first)
+
+		assertEquals(emptyList(), storedTimes)
+	}
+
+	@Test
+	fun aBulkDeleteCancelsThePendingUndo() = runTest {
+		recordAt("2026-11-21T08:00:00Z")
+		recordAt("2026-11-20T08:00:00Z")
+
+		val deletingAll = viewModel()
+		val single = deletingAll.state.value.locations!!.first().location
+		deletingAll.delete(single)
+		deletingAll.deleteAll()
+		deletingAll.restore(single)
+		assertEquals(emptyList(), storedTimes)
+
+		recordAt("2026-11-21T08:00:00Z")
+		recordAt("2025-01-01T08:00:00Z")
+		val deletingOlder = viewModel()
+		val newest = deletingOlder.state.value.locations!!.first().location
+		deletingOlder.delete(newest)
+		deletingOlder.deleteBefore(deletingOlder.olderThan().getValue(LocationAge.YEAR).cutoff)
+		deletingOlder.restore(newest)
+		assertEquals(emptyList(), storedTimes)
+	}
+
+	@Test
 	fun countsWhatEachAgeWouldDelete() = runTest {
 		recordAt("2026-11-21T12:00:00Z") // a day old
 		recordAt("2026-10-01T12:00:00Z") // over a month
 		recordAt("2026-04-01T12:00:00Z") // over 6 months
 		recordAt("2024-11-22T12:00:00Z") // over a year
 		val viewModel = viewModel()
+
+		val olderThan = viewModel.olderThan()
 
 		assertEquals(
 			mapOf(
@@ -90,20 +131,36 @@ class LocationsScreenViewModelTest {
 				LocationAge.SIX_MONTHS to 2,
 				LocationAge.YEAR to 1,
 			),
-			viewModel.countsOlderThan(),
+			olderThan.mapValues { it.value.count },
 		)
+		assertEquals(Instant.parse("2026-10-22T12:00:00Z"), olderThan.getValue(LocationAge.MONTH).cutoff)
 	}
 
 	@Test
-	fun deletesOnlyOlderThanTheAge() = runTest {
+	fun deletesOnlyBeforeTheCutoff() = runTest {
 		recordAt("2026-11-21T12:00:00Z")
 		recordAt("2026-10-22T12:00:01Z") // just under a month old, kept
 		recordAt("2026-10-22T11:59:59Z") // just over, deleted
 		val viewModel = viewModel()
 
-		viewModel.deleteOlderThan(LocationAge.MONTH)
+		viewModel.deleteBefore(viewModel.olderThan().getValue(LocationAge.MONTH).cutoff)
 
 		assertEquals(listOf("2026-10-22T12:00:01Z", "2026-11-21T12:00:00Z"), storedTimes)
+	}
+
+	@Test
+	fun confirmingDeletesWhatTheDialogCountedEvenIfTimePassed() = runTest {
+		recordAt("2026-10-22T18:00:00Z") // under a month old when the dialog opens
+		recordAt("2026-10-01T12:00:00Z")
+		val viewModel = viewModel()
+		val choice = viewModel.olderThan().getValue(LocationAge.MONTH)
+		assertEquals(1, choice.count)
+
+		// the dialog stays open a day, the first location is over a month old by now
+		now += 1.days
+		viewModel.deleteBefore(choice.cutoff)
+
+		assertEquals(listOf("2026-10-22T18:00:00Z"), storedTimes)
 	}
 
 	@Test

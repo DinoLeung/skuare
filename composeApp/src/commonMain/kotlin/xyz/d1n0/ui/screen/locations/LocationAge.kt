@@ -19,3 +19,10 @@ enum class LocationAge(private val amount: Int, private val unit: DateTimeUnit.D
 	/** Locations recorded before this are older than this age. */
 	fun cutoff(now: Instant, timeZone: TimeZone): Instant = now.minus(amount, unit, timeZone)
 }
+
+/**
+ * What deleting the locations older than a [LocationAge] removes, taken when its dialog opens.
+ * Confirming deletes before this [cutoff], so exactly the [count] the dialog showed, even if the
+ * dialog stayed open while locations aged past it.
+ */
+data class OlderThan(val cutoff: Instant, val count: Int)

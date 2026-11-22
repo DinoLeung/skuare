@@ -13,6 +13,7 @@ import xyz.d1n0.data.database.PressedLocationWithWatch
 import xyz.d1n0.data.repository.AppSettingsRepository
 import xyz.d1n0.data.repository.PressedLocationRepository
 import kotlin.time.Clock
+import kotlin.time.Instant
 
 /**
  * @property locations Newest first, null until loaded, so the empty text doesn't flash.
@@ -37,32 +38,44 @@ class LocationsScreenViewModel(
 	) { locations, enabled -> LocationsUiState(locations, enabled) }
 		.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), LocationsUiState())
 
+	/**
+	 * The last single delete, until it's undone or a later delete supersedes it. Only it can be
+	 * undone: a bulk delete the user confirmed since must not bring it back.
+	 */
+	private var undoable: PressedLocation? = null
+
 	/** Deletes one location, [restore] puts it back, e.g. from the snackbar's Undo. */
 	fun delete(location: PressedLocation) {
+		undoable = location
 		viewModelScope.launch { pressedLocationRepository.delete(location) }
 	}
 
+	/** Undoes [delete], if [location] is still the last one deleted and no bulk delete followed. */
 	fun restore(location: PressedLocation) {
+		if (undoable?.id != location.id) return
+		undoable = null
 		viewModelScope.launch { pressedLocationRepository.restore(location) }
 	}
 
-	/** How many of the loaded locations each [LocationAge] would delete, for its dialog. */
-	fun countsOlderThan(): Map<LocationAge, Int> {
+	/** What each [LocationAge] would delete of the loaded locations, for its dialog. */
+	fun olderThan(): Map<LocationAge, OlderThan> {
 		val now = clock.now()
 		val zone = timeZone()
 		val locations = state.value.locations.orEmpty()
 		return LocationAge.entries.associateWith { age ->
 			val cutoff = age.cutoff(now, zone)
-			locations.count { it.location.pressedAt < cutoff }
+			OlderThan(cutoff = cutoff, count = locations.count { it.location.pressedAt < cutoff })
 		}
 	}
 
-	fun deleteOlderThan(age: LocationAge) {
-		val cutoff = age.cutoff(clock.now(), timeZone())
+	/** Deletes the locations before [cutoff], the one [olderThan] counted with. */
+	fun deleteBefore(cutoff: Instant) {
+		undoable = null
 		viewModelScope.launch { pressedLocationRepository.deleteBefore(cutoff) }
 	}
 
 	fun deleteAll() {
+		undoable = null
 		viewModelScope.launch { pressedLocationRepository.deleteAll() }
 	}
 }

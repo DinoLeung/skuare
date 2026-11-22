@@ -101,9 +101,16 @@ fun LocationsScreen(onBack: () -> Unit) {
 				if (result == SnackbarResult.ActionPerformed) viewModel.restore(location)
 			}
 		},
-		countsOlderThan = viewModel::countsOlderThan,
-		onDeleteOlderThan = viewModel::deleteOlderThan,
-		onDeleteAll = viewModel::deleteAll,
+		olderThan = viewModel::olderThan,
+		// a bulk delete supersedes a single one, its Undo goes, see LocationsScreenViewModel.restore
+		onDeleteBefore = { cutoff ->
+			snackbarHostState.currentSnackbarData?.dismiss()
+			viewModel.deleteBefore(cutoff)
+		},
+		onDeleteAll = {
+			snackbarHostState.currentSnackbarData?.dismiss()
+			viewModel.deleteAll()
+		},
 	)
 }
 
@@ -115,13 +122,14 @@ private fun LocationsScreenContent(
 	onBack: () -> Unit,
 	onOpenInMaps: (PressedLocation) -> Unit,
 	onDelete: (PressedLocation) -> Unit,
-	countsOlderThan: () -> Map<LocationAge, Int>,
-	onDeleteOlderThan: (LocationAge) -> Unit,
+	olderThan: () -> Map<LocationAge, OlderThan>,
+	onDeleteBefore: (Instant) -> Unit,
 	onDeleteAll: () -> Unit,
 ) {
 	val locations = state.locations
-	// the counts are taken when the dialog opens, so they don't change under the user's eyes
-	var olderThanCounts by remember { mutableStateOf<Map<LocationAge, Int>?>(null) }
+	// taken when the dialog opens: the counts don't change under the user's eyes, and confirming
+	// deletes with the cutoff they were counted with
+	var olderThanChoices by remember { mutableStateOf<Map<LocationAge, OlderThan>?>(null) }
 	var showDeleteAllDialog by remember { mutableStateOf(false) }
 
 	Scaffold(
@@ -138,7 +146,7 @@ private fun LocationsScreenContent(
 				},
 				actions = {
 					if (!locations.isNullOrEmpty()) {
-						IconButton(onClick = { olderThanCounts = countsOlderThan() }) {
+						IconButton(onClick = { olderThanChoices = olderThan() }) {
 							Icon(
 								Icons.Outlined.AutoDelete,
 								contentDescription = stringResource(Res.string.locations_delete_older),
@@ -196,14 +204,14 @@ private fun LocationsScreenContent(
 		}
 	}
 
-	olderThanCounts?.let { counts ->
+	olderThanChoices?.let { choices ->
 		DeleteOlderLocationsDialog(
-			counts = counts,
+			counts = choices.mapValues { it.value.count },
 			onConfirm = { age ->
-				olderThanCounts = null
-				onDeleteOlderThan(age)
+				olderThanChoices = null
+				onDeleteBefore(choices.getValue(age).cutoff)
 			},
-			onDismiss = { olderThanCounts = null },
+			onDismiss = { olderThanChoices = null },
 		)
 	}
 
@@ -256,8 +264,8 @@ private fun LocationsScreenPreview() {
 			onBack = {},
 			onOpenInMaps = {},
 			onDelete = {},
-			countsOlderThan = { emptyMap() },
-			onDeleteOlderThan = {},
+			olderThan = { emptyMap() },
+			onDeleteBefore = {},
 			onDeleteAll = {},
 		)
 	}
@@ -273,8 +281,8 @@ private fun LocationsScreenEmptyPreview() {
 			onBack = {},
 			onOpenInMaps = {},
 			onDelete = {},
-			countsOlderThan = { emptyMap() },
-			onDeleteOlderThan = {},
+			olderThan = { emptyMap() },
+			onDeleteBefore = {},
 			onDeleteAll = {},
 		)
 	}
