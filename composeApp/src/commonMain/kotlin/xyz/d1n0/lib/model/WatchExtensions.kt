@@ -8,12 +8,14 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withTimeout
 import kotlinx.coroutines.withTimeoutOrNull
 import xyz.d1n0.lib.constant.OpCode
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
@@ -118,8 +120,22 @@ private fun ByteArray.isClocksReply() = when (firstOrNull()) {
 suspend fun Watch.writeClocks(clocksSettings: ClocksSettings) =
 	clocksSettings.clocksPackets.forEach { writeOrThrow(it) }
 
-suspend fun Watch.writeTime(delay: Duration = 0.seconds) =
-	clocks.value.pinnedClock?.let { writeOrThrow(it.getCurrentDateTimePacket(delay = delay)) }
+/**
+ * Writes the current time for the pinned clock, nothing if there is none.
+ *
+ * @throws TimeWriteUnansweredException if the write fails and the watch disconnects right after,
+ *         see [timeWriteFailure]. Any other failure is thrown as it is.
+ */
+suspend fun Watch.writeTime(delay: Duration = 0.seconds) {
+	val packet = clocks.value.pinnedClock?.getCurrentDateTimePacket(delay = delay) ?: return
+	try {
+		writeOrThrow(packet)
+	} catch (e: CancellationException) {
+		throw e
+	} catch (e: Exception) {
+		throw timeWriteFailure(e) { state.first { it is State.Disconnecting || it is State.Disconnected } }
+	}
+}
 
 suspend fun Watch.requestAlarms() {
 	request(OpCode.ALARM_A)

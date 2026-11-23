@@ -29,6 +29,7 @@ import xyz.d1n0.lib.constant.ConnectReason
 import xyz.d1n0.lib.constant.OpCode
 import xyz.d1n0.lib.model.AppInfo
 import xyz.d1n0.lib.model.CustomWatchModel
+import xyz.d1n0.lib.model.TimeWriteUnansweredException
 import xyz.d1n0.lib.model.Watch
 import xyz.d1n0.phone.LocationProvider
 import xyz.d1n0.phone.LocationResult
@@ -185,6 +186,8 @@ class WatchSessionHandler(
 	 *    - manual sync (lower-right short press): the same, and if the user turned on location
 	 *      recording, also reads the phone's location and stores it as a
 	 *      [xyz.d1n0.data.database.PressedLocation]. The read starts before the time adjustment.
+	 *      A watch that disconnects without answering the time write counts as synced, see
+	 *      [TimeWriteUnansweredException].
 	 *    - setup or default (lower-left long press): adjusts the time like a sync, then keeps the
 	 *      connection and holds the watch in [pendingForegroundWatch], the caller should ask the
 	 *      user to open the app.
@@ -331,7 +334,7 @@ class WatchSessionHandler(
 					val watchName = watchConnectionName(watch, address) ?: address
 					startLocationRead(LocationRequest(address, watchName, pressedAt))
 				}
-				BackgroundSessionResult.Synced(adjustTimeAndRecord(watch, address))
+				BackgroundSessionResult.Synced(adjustTimeAndRecord(watch, address, acceptUnansweredTimeWrite = true))
 			}
 
 			ConnectReason.SETUP, ConnectReason.DEFAULT -> {
@@ -420,15 +423,30 @@ class WatchSessionHandler(
 	 * Adjusts the time and stores the result in [PairedWatch].
 	 *
 	 * @param address BLE address of the watch, nothing is stored if it is unknown.
+	 * @param acceptUnansweredTimeWrite Counts a [TimeWriteUnansweredException] as a successful
+	 *        sync. Only for a lower-right short press: the older GMW-B5000 module takes the time,
+	 *        then goes silent instead of answering, with the official app too. A lower-left long
+	 *        press gets an answer, and other connect reasons haven't been seen doing it, so they
+	 *        still count it as a lost connection.
 	 * @return Why the time adjustment failed, null if it succeeded.
 	 */
-	private suspend fun adjustTimeAndRecord(watch: ConnectedWatch, address: String?): Throwable? {
+	private suspend fun adjustTimeAndRecord(
+		watch: ConnectedWatch,
+		address: String?,
+		acceptUnansweredTimeWrite: Boolean = false,
+	): Throwable? {
 		val connectionName = watchConnectionName(watch, address)
 		connectionNotifier.timeSyncStarted()
-		val error = try {
+		val adjustError = try {
 			watch.adjustTime().exceptionOrNull()
 		} finally {
 			connectionNotifier.timeSyncFinished(connectionName)
+		}
+		val error = if (acceptUnansweredTimeWrite && adjustError is TimeWriteUnansweredException) {
+			log.w { "$address disconnected without answering the time write, counted as synced" }
+			null
+		} else {
+			adjustError
 		}
 		address?.let {
 			pairedWatchRepository.recordSync(

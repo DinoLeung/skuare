@@ -1,5 +1,6 @@
 package xyz.d1n0.sync
 
+import com.juul.kable.NotConnectedException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -38,6 +39,7 @@ import xyz.d1n0.lib.constant.ConnectReason
 import xyz.d1n0.lib.constant.OpCode
 import xyz.d1n0.lib.model.AppInfo
 import xyz.d1n0.lib.model.CustomWatchModel
+import xyz.d1n0.lib.model.TimeWriteUnansweredException
 import xyz.d1n0.lib.model.WatchErrorPacket
 import xyz.d1n0.lib.model.WatchFeatures
 import xyz.d1n0.lib.model.WatchInfo
@@ -620,6 +622,68 @@ class WatchSessionHandlerTest {
 		assertEquals(SyncFailure.WATCH_ERROR, stored.lastSyncFailure)
 		assertEquals("FF 81 1D", stored.lastSyncErrorDetail)
 	}
+
+	@Test
+	fun manualSyncCountsUnansweredTimeWriteAsSynced() = runTest {
+		val fixture = Fixture()
+		fixture.pair()
+		// the last button press failed the same way before this fix, the error must go
+		fixture.repository.recordSync(ADDRESS, failure = SyncFailure.OTHER, errorDetail = "GATT_ERROR(133)")
+		val watch = FakeConnectedWatch(
+			connectReason = ConnectReason.MANUAL_SYNC,
+			adjustResult = Result.failure(unansweredTimeWrite()),
+		)
+
+		val result = fixture.handler.runBackground(ADDRESS) { watch }
+
+		val synced = assertIs<BackgroundSessionResult.Synced>(result)
+		assertNull(synced.error)
+		val stored = assertNotNull(fixture.repository.find(ADDRESS))
+		assertNotNull(stored.lastSyncAt)
+		assertNull(stored.lastSyncFailure)
+		assertNull(stored.lastSyncErrorDetail)
+	}
+
+	@Test
+	fun manualSyncStillRecordsAConnectionLostBeforeTheTimeWrite() = runTest {
+		val fixture = Fixture()
+		fixture.pair()
+		val lost = NotConnectedException("Disconnected")
+		val watch = FakeConnectedWatch(connectReason = ConnectReason.MANUAL_SYNC, adjustResult = Result.failure(lost))
+
+		val result = fixture.handler.runBackground(ADDRESS) { watch }
+
+		assertTrue(assertIs<BackgroundSessionResult.Synced>(result).error === lost)
+		assertEquals(SyncFailure.CONNECTION_LOST, fixture.repository.find(ADDRESS)?.lastSyncFailure)
+	}
+
+	@Test
+	fun autoSyncRecordsUnansweredTimeWriteAsLostConnection() = runTest {
+		val fixture = Fixture()
+		fixture.pair()
+		val unanswered = unansweredTimeWrite()
+		val watch = FakeConnectedWatch(connectReason = ConnectReason.AUTO_SYNC, adjustResult = Result.failure(unanswered))
+
+		val result = fixture.handler.runBackground(ADDRESS) { watch }
+
+		assertTrue(assertIs<BackgroundSessionResult.Synced>(result).error === unanswered)
+		assertEquals(SyncFailure.CONNECTION_LOST, fixture.repository.find(ADDRESS)?.lastSyncFailure)
+	}
+
+	@Test
+	fun foregroundRecordsUnansweredTimeWriteAsLostConnection() = runTest {
+		val fixture = Fixture()
+		val watch = FakeConnectedWatch(adjustResult = Result.failure(unansweredTimeWrite()))
+
+		fixture.handler.runForeground(watch)
+
+		assertEquals(SyncFailure.CONNECTION_LOST, fixture.repository.find(ADDRESS)?.lastSyncFailure)
+	}
+
+	/** What the older GMW-B5000 module gives after taking the time, see [TimeWriteUnansweredException]. */
+	private fun unansweredTimeWrite() = TimeWriteUnansweredException(
+		IllegalStateException("OnCharacteristicWrite(characteristic=26eb002d-b012-49a8-b1f8-394fb2032b0f, status=GATT_ERROR(133))"),
+	)
 
 	@Test
 	fun setupRequestHoldsConnectionUntilPromptIsDropped() = runTest {
