@@ -1,5 +1,6 @@
 package xyz.d1n0.lib.model
 
+import com.juul.kable.NotConnectedException
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
@@ -32,5 +33,12 @@ class TimeWriteFailureTest {
 	@Test
 	fun disconnectLongAfterTheFailureDoesNotCount() = runTest {
 		assertSame(gattError, timeWriteFailure(gattError) { delay(2.seconds) })
+	}
+
+	@Test
+	fun linkGoneBeforeTheWriteIsNotUnanswered() = runTest {
+		// Kable throws this before sending when the link is already down, the watch is disconnected
+		val notConnected = NotConnectedException("Disconnected")
+		assertSame(notConnected, timeWriteFailure(notConnected) {})
 	}
 }

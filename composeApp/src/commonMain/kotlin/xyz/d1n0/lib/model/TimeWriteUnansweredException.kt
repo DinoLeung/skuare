@@ -1,5 +1,6 @@
 package xyz.d1n0.lib.model
 
+import com.juul.kable.NotConnectedException
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.time.Duration.Companion.seconds
 
@@ -21,10 +22,15 @@ private val UNANSWERED_DISCONNECT_WAIT = 1.seconds
  * within a second, [error] otherwise. Android fails the pending write and reports the disconnect
  * at the same moment, so the disconnect may only arrive just after the failure.
  *
+ * A [NotConnectedException] is always [error]: Kable throws it when the link was already gone, so
+ * the time packet was never sent.
+ *
  * @param awaitDisconnected Returns once the watch is disconnected.
  */
 internal suspend fun timeWriteFailure(error: Exception, awaitDisconnected: suspend () -> Unit): Exception =
-	if (withTimeoutOrNull(UNANSWERED_DISCONNECT_WAIT) { awaitDisconnected() } != null) {
+	if (error !is NotConnectedException &&
+		withTimeoutOrNull(UNANSWERED_DISCONNECT_WAIT) { awaitDisconnected() } != null
+	) {
 		TimeWriteUnansweredException(error)
 	} else {
 		error
