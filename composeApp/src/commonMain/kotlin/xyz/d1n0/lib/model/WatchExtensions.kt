@@ -215,9 +215,9 @@ suspend fun Watch.writeReminderConfigs(remindersSettings: RemindersSettings) =
  * and radio IDs are left out on watches without [WatchFeatures.hasTimeZoneLocation], as the
  * official app does.
  *
- * On watches with [Watch.hasBatchCharacteristics] they go in three batches, in the official app's
- * order: clocks, configs with coordinates and radio IDs, then names. Otherwise each packet is
- * written to the IO characteristic.
+ * On watches with [Watch.hasBatchCharacteristics] they go in batches, in the official app's order:
+ * clocks, configs, coordinates and radio IDs, then names. Otherwise each packet is written to the
+ * IO characteristic.
  *
  * Unlike most writes, a failed one throws, e.g. [com.juul.kable.NotConnectedException], so a sync
  * or save that didn't reach the watch fails.
@@ -232,7 +232,8 @@ private suspend fun Watch.writeClocksAndTimeZoneData(clocksSettings: ClocksSetti
 			timeZoneLocationPackets(clocksSettings),
 			timeZoneNamePackets(clocksSettings),
 		)
-		batches.forEach { writeBatchOrThrow(it) }
+		// no coordinates without hasTimeZoneLocation, and an empty batch can't be encoded
+		batches.filter { it.isNotEmpty() }.forEach { writeBatchOrThrow(it) }
 	} else {
 		writeClocks(clocksSettings)
 		writeTimeZoneConfigs(clocksSettings)
