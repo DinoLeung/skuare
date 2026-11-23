@@ -103,8 +103,8 @@ excellent opportunity to learn JetBrains Compose Multiplatform and core BLE comm
 ## Roadmap
 
 - [x] Map out the data models
-- [X] Implement BLE communication protocol
-- [ ] Simple UI to pair and interact with the watch
+- [x] Implement BLE communication protocol
+- [x] Simple UI to pair and interact with the watch
 - [x] Local sqlite or shared preference to keep track of paired watches
 - [ ] Support auto time adjustment procedure when app is not in foreground
     - [x] Android companion device manager
