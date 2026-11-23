@@ -31,6 +31,9 @@ import kotlin.time.Duration.Companion.seconds
  *           sessions, so it needs background sync too.
  * @property isLocationPermissionGranted Whether a background session may read the location now.
  * @property locationPermissionDenied Turning location recording on failed, the user didn't allow it.
+ * @property isLocationDisclosureShown Turning location recording on first says what the location is
+ *           used for, the permissions are asked for only once the user accepts. Google Play requires
+ *           this disclosure for background location.
  * @property isFindPhoneSupported Whether find phone can work here, background sessions again.
  * @property canForceMaxVolume False on iOS, the sound follows the phone's volume there.
  * @property isNotificationPermissionGranted The Stop button of the ringing lives in a notification.
@@ -46,6 +49,7 @@ data class AppSettingsUiState(
 	val isLocationRecordingEnabled: Boolean = false,
 	val isLocationPermissionGranted: Boolean = false,
 	val locationPermissionDenied: Boolean = false,
+	val isLocationDisclosureShown: Boolean = false,
 	val isFindPhoneSupported: Boolean = false,
 	val canForceMaxVolume: Boolean = true,
 	val findPhone: FindPhoneSettings = FindPhoneSettings(),
@@ -210,7 +214,8 @@ class AppSettingsScreenViewModel(
 	fun openSystemSettings() = permissions.openAppSettings()
 
 	/**
-	 * Turning it on asks for the permissions it needs first, and stays off if any is refused.
+	 * Turning it on shows the disclosure first, see [AppSettingsUiState.isLocationDisclosureShown],
+	 * every time, as it starts collecting the location even when the permissions are still granted.
 	 * Turning it off asks for nothing, the system settings take a permission away.
 	 */
 	fun setLocationRecording(enabled: Boolean) {
@@ -220,6 +225,21 @@ class AppSettingsScreenViewModel(
 			viewModelScope.launch { appSettingsRepository.setLocationRecordingEnabled(false) }
 			return
 		}
+		_state.update { it.copy(isLocationDisclosureShown = true) }
+	}
+
+	/** Leaves location recording off, nothing is asked for. */
+	fun dismissLocationDisclosure() {
+		_state.update { it.copy(isLocationDisclosureShown = false) }
+	}
+
+	/**
+	 * Asks for the permissions location recording needs, and turns it on if all are granted. It stays
+	 * off if any is refused.
+	 */
+	fun acceptLocationDisclosure() {
+		if (!_state.value.isLocationDisclosureShown || _state.value.isRequestingPermission) return
+		_state.update { it.copy(isLocationDisclosureShown = false) }
 		requestingPermissions {
 			val granted = requestAll(locationProvider.requiredPermissions) && locationProvider.isPermissionGranted()
 			if (granted) appSettingsRepository.setLocationRecordingEnabled(true)

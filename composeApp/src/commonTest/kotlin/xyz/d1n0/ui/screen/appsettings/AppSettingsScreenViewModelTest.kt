@@ -377,6 +377,7 @@ class AppSettingsScreenViewModelTest {
 		val viewModel = viewModel()
 
 		viewModel.setLocationRecording(true)
+		viewModel.acceptLocationDisclosure()
 
 		assertEquals(LOCATION_PERMISSIONS, permissions.requested)
 		assertTrue(viewModel.state.value.isLocationRecordingEnabled)
@@ -385,7 +386,55 @@ class AppSettingsScreenViewModelTest {
 		permissions.granted.clear()
 		viewModel.setLocationRecording(false)
 		viewModel.setLocationRecording(true)
+		viewModel.acceptLocationDisclosure()
 		assertFalse(viewModel.state.value.isLocationRecordingEnabled)
 		assertTrue(viewModel.state.value.locationPermissionDenied)
+	}
+
+	@Test
+	fun turningLocationRecordingOnShowsTheDisclosureBeforeAskingForAnything() = runTest {
+		val viewModel = viewModel()
+
+		viewModel.setLocationRecording(true)
+
+		assertTrue(viewModel.state.value.isLocationDisclosureShown)
+		assertTrue(permissions.requested.isEmpty())
+		assertFalse(viewModel.state.value.isLocationRecordingEnabled)
+
+		viewModel.acceptLocationDisclosure()
+
+		assertFalse(viewModel.state.value.isLocationDisclosureShown)
+		assertEquals(LOCATION_PERMISSIONS, permissions.requested)
+		assertTrue(viewModel.state.value.isLocationRecordingEnabled)
+	}
+
+	@Test
+	fun cancellingTheLocationDisclosureLeavesRecordingOff() = runTest {
+		val viewModel = viewModel()
+
+		viewModel.setLocationRecording(true)
+		viewModel.dismissLocationDisclosure()
+
+		assertFalse(viewModel.state.value.isLocationDisclosureShown)
+		assertTrue(permissions.requested.isEmpty())
+		assertFalse(viewModel.state.value.isLocationRecordingEnabled)
+		assertFalse(viewModel.state.value.locationPermissionDenied)
+
+		// accepting after it's gone asks for nothing
+		viewModel.acceptLocationDisclosure()
+		assertTrue(permissions.requested.isEmpty())
+	}
+
+	@Test
+	fun theLocationDisclosureShowsAgainWhenThePermissionsAreStillGranted() = runTest {
+		permissions.granted += LOCATION_PERMISSIONS
+		val viewModel = viewModel()
+
+		viewModel.setLocationRecording(true)
+		assertTrue(viewModel.state.value.isLocationDisclosureShown)
+
+		viewModel.acceptLocationDisclosure()
+		assertTrue(permissions.requested.isEmpty())
+		assertTrue(viewModel.state.value.isLocationRecordingEnabled)
 	}
 }

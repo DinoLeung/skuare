@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -74,6 +75,8 @@ fun AppSettingsScreen(
 		state = state,
 		onBack = onBack,
 		onLocationRecordingChange = viewModel::setLocationRecording,
+		onAcceptLocationDisclosure = viewModel::acceptLocationDisclosure,
+		onDismissLocationDisclosure = viewModel::dismissLocationDisclosure,
 		onFindPhoneChange = viewModel::setFindPhone,
 		onRingUntilStoppedChange = viewModel::setRingUntilStopped,
 		onMaxVolumeChange = viewModel::setMaxVolume,
@@ -92,6 +95,8 @@ private fun AppSettingsScreenContent(
 	state: AppSettingsUiState,
 	onBack: () -> Unit,
 	onLocationRecordingChange: (Boolean) -> Unit,
+	onAcceptLocationDisclosure: () -> Unit,
+	onDismissLocationDisclosure: () -> Unit,
 	onFindPhoneChange: (Boolean) -> Unit,
 	onRingUntilStoppedChange: (Boolean) -> Unit,
 	onMaxVolumeChange: (Boolean) -> Unit,
@@ -102,6 +107,9 @@ private fun AppSettingsScreenContent(
 	onOpenSystemSettings: () -> Unit,
 	onOpenLocations: () -> Unit,
 ) {
+	if (state.isLocationDisclosureShown) {
+		LocationDisclosureDialog(onAccept = onAcceptLocationDisclosure, onDismiss = onDismissLocationDisclosure)
+	}
 	Scaffold(
 		topBar = {
 			TopAppBar(
@@ -187,6 +195,27 @@ private fun LocationRecordingCard(
 			onOpenSystemSettings = onOpenSystemSettings,
 		)
 	}
+}
+
+/**
+ * Says what the location is used for before the system's prompts, the prominent disclosure Google
+ * Play requires for background location. The prompts follow only on [onAccept].
+ */
+@Composable
+private fun LocationDisclosureDialog(onAccept: () -> Unit, onDismiss: () -> Unit) {
+	AlertDialog(
+		onDismissRequest = onDismiss,
+		title = { Text(stringResource(Res.string.app_settings_location_disclosure_title)) },
+		text = { Text(stringResource(Res.string.app_settings_location_disclosure_text)) },
+		confirmButton = {
+			TextButton(onClick = onAccept) {
+				Text(stringResource(Res.string.app_settings_location_disclosure_continue))
+			}
+		},
+		dismissButton = {
+			TextButton(onClick = onDismiss) { Text(stringResource(Res.string.common_cancel)) }
+		},
+	)
 }
 
 @Composable
@@ -389,6 +418,8 @@ private fun AppSettingsScreenPreview() {
 			),
 			onBack = {},
 			onLocationRecordingChange = {},
+			onAcceptLocationDisclosure = {},
+			onDismissLocationDisclosure = {},
 			onFindPhoneChange = {},
 			onRingUntilStoppedChange = {},
 			onMaxVolumeChange = {},

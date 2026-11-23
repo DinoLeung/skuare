@@ -63,6 +63,10 @@
 	<string name="app_settings_location_title">Record location</string>
 	<string name="app_settings_location_switch">Save the phone's location when the lower-right button is pressed briefly</string>
 	<string name="app_settings_location_description">The watch syncs its time as usual, and Skuare saves where your phone is. Needs precise location, allowed all the time.</string>
+	<!-- Shown when the switch is turned on, before the system's location prompts. Google Play requires this disclosure for background location, keep "even when Skuare is closed or not in use" -->
+	<string name="app_settings_location_disclosure_title">Allow location in the background?</string>
+	<string name="app_settings_location_disclosure_text">Skuare collects location data to save where your phone is when you briefly press the lower-right button on your watch, even when Skuare is closed or not in use. Locations stay on this phone, Skuare never sends them anywhere. Next, allow precise location, then allow it all the time.</string>
+	<string name="app_settings_location_disclosure_continue">Continue</string>
 	<!-- The switch is on, but the permission was taken away in the system settings since -->
 	<string name="app_settings_location_permission_missing">Location isn't allowed all the time, so no locations are saved.</string>
 	<!-- Turning the switch on failed, the user didn't allow the location -->

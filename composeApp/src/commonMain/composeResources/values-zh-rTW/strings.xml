@@ -47,6 +47,9 @@
 	<string name="app_settings_location_title">記錄位置</string>
 	<string name="app_settings_location_switch">短按右下按鈕時儲存手機位置</string>
 	<string name="app_settings_location_description">手錶會照常校正時間，Skuare 會儲存手機當時的位置。需要允許 Skuare 一律使用精確位置。</string>
+	<string name="app_settings_location_disclosure_title">允許在背景使用位置？</string>
+	<string name="app_settings_location_disclosure_text">Skuare 會收集位置資料，在你短按手錶右下按鈕時儲存手機所在的位置，即使 Skuare 已關閉或未在使用中也一樣。位置只會儲存在這支手機上，Skuare 不會將位置傳送到任何地方。接下來請允許使用精確位置，再允許 Skuare 一律使用位置。</string>
+	<string name="app_settings_location_disclosure_continue">繼續</string>
 	<string name="app_settings_location_permission_missing">未允許一律使用位置，因此不會儲存位置。</string>
 	<string name="app_settings_location_permission_denied">未取得位置權限。請到系統設定中允許 Skuare 一律使用精確位置。</string>
 	<string name="app_settings_open_system_settings">開啟系統設定</string>
