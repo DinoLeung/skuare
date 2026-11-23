@@ -69,7 +69,7 @@ enum class WatchModel(
 			"DW-B5600" to DW_SQUARE,        // module 3509
 			"GA-B2100" to CASIOAK,          // module 5689
 			"GBM-2100" to CASIOAK,          // module 5729, untested, assumed to match the GA-B2100
-			"GM-B2100" to CASIOAK,          // module 5691, untested, assumed to match the GA-B2100
+			"GM-B2100" to CASIOAK,          // module 5691, community tested
 		)
 
 		/**

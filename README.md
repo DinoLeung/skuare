@@ -27,28 +27,37 @@ assistance from
 
 Skuare supports the following watch models and Casio modules:
 
-- GMW-B5000
-    - [Module 3459](https://shockbase.org/watches/modules_dyn.php?module=3459)
-    - [Module 3539](https://shockbase.org/watches/modules_dyn.php?module=3539)
-- GW-B5600
-    - [Module 3461](https://shockbase.org/watches/modules_dyn.php?module=3461)
-    - [Module 3540](https://shockbase.org/watches/modules_dyn.php?module=3540)
-- MRG-B5000
-    - [Module 3501](https://shockbase.org/watches/modules_dyn.php?module=3501) (untested)
-- GCW-B5000
-  - [Module 3543](https://shockbase.org/watches/modules_dyn.php?module=3543) (untested)
-- GW-BX5600
-    - [Module 3578](https://shockbase.org/watches/modules_dyn.php?module=3578)
-- GMW-BZ5000
-    - [Module 3575](https://shockbase.org/watches/modules_dyn.php?module=3575) (untested)
-- DW-B5600
-    - [Module 3509](https://shockbase.org/watches/modules_dyn.php?module=3509) (untested)
-- GA-B2100
-    - [Module 5689](https://shockbase.org/watches/modules_dyn.php?module=5689)
-- GBM-2100
-    - [Module 5729](https://shockbase.org/watches/modules_dyn.php?module=5729) (untested)
-- GM-B2100
-    - [Module 5691](https://shockbase.org/watches/modules_dyn.php?module=5691) (untested)
+| Model      | Module         | Status           |
+|------------|----------------|------------------|
+| GMW-B5000  | [3459], [3539] | Tested           |
+| GW-B5600   | [3461], [3540] | Tested           |
+| MRG-B5000  | [3501]         | Community tested |
+| GCW-B5000  | [3543]         | Community tested |
+| GW-BX5600  | [3578]         | Tested           |
+| GMW-BZ5000 | [3575]         | Community tested |
+| DW-B5600   | [3509]         | Untested         |
+| GA-B2100   | [5689]         | Tested           |
+| GM-B2100   | [5691]         | Community tested |
+| GBM-2100   | [5729]         | Untested         |
+
+[3459]: https://shockbase.org/watches/modules_dyn.php?module=3459
+[3539]: https://shockbase.org/watches/modules_dyn.php?module=3539
+[3461]: https://shockbase.org/watches/modules_dyn.php?module=3461
+[3540]: https://shockbase.org/watches/modules_dyn.php?module=3540
+[3501]: https://shockbase.org/watches/modules_dyn.php?module=3501
+[3543]: https://shockbase.org/watches/modules_dyn.php?module=3543
+[3578]: https://shockbase.org/watches/modules_dyn.php?module=3578
+[3575]: https://shockbase.org/watches/modules_dyn.php?module=3575
+[3509]: https://shockbase.org/watches/modules_dyn.php?module=3509
+[5689]: https://shockbase.org/watches/modules_dyn.php?module=5689
+[5691]: https://shockbase.org/watches/modules_dyn.php?module=5691
+[5729]: https://shockbase.org/watches/modules_dyn.php?module=5729
+
+- **Tested**: tested on my own watches.
+- **Community tested**: reported working by users.
+- **Untested**: should work, as it shares its protocol with a tested model, but no one has
+  confirmed it yet. If you own one, please
+  [open an issue](https://github.com/DinoLeung/skuare/issues) to say how it went.
 
 Other watches can be paired too. They start with only a home clock and one world clock; adjust
 the watch features from the wrench button in the title bar to match the watch.
