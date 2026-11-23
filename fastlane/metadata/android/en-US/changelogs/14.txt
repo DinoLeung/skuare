@@ -1,0 +1,8 @@
+- Make find phone's full alarm volume optional
+- Choose your own find phone ringtone
+- Find the phone by holding the watch's lower-right button
+- Delete recorded locations one at a time, by age or all at once
+- Open a recorded location in the map app
+- Ask whether to delete a watch's recorded locations when forgetting it
+- Record the phone's location on a short press of the lower-right button
+- Bug fixes
