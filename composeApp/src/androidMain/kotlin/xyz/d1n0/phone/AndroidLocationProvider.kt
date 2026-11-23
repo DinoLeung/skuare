@@ -29,7 +29,10 @@ class AndroidLocationProvider(context: Context) : LocationProvider {
 	private val context = context.applicationContext
 	private val manager = context.getSystemService(LocationManager::class.java)
 
-	override val isSupported = true
+	// off until Google Play approves the background location declaration, the location permissions
+	// are commented out in the manifest until then. This hides location recording in App settings and keeps
+	// the sync from reading the location.
+	override val isSupported = false
 
 	override val requiredPermissions: List<Permission> = listOf(Permission.LOCATION, BackgroundLocationOnly)
 
