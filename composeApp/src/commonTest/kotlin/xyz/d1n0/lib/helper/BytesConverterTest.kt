@@ -133,6 +133,17 @@ class BytesConverterTest {
 	}
 
 	@Test
+	fun sundayIsWeekdaySeven() {
+		// connect_time_sync_bat3_sun_gold.pcapng, the official app on Sunday 2026-11-22:
+		// 09 EA07 0B 16 16 3B 06 07 17 01. Opcode and trailing 01 left out, 91 ms gives its sub-second byte
+		val sunday = LocalDateTime(2026, 11, 22, 22, 59, 6, 91_000_000)
+		assertContentEquals(
+			byteArrayOf(0xEA.toByte(), 0x07, 0x0B, 0x16, 0x16, 0x3B, 0x06, 0x07, 0x17),
+			sunday.toByteArray(),
+		)
+	}
+
+	@Test
 	fun testLocalDateBcdConversion() {
 		val localDate = LocalDate(2025, 3, 24)
 		val bytes = localDate.toBcdByteArray()
