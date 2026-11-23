@@ -228,7 +228,8 @@ private suspend fun Watch.writeClocksAndTimeZoneData(clocksSettings: ClocksSetti
 	if (hasBatchCharacteristics) {
 		val batches = listOf(
 			clocksSettings.clocksPackets,
-			clocksSettings.timeZoneConfigPackets + timeZoneLocationPackets(clocksSettings),
+			clocksSettings.timeZoneConfigPackets,
+			timeZoneLocationPackets(clocksSettings),
 			timeZoneNamePackets(clocksSettings),
 		)
 		batches.forEach { writeBatchOrThrow(it) }
