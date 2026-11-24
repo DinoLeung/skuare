@@ -25,12 +25,10 @@
         Optional, only asked for when the user turns on location recording in App settings: a short
         press of the watch's lower-right button records the phone's location. The session runs in
         the background, so it needs background location too.
-        Commented out until Google Play approves the background location declaration, location
-        recording is turned off until then, see AndroidLocationProvider.isSupported.
     -->
-    <!-- <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> -->
-    <!-- <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> -->
-    <!-- <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" /> -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 
     <!-- Find phone vibrates while it rings, a normal permission granted at install -->
     <uses-permission android:name="android.permission.VIBRATE" />

@@ -132,24 +132,21 @@ private fun AppSettingsScreenContent(
 			contentPadding = PaddingValues(8.dp),
 			verticalArrangement = Arrangement.spacedBy(8.dp),
 		) {
-			// hidden while location recording is turned off, see AndroidLocationProvider.isSupported
-			if (state.isLocationSupported) {
-				item {
-					LocationRecordingCard(
-						state = state,
-						onLocationRecordingChange = onLocationRecordingChange,
-						onOpenSystemSettings = onOpenSystemSettings,
-						modifier = Modifier.fillMaxWidth(),
-					)
-				}
-				item {
-					CardView(
-						modifier = Modifier.fillMaxWidth(),
-						onClick = onOpenLocations,
-						title = { Text(stringResource(Res.string.locations_title)) },
-						indicator = { Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null) },
-					)
-				}
+			item {
+				LocationRecordingCard(
+					state = state,
+					onLocationRecordingChange = onLocationRecordingChange,
+					onOpenSystemSettings = onOpenSystemSettings,
+					modifier = Modifier.fillMaxWidth(),
+				)
+			}
+			item {
+				CardView(
+					modifier = Modifier.fillMaxWidth(),
+					onClick = onOpenLocations,
+					title = { Text(stringResource(Res.string.locations_title)) },
+					indicator = { Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null) },
+				)
 			}
 			item {
 				FindPhoneCard(
