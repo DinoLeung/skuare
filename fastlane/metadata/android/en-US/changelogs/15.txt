@@ -1,0 +1,4 @@
+- Record the phone's location on a short press of the lower-right button, missing from 0.2.0-rc1
+- Open a recorded location in the map app
+- Delete recorded locations one at a time, by age or all at once
+- Ask whether to delete a watch's recorded locations when forgetting it
