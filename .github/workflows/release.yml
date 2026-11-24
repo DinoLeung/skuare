@@ -70,16 +70,8 @@ jobs:
           UPLOAD_KEYSTORE_PASSWORD: ${{ secrets.UPLOAD_KEYSTORE_PASSWORD }}
           UPLOAD_KEY_ALIAS: ${{ secrets.UPLOAD_KEY_ALIAS }}
           UPLOAD_KEY_PASSWORD: ${{ secrets.UPLOAD_KEY_PASSWORD }}
-      - name: Upload to Google Play
-        uses: r0adkll/upload-google-play@v1
-        with:
-          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
-          packageName: xyz.d1n0
-          releaseFiles: composeApp/build/outputs/bundle/release/composeApp-release.aab
-          mappingFile: composeApp/build/outputs/mapping/release/mapping.txt
-          tracks: ${{ steps.channel.outputs.track }}
-          status: completed
-          whatsNewDirectory: ${{ runner.temp }}/whatsnew
+      # GitHub first: Play can reject a release (e.g. a missing permission declaration), and the
+      # APK should still be published then. A rerun updates the same GitHub release.
       - name: Write GitHub release notes
         run: scripts/github-release-notes.sh | tee "$RUNNER_TEMP/release-notes.md"
         env:
@@ -93,3 +85,15 @@ jobs:
           files: |
             composeApp/build/outputs/apk/release/composeApp-release.apk
             composeApp/build/outputs/mapping/release/mapping.txt
+          # a rerun after a failed Play upload replaces the assets of the first run
+          overwrite_files: true
+      - name: Upload to Google Play
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: xyz.d1n0
+          releaseFiles: composeApp/build/outputs/bundle/release/composeApp-release.aab
+          mappingFile: composeApp/build/outputs/mapping/release/mapping.txt
+          tracks: ${{ steps.channel.outputs.track }}
+          status: completed
+          whatsNewDirectory: ${{ runner.temp }}/whatsnew
