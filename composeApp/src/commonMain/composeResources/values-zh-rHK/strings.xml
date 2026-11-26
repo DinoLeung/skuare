@@ -209,7 +209,7 @@
 	<string name="custom_model_disconnects_on_save">手錶傳回錯誤，儲存後會中斷連接以便恢復。之後請從手錶重新連接。</string>
 	<string name="custom_model_unsaved_other_tabs">其他分頁未儲存的變更將會捨棄。</string>
 	<string name="custom_model_intro_title">尚未完全支援 %1$s</string>
-	<string name="custom_model_intro_text">目前只開啟基本功能：一個本地時鐘和一個世界時鐘。請使用標題列的扳手按鈕，開啟手錶具備的功能。</string>
+	<string name="custom_model_intro_text">目前只開啟基本功能：一個本地時鐘和一個世界時鐘。請在標題列的選單中選擇「調整手錶功能」，開啟手錶具備的功能。</string>
 	<string name="custom_model_intro_adjust">調整</string>
 	<string name="custom_model_intro_later">稍後</string>
 

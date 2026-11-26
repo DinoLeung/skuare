@@ -269,7 +269,7 @@
 	<string name="custom_model_unsaved_other_tabs">Unsaved changes on other tabs will be discarded.</string>
 	<!-- %1$s: the watch's model name, e.g. CASIO GBD-H2000 -->
 	<string name="custom_model_intro_title">%1$s isn't fully supported yet</string>
-	<string name="custom_model_intro_text">Only the basics are on: a home clock and one world clock. Use the wrench button in the title bar to turn on the features your watch has.</string>
+	<string name="custom_model_intro_text">Only the basics are on: a home clock and one world clock. Choose Adjust watch features in the title bar's menu to turn on the features your watch has.</string>
 	<string name="custom_model_intro_adjust">Adjust</string>
 	<string name="custom_model_intro_later">Later</string>
 
