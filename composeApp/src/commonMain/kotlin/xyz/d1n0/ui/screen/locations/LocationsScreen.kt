@@ -56,8 +56,8 @@ import kotlin.time.Instant
 
 /**
  * Where the phone was at each short press of the lower-right button, newest first. Tapping one
- * opens it in the phone's map app, a long press offers to delete it. The title bar deletes the
- * older ones or all of them.
+ * opens it in the phone's map app, a long press offers to rename or delete it. The title bar deletes
+ * the older ones or all of them.
  */
 @Composable
 fun LocationsScreen(onBack: () -> Unit) {
@@ -75,8 +75,10 @@ fun LocationsScreen(onBack: () -> Unit) {
 		onBack = onBack,
 		onOpenInMaps = { location ->
 			val point = GeoPoint(location.latitude, location.longitude, location.accuracyMeters)
-			// the pin is named after the press, the map app shows the place itself
-			val link = mapLinks.link(point, label = formatter.formatDateTime(location.pressedAt))
+			// the pin is named after the user's name for the place, else the press, the map app shows the
+			// place itself
+			val label = location.name ?: formatter.formatDateTime(location.pressedAt)
+			val link = mapLinks.link(point, label = label)
 			try {
 				uriHandler.openUri(link)
 			} catch (e: CancellationException) {
@@ -101,6 +103,7 @@ fun LocationsScreen(onBack: () -> Unit) {
 				if (result == SnackbarResult.ActionPerformed) viewModel.restore(location)
 			}
 		},
+		onRename = viewModel::rename,
 		olderThan = viewModel::olderThan,
 		// a bulk delete supersedes a single one, its Undo goes, see LocationsScreenViewModel.restore
 		onDeleteBefore = { cutoff ->
@@ -122,6 +125,7 @@ private fun LocationsScreenContent(
 	onBack: () -> Unit,
 	onOpenInMaps: (PressedLocation) -> Unit,
 	onDelete: (PressedLocation) -> Unit,
+	onRename: (PressedLocation, String) -> Unit,
 	olderThan: () -> Map<LocationAge, OlderThan>,
 	onDeleteBefore: (Instant) -> Unit,
 	onDeleteAll: () -> Unit,
@@ -131,6 +135,7 @@ private fun LocationsScreenContent(
 	// deletes with the cutoff they were counted with
 	var olderThanChoices by remember { mutableStateOf<Map<LocationAge, OlderThan>?>(null) }
 	var showDeleteAllDialog by remember { mutableStateOf(false) }
+	var renaming by remember { mutableStateOf<PressedLocation?>(null) }
 
 	Scaffold(
 		topBar = {
@@ -196,12 +201,25 @@ private fun LocationsScreenContent(
 					LocationCard(
 						item = item,
 						onClick = { onOpenInMaps(item.location) },
+						onRename = { renaming = item.location },
 						onDelete = { onDelete(item.location) },
 						modifier = Modifier.fillMaxWidth(),
 					)
 				}
 			}
 		}
+	}
+
+	renaming?.let { location ->
+		RenameLocationDialog(
+			name = location.name,
+			defaultName = LocalLocaleFormatter.current.formatDateTime(location.pressedAt),
+			onConfirm = { name ->
+				renaming = null
+				onRename(location, name)
+			},
+			onDismiss = { renaming = null },
+		)
 	}
 
 	olderThanChoices?.let { choices ->
@@ -243,6 +261,7 @@ private fun LocationsScreenPreview() {
 							latitude = 22.2793,
 							longitude = 114.16281,
 							accuracyMeters = 12.4,
+							name = "Secret hideout",
 						),
 						pairedDisplayName = "My watch",
 					),
@@ -264,6 +283,7 @@ private fun LocationsScreenPreview() {
 			onBack = {},
 			onOpenInMaps = {},
 			onDelete = {},
+			onRename = { _, _ -> },
 			olderThan = { emptyMap() },
 			onDeleteBefore = {},
 			onDeleteAll = {},
@@ -281,6 +301,7 @@ private fun LocationsScreenEmptyPreview() {
 			onBack = {},
 			onOpenInMaps = {},
 			onDelete = {},
+			onRename = { _, _ -> },
 			olderThan = { emptyMap() },
 			onDeleteBefore = {},
 			onDeleteAll = {},

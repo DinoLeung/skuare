@@ -57,6 +57,11 @@ class LocationsScreenViewModel(
 		viewModelScope.launch { pressedLocationRepository.restore(location) }
 	}
 
+	/** Names [location], a blank [name] goes back to the watch's name. */
+	fun rename(location: PressedLocation, name: String) {
+		viewModelScope.launch { pressedLocationRepository.rename(location, name) }
+	}
+
 	/** What each [LocationAge] would delete of the loaded locations, for its dialog. */
 	fun olderThan(): Map<LocationAge, OlderThan> {
 		val now = clock.now()

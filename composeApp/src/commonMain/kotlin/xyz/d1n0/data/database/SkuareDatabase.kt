@@ -20,7 +20,7 @@ const val DATABASE_NAME = "skuare.db"
  */
 @Database(
 	entities = [PairedWatch::class, AppConfig::class, AppSettings::class, PressedLocation::class],
-	version = 8,
+	version = 9,
 	autoMigrations = [
 		AutoMigration(from = 1, to = 2, spec = CustomWatchModelMigration::class),
 		AutoMigration(from = 2, to = 3, spec = AlarmAndLocationFeaturesMigration::class),
@@ -32,6 +32,8 @@ const val DATABASE_NAME = "skuare.db"
 		AutoMigration(from = 6, to = 7),
 		// adds the find phone full volume setting to app_settings, on, as it rang before
 		AutoMigration(from = 7, to = 8),
+		// adds the user's name for a recorded location, null, the watch's name shows until they rename it
+		AutoMigration(from = 8, to = 9),
 	],
 )
 @TypeConverters(Converters::class)

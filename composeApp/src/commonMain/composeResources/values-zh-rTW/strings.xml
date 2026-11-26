@@ -87,6 +87,10 @@
 	<string name="locations_no_map_app">沒有可顯示這個位置的應用程式</string>
 	<string name="locations_deleted">已刪除位置</string>
 	<string name="locations_undo">復原</string>
+	<string name="locations_rename">重新命名</string>
+	<string name="locations_rename_title">重新命名位置</string>
+	<string name="locations_name">名稱</string>
+	<string name="locations_name_hint">留空會使用日期和時間</string>
 	<string name="locations_delete_all">刪除所有位置</string>
 	<string name="locations_delete_all_title">要刪除所有位置嗎？</string>
 	<plurals name="locations_delete_all_text">

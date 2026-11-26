@@ -78,6 +78,20 @@ class LocationsScreenViewModelTest {
 	}
 
 	@Test
+	fun undoingTheDeleteOfARenamedLocationKeepsItsName() = runTest {
+		recordAt("2026-11-21T08:00:00Z")
+		val viewModel = viewModel()
+		viewModel.rename(viewModel.state.value.locations!!.single().location, "Secret hideout")
+		val renamed = viewModel.state.value.locations!!.single().location
+		assertEquals("Secret hideout", renamed.name)
+
+		viewModel.delete(renamed)
+		viewModel.restore(renamed)
+
+		assertEquals("Secret hideout", viewModel.state.value.locations!!.single().location.name)
+	}
+
+	@Test
 	fun onlyTheLastSingleDeleteCanBeUndone() = runTest {
 		recordAt("2026-11-21T08:00:00Z")
 		recordAt("2026-11-20T08:00:00Z")
