@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.Build
 import androidx.compose.material.icons.sharp.LinkOff
+import androidx.compose.material.icons.sharp.Place
 import androidx.compose.material.icons.sharp.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -49,6 +50,7 @@ fun NavBarScaffold(
 	onDisconnect: () -> Unit,
 	onReload: (NavBarRoute?) -> Unit,
 	onOpenAppSettings: () -> Unit,
+	onOpenLocations: () -> Unit,
 ) {
 	val viewModel = koinViewModel<NavBarViewModel>()
 
@@ -203,6 +205,10 @@ fun NavBarScaffold(
 						) {
 							Icon(Icons.Sharp.Build, contentDescription = stringResource(Res.string.nav_adjust_watch_features))
 						}
+					}
+					// in the pairing screen's order, App settings last
+					IconButton(onClick = onOpenLocations) {
+						Icon(Icons.Sharp.Place, contentDescription = stringResource(Res.string.locations_title))
 					}
 					IconButton(onClick = onOpenAppSettings) {
 						Icon(Icons.Sharp.Settings, contentDescription = stringResource(Res.string.app_settings_title))

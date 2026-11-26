@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
@@ -56,6 +57,7 @@ import xyz.d1n0.resources.*
 fun PairingScreen(
 	onConnect: () -> Unit,
 	onOpenAppSettings: () -> Unit,
+	onOpenLocations: () -> Unit,
 ) {
 	val permissionsControllerFactory = rememberPermissionsControllerFactory()
 	val permissionsController =
@@ -80,6 +82,7 @@ fun PairingScreen(
 		},
 		onOpenSettings = viewModel.permissionsController::openAppSettings,
 		onOpenAppSettings = onOpenAppSettings,
+		onOpenLocations = onOpenLocations,
 	)
 }
 
@@ -90,12 +93,16 @@ private fun PairingScreenContent(
 	onEvent: (PairingUiEvent) -> Unit,
 	onOpenSettings: () -> Unit,
 	onOpenAppSettings: () -> Unit,
+	onOpenLocations: () -> Unit,
 ) {
 	Scaffold(
 		topBar = {
 			TopAppBar(
 				title = { Text(stringResource(Res.string.app_name)) },
 				actions = {
+					IconButton(onClick = onOpenLocations) {
+						Icon(Icons.Default.Place, contentDescription = stringResource(Res.string.locations_title))
+					}
 					IconButton(onClick = onOpenAppSettings) {
 						Icon(Icons.Default.Settings, contentDescription = stringResource(Res.string.app_settings_title))
 					}
@@ -228,6 +235,7 @@ private fun PairingScreenPreview() {
 			onEvent = {},
 			onOpenSettings = {},
 			onOpenAppSettings = {},
+			onOpenLocations = {},
 		)
 	}
 }
@@ -243,6 +251,7 @@ private fun PairingScreenEmptyPreview() {
 			onEvent = {},
 			onOpenSettings = {},
 			onOpenAppSettings = {},
+			onOpenLocations = {},
 		)
 	}
 }
@@ -256,6 +265,7 @@ private fun PairingScreenNoPermissionPreview() {
 			onEvent = {},
 			onOpenSettings = {},
 			onOpenAppSettings = {},
+			onOpenLocations = {},
 		)
 	}
 }
