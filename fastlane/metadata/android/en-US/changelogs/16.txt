@@ -1,0 +1,3 @@
+- Move App settings and Adjust watch features into the title bar menu
+- Open recorded locations from the pairing and watch screens
+- Rename recorded locations
