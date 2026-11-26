@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Watch
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -103,22 +104,29 @@ private fun PairingScreenContent(
 					IconButton(onClick = onOpenLocations) {
 						Icon(Icons.Default.Place, contentDescription = stringResource(Res.string.locations_title))
 					}
-					IconButton(onClick = onOpenAppSettings) {
-						Icon(Icons.Default.Settings, contentDescription = stringResource(Res.string.app_settings_title))
-					}
+					// the rarely used ones go in the menu, as in the watch screens' title bar
 					var menuExpanded by remember { mutableStateOf(false) }
 					// the box anchors the menu to the button
 					Box {
 						IconButton(onClick = { menuExpanded = true }) {
-							Icon(Icons.Default.MoreVert, contentDescription = stringResource(Res.string.pairing_more_options))
+							Icon(Icons.Default.MoreVert, contentDescription = stringResource(Res.string.common_more_options))
 						}
 						DropdownMenu(
 							expanded = menuExpanded,
 							onDismissRequest = { menuExpanded = false },
 						) {
+							DropdownMenuItem(
+								text = { Text(stringResource(Res.string.app_settings_title)) },
+								leadingIcon = { Icon(Icons.Default.Settings, contentDescription = null) },
+								onClick = {
+									menuExpanded = false
+									onOpenAppSettings()
+								},
+							)
 							// needs no permissions, the demo watch uses no Bluetooth
 							DropdownMenuItem(
 								text = { Text(stringResource(Res.string.pairing_connect_demo_watch)) },
+								leadingIcon = { Icon(Icons.Default.Watch, contentDescription = null) },
 								onClick = {
 									menuExpanded = false
 									onEvent(PairingUiEvent.StartDemo)

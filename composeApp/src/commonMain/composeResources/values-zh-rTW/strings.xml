@@ -7,6 +7,7 @@
 	<string name="common_confirm">確定</string>
 	<string name="common_delete">刪除</string>
 	<string name="common_disconnect">中斷連線</string>
+	<string name="common_more_options">更多選項</string>
 	<string name="common_others">其他</string>
 	<string name="common_save">儲存</string>
 	<string name="common_selected">已選取</string>
@@ -27,7 +28,6 @@
 	<string name="pairing_stop_searching">停止搜尋</string>
 	<string name="pairing_pair_new_watch">配對新手錶</string>
 	<string name="pairing_connect_demo_watch">連線至示範手錶</string>
-	<string name="pairing_more_options">更多選項</string>
 	<string name="pairing_grant_permissions">請到應用程式設定中授予權限</string>
 	<string name="pairing_no_watches">沒有已配對的手錶</string>
 	<string name="pairing_no_watches_hint">按住手錶左下方的 MODE 按鈕，然後點一下 + 進行配對。</string>

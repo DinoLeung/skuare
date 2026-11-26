@@ -12,6 +12,8 @@
 	<string name="common_confirm">Confirm</string>
 	<string name="common_delete">Delete</string>
 	<string name="common_disconnect">Disconnect</string>
+	<!-- Opens the menu at the end of a title bar -->
+	<string name="common_more_options">More options</string>
 	<string name="common_others">Others</string>
 	<string name="common_save">Save</string>
 	<string name="common_selected">Selected</string>
@@ -36,8 +38,6 @@
 	<string name="pairing_pair_new_watch">Pair a new watch</string>
 	<!-- Opens the watch screens with a demo watch, no watch or Bluetooth needed -->
 	<string name="pairing_connect_demo_watch">Connect to a demo watch</string>
-	<!-- Opens the menu in the pairing screen's title bar -->
-	<string name="pairing_more_options">More options</string>
 	<string name="pairing_grant_permissions">Grant permissions from app settings</string>
 	<string name="pairing_no_watches">No paired watches</string>
 	<string name="pairing_no_watches_hint">Press and hold the MODE button (lower-left) on your watch, then tap + to pair it.</string>

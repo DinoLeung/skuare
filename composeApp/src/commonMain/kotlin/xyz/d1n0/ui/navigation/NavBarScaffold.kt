@@ -9,8 +9,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.Build
 import androidx.compose.material.icons.sharp.LinkOff
+import androidx.compose.material.icons.sharp.MoreVert
 import androidx.compose.material.icons.sharp.Place
 import androidx.compose.material.icons.sharp.Settings
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -198,20 +201,38 @@ fun NavBarScaffold(
 					) {
 						Icon(Icons.Sharp.LinkOff, contentDescription = stringResource(Res.string.common_disconnect))
 					}
-					if (customModel != null) {
-						IconButton(
-							onClick = { openCustomModelDialog(false) },
-							enabled = !isSaving && watchConnectionState.value is PeripheralState.Connected,
-						) {
-							Icon(Icons.Sharp.Build, contentDescription = stringResource(Res.string.nav_adjust_watch_features))
-						}
-					}
-					// in the pairing screen's order, App settings last
 					IconButton(onClick = onOpenLocations) {
 						Icon(Icons.Sharp.Place, contentDescription = stringResource(Res.string.locations_title))
 					}
-					IconButton(onClick = onOpenAppSettings) {
-						Icon(Icons.Sharp.Settings, contentDescription = stringResource(Res.string.app_settings_title))
+					// the rarely used ones go in the menu, so the bar has as many icons on every watch and
+					// leaves room for the tab's title
+					var menuExpanded by remember { mutableStateOf(false) }
+					// the box anchors the menu to the button
+					Box {
+						IconButton(onClick = { menuExpanded = true }) {
+							Icon(Icons.Sharp.MoreVert, contentDescription = stringResource(Res.string.common_more_options))
+						}
+						DropdownMenu(expanded = menuExpanded, onDismissRequest = { menuExpanded = false }) {
+							if (customModel != null) {
+								DropdownMenuItem(
+									text = { Text(stringResource(Res.string.nav_adjust_watch_features)) },
+									leadingIcon = { Icon(Icons.Sharp.Build, contentDescription = null) },
+									onClick = {
+										menuExpanded = false
+										openCustomModelDialog(false)
+									},
+									enabled = !isSaving && watchConnectionState.value is PeripheralState.Connected,
+								)
+							}
+							DropdownMenuItem(
+								text = { Text(stringResource(Res.string.app_settings_title)) },
+								leadingIcon = { Icon(Icons.Sharp.Settings, contentDescription = null) },
+								onClick = {
+									menuExpanded = false
+									onOpenAppSettings()
+								},
+							)
+						}
 					}
 				},
 			)
