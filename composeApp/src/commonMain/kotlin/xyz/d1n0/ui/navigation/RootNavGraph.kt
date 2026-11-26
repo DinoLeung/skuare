@@ -47,6 +47,11 @@ fun RootNavGraph() {
 		rootNavHostController.navigate(RootNavRoute.AppSettings.route) { launchSingleTop = true }
 	}
 
+	// like App settings, on top of the pairing or the watch screens
+	val onOpenLocations = {
+		rootNavHostController.navigate(RootNavRoute.Locations.route) { launchSingleTop = true }
+	}
+
 	// navigateUp never pops the start destination, a double tap on back can't empty the back stack
 	val onBack: () -> Unit = { rootNavHostController.navigateUp() }
 
@@ -55,7 +60,11 @@ fun RootNavGraph() {
 		startDestination = RootNavRoute.Pairing.route,
 	) {
 		composable(RootNavRoute.Pairing.route) {
-			PairingScreen(onConnect = onConnect, onOpenAppSettings = onOpenAppSettings)
+			PairingScreen(
+				onConnect = onConnect,
+				onOpenAppSettings = onOpenAppSettings,
+				onOpenLocations = onOpenLocations,
+			)
 		}
 		composable(RootNavRoute.Watch.route) {
 			NavBarScaffold(
@@ -63,15 +72,11 @@ fun RootNavGraph() {
 				onDisconnect = onDisconnect,
 				onReload = onReload,
 				onOpenAppSettings = onOpenAppSettings,
+				onOpenLocations = onOpenLocations,
 			)
 		}
 		composable(RootNavRoute.AppSettings.route) {
-			AppSettingsScreen(
-				onBack = onBack,
-				onOpenLocations = {
-					rootNavHostController.navigate(RootNavRoute.Locations.route) { launchSingleTop = true }
-				},
-			)
+			AppSettingsScreen(onBack = onBack)
 		}
 		composable(RootNavRoute.Locations.route) {
 			LocationsScreen(onBack = onBack)

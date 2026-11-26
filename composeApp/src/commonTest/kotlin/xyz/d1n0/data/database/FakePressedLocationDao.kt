@@ -44,6 +44,10 @@ internal class FakePressedLocationDao(private val pairedWatchDao: PairedWatchDao
 			stored.groupingBy { it.watchAddress }.eachCount().map { (address, count) -> PressedLocationCount(address, count) }
 		}
 
+	override suspend fun rename(id: Long, name: String?) {
+		locations.update { stored -> stored.map { if (it.id == id) it.copy(name = name) else it } }
+	}
+
 	override suspend fun deleteFor(address: String) {
 		locations.update { stored -> stored.filterNot { it.watchAddress == address } }
 	}

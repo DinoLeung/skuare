@@ -28,6 +28,10 @@ class PressedLocationRepository(private val dao: PressedLocationDao) {
 			)
 		)
 
+	/** Names [location], a blank [name] clears it, so the watch's name shows again. */
+	suspend fun rename(location: PressedLocation, name: String) =
+		dao.rename(location.id, name.trim().takeIf { it.isNotEmpty() })
+
 	suspend fun deleteFor(watchAddress: String) = dao.deleteFor(watchAddress)
 
 	suspend fun delete(location: PressedLocation) = dao.delete(location.id)

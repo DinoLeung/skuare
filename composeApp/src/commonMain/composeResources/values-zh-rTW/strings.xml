@@ -7,6 +7,7 @@
 	<string name="common_confirm">確定</string>
 	<string name="common_delete">刪除</string>
 	<string name="common_disconnect">中斷連線</string>
+	<string name="common_more_options">更多選項</string>
 	<string name="common_others">其他</string>
 	<string name="common_save">儲存</string>
 	<string name="common_selected">已選取</string>
@@ -27,7 +28,6 @@
 	<string name="pairing_stop_searching">停止搜尋</string>
 	<string name="pairing_pair_new_watch">配對新手錶</string>
 	<string name="pairing_connect_demo_watch">連線至示範手錶</string>
-	<string name="pairing_more_options">更多選項</string>
 	<string name="pairing_grant_permissions">請到應用程式設定中授予權限</string>
 	<string name="pairing_no_watches">沒有已配對的手錶</string>
 	<string name="pairing_no_watches_hint">按住手錶左下方的 MODE 按鈕，然後點一下 + 進行配對。</string>
@@ -87,6 +87,10 @@
 	<string name="locations_no_map_app">沒有可顯示這個位置的應用程式</string>
 	<string name="locations_deleted">已刪除位置</string>
 	<string name="locations_undo">復原</string>
+	<string name="locations_rename">重新命名</string>
+	<string name="locations_rename_title">重新命名位置</string>
+	<string name="locations_name">名稱</string>
+	<string name="locations_name_hint">留空會使用日期和時間</string>
 	<string name="locations_delete_all">刪除所有位置</string>
 	<string name="locations_delete_all_title">要刪除所有位置嗎？</string>
 	<plurals name="locations_delete_all_text">
@@ -205,7 +209,7 @@
 	<string name="custom_model_disconnects_on_save">手錶傳回錯誤，儲存後會中斷連線讓它恢復。之後請從手錶重新連線。</string>
 	<string name="custom_model_unsaved_other_tabs">其他分頁中未儲存的變更將會捨棄。</string>
 	<string name="custom_model_intro_title">尚未完整支援 %1$s</string>
-	<string name="custom_model_intro_text">目前只開啟基本功能：一個本地時鐘和一個世界時鐘。請使用標題列的扳手按鈕，開啟手錶具備的功能。</string>
+	<string name="custom_model_intro_text">目前只開啟基本功能：一個本地時鐘和一個世界時鐘。請在標題列的選單中選擇「調整手錶功能」，開啟手錶具備的功能。</string>
 	<string name="custom_model_intro_adjust">調整</string>
 	<string name="custom_model_intro_later">稍後</string>
 

@@ -18,6 +18,8 @@ import kotlin.time.Instant
  *           forgotten.
  * @property pressedAt When the watch said why it connected, i.e. the press.
  * @property accuracyMeters See [xyz.d1n0.phone.GeoPoint.accuracyMeters].
+ * @property name What the user called the place, e.g. "Secret hideout", null until they rename it,
+ *           never blank. The list titles an unnamed location with [pressedAt].
  */
 @Entity(
 	tableName = "pressed_location",
@@ -31,6 +33,7 @@ data class PressedLocation(
 	val latitude: Double,
 	val longitude: Double,
 	val accuracyMeters: Double?,
+	val name: String? = null,
 )
 
 /**

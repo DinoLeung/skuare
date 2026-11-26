@@ -12,6 +12,8 @@
 	<string name="common_confirm">Confirm</string>
 	<string name="common_delete">Delete</string>
 	<string name="common_disconnect">Disconnect</string>
+	<!-- Opens the menu at the end of a title bar -->
+	<string name="common_more_options">More options</string>
 	<string name="common_others">Others</string>
 	<string name="common_save">Save</string>
 	<string name="common_selected">Selected</string>
@@ -36,8 +38,6 @@
 	<string name="pairing_pair_new_watch">Pair a new watch</string>
 	<!-- Opens the watch screens with a demo watch, no watch or Bluetooth needed -->
 	<string name="pairing_connect_demo_watch">Connect to a demo watch</string>
-	<!-- Opens the menu in the pairing screen's title bar -->
-	<string name="pairing_more_options">More options</string>
 	<string name="pairing_grant_permissions">Grant permissions from app settings</string>
 	<string name="pairing_no_watches">No paired watches</string>
 	<string name="pairing_no_watches_hint">Press and hold the MODE button (lower-left) on your watch, then tap + to pair it.</string>
@@ -129,6 +129,12 @@
 	<!-- Snackbar after deleting one location from its long-press menu, with locations_undo -->
 	<string name="locations_deleted">Location deleted</string>
 	<string name="locations_undo">Undo</string>
+	<!-- Long-press menu item and the title of its dialog, which names a location, e.g. "Secret hideout" -->
+	<string name="locations_rename">Rename</string>
+	<string name="locations_rename_title">Rename location</string>
+	<string name="locations_name">Name</string>
+	<!-- Under the name field: a location without a name of its own is titled with the date and time it was recorded -->
+	<string name="locations_name_hint">Leave empty to use the date and time</string>
 	<!-- Title bar button and its confirmation -->
 	<string name="locations_delete_all">Delete all locations</string>
 	<string name="locations_delete_all_title">Delete all locations?</string>
@@ -263,7 +269,7 @@
 	<string name="custom_model_unsaved_other_tabs">Unsaved changes on other tabs will be discarded.</string>
 	<!-- %1$s: the watch's model name, e.g. CASIO GBD-H2000 -->
 	<string name="custom_model_intro_title">%1$s isn't fully supported yet</string>
-	<string name="custom_model_intro_text">Only the basics are on: a home clock and one world clock. Use the wrench button in the title bar to turn on the features your watch has.</string>
+	<string name="custom_model_intro_text">Only the basics are on: a home clock and one world clock. Choose Adjust watch features in the title bar's menu to turn on the features your watch has.</string>
 	<string name="custom_model_intro_adjust">Adjust</string>
 	<string name="custom_model_intro_later">Later</string>
 

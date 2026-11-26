@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -54,10 +53,7 @@ import kotlin.time.Duration
  * saved straight away, nothing is written to a watch.
  */
 @Composable
-fun AppSettingsScreen(
-	onBack: () -> Unit,
-	onOpenLocations: () -> Unit,
-) {
+fun AppSettingsScreen(onBack: () -> Unit) {
 	val permissionsControllerFactory = rememberPermissionsControllerFactory()
 	val permissionsController =
 		remember(permissionsControllerFactory) { permissionsControllerFactory.createPermissionsController() }
@@ -85,7 +81,6 @@ fun AppSettingsScreen(
 		onResetSound = viewModel::resetSound,
 		onToggleSoundPlayback = viewModel::toggleSoundPlayback,
 		onOpenSystemSettings = viewModel::openSystemSettings,
-		onOpenLocations = onOpenLocations,
 	)
 }
 
@@ -105,7 +100,6 @@ private fun AppSettingsScreenContent(
 	onResetSound: () -> Unit,
 	onToggleSoundPlayback: () -> Unit,
 	onOpenSystemSettings: () -> Unit,
-	onOpenLocations: () -> Unit,
 ) {
 	if (state.isLocationDisclosureShown) {
 		LocationDisclosureDialog(onAccept = onAcceptLocationDisclosure, onDismiss = onDismissLocationDisclosure)
@@ -138,14 +132,6 @@ private fun AppSettingsScreenContent(
 					onLocationRecordingChange = onLocationRecordingChange,
 					onOpenSystemSettings = onOpenSystemSettings,
 					modifier = Modifier.fillMaxWidth(),
-				)
-			}
-			item {
-				CardView(
-					modifier = Modifier.fillMaxWidth(),
-					onClick = onOpenLocations,
-					title = { Text(stringResource(Res.string.locations_title)) },
-					indicator = { Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null) },
 				)
 			}
 			item {
@@ -428,7 +414,6 @@ private fun AppSettingsScreenPreview() {
 			onResetSound = {},
 			onToggleSoundPlayback = {},
 			onOpenSystemSettings = {},
-			onOpenLocations = {},
 		)
 	}
 }

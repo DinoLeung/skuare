@@ -6,8 +6,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -33,8 +33,9 @@ import kotlin.math.roundToInt
 import kotlin.time.Instant
 
 /**
- * A recorded location: the watch, when its lower-right button was pressed, and where the phone was.
- * A long press opens a menu with Delete.
+ * A recorded location: its name, the time of the press on the watch's lower-right button until the
+ * user renames it, the watch, and where the phone was. A long press opens a menu with Rename and
+ * Delete.
  *
  * @param onClick Opens the location in the phone's map app.
  */
@@ -42,6 +43,7 @@ import kotlin.time.Instant
 fun LocationCard(
 	item: PressedLocationWithWatch,
 	onClick: () -> Unit,
+	onRename: () -> Unit,
 	onDelete: () -> Unit,
 	modifier: Modifier = Modifier,
 ) {
@@ -55,6 +57,14 @@ fun LocationCard(
 			modifier = Modifier.fillMaxWidth(),
 		)
 		DropdownMenu(expanded = menuExpanded, onDismissRequest = { menuExpanded = false }) {
+			DropdownMenuItem(
+				text = { Text(stringResource(Res.string.locations_rename)) },
+				leadingIcon = { Icon(Icons.Outlined.Edit, contentDescription = null) },
+				onClick = {
+					menuExpanded = false
+					onRename()
+				},
+			)
 			DropdownMenuItem(
 				text = { Text(stringResource(Res.string.common_delete)) },
 				leadingIcon = { Icon(Icons.Outlined.Delete, contentDescription = null) },
@@ -75,22 +85,22 @@ private fun LocationCardContent(
 	modifier: Modifier = Modifier,
 ) {
 	val location = item.location
+	val pressedAt = LocalLocaleFormatter.current.formatDateTime(location.pressedAt)
 	CardView(
 		modifier = modifier,
 		onClick = onClick,
 		onLongClick = onLongClick,
-		title = { Text(text = item.watchName, style = MaterialTheme.typography.titleMedium) },
-		// the whole card opens the map, the icon only shows that it does
-		indicator = { Icon(Icons.AutoMirrored.Filled.OpenInNew, contentDescription = null) },
+		title = { Text(text = location.name ?: pressedAt, style = MaterialTheme.typography.titleMedium) },
 	) {
 		Column(
 			modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
 			verticalArrangement = Arrangement.spacedBy(4.dp),
 		) {
-			Text(
-				text = LocalLocaleFormatter.current.formatDateTime(location.pressedAt),
-				style = MaterialTheme.typography.bodyMedium,
-			)
+			Text(text = item.watchName, style = MaterialTheme.typography.bodyMedium)
+			// an unnamed location already has the time as its title
+			if (location.name != null) {
+				Text(text = pressedAt, style = MaterialTheme.typography.bodyMedium)
+			}
 			Text(
 				text = stringResource(
 					Res.string.locations_coordinates,
@@ -124,10 +134,12 @@ private fun LocationCardPreview() {
 					latitude = 22.2793,
 					longitude = 114.16281,
 					accuracyMeters = 12.4,
+					name = "Secret hideout",
 				),
 				pairedDisplayName = "My watch",
 			),
 			onClick = {},
+			onRename = {},
 			onDelete = {},
 		)
 	}

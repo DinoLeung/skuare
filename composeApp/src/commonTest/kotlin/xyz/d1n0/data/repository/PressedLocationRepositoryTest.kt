@@ -8,6 +8,7 @@ import xyz.d1n0.data.database.PairedWatch
 import xyz.d1n0.phone.GeoPoint
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import kotlin.time.Instant
 
 class PressedLocationRepositoryTest {
@@ -41,6 +42,31 @@ class PressedLocationRepositoryTest {
 		assertEquals(listOf(LATER, EARLIER), locations.map { it.location.pressedAt })
 		// a forgotten watch keeps the name it had at the press, a paired one shows its current name
 		assertEquals(listOf("CASIO GA-B2100", "Renamed square"), locations.map { it.watchName })
+	}
+
+	@Test
+	fun renamesTrimmedAndKeepsTheWatch() = runTest {
+		val repository = repositoryWithTwoWatches()
+		val unnamed = repository.observeAll().first().first()
+		assertNull(unnamed.location.name)
+
+		repository.rename(unnamed.location, "  Secret hideout ")
+
+		val renamed = repository.observeAll().first().first()
+		assertEquals("Secret hideout", renamed.location.name)
+		assertEquals("CASIO GA-B2100", renamed.watchName)
+	}
+
+	@Test
+	fun aBlankNameClearsIt() = runTest {
+		val repository = repositoryWithTwoWatches()
+		val location = repository.observeAll().first().first().location
+		repository.rename(location, "Secret hideout")
+
+		repository.rename(location, "   ")
+
+		// never stored blank, the list shows the time again
+		assertNull(repository.observeAll().first().first().location.name)
 	}
 
 	@Test

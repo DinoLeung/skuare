@@ -27,6 +27,10 @@ interface PressedLocationDao {
 	@Query("SELECT watchAddress, COUNT(*) AS count FROM pressed_location GROUP BY watchAddress")
 	fun observeCounts(): Flow<List<PressedLocationCount>>
 
+	/** @param name Null goes back to the watch's name. */
+	@Query("UPDATE pressed_location SET name = :name WHERE id = :id")
+	suspend fun rename(id: Long, name: String?)
+
 	@Query("DELETE FROM pressed_location WHERE watchAddress = :address")
 	suspend fun deleteFor(address: String)
 

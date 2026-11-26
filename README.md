@@ -60,7 +60,7 @@ Skuare supports the following watch models and Casio modules:
   [open an issue](https://github.com/DinoLeung/skuare/issues) to say how it went.
 
 Other watches can be paired too. They start with only a home clock and one world clock; adjust
-the watch features from the wrench button in the title bar to match the watch.
+the watch features from Adjust watch features in the title bar's menu to match the watch.
 
 ## Why rebuild everything when [GShockAPI](https://github.com/izivkov/GShockAPI/tree/main) already exists?
 
